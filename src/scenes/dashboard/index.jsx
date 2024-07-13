@@ -12,11 +12,31 @@ import GeographyChart from "../../components/GeographyChart";
 import BarChart from "../../components/BarChart";
 import StatBox from "../../components/StatBox";
 import ProgressCircle from "../../components/ProgressCircle";
-
+import { useEffect, useState } from "react";
+import ApiService from "../../services/apiServices";
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-
+  const [userName, setUserName] = useState("");
+  const userId = localStorage.getItem("userId");
+  const shopId = localStorage.getItem("shopId");
+  console.log(userName);
+  console.log(shopId);
+  console.log(userId);
+  useEffect(() => {
+    // Hàm để gọi API và cập nhật state
+    const fetchUserFullName = async () => {
+      try {
+        const data = await ApiService.getAccountDetailById(userId);
+        setUserName(data.data.fullname);
+        localStorage.setItem("name", userName);
+        // Giả sử API trả về đối tượng có thuộc tính fullName
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+    fetchUserFullName();
+  }, [userId]); // useEffect sẽ chạy lại khi userId thay đổi
   return (
     <Box m="20px">
       {/* HEADER */}
