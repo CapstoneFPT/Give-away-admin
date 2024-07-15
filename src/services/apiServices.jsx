@@ -10,6 +10,35 @@ const axiosInstance = axios.create({
 });
 
 const ApiService = {
+  getLeavesCategories: async (shopId) => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/categories/leaves?shopId=${shopId}`
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  },
+  addItemByShopId: async (shopId, newItem) => {
+    try {
+      const response = await axiosInstance.post(
+        `/api/shops/${shopId}/fashionitems`,
+        newItem
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  },
+  getOrderByShopId: async (shopId) => {
+    try {
+      const response = await axiosInstance.get(``);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  },
   getAccountDetailById: async (accountId) => {
     try {
       const response = await axiosInstance.get(`/api/accounts/${accountId}`);
