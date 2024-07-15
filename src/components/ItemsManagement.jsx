@@ -21,18 +21,21 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import ApiService from "../services/apiServices";
 import AuctionForm from "./CreateAuctionForm";
+import AddItem from "./AddItem"; // Import AddItem component
 
 const ItemsManagement = () => {
   const [fashionItems, setFashionItems] = useState([]);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(5);
   const shopId = localStorage.getItem("shopId");
+  console.log(shopId);
   const [isLoading, setIsLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
   const [openAuctionForm, setOpenAuctionForm] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [tabIndex, setTabIndex] = useState(0);
-  const [searchQuery, setSearchQuery] = useState(""); // Thêm trạng thái cho từ khóa tìm kiếm
+  const [searchQuery, setSearchQuery] = useState("");
+  const [openAddItem, setOpenAddItem] = useState(false); // Thêm trạng thái để quản lý form AddItem
 
   const getFashionItems = useCallback(
     async (page, pageSize, searchQuery) => {
@@ -56,7 +59,7 @@ const ItemsManagement = () => {
         }
       } catch (error) {
         alert("Failed to fetch items: " + error.message);
-        setFashionItems([]); // Đảm bảo rằng fashionItems luôn là một mảng
+        setFashionItems([]);
         setTotalCount(0);
       } finally {
         setIsLoading(false);
@@ -125,7 +128,6 @@ const ItemsManagement = () => {
   const handleAddToAuction = (item) => {
     setSelectedItem(item);
     setOpenAuctionForm(true);
-    console.log(selectedItem);
   };
 
   const handleAuctionSubmit = async (auctionData) => {
@@ -137,7 +139,6 @@ const ItemsManagement = () => {
       getFashionItems(page, pageSize, searchQuery);
     } catch (error) {
       alert("Failed to create auction: " + error.message);
-      console.log(auctionData);
       setIsLoading(false);
     }
   };
@@ -148,17 +149,21 @@ const ItemsManagement = () => {
 
   const handleChangeRowsPerPage = (event) => {
     setPageSize(parseInt(event.target.value, 10));
-    setPage(0); // Đặt lại trang hiện tại về 0
+    setPage(0);
   };
 
   const handleTabChange = (event, newValue) => {
     setTabIndex(newValue);
-    setPage(0); // Reset page number when changing tab
+    setPage(0);
   };
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
-    setPage(0); // Reset page number when searching
+    setPage(0);
+  };
+
+  const handleAddItemSuccess = () => {
+    getFashionItems(page, pageSize, searchQuery);
   };
 
   const renderTable = () => (
@@ -186,7 +191,7 @@ const ItemsManagement = () => {
                     variant="body2"
                     color="textSecondary"
                     noWrap
-                    sx={{ maxWidth: 300 }} // Adjust maxWidth as needed
+                    sx={{ maxWidth: 300 }}
                   >
                     {item.note}
                   </Typography>
@@ -256,7 +261,7 @@ const ItemsManagement = () => {
       <Typography component="h1" variant="h5" align="center" sx={{ mb: 3 }}>
         Item Management
       </Typography>
-      <Box display="flex" justifyContent="center" mb={3}>
+      <Box display="flex" justifyContent="space-between" mb={3}>
         <Box display="flex" backgroundColor="white" borderRadius="3px" p={1}>
           <InputBase
             sx={{ ml: 1, flex: 1 }}
@@ -268,39 +273,47 @@ const ItemsManagement = () => {
             <SearchIcon />
           </IconButton>
         </Box>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setOpenAddItem(true)}
+        >
+          Add New Item
+        </Button>
       </Box>
-      <Paper elevation={3} sx={{ padding: 3 }}>
-        <Tabs value={tabIndex} onChange={handleTabChange} centered>
-          <Tab label="Available Items" />
-          <Tab label="Pending Auction Items" />
-          <Tab label="Awaiting Auction Items" />
+      <Paper elevation={3}>
+        <Tabs
+          value={tabIndex}
+          onChange={handleTabChange}
+          indicatorColor="primary"
+          textColor="primary"
+          variant="fullWidth"
+        >
+          <Tab label="All Items" />
+          <Tab label="Pending Auction" />
+          <Tab label="Awaiting Auction" />
         </Tabs>
-        <Typography variant="body2" align="right" sx={{ mb: 2 }}>
-          Page {page + 1} of {Math.ceil(totalCount / pageSize)}
-        </Typography>
         {isLoading ? (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              minHeight: "100vh",
-            }}
-          >
+          <Box display="flex" justifyContent="center" mt={5}>
             <CircularProgress />
           </Box>
         ) : (
           renderTable()
         )}
       </Paper>
-      {selectedItem && (
+      {openAuctionForm && (
         <AuctionForm
           open={openAuctionForm}
           onClose={() => setOpenAuctionForm(false)}
+          item={selectedItem}
           onSubmit={handleAuctionSubmit}
-          itemId={selectedItem.itemId}
         />
       )}
+      <AddItem
+        open={openAddItem}
+        onClose={() => setOpenAddItem(false)}
+        onAddSuccess={handleAddItemSuccess}
+      />
     </Container>
   );
 };

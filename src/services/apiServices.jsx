@@ -10,6 +10,35 @@ const axiosInstance = axios.create({
 });
 
 const ApiService = {
+  getLeavesCategories: async (shopId) => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/categories/leaves?shopId=${shopId}`
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  },
+  addItemByShopId: async (shopId, newItem) => {
+    try {
+      const response = await axiosInstance.post(
+        `/api/shops/${shopId}/fashionitems`,
+        newItem
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  },
+  getOrderByShopId: async (shopId) => {
+    try {
+      const response = await axiosInstance.get(``);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  },
   getAccountDetailById: async (accountId) => {
     try {
       const response = await axiosInstance.get(`/api/accounts/${accountId}`);
@@ -45,6 +74,57 @@ const ApiService = {
         email,
         password,
       });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  },
+  createConsignByStaff: async (shopId, consignmentData) => {
+    try {
+      const formData = new FormData();
+      formData.append("type", consignmentData.type);
+      formData.append("recipientName", consignmentData.recipientName);
+      formData.append("phone", consignmentData.phone);
+      formData.append("address", consignmentData.address);
+      formData.append("email", consignmentData.email);
+
+      consignmentData.fashionItemForConsigns.forEach((item, index) => {
+        formData.append(`fashionItemForConsigns[${index}].name`, item.name);
+        formData.append(`fashionItemForConsigns[${index}].note`, item.note);
+        formData.append(`fashionItemForConsigns[${index}].value`, item.value);
+        formData.append(
+          `fashionItemForConsigns[${index}].dealPrice`,
+          item.dealPrice
+        );
+        formData.append(
+          `fashionItemForConsigns[${index}].confirmedPrice`,
+          item.confirmedPrice
+        );
+        formData.append(
+          `fashionItemForConsigns[${index}].condition`,
+          item.condition
+        );
+        formData.append(
+          `fashionItemForConsigns[${index}].categoryId`,
+          item.categoryId
+        );
+        formData.append(`fashionItemForConsigns[${index}].size`, item.size);
+        formData.append(`fashionItemForConsigns[${index}].color`, item.color);
+        formData.append(`fashionItemForConsigns[${index}].brand`, item.brand);
+        formData.append(`fashionItemForConsigns[${index}].gender`, item.gender);
+
+        item.image.forEach((image, imgIndex) => {
+          formData.append(
+            `fashionItemForConsigns[${index}].image[${imgIndex}]`,
+            image
+          );
+        });
+      });
+
+      const response = await axiosInstance.post(
+        `/api/shops/${shopId}/consignsales`,
+        formData
+      );
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || error.message);

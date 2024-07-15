@@ -8,6 +8,9 @@ import {
   Paper,
   Divider,
   Grid,
+  Card,
+  CardMedia,
+  CardContent,
 } from "@mui/material";
 import ApiService from "../../services/apiServices";
 
@@ -84,22 +87,41 @@ const ConsignDetail = () => {
                   <Typography variant="h6">
                     Item Name: {detail.fashionItem.name}
                   </Typography>
-                  <Typography>
-                    Condition: {detail.fashionItem.condition}
-                  </Typography>
-                  <Typography>Status: {detail.fashionItem.status}</Typography>
-                  <Typography>Deal Price: ${detail.dealPrice}</Typography>
-                  <Typography>
-                    Confirmed Price: ${detail.confirmedPrice}
-                  </Typography>
-                  <Typography>
-                    Category: {detail.fashionItem.categoryName}
-                  </Typography>
-                  <Typography>Size: {detail.fashionItem.size}</Typography>
-                  <Typography>Color: {detail.fashionItem.color}</Typography>
-                  <Typography>Brand: {detail.fashionItem.brand}</Typography>
-                  <Typography>Gender: {detail.fashionItem.gender}</Typography>
-                  <Typography>Note: {detail.fashionItem.note}</Typography>
+                  <Card sx={{ maxWidth: 300 }}>
+                    <CardMedia
+                      component="img"
+                      height="auto"
+                      image={
+                        detail.fashionItem.image &&
+                        detail.fashionItem.image.length > 0
+                          ? detail.fashionItem.image[0]
+                          : ""
+                      }
+                      alt={detail.fashionItem.name}
+                    />
+                    <CardContent>
+                      <Typography>
+                        Condition: {detail.fashionItem.condition}
+                      </Typography>
+                      <Typography>
+                        Status: {detail.fashionItem.status}
+                      </Typography>
+                      <Typography>Deal Price: ${detail.dealPrice}</Typography>
+                      <Typography>
+                        Confirmed Price: ${detail.confirmedPrice}
+                      </Typography>
+                      <Typography>
+                        Category: {detail.fashionItem.categoryName}
+                      </Typography>
+                      <Typography>Size: {detail.fashionItem.size}</Typography>
+                      <Typography>Color: {detail.fashionItem.color}</Typography>
+                      <Typography>Brand: {detail.fashionItem.brand}</Typography>
+                      <Typography>
+                        Gender: {detail.fashionItem.gender}
+                      </Typography>
+                      <Typography>Note: {detail.fashionItem.note}</Typography>
+                    </CardContent>
+                  </Card>
                 </Paper>
               </Grid>
             ))}
