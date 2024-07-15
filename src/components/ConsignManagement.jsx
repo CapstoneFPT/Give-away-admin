@@ -19,7 +19,7 @@ import {
   Grid,
   IconButton,
 } from "@mui/material";
-import { Add, Remove } from "@mui/icons-material";
+import { Add, Remove, AddCircleOutline } from "@mui/icons-material";
 import ApiService from "../services/apiServices";
 
 const ConsignManagement = () => {
@@ -47,7 +47,7 @@ const ConsignManagement = () => {
         color: "",
         brand: "",
         gender: "Male",
-        image: [""],
+        image: [], // Assuming you want to keep `image` as the field name
       },
     ],
   });
@@ -105,6 +105,16 @@ const ConsignManagement = () => {
     }));
   };
 
+  const handleFileChange = (e, index) => {
+    const files = Array.from(e.target.files);
+    const updatedItems = [...newConsign.fashionItemForConsigns];
+    updatedItems[index].image = files.map((file) => URL.createObjectURL(file)); // Ensure `image` is updated correctly
+    setNewConsign((prev) => ({
+      ...prev,
+      fashionItemForConsigns: updatedItems,
+    }));
+  };
+
   const handleAddItem = () => {
     setNewConsign((prev) => ({
       ...prev,
@@ -122,7 +132,7 @@ const ConsignManagement = () => {
           color: "",
           brand: "",
           gender: "Male",
-          image: [""],
+          image: [], // Ensure `image` is initialized properly
         },
       ],
     }));
@@ -139,7 +149,7 @@ const ConsignManagement = () => {
 
   const handleSubmit = async () => {
     try {
-      await ApiService.addConsignment(shopId, newConsign);
+      await ApiService.createConsignByStaff(shopId, newConsign);
       handleClose();
       const data = await ApiService.getAllConsignments(shopId, page, pageSize);
       setConsignments(data.data.items);
@@ -156,6 +166,7 @@ const ConsignManagement = () => {
       <Button
         variant="contained"
         color="primary"
+        startIcon={<Add />}
         onClick={handleOpen}
         sx={{ mb: 2 }}
       >
@@ -228,8 +239,8 @@ const ConsignManagement = () => {
             >
               Previous
             </Button>
-            <Typography>
-              Page {page} / Total Pages {totalPage}
+            <Typography variant="body1">
+              Page {page} of {totalPage}
             </Typography>
             <Button
               variant="contained"
@@ -241,11 +252,11 @@ const ConsignManagement = () => {
           </Box>
         </>
       )}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Add Consignment</DialogTitle>
+      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+        <DialogTitle>Add New Consignment</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Enter consignment details below:
+            Fill in the details to add a new consignment.
           </DialogContentText>
           <TextField
             autoFocus
@@ -284,163 +295,186 @@ const ConsignManagement = () => {
             value={newConsign.email}
             onChange={handleChange}
           />
-          <Typography variant="h6" gutterBottom>
-            Fashion Items
-          </Typography>
           {newConsign.fashionItemForConsigns.map((item, index) => (
-            <Grid container spacing={2} key={index} alignItems="center">
-              <Grid item xs={12}>
-                <Typography variant="subtitle1">Item {index + 1}</Typography>
+            <Box key={index} mb={2} border={1} borderColor="grey.300" p={2}>
+              <Typography variant="h6">Item {index + 1}</Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    margin="dense"
+                    name="name"
+                    label="Item Name"
+                    type="text"
+                    fullWidth
+                    value={item.name}
+                    onChange={(e) => handleItemChange(e, index)}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    margin="dense"
+                    name="note"
+                    label="Note"
+                    type="text"
+                    fullWidth
+                    value={item.note}
+                    onChange={(e) => handleItemChange(e, index)}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    margin="dense"
+                    name="value"
+                    label="Value"
+                    type="number"
+                    fullWidth
+                    value={item.value}
+                    onChange={(e) => handleItemChange(e, index)}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    margin="dense"
+                    name="dealPrice"
+                    label="Deal Price"
+                    type="number"
+                    fullWidth
+                    value={item.dealPrice}
+                    onChange={(e) => handleItemChange(e, index)}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    margin="dense"
+                    name="confirmedPrice"
+                    label="Confirmed Price"
+                    type="number"
+                    fullWidth
+                    value={item.confirmedPrice}
+                    onChange={(e) => handleItemChange(e, index)}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    margin="dense"
+                    name="condition"
+                    label="Condition"
+                    type="text"
+                    fullWidth
+                    value={item.condition}
+                    onChange={(e) => handleItemChange(e, index)}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    margin="dense"
+                    name="categoryId"
+                    label="Category ID"
+                    type="text"
+                    fullWidth
+                    value={item.categoryId}
+                    onChange={(e) => handleItemChange(e, index)}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    margin="dense"
+                    name="size"
+                    label="Size"
+                    type="text"
+                    fullWidth
+                    value={item.size}
+                    onChange={(e) => handleItemChange(e, index)}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    margin="dense"
+                    name="color"
+                    label="Color"
+                    type="text"
+                    fullWidth
+                    value={item.color}
+                    onChange={(e) => handleItemChange(e, index)}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    margin="dense"
+                    name="brand"
+                    label="Brand"
+                    type="text"
+                    fullWidth
+                    value={item.brand}
+                    onChange={(e) => handleItemChange(e, index)}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    margin="dense"
+                    name="gender"
+                    label="Gender"
+                    type="text"
+                    fullWidth
+                    value={item.gender}
+                    onChange={(e) => handleItemChange(e, index)}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <input
+                    accept="image/*"
+                    id={`image-upload-${index}`}
+                    multiple
+                    type="file"
+                    onChange={(e) => handleFileChange(e, index)}
+                    style={{ display: "none" }}
+                  />
+                  <label htmlFor={`image-upload-${index}`}>
+                    <Button
+                      variant="outlined"
+                      component="span"
+                      startIcon={<AddCircleOutline />}
+                    >
+                      Add Image
+                    </Button>
+                  </label>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  {item.image &&
+                    item.image.map((url, i) => (
+                      <img
+                        key={i}
+                        src={url}
+                        alt={`Item ${index + 1} ${i + 1}`}
+                        style={{ maxWidth: "100px", maxHeight: "100px" }}
+                      />
+                    ))}
+                </Grid>
+                <Grid item xs={12} sm={12}>
+                  <IconButton
+                    aria-label="delete"
+                    onClick={() => handleRemoveItem(index)}
+                  >
+                    <Remove />
+                  </IconButton>
+                </Grid>
               </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  margin="dense"
-                  name="name"
-                  label="Name"
-                  type="text"
-                  fullWidth
-                  value={item.name}
-                  onChange={(e) => handleItemChange(e, index)}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  margin="dense"
-                  name="note"
-                  label="Note"
-                  type="text"
-                  fullWidth
-                  value={item.note}
-                  onChange={(e) => handleItemChange(e, index)}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  margin="dense"
-                  name="value"
-                  label="Value"
-                  type="number"
-                  fullWidth
-                  value={item.value}
-                  onChange={(e) => handleItemChange(e, index)}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  margin="dense"
-                  name="dealPrice"
-                  label="Deal Price"
-                  type="number"
-                  fullWidth
-                  value={item.dealPrice}
-                  onChange={(e) => handleItemChange(e, index)}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  margin="dense"
-                  name="confirmedPrice"
-                  label="Confirmed Price"
-                  type="number"
-                  fullWidth
-                  value={item.confirmedPrice}
-                  onChange={(e) => handleItemChange(e, index)}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  margin="dense"
-                  name="condition"
-                  label="Condition"
-                  type="text"
-                  fullWidth
-                  value={item.condition}
-                  onChange={(e) => handleItemChange(e, index)}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  margin="dense"
-                  name="categoryId"
-                  label="Category ID"
-                  type="text"
-                  fullWidth
-                  value={item.categoryId}
-                  onChange={(e) => handleItemChange(e, index)}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  margin="dense"
-                  name="size"
-                  label="Size"
-                  type="text"
-                  fullWidth
-                  value={item.size}
-                  onChange={(e) => handleItemChange(e, index)}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  margin="dense"
-                  name="color"
-                  label="Color"
-                  type="text"
-                  fullWidth
-                  value={item.color}
-                  onChange={(e) => handleItemChange(e, index)}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  margin="dense"
-                  name="brand"
-                  label="Brand"
-                  type="text"
-                  fullWidth
-                  value={item.brand}
-                  onChange={(e) => handleItemChange(e, index)}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  margin="dense"
-                  name="gender"
-                  label="Gender"
-                  type="text"
-                  fullWidth
-                  value={item.gender}
-                  onChange={(e) => handleItemChange(e, index)}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  margin="dense"
-                  name="image"
-                  label="Image URL"
-                  type="text"
-                  fullWidth
-                  value={item.image[0]}
-                  onChange={(e) => handleItemChange(e, index)}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <IconButton onClick={() => handleRemoveItem(index)}>
-                  <Remove />
-                </IconButton>
-                <IconButton onClick={handleAddItem}>
-                  <Add />
-                </IconButton>
-              </Grid>
-            </Grid>
+            </Box>
           ))}
+          <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<Add />}
+            onClick={handleAddItem}
+            sx={{ mt: 2 }}
+          >
+            Add Item
+          </Button>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
-          </Button>
+          <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={handleSubmit} color="primary">
-            Submit
+            Add Consignment
           </Button>
         </DialogActions>
       </Dialog>
