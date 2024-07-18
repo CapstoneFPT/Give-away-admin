@@ -12,7 +12,7 @@ import {
   InputLabel,
 } from "@mui/material";
 
-const AuctionForm = ({ open, onClose, onSubmit, itemId }) => {
+const AuctionForm = ({ open, onClose, onSubmit, item }) => {
   const shopId = localStorage.getItem("shopId");
   const [auctionData, setAuctionData] = useState({
     title: "",
@@ -38,8 +38,9 @@ const AuctionForm = ({ open, onClose, onSubmit, itemId }) => {
     onSubmit({
       ...auctionData,
       shopId,
-      auctionItemId: itemId,
+      auctionItemId: item.itemId,
     });
+    console.log(item.itemId);
   };
 
   const today = new Date().toISOString().split("T")[0]; // Lấy ngày hiện tại
@@ -94,13 +95,13 @@ const AuctionForm = ({ open, onClose, onSubmit, itemId }) => {
             value={auctionData.timeslotId}
             onChange={handleChange}
           >
-            <MenuItem value="0cb73259-020a-cc63-76db-bce40eb3312f">
+            <MenuItem value="8223103b-8bf5-7804-f63b-32d845d948f4">
               Timeslot 1
             </MenuItem>
-            <MenuItem value="0cb73259-020a-cc63-76db-bce40eb3312f">
+            <MenuItem value="8223103b-8bf5-7804-f63b-32d845d948f4">
               Timeslot 2
             </MenuItem>
-            <MenuItem value="0cb73259-020a-cc63-76db-bce40eb3312f">
+            <MenuItem value="8223103b-8bf5-7804-f63b-32d845d948f4">
               Timeslot 3
             </MenuItem>
           </Select>
