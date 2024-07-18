@@ -10,10 +10,20 @@ const axiosInstance = axios.create({
 });
 
 const ApiService = {
-  getLeavesCategories: async (shopId) => {
+  getOrderByShopId: async (shopId, page, pageSize, status, searchTerm) => {
     try {
       const response = await axiosInstance.get(
-        `/api/categories/leaves?shopId=${shopId}`
+        `/api/shops/${shopId}/orders?PageNumber=${page}&PageSize=${pageSize}&Status=${status}&OrderCode=${searchTerm}`
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  },
+  getLeavesCategories: async () => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/categories/condition?Level=4`
       );
       return response.data;
     } catch (error) {
@@ -31,14 +41,7 @@ const ApiService = {
       throw new Error(error.response?.data?.message || error.message);
     }
   },
-  getOrderByShopId: async (shopId) => {
-    try {
-      const response = await axiosInstance.get(``);
-      return response.data;
-    } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
-    }
-  },
+
   getAccountDetailById: async (accountId) => {
     try {
       const response = await axiosInstance.get(`/api/accounts/${accountId}`);
@@ -61,7 +64,7 @@ const ApiService = {
       const response = await axiosInstance.get(
         `/api/accounts?Page=${page}&PageSize=${pageSize}&Status=Active&Status=Inactive&SearchTerm=${searchQuery}`
       );
-      console.log(response);
+
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || error.message);
@@ -142,25 +145,20 @@ const ApiService = {
     }
   },
 
-  getItemsByShopId: async (shopId, page, pageSize, searchQuery) => {
+  getItemsByShopId: async (shopId, page, pageSize, searchQuery, type) => {
     const response = await axiosInstance.get(
-      `/api/fashionitems?PageNumber=${page}&PageSize=${pageSize}&SearchTerm=${searchQuery}&Status=Available&Status=Unavailable&ShopId=${shopId}`
+      `/api/fashionitems?PageNumber=${page}&PageSize=${pageSize}&SearchTerm=${searchQuery}&Type=${type}&ShopId=${shopId}`
     );
-
+    console.log(response);
     return response.data;
   },
-  getAunctionItemById: async (shopId, page, pageSize, status, searchQuery) => {
-    const response = await axiosInstance.get(
-      `/api/fashionitems?PageNumber=${page}&PageSize=${pageSize}&SearchTerm=${searchQuery}&Status=${status}&Type=ConsignedForAuction&ShopId${shopId}`
-    );
 
-    return response.data;
-  },
-  getAllConsignments: async (shopId, page, pageSize) => {
+  getAllConsignments: async (shopId, page, pageSize, status, searchTerm) => {
     try {
       const response = await axiosInstance.get(
-        `/api/shops/${shopId}/consignsales?PageNumber=${page}&PageSize=${pageSize}`
+        `/api/shops/${shopId}/consignsales?PageNumber=${page}&PageSize=${pageSize}&Status=${status}&ConsignSaleCode=${searchTerm}`
       );
+      console.log(response);
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || error.message);
@@ -179,6 +177,7 @@ const ApiService = {
   createAuction: async (auctionData) => {
     try {
       const response = await axiosInstance.post(`/api/auctions`, auctionData);
+
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || error.message);

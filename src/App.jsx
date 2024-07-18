@@ -1,33 +1,42 @@
 import React, { useState, useEffect } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  useLocation,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
 import Topbar from "./scenes/global/Topbar";
-import Sidebar from "./scenes/global/Sidebar";
+import AdminSideBar from "./scenes/global/AdminSideBar";
+import StaffSideBar from "./scenes/global/StaffSideBar.jsx";
 import Dashboard from "./scenes/dashboard";
 import Team from "./scenes/team";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 import ItemsManagement from "./components/ItemsManagement";
 import Login from "./scenes/login/login";
-import { Navigate, useNavigate } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AccountManagement from "./components/AccountsManagement";
 import AccountDetail from "./scenes/accounts/AccountDetail";
 import ConsignManagement from "./components/ConsignManagement";
 import ConsignDetail from "./scenes/consigns/ConsignDetail";
+
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
   const isLoginPath = location.pathname === "/login";
+  const role = localStorage.getItem("role");
+
   useEffect(() => {
-    const role = localStorage.getItem("role");
     const shopId = localStorage.getItem("shopId");
     if (role && shopId && isLoginPath) {
       // User is logged in and on login page, navigate to home
       navigate("/home");
     }
-  }, [navigate, isLoginPath]);
+  }, [navigate, isLoginPath, role]);
+
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
@@ -39,7 +48,12 @@ function App() {
             minHeight: "100vh",
           }}
         >
-          {!isLoginPath && <Sidebar isSidebar={isSidebar} />}
+          {!isLoginPath &&
+            (role === "Admin" ? (
+              <AdminSideBar isSidebar={isSidebar} />
+            ) : (
+              <StaffSideBar isSidebar={isSidebar} />
+            ))}
           <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
             {!isLoginPath && <Topbar setIsSidebar={setIsSidebar} />}
             <main style={{ flex: 1, padding: isLoginPath ? 0 : "20px" }}>
@@ -49,7 +63,7 @@ function App() {
                 <Route
                   path="/consign/"
                   element={
-                    <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
+                    <ProtectedRoute allowedRoles={["Staff"]}>
                       <ConsignManagement />
                     </ProtectedRoute>
                   }
@@ -57,7 +71,7 @@ function App() {
                 <Route
                   path="/consign/:consignSaleCode"
                   element={
-                    <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
+                    <ProtectedRoute allowedRoles={["Staff"]}>
                       <ConsignDetail />
                     </ProtectedRoute>
                   }
@@ -65,7 +79,7 @@ function App() {
                 <Route
                   path="/manage-accounts/:accountId"
                   element={
-                    <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
+                    <ProtectedRoute allowedRoles={["Admin"]}>
                       <AccountDetail />
                     </ProtectedRoute>
                   }
@@ -73,7 +87,7 @@ function App() {
                 <Route
                   path="/manage-accounts"
                   element={
-                    <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
+                    <ProtectedRoute allowedRoles={["Admin"]}>
                       <AccountManagement />
                     </ProtectedRoute>
                   }
@@ -103,21 +117,6 @@ function App() {
                   }
                 />
               </Routes>
-              {/* <Routes>
-                <Route path="/" element={<Navigate to="/login" />} />
-                <Route path="/home" element={<Dashboard />} />
-                <Route path="/team" element={<Team />} />
-                <Route path="/contacts" element={<Contacts />} />
-                <Route path="/invoices" element={<Invoices />} />
-                <Route path="/form" element={<Form />} />
-                <Route path="/bar" element={<Bar />} />
-                <Route path="/pie" element={<Pie />} />
-                <Route path="/line" element={<Line />} />
-                <Route path="/faq" element={<FAQ />} />
-                <Route path="/calendar" element={<Calendar />} />
-                <Route path="/geography" element={<Geography />} />
-                <Route path="/login" element={<Login />} />
-              </Routes> */}
             </main>
           </div>
         </div>

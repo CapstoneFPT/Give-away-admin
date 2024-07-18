@@ -20,7 +20,6 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ApiService from "../services/apiServices";
-import AuctionForm from "./CreateAuctionForm";
 import AddItem from "./AddItem"; // Import AddItem component
 
 const ItemsManagement = () => {
@@ -28,56 +27,24 @@ const ItemsManagement = () => {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(5);
   const shopId = localStorage.getItem("shopId");
-  console.log(shopId);
+
   const [isLoading, setIsLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
-  const [openAuctionForm, setOpenAuctionForm] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
   const [tabIndex, setTabIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const [openAddItem, setOpenAddItem] = useState(false); // Thêm trạng thái để quản lý form AddItem
+  const [openAddItem, setOpenAddItem] = useState(false);
+  const [type, setType] = useState("ItemBase");
 
   const getFashionItems = useCallback(
-    async (page, pageSize, searchQuery) => {
+    async (page, pageSize, searchQuery, type) => {
       try {
         setIsLoading(true);
         const response = await ApiService.getItemsByShopId(
           shopId,
           page + 1,
           pageSize,
-          searchQuery
-        );
-        const data = response.data;
-        if (data && data.items) {
-          setFashionItems(data.items);
-          setPage(data.pageNumber - 1);
-          setPageSize(data.pageSize);
-          setTotalCount(data.totalCount);
-        } else {
-          setFashionItems([]);
-          setTotalCount(0);
-        }
-      } catch (error) {
-        alert("Failed to fetch items: " + error.message);
-        setFashionItems([]);
-        setTotalCount(0);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [shopId]
-  );
-
-  const getAuctionItems = useCallback(
-    async (page, pageSize, status, searchQuery) => {
-      try {
-        setIsLoading(true);
-        const response = await ApiService.getAunctionItemById(
-          shopId,
-          page + 1,
-          pageSize,
-          status,
-          searchQuery
+          searchQuery,
+          type
         );
         const data = response.data;
         if (data && data.items) {
@@ -101,14 +68,8 @@ const ItemsManagement = () => {
   );
 
   useEffect(() => {
-    if (tabIndex === 0) {
-      getFashionItems(page, pageSize, searchQuery);
-    } else if (tabIndex === 1) {
-      getAuctionItems(page, pageSize, "PendingAuction", searchQuery);
-    } else if (tabIndex === 2) {
-      getAuctionItems(page, pageSize, "AwaitingAuction", searchQuery);
-    }
-  }, [getFashionItems, getAuctionItems, page, pageSize, tabIndex, searchQuery]);
+    getFashionItems(page, pageSize, searchQuery, type);
+  }, [getFashionItems, page, pageSize, tabIndex, searchQuery, type]);
 
   const toggleStatus = async (itemId, currentStatus) => {
     const newStatus =
@@ -117,28 +78,10 @@ const ItemsManagement = () => {
       setIsLoading(true);
       await ApiService.updateItemStatus(itemId, newStatus);
       alert(`Status updated to ${newStatus} successfully`);
-      getFashionItems(page, pageSize, searchQuery);
+      getFashionItems(page, pageSize, searchQuery, type);
     } catch (error) {
       alert("Failed to update status: " + error.message);
     } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleAddToAuction = (item) => {
-    setSelectedItem(item);
-    setOpenAuctionForm(true);
-  };
-
-  const handleAuctionSubmit = async (auctionData) => {
-    try {
-      setIsLoading(true);
-      await ApiService.createAuction(auctionData);
-      alert("Auction created successfully");
-      setOpenAuctionForm(false);
-      getFashionItems(page, pageSize, searchQuery);
-    } catch (error) {
-      alert("Failed to create auction: " + error.message);
       setIsLoading(false);
     }
   };
@@ -155,6 +98,13 @@ const ItemsManagement = () => {
   const handleTabChange = (event, newValue) => {
     setTabIndex(newValue);
     setPage(0);
+    if (newValue === 0) {
+      setType("ItemBase");
+    } else if (newValue === 1) {
+      setType("ConsignedForSale");
+    } else if (newValue === 2) {
+      setType("ConsignedForAuction");
+    }
   };
 
   const handleSearchChange = (event) => {
@@ -163,7 +113,7 @@ const ItemsManagement = () => {
   };
 
   const handleAddItemSuccess = () => {
-    getFashionItems(page, pageSize, searchQuery);
+    getFashionItems(page, pageSize, searchQuery, type);
   };
 
   const renderTable = () => (
@@ -198,7 +148,7 @@ const ItemsManagement = () => {
                 </TableCell>
                 <TableCell>{item.sellingPrice}</TableCell>
                 <TableCell>
-                  {tabIndex === 0 ? (
+                  {item.type !== "ConsignedForAuction" ? (
                     <Button
                       variant={
                         item.status === "Available" ? "contained" : "outlined"
@@ -216,21 +166,6 @@ const ItemsManagement = () => {
                   )}
                 </TableCell>
                 <TableCell>{item.type}</TableCell>
-                {tabIndex === 0 && (
-                  <TableCell>
-                    {item.status === "Available" &&
-                      item.type === "ConsignedForAuction" && (
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={() => handleAddToAuction(item)}
-                          disabled={isLoading}
-                        >
-                          Add to Auction
-                        </Button>
-                      )}
-                  </TableCell>
-                )}
               </TableRow>
             ))
           ) : (
@@ -289,9 +224,9 @@ const ItemsManagement = () => {
           textColor="primary"
           variant="fullWidth"
         >
-          <Tab label="All Items" />
-          <Tab label="Pending Auction" />
-          <Tab label="Awaiting Auction" />
+          <Tab label="Item Base" />
+          <Tab label="Consigned For Sale" />
+          <Tab label="Consigned For Auction" />
         </Tabs>
         {isLoading ? (
           <Box display="flex" justifyContent="center" mt={5}>
@@ -301,14 +236,6 @@ const ItemsManagement = () => {
           renderTable()
         )}
       </Paper>
-      {openAuctionForm && (
-        <AuctionForm
-          open={openAuctionForm}
-          onClose={() => setOpenAuctionForm(false)}
-          item={selectedItem}
-          onSubmit={handleAuctionSubmit}
-        />
-      )}
       <AddItem
         open={openAddItem}
         onClose={() => setOpenAddItem(false)}

@@ -37,8 +37,8 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
   useEffect(() => {
     const fetchCategoryLeaves = async () => {
       try {
-        const response = await ApiService.getLeavesCategories(shopId);
-        setCategoryLeaves(response.categoryLeaves);
+        const response = await ApiService.getLeavesCategories();
+        setCategoryLeaves(response.data);
       } catch (error) {
         console.error("Error fetching category leaves:", error.message);
       }
