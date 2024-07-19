@@ -25,7 +25,7 @@ const AuctionForm = ({ open, onClose, onSubmit, item }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "stepIncrementPercentage" && value > 100) {
-      return; // Limit to 100
+      return;
     }
     setAuctionData({
       ...auctionData,
@@ -43,7 +43,7 @@ const AuctionForm = ({ open, onClose, onSubmit, item }) => {
     console.log(item.itemId);
   };
 
-  const today = new Date().toISOString().split("T")[0]; // Lấy ngày hiện tại
+  const today = new Date().toISOString().split("T")[0];
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -85,7 +85,7 @@ const AuctionForm = ({ open, onClose, onSubmit, item }) => {
             shrink: true,
           }}
           inputProps={{
-            min: today, // Đặt ngày tối thiểu là ngày hiện tại
+            min: today,
           }}
         />
         <FormControl fullWidth margin="normal">
@@ -95,7 +95,7 @@ const AuctionForm = ({ open, onClose, onSubmit, item }) => {
             value={auctionData.timeslotId}
             onChange={handleChange}
           >
-            <MenuItem value="8223103b-8bf5-7804-f63b-32d845d948f4">
+            <MenuItem value="0cb73259-020a-cc63-76db-bce40eb3312f">
               Timeslot 1
             </MenuItem>
             <MenuItem value="8223103b-8bf5-7804-f63b-32d845d948f4">

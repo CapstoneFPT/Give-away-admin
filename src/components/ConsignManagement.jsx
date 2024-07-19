@@ -12,7 +12,7 @@ import {
   Typography,
   Tabs,
   Tab,
-  TextField, // Import TextField for the search bar
+  TextField,
 } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import ApiService from "../services/apiServices";
@@ -28,7 +28,7 @@ const ConsignManagement = () => {
   const [pageSize, setPageSize] = useState(5);
   const navigate = useNavigate();
   const [tabIndex, setTabIndex] = useState(0);
-  const [searchTerm, setSearchTerm] = useState(""); // State for search term
+  const [searchTerm, setSearchTerm] = useState("");
 
   const statusTabs = useMemo(
     () => [
@@ -151,6 +151,7 @@ const ConsignManagement = () => {
                 <TableCell>Total Price</TableCell>
                 <TableCell>Sold Price</TableCell>
                 <TableCell>Type</TableCell>
+                <TableCell>Detail</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -178,6 +179,7 @@ const ConsignManagement = () => {
                       Detail
                     </Button>
                   </TableCell>
+                  <TableCell></TableCell>
                 </TableRow>
               ))}
             </TableBody>

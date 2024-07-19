@@ -17,11 +17,15 @@ import {
   Tab,
   InputBase,
   IconButton,
+  FormControl,
+  MenuItem,
+  InputLabel,
+  Select,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ApiService from "../services/apiServices";
-import AddItem from "./AddItem"; // Import AddItem component
-
+import AddItem from "./AddItem";
+import AuctionForm from "./CreateAuctionForm";
 const ItemsManagement = () => {
   const [fashionItems, setFashionItems] = useState([]);
   const [page, setPage] = useState(0);
@@ -34,18 +38,53 @@ const ItemsManagement = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [openAddItem, setOpenAddItem] = useState(false);
   const [type, setType] = useState("ItemBase");
-
+  const [openAuctionForm, setOpenAuctionForm] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [statusFilter, setStatusFilter] = useState("Available");
+  const statusOptions = {
+    ConsignedForSale: [
+      "Available",
+      "Unavailable",
+      "OnDelivery",
+      "Sold",
+      "Pending",
+      "Refundable",
+      "Rejected",
+      "Returned",
+    ],
+    ItemBase: [
+      "Available",
+      "Unavailable",
+      "OnDelivery",
+      "Sold",
+      "Refundable",
+      "Returned",
+    ],
+    ConsignedForAuction: [
+      "Available",
+      "Unavailable",
+      "Pending",
+      "PendingAuction",
+      "AwaitingAuction",
+      "Bidding",
+      "Won",
+      "Rejected",
+      "Returned",
+    ],
+  };
   const getFashionItems = useCallback(
-    async (page, pageSize, searchQuery, type) => {
+    async (page, pageSize, status, searchQuery, type) => {
       try {
         setIsLoading(true);
         const response = await ApiService.getItemsByShopId(
-          shopId,
           page + 1,
           pageSize,
+          status,
           searchQuery,
-          type
+          type,
+          shopId
         );
+
         const data = response.data;
         if (data && data.items) {
           setFashionItems(data.items);
@@ -58,6 +97,7 @@ const ItemsManagement = () => {
         }
       } catch (error) {
         alert("Failed to fetch items: " + error.message);
+
         setFashionItems([]);
         setTotalCount(0);
       } finally {
@@ -68,17 +108,32 @@ const ItemsManagement = () => {
   );
 
   useEffect(() => {
-    getFashionItems(page, pageSize, searchQuery, type);
-  }, [getFashionItems, page, pageSize, tabIndex, searchQuery, type]);
+    getFashionItems(page, pageSize, statusFilter, searchQuery, type);
+  }, [
+    getFashionItems,
+    page,
+    pageSize,
+    tabIndex,
+    statusFilter,
+    searchQuery,
+    type,
+  ]);
 
   const toggleStatus = async (itemId, currentStatus) => {
+    if (currentStatus !== "Available" && currentStatus !== "Unavailable") {
+      alert(
+        "Only items with status 'Available' or 'Unavailable' can be changed."
+      );
+      return;
+    }
+
     const newStatus =
       currentStatus === "Available" ? "Unavailable" : "Available";
     try {
       setIsLoading(true);
       await ApiService.updateItemStatus(itemId, newStatus);
       alert(`Status updated to ${newStatus} successfully`);
-      getFashionItems(page, pageSize, searchQuery, type);
+      getFashionItems(page, pageSize, statusFilter, searchQuery, type);
     } catch (error) {
       alert("Failed to update status: " + error.message);
     } finally {
@@ -94,7 +149,10 @@ const ItemsManagement = () => {
     setPageSize(parseInt(event.target.value, 10));
     setPage(0);
   };
-
+  const handleStatusChange = (event) => {
+    setStatusFilter(event.target.value);
+    setPage(0);
+  };
   const handleTabChange = (event, newValue) => {
     setTabIndex(newValue);
     setPage(0);
@@ -116,6 +174,26 @@ const ItemsManagement = () => {
     getFashionItems(page, pageSize, searchQuery, type);
   };
 
+  const handleAddToOrder = (itemId) => {
+    // Thêm logic để xử lý khi thêm vào đơn hàng
+    alert(`Item with id ${itemId} added to order.`);
+  };
+
+  const handleCreateAuction = (item) => {
+    setSelectedItem(item);
+    setOpenAuctionForm(true);
+  };
+  const handleAuctionSubmit = async (auctionData) => {
+    try {
+      await ApiService.createAuction(auctionData);
+      alert("Auction created successfully");
+      setOpenAuctionForm(false);
+      getFashionItems(page, pageSize, searchQuery, type);
+    } catch (error) {
+      alert("Failed to create auction: " + error.message);
+    }
+  };
+
   const renderTable = () => (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -127,7 +205,7 @@ const ItemsManagement = () => {
             <TableCell>Price</TableCell>
             <TableCell>Status</TableCell>
             <TableCell>Type</TableCell>
-            {tabIndex === 0 && <TableCell>Action</TableCell>}
+            <TableCell>Action</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -148,7 +226,8 @@ const ItemsManagement = () => {
                 </TableCell>
                 <TableCell>{item.sellingPrice}</TableCell>
                 <TableCell>
-                  {item.type !== "ConsignedForAuction" ? (
+                  {item.status === "Available" ||
+                  item.status === "Unavailable" ? (
                     <Button
                       variant={
                         item.status === "Available" ? "contained" : "outlined"
@@ -166,6 +245,31 @@ const ItemsManagement = () => {
                   )}
                 </TableCell>
                 <TableCell>{item.type}</TableCell>
+                {(item.type === "ItemBase" ||
+                  item.type === "ConsignedForSale") &&
+                  item.status === "Available" && (
+                    <TableCell>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={() => handleAddToOrder(item.itemId)}
+                      >
+                        Add to Order
+                      </Button>
+                    </TableCell>
+                  )}
+                {item.type === "ConsignedForAuction" &&
+                  item.status === "Available" && (
+                    <TableCell>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => handleCreateAuction(item)}
+                      >
+                        Create Auction
+                      </Button>
+                    </TableCell>
+                  )}
               </TableRow>
             ))
           ) : (
@@ -207,7 +311,24 @@ const ItemsManagement = () => {
           <IconButton type="button" sx={{ p: 1 }}>
             <SearchIcon />
           </IconButton>
+          <FormControl sx={{ minWidth: 120 }}>
+            <InputLabel id="status-select-label">Status</InputLabel>
+            <Select
+              value={statusFilter}
+              onChange={handleStatusChange}
+              labelId="status-select-label"
+              label="Status"
+              id="status-select"
+            >
+              {statusOptions[type].map((status) => (
+                <MenuItem key={status} value={status}>
+                  {status}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </Box>
+
         <Button
           variant="contained"
           color="primary"
@@ -240,6 +361,12 @@ const ItemsManagement = () => {
         open={openAddItem}
         onClose={() => setOpenAddItem(false)}
         onAddSuccess={handleAddItemSuccess}
+      />
+      <AuctionForm
+        open={openAuctionForm}
+        onClose={() => setOpenAuctionForm(false)}
+        onSubmit={handleAuctionSubmit}
+        item={selectedItem}
       />
     </Container>
   );

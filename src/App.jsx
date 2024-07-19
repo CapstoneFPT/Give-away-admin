@@ -20,6 +20,7 @@ import AccountManagement from "./components/AccountsManagement";
 import AccountDetail from "./scenes/accounts/AccountDetail";
 import ConsignManagement from "./components/ConsignManagement";
 import ConsignDetail from "./scenes/consigns/ConsignDetail";
+import OrderManagement from "./components/OrdersManagement.jsx";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -60,6 +61,14 @@ function App() {
               <Routes>
                 <Route path="/" element={<Navigate to="/login" />} />
                 <Route path="/login" element={<Login />} />
+                <Route
+                  path="/order-staff"
+                  element={
+                    <ProtectedRoute allowedRoles={["Staff"]}>
+                      <OrderManagement />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path="/consign/"
                   element={
