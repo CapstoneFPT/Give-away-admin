@@ -10,6 +10,17 @@ const axiosInstance = axios.create({
 });
 
 const ApiService = {
+  createOrderbyStaff: async (shopId, order) => {
+    try {
+      const response = await axiosInstance.post(
+        `/api/shops/${shopId}/orders`,
+        order
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  },
   getOrderByShopId: async (shopId, page, pageSize, status, searchTerm) => {
     try {
       const response = await axiosInstance.get(

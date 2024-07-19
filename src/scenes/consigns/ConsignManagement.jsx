@@ -15,8 +15,8 @@ import {
   TextField,
 } from "@mui/material";
 import { Add } from "@mui/icons-material";
-import ApiService from "../services/apiServices";
-import AddConsignment from "./AddConsignment";
+import ApiService from "../../services/apiServices";
+import AddConsignment from "../../components/AddConsignment";
 
 const ConsignManagement = () => {
   const [consignments, setConsignments] = useState([]);

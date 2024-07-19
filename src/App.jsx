@@ -13,14 +13,14 @@ import Dashboard from "./scenes/dashboard";
 import Team from "./scenes/team";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
-import ItemsManagement from "./components/ItemsManagement";
+import ItemsManagement from "./scenes/items/ItemsManagement.jsx";
 import Login from "./scenes/login/login";
 import ProtectedRoute from "./components/ProtectedRoute";
-import AccountManagement from "./components/AccountsManagement";
+import AccountManagement from "./scenes/accounts/AccountsManagement.jsx";
 import AccountDetail from "./scenes/accounts/AccountDetail";
-import ConsignManagement from "./components/ConsignManagement";
+import ConsignManagement from "./scenes/consigns/ConsignManagement.jsx";
 import ConsignDetail from "./scenes/consigns/ConsignDetail";
-import OrderManagement from "./components/OrdersManagement.jsx";
+import OrderManagement from "./scenes/orders/OrdersManagement.jsx";
 
 function App() {
   const [theme, colorMode] = useMode();
