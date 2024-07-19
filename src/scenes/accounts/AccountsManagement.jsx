@@ -12,7 +12,7 @@ import {
   Typography,
   TextField,
 } from "@mui/material";
-import ApiService from "../services/apiServices";
+import ApiService from "../../services/apiServices";
 
 const AccountManagement = () => {
   const [accounts, setAccounts] = useState([]);

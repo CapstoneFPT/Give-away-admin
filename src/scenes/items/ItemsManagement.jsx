@@ -23,14 +23,15 @@ import {
   Select,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import ApiService from "../services/apiServices";
-import AddItem from "./AddItem";
-import AuctionForm from "./CreateAuctionForm";
+import ApiService from "../../services/apiServices";
+import AddItem from "../../components/AddItem";
+import AuctionForm from "../../components/CreateAuctionForm";
 const ItemsManagement = () => {
   const [fashionItems, setFashionItems] = useState([]);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(5);
   const shopId = localStorage.getItem("shopId");
+  const [cartItems, setCartItems] = useState([]);
 
   const [isLoading, setIsLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
@@ -155,6 +156,7 @@ const ItemsManagement = () => {
   };
   const handleTabChange = (event, newValue) => {
     setTabIndex(newValue);
+    setStatusFilter("Available");
     setPage(0);
     if (newValue === 0) {
       setType("ItemBase");
@@ -174,11 +176,6 @@ const ItemsManagement = () => {
     getFashionItems(page, pageSize, searchQuery, type);
   };
 
-  const handleAddToOrder = (itemId) => {
-    // Thêm logic để xử lý khi thêm vào đơn hàng
-    alert(`Item with id ${itemId} added to order.`);
-  };
-
   const handleCreateAuction = (item) => {
     setSelectedItem(item);
     setOpenAuctionForm(true);
@@ -193,6 +190,82 @@ const ItemsManagement = () => {
       alert("Failed to create auction: " + error.message);
     }
   };
+  const handleAddToOrder = (item) => {
+    setCartItems((prevItems) => [...prevItems, item]);
+    setFashionItems((prevItems) =>
+      prevItems.filter((i) => i.itemId !== item.itemId)
+    );
+  };
+
+  const handleRemoveFromCart = (itemId) => {
+    const removedItem = cartItems.find((item) => item.itemId === itemId);
+    setCartItems((prevItems) =>
+      prevItems.filter((item) => item.itemId !== itemId)
+    );
+    setFashionItems((prevItems) => [...prevItems, removedItem]);
+  };
+
+  const handlePlaceOrder = async () => {
+    try {
+      await ApiService.createOrder(cartItems);
+      alert("Order placed successfully");
+      setCartItems([]);
+    } catch (error) {
+      alert("Failed to place order: " + error.message);
+    }
+  };
+  const renderCart = () => (
+    <Paper elevation={3} sx={{ mt: 3, p: 2 }}>
+      <Typography variant="h6" gutterBottom>
+        Cart
+      </Typography>
+      {cartItems.length === 0 ? (
+        <Typography variant="body1">No items in the cart.</Typography>
+      ) : (
+        <TableContainer>
+          <Table sx={{ minWidth: 650 }}>
+            <TableHead>
+              <TableRow>
+                <TableCell>Category</TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Price</TableCell>
+                <TableCell>Action</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {cartItems.map((item) => (
+                <TableRow key={item.itemId}>
+                  <TableCell>{item.categoryName}</TableCell>
+                  <TableCell>{item.name}</TableCell>
+                  <TableCell>{item.sellingPrice}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={() => handleRemoveFromCart(item.itemId)}
+                    >
+                      Remove
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+      {cartItems.length > 0 && (
+        <Box display="flex" justifyContent="flex-end" mt={2}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handlePlaceOrder}
+          >
+            Place Order
+          </Button>
+        </Box>
+      )}
+    </Paper>
+  );
 
   const renderTable = () => (
     <TableContainer component={Paper}>
@@ -252,7 +325,7 @@ const ItemsManagement = () => {
                       <Button
                         variant="contained"
                         color="secondary"
-                        onClick={() => handleAddToOrder(item.itemId)}
+                        onClick={() => handleAddToOrder(item)}
                       >
                         Add to Order
                       </Button>
@@ -357,6 +430,7 @@ const ItemsManagement = () => {
           renderTable()
         )}
       </Paper>
+      {renderCart()}
       <AddItem
         open={openAddItem}
         onClose={() => setOpenAddItem(false)}
