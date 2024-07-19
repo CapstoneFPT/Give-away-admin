@@ -156,7 +156,7 @@ const ApiService = {
     const response = await axiosInstance.get(
       `/api/fashionitems?PageNumber=${page}&PageSize=${pageSize}&Status=${status}&SearchTerm=${searchQuery}&Type=${type}&ShopId=${shopId}`
     );
-    console.log(response);
+
     return response.data;
   },
 
