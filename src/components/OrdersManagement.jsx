@@ -30,34 +30,39 @@ const OrderManagement = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [statusFilter, setStatusFilter] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const shopId = localStorage.getItem("shopId");
 
-  const getOrders = useCallback(async (page, pageSize, status, searchQuery) => {
-    try {
-      setIsLoading(true);
-      const response = await ApiService.getOrders(
-        page + 1,
-        pageSize,
-        status,
-        searchQuery
-      );
-      const data = response.data;
-      if (data && data.items) {
-        setOrders(data.items);
-        setPage(data.pageNumber - 1);
-        setPageSize(data.pageSize);
-        setTotalCount(data.totalCount);
-      } else {
+  const getOrders = useCallback(
+    async (page, pageSize, status, searchQuery) => {
+      try {
+        setIsLoading(true);
+        const response = await ApiService.getOrderByShopId(
+          shopId,
+          page + 1,
+          pageSize,
+          status,
+          searchQuery
+        );
+        const data = response.data;
+        if (data && data.items) {
+          setOrders(data.items);
+          setPage(data.pageNumber - 1);
+          setPageSize(data.pageSize);
+          setTotalCount(data.totalCount);
+        } else {
+          setOrders([]);
+          setTotalCount(0);
+        }
+      } catch (error) {
+        alert("Failed to fetch orders: " + error.message);
         setOrders([]);
         setTotalCount(0);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      alert("Failed to fetch orders: " + error.message);
-      setOrders([]);
-      setTotalCount(0);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    },
+    [shopId]
+  );
 
   useEffect(() => {
     getOrders(page, pageSize, statusFilter, searchQuery);
@@ -112,8 +117,10 @@ const OrderManagement = () => {
           ) : (
             <TableRow>
               <TableCell colSpan={6} align="center">
-                {searchQuery
-                  ? "No orders match your search."
+                {isLoading
+                  ? "Loading orders..."
+                  : searchQuery || statusFilter
+                  ? "No orders match your search or filter."
                   : "No orders available."}
               </TableCell>
             </TableRow>
@@ -149,17 +156,17 @@ const OrderManagement = () => {
             <SearchIcon />
           </IconButton>
         </Box>
+
         <FormControl sx={{ minWidth: 120 }}>
-          <InputLabel>Status</InputLabel>
+          <InputLabel id="status-select-label">Status</InputLabel>
           <Select
             value={statusFilter}
             onChange={handleStatusChange}
-            displayEmpty
-            inputProps={{ "aria-label": "Without label" }}
+            labelId="status-select-label"
+            label="Status"
+            id="status-select"
           >
-            <MenuItem value="">
-              <em>All</em>
-            </MenuItem>
+            <MenuItem value="">All</MenuItem>
             <MenuItem value="AwaitingPayment">Awaiting Payment</MenuItem>
             <MenuItem value="OnDelivery">On Delivery</MenuItem>
             <MenuItem value="Completed">Completed</MenuItem>

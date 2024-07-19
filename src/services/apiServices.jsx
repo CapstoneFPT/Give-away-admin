@@ -145,9 +145,16 @@ const ApiService = {
     }
   },
 
-  getItemsByShopId: async (shopId, page, pageSize, searchQuery, type) => {
+  getItemsByShopId: async (
+    page,
+    pageSize,
+    status,
+    searchQuery,
+    type,
+    shopId
+  ) => {
     const response = await axiosInstance.get(
-      `/api/fashionitems?PageNumber=${page}&PageSize=${pageSize}&SearchTerm=${searchQuery}&Type=${type}&ShopId=${shopId}`
+      `/api/fashionitems?PageNumber=${page}&PageSize=${pageSize}&Status=${status}&SearchTerm=${searchQuery}&Type=${type}&ShopId=${shopId}`
     );
     console.log(response);
     return response.data;

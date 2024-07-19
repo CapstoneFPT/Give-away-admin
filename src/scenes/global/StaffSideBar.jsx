@@ -139,7 +139,7 @@ const StaffSideBar = () => {
             />
             <Item
               title="Order"
-              to="/order"
+              to="/order-staff"
               icon={<ReceiptOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
