@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -14,6 +14,8 @@ import {
   IconButton,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { storage } from "../firebaseconfig";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import ApiService from "../services/apiServices";
 
 const AddItem = ({ open, onClose, onAddSuccess }) => {
@@ -30,24 +32,21 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
     categoryId: "",
     images: [],
   });
-  const [categoryLeaves, setCategoryLeaves] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const shopId = localStorage.getItem("shopId");
 
   useEffect(() => {
-    const fetchCategoryLeaves = async () => {
-      try {
-        const response = await ApiService.getLeavesCategories();
-        setCategoryLeaves(response.data);
-      } catch (error) {
-        console.error("Error fetching category leaves:", error.message);
-      }
-    };
+    if (newItem.gender) {
+      const genderId =
+        newItem.gender === "Male"
+          ? "c7c0ba52-8406-47c1-9be5-497cbeea5933"
+          : "8c3fe1f7-0082-4382-85de-6c70fcd76761";
+      getCateByGender(genderId);
+    }
+  }, [newItem.gender]);
 
-    fetchCategoryLeaves();
-  }, [shopId]);
-
-  const handleNewItemChange = (event) => {
+  const handleItemChange = (event) => {
     const { name, value } = event.target;
     setNewItem((prevItem) => ({
       ...prevItem,
@@ -55,14 +54,28 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
     }));
   };
 
-  const handleImageChange = (event) => {
+  const getCateByGender = async (genderId) => {
+    try {
+      const response = await ApiService.getCategoryByGender(genderId);
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Error fetching categories:", error.message);
+    }
+  };
+
+  const handleImageChange = async (event) => {
     const files = event.target.files;
-    const imagesArray = Array.from(files).map((file) =>
-      URL.createObjectURL(file)
-    );
+    const uploadPromises = Array.from(files).map(async (file) => {
+      const storageRef = ref(storage, `images/${file.name}`);
+      await uploadBytes(storageRef, file);
+      return getDownloadURL(storageRef);
+    });
+
+    const imageUrls = await Promise.all(uploadPromises);
+
     setNewItem((prevItem) => ({
       ...prevItem,
-      images: [...prevItem.images, ...imagesArray].slice(0, 5),
+      images: [...prevItem.images, ...imageUrls].slice(0, 3), // Allow up to 3 images
     }));
   };
 
@@ -98,7 +111,7 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
       });
       onClose();
     } catch (error) {
-      console.error("Failed to add item:", error); // Log error for debugging
+      console.error("Failed to add item:", error);
       alert("Failed to add item: " + error.message);
       setIsLoading(false);
     }
@@ -139,7 +152,7 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
               name="name"
               autoFocus
               value={newItem.name}
-              onChange={handleNewItemChange}
+              onChange={handleItemChange}
             />
           </Grid>
           <Grid item xs={6}>
@@ -152,7 +165,7 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
               name="sellingPrice"
               type="number"
               value={newItem.sellingPrice}
-              onChange={handleNewItemChange}
+              onChange={handleItemChange}
             />
           </Grid>
           <Grid item xs={12}>
@@ -164,7 +177,7 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
               label="Note"
               name="note"
               value={newItem.note}
-              onChange={handleNewItemChange}
+              onChange={handleItemChange}
             />
           </Grid>
           <Grid item xs={6}>
@@ -177,7 +190,7 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
               name="value"
               type="number"
               value={newItem.value}
-              onChange={handleNewItemChange}
+              onChange={handleItemChange}
             />
           </Grid>
           <Grid item xs={6}>
@@ -189,7 +202,7 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
               label="Condition"
               name="condition"
               value={newItem.condition}
-              onChange={handleNewItemChange}
+              onChange={handleItemChange}
             />
           </Grid>
           <Grid item xs={6}>
@@ -201,7 +214,7 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
               label="Brand"
               name="brand"
               value={newItem.brand}
-              onChange={handleNewItemChange}
+              onChange={handleItemChange}
             />
           </Grid>
           <Grid item xs={6}>
@@ -213,7 +226,7 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
               label="Color"
               name="color"
               value={newItem.color}
-              onChange={handleNewItemChange}
+              onChange={handleItemChange}
             />
           </Grid>
           <Grid item xs={6}>
@@ -226,7 +239,7 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
                 id="gender"
                 name="gender"
                 value={newItem.gender}
-                onChange={handleNewItemChange}
+                onChange={handleItemChange}
               >
                 <MenuItem value="Male">Male</MenuItem>
                 <MenuItem value="Female">Female</MenuItem>
@@ -243,9 +256,9 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
                 id="categoryId"
                 name="categoryId"
                 value={newItem.categoryId}
-                onChange={handleNewItemChange}
+                onChange={handleItemChange}
               >
-                {categoryLeaves.map((category) => (
+                {categories.map((category) => (
                   <MenuItem
                     key={category.categoryId}
                     value={category.categoryId}
@@ -266,12 +279,13 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
                 id="size"
                 name="size"
                 value={newItem.size}
-                onChange={handleNewItemChange}
+                onChange={handleItemChange}
               >
                 <MenuItem value="XS">XS</MenuItem>
                 <MenuItem value="S">S</MenuItem>
                 <MenuItem value="M">M</MenuItem>
-                <MenuItem value="XL">L</MenuItem>
+                <MenuItem value="L">L</MenuItem>
+                <MenuItem value="XL">XL</MenuItem>
                 <MenuItem value="XXL">XXL</MenuItem>
                 <MenuItem value="XXXL">XXXL</MenuItem>
                 <MenuItem value="XXXXL">4XL</MenuItem>
@@ -286,56 +300,68 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
               type="file"
               style={{ display: "none" }}
               onChange={handleImageChange}
+              disabled={newItem.images.length >= 3} // Disable after 3 images
             />
             <label htmlFor="upload-images">
               <Button
                 variant="contained"
-                color="primary"
                 component="span"
-                disabled={newItem.images.length >= 5}
-                sx={{ mt: 2 }}
+                disabled={newItem.images.length >= 3} // Disable after 3 images
               >
                 Upload Images
               </Button>
             </label>
           </Grid>
           <Grid item xs={12}>
-            <Box display="flex" flexWrap="wrap">
-              {newItem.images.map((image, index) => (
-                <Box key={index} position="relative" mr={1} mb={1}>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+              {newItem.images.map((url, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    position: "relative",
+                    width: 100,
+                    height: 100,
+                    border: "1px solid #ddd",
+                    borderRadius: 1,
+                    overflow: "hidden",
+                  }}
+                >
                   <img
-                    src={image}
-                    alt={`Preview ${index}`}
-                    style={{ width: 100, height: 100, objectFit: "cover" }}
+                    src={url}
+                    alt={`Item ${index}`}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
                   />
                   <IconButton
-                    onClick={() => handleImageDelete(index)}
                     size="small"
-                    color="secondary"
                     style={{
                       position: "absolute",
-                      top: 0,
-                      right: 0,
+                      top: -5,
+                      right: -5,
                       backgroundColor: "white",
                     }}
+                    onClick={() => handleImageDelete(index)}
                   >
-                    <DeleteIcon />
+                    <DeleteIcon fontSize="small" />
                   </IconButton>
                 </Box>
               ))}
             </Box>
           </Grid>
         </Grid>
-        <Box mt={3} textAlign="center">
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAddItemSubmit}
-            disabled={isLoading}
-          >
-            {isLoading ? "Adding..." : "Add Item"}
-          </Button>
-        </Box>
+        <Button
+          onClick={handleAddItemSubmit}
+          variant="contained"
+          color="primary"
+          fullWidth
+          sx={{ mt: 3, mb: 2 }}
+          disabled={isLoading}
+        >
+          {isLoading ? "Adding..." : "Add Item"}
+        </Button>
       </Container>
     </Modal>
   );

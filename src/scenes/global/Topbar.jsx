@@ -25,8 +25,7 @@ const Topbar = ({ onSearch }) => {
   };
 
   const handleLogOut = () => {
-    localStorage.removeItem("shopId");
-    localStorage.removeItem("role");
+    localStorage.clear();
     navigate("/login");
   };
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -45,19 +45,31 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
   const [isLoading, setIsLoading] = useState(false);
   const shopId = localStorage.getItem("shopId");
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await ApiService.getLeavesCategories();
-        setCategories(response.data);
-      } catch (error) {
-        console.error("Error fetching categories:", error.message);
-      }
-    };
+  const handleGenderClick = async (gender, index) => {
+    const genderId =
+      gender === "Male"
+        ? "c7c0ba52-8406-47c1-9be5-497cbeea5933"
+        : "8c3fe1f7-0082-4382-85de-6c70fcd76761";
 
-    fetchCategories();
-  }, [shopId]);
+    // Set the selected gender ID
 
+    // Fetch and update categories based on the selected gender
+    await getCateByGender(genderId);
+
+    // Update the gender for the specific item
+    handleItemChange({ target: { name: "gender", value: gender } }, index);
+
+    console.log(`Selected Gender ID: ${genderId}`);
+  };
+
+  const getCateByGender = async (genderId) => {
+    try {
+      const response = await ApiService.getCategoryByGender(genderId);
+      setCategories(response.data); // Update the categories state
+    } catch (error) {
+      console.error("Error fetching categories:", error.message);
+    }
+  };
   const handleChange = (event) => {
     const { name, value } = event.target;
     setNewConsign((prevState) => ({
@@ -339,11 +351,25 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
                 </Grid>
                 <Grid item xs={12} sm={6} md={4}>
                   <FormControl fullWidth>
+                    <InputLabel>Gender</InputLabel>
+                    <Select
+                      label="Gender"
+                      name="gender"
+                      value={item.gender}
+                      onChange={(e) => handleGenderClick(e.target.value, index)}
+                    >
+                      <MenuItem value="Male">Male</MenuItem>
+                      <MenuItem value="Female">Female</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                  <FormControl fullWidth>
                     <InputLabel>Category</InputLabel>
                     <Select
                       label="Category"
                       name="categoryId"
-                      value={item.categoryId}
+                      value={item.categoryId || ""}
                       onChange={(e) => handleItemChange(e, index)}
                     >
                       {categories.map((category) => (
@@ -358,13 +384,24 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
                   </FormControl>
                 </Grid>
                 <Grid item xs={12} sm={6} md={4}>
-                  <TextField
-                    label="Size"
-                    name="size"
-                    value={item.size}
-                    onChange={(e) => handleItemChange(e, index)}
-                    fullWidth
-                  />
+                  <FormControl fullWidth>
+                    <InputLabel>Size</InputLabel>
+                    <Select
+                      label="Size"
+                      name="size"
+                      value={item.size}
+                      onChange={(e) => handleItemChange(e, index)}
+                    >
+                      <MenuItem value="XS">XS</MenuItem>
+                      <MenuItem value="S">S</MenuItem>
+                      <MenuItem value="M">M</MenuItem>
+                      <MenuItem value="L">L</MenuItem>
+                      <MenuItem value="XL">XL</MenuItem>
+                      <MenuItem value="XXL">XXL</MenuItem>
+                      <MenuItem value="XXXL">3L</MenuItem>
+                      <MenuItem value="XXXXL">4L</MenuItem>
+                    </Select>
+                  </FormControl>
                 </Grid>
                 <Grid item xs={12} sm={6} md={4}>
                   <TextField
@@ -385,22 +422,8 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} md={4}>
-                  <FormControl fullWidth>
-                    <InputLabel>Gender</InputLabel>
-                    <Select
-                      label="Gender"
-                      name="gender"
-                      value={item.gender}
-                      onChange={(e) => handleItemChange(e, index)}
-                    >
-                      <MenuItem value="Male">Male</MenuItem>
-                      <MenuItem value="Female">Female</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12}>
                   <Button variant="contained" component="label" fullWidth>
-                    Upload Images
+                    Upload Image
                     <input
                       type="file"
                       hidden
@@ -409,31 +432,23 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
                     />
                   </Button>
                 </Grid>
-                <Grid item xs={12}>
-                  {item.image.map((img, imgIndex) => (
+                <Grid item xs={12} sm={6} md={12}>
+                  {item.image.map((imgSrc, imgIndex) => (
                     <Box
                       key={imgIndex}
-                      sx={{
-                        display: "inline-block",
-                        position: "relative",
-                        margin: "0 10px 10px 0",
-                      }}
+                      position="relative"
+                      display="inline-block"
+                      mr={1}
                     >
                       <img
-                        src={img}
-                        alt={`img-${imgIndex}`}
-                        width="100"
-                        height="100"
+                        src={imgSrc}
+                        alt={`Uploaded ${imgIndex}`}
+                        style={{ maxWidth: "100px", margin: "5px" }}
                       />
                       <IconButton
-                        aria-label="delete"
-                        sx={{
-                          position: "absolute",
-                          top: 0,
-                          right: 0,
-                          backgroundColor: "rgba(255, 255, 255, 0.7)",
-                        }}
+                        size="small"
                         onClick={() => handleRemoveImage(index, imgIndex)}
+                        style={{ position: "absolute", top: 0, right: 0 }}
                       >
                         <DeleteIcon />
                       </IconButton>
@@ -443,29 +458,28 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
               </Grid>
             </Box>
           ))}
-          {newConsign.fashionItemForConsigns.length < 5 && (
-            <Grid item xs={3}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleAddItem}
-                fullWidth
-              >
-                Add Item
-              </Button>
-            </Grid>
-          )}
+          <Grid item xs={12}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleAddItem}
+              style={{ marginTop: "20px" }}
+            >
+              Add Another Item
+            </Button>
+          </Grid>
+          <Grid item xs={12}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSubmit}
+              disabled={isLoading}
+              style={{ marginTop: "20px" }}
+            >
+              {isLoading ? "Submitting..." : "Submit"}
+            </Button>
+          </Grid>
         </Grid>
-        <Box mt={3}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSubmit}
-            disabled={isLoading}
-          >
-            {isLoading ? "Submitting..." : "Submit"}
-          </Button>
-        </Box>
       </Container>
     </Modal>
   );

@@ -20,6 +20,7 @@ const AccountManagement = () => {
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const phone = "";
   const pageSize = 5;
   const navigate = useNavigate();
 
@@ -30,6 +31,7 @@ const AccountManagement = () => {
         const data = await ApiService.getAllAccounts(
           page,
           pageSize,
+          phone,
           searchQuery
         );
         setAccounts(data.items);

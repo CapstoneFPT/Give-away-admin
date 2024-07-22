@@ -18,9 +18,11 @@ import {
   Select,
   FormControl,
   InputLabel,
+  Button,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ApiService from "../../services/apiServices";
+import { useNavigate } from "react-router-dom";
 
 const OrderManagement = () => {
   const [orders, setOrders] = useState([]);
@@ -31,6 +33,7 @@ const OrderManagement = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const shopId = localStorage.getItem("shopId");
+  const navigate = useNavigate();
 
   const getOrders = useCallback(
     async (page, pageSize, status, searchQuery) => {
@@ -82,9 +85,17 @@ const OrderManagement = () => {
     setPage(0);
   };
 
+  const handleDetailClick = (orderId) => {
+    navigate(`/order-staff/${orderId}`);
+  };
+
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
     setPage(0);
+  };
+
+  const handleCreateOrder = () => {
+    navigate("/order-staff/create-order");
   };
 
   const renderTable = () => (
@@ -92,18 +103,22 @@ const OrderManagement = () => {
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
+            <TableCell>Total Price</TableCell>
             <TableCell>Order Code</TableCell>
             <TableCell>Customer Name</TableCell>
             <TableCell>Recipient Name</TableCell>
             <TableCell>Status</TableCell>
             <TableCell>Payment Method</TableCell>
             <TableCell>Created Date</TableCell>
+            <TableCell>Purchase Type</TableCell>
+            <TableCell>Detail</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {orders.length > 0 ? (
             orders.map((order) => (
               <TableRow key={order.orderId}>
+                <TableCell>{order.totalPrice}</TableCell>
                 <TableCell>{order.orderCode}</TableCell>
                 <TableCell>{order.customerName}</TableCell>
                 <TableCell>{order.recipientName}</TableCell>
@@ -112,11 +127,21 @@ const OrderManagement = () => {
                 <TableCell>
                   {new Date(order.createdDate).toLocaleString()}
                 </TableCell>
+                <TableCell>{order.purchaseType}</TableCell>
+                <TableCell>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleDetailClick(order.orderId)}
+                  >
+                    Detail
+                  </Button>
+                </TableCell>
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={6} align="center">
+              <TableCell colSpan={9} align="center">
                 {isLoading
                   ? "Loading orders..."
                   : searchQuery || statusFilter
@@ -173,6 +198,10 @@ const OrderManagement = () => {
             <MenuItem value="Cancelled">Cancelled</MenuItem>
           </Select>
         </FormControl>
+
+        <Button variant="contained" color="primary" onClick={handleCreateOrder}>
+          Create Order
+        </Button>
       </Box>
       <Paper elevation={3}>
         {isLoading ? (

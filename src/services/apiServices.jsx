@@ -10,11 +10,32 @@ const axiosInstance = axios.create({
 });
 
 const ApiService = {
-  createOrderbyStaff: async (shopId, order) => {
+  getCategoryByGender: async (genderId) => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/categories/condition?ParentId=${genderId}`
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  },
+
+  getOrderDetailbyShopId: async (orderId, shopId) => {
+    try {
+      const response = await axiosInstance.get(
+        `api/orders/${orderId}/orderdetails?ShopId=${shopId}`
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  },
+  createOrderbyStaff: async (shopId, orderData) => {
     try {
       const response = await axiosInstance.post(
         `/api/shops/${shopId}/orders`,
-        order
+        orderData
       );
       return response.data;
     } catch (error) {
@@ -70,10 +91,10 @@ const ApiService = {
       throw new Error(error.response?.data?.message || error.message);
     }
   },
-  getAllAccounts: async (page, pageSize, searchQuery) => {
+  getAllAccounts: async (page, pageSize, phone, searchQuery) => {
     try {
       const response = await axiosInstance.get(
-        `/api/accounts?Page=${page}&PageSize=${pageSize}&Status=Active&Status=Inactive&SearchTerm=${searchQuery}`
+        `/api/accounts?Page=${page}&PageSize=${pageSize}&Phone=${phone}&Status=Active&Status=Inactive&SearchTerm=${searchQuery}`
       );
 
       return response.data;
@@ -81,7 +102,17 @@ const ApiService = {
       throw new Error(error.response?.data?.message || error.message);
     }
   },
+  getAccountByPhone: async (phone) => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/accounts?Phone=${phone}&Status=Active`
+      );
 
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  },
   authLogin: async (email, password) => {
     try {
       const response = await axiosInstance.post(`/api/auth/login`, {
@@ -155,7 +186,16 @@ const ApiService = {
       throw new Error(error.response?.data?.message || error.message);
     }
   },
-
+  getItemForOrder: async (searchQuery, shopId) => {
+    try {
+      const response = await axiosInstance.get(
+        `api/fashionitems?SearchTerm=${searchQuery}&Status=Available&Type=ItemBase&Type=ConsignedForSale&ShopId=${shopId}`
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  },
   getItemsByShopId: async (
     page,
     pageSize,
