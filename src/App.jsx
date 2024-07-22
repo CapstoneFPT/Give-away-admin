@@ -21,6 +21,8 @@ import AccountDetail from "./scenes/accounts/AccountDetail";
 import ConsignManagement from "./scenes/consigns/ConsignManagement.jsx";
 import ConsignDetail from "./scenes/consigns/ConsignDetail";
 import OrderManagement from "./scenes/orders/OrdersManagement.jsx";
+import OrderDetail from "./scenes/orders/OrderDetail.jsx";
+import CreateOrder from "./components/CreateOrder.jsx";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -61,6 +63,22 @@ function App() {
               <Routes>
                 <Route path="/" element={<Navigate to="/login" />} />
                 <Route path="/login" element={<Login />} />
+                <Route
+                  path="/order-staff/create-order"
+                  element={
+                    <ProtectedRoute allowedRoles={["Staff"]}>
+                      <CreateOrder />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/order-staff/:orderId"
+                  element={
+                    <ProtectedRoute allowedRoles={["Staff"]}>
+                      <OrderDetail />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path="/order-staff"
                   element={

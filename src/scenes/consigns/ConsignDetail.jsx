@@ -20,7 +20,7 @@ const ConsignDetail = () => {
   const [consignDetail, setConsignDetail] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const shopId = localStorage.getItem("shopId");
-
+  console.log(consignDetail);
   useEffect(() => {
     const fetchConsign = async () => {
       setIsLoading(true);
@@ -68,13 +68,11 @@ const ConsignDetail = () => {
             <Typography variant="h6">
               End Date: {new Date(consignDetail.endDate).toLocaleString()}
             </Typography>
-            <Typography variant="h6">Status: {consignDetail.status}</Typography>
+            <Typography variant="h6">Status:{consignDetail.status}</Typography>
             <Typography variant="h6">
               Total Price: ${consignDetail.totalPrice}
             </Typography>
-            <Typography variant="h6">
-              Sold Price: ${consignDetail.soldPrice}
-            </Typography>
+            <Typography variant="h6">Sold Price: $</Typography>
           </Paper>
           <Typography variant="h5" gutterBottom>
             Consignment Details
@@ -85,41 +83,23 @@ const ConsignDetail = () => {
               <Grid item xs={12} md={6} lg={4} key={detail.consignSaleDetailId}>
                 <Paper elevation={3} sx={{ p: 2 }}>
                   <Typography variant="h6">
-                    Item Name: {detail.fashionItem.name}
+                    Item Name: {detail.itemName}
                   </Typography>
                   <Card sx={{ maxWidth: 300 }}>
-                    <CardMedia
-                      component="img"
-                      height="auto"
-                      image={
-                        detail.fashionItem.image &&
-                        detail.fashionItem.image.length > 0
-                          ? detail.fashionItem.image[0]
-                          : ""
-                      }
-                      alt={detail.fashionItem.name}
-                    />
+                    <CardMedia component="img" height="auto" />
                     <CardContent>
-                      <Typography>
-                        Condition: {detail.fashionItem.condition}
-                      </Typography>
-                      <Typography>
-                        Status: {detail.fashionItem.status}
-                      </Typography>
+                      <Typography>Condition: {detail.condition}</Typography>
+                      <Typography>Status: {detail.status}</Typography>
                       <Typography>Deal Price: ${detail.dealPrice}</Typography>
                       <Typography>
                         Confirmed Price: ${detail.confirmedPrice}
                       </Typography>
-                      <Typography>
-                        Category: {detail.fashionItem.categoryName}
-                      </Typography>
-                      <Typography>Size: {detail.fashionItem.size}</Typography>
-                      <Typography>Color: {detail.fashionItem.color}</Typography>
-                      <Typography>Brand: {detail.fashionItem.brand}</Typography>
-                      <Typography>
-                        Gender: {detail.fashionItem.gender}
-                      </Typography>
-                      <Typography>Note: {detail.fashionItem.note}</Typography>
+                      <Typography>Category: {detail.categoryName}</Typography>
+                      <Typography>Size: {detail.size}</Typography>
+                      <Typography>Color: {detail.color}</Typography>
+                      <Typography>Brand: {detail.brand}</Typography>
+                      <Typography>Gender: {detail.gender}</Typography>
+                      <Typography>Note: {detail.note}</Typography>
                     </CardContent>
                   </Card>
                 </Paper>
