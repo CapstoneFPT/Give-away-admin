@@ -35,7 +35,7 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const shopId = localStorage.getItem("shopId");
-
+  console.log(newItem);
   useEffect(() => {
     if (newItem.gender) {
       const genderId =
@@ -101,7 +101,7 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
         name: "",
         note: "",
         value: 0,
-        condition: "",
+        condition: 0,
         brand: "",
         color: "",
         gender: "",
@@ -198,6 +198,7 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
               margin="normal"
               required
               fullWidth
+              type="number"
               id="condition"
               label="Condition"
               name="condition"
