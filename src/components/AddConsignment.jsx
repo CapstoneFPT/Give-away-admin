@@ -31,7 +31,7 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
         value: 0,
         dealPrice: 0,
         confirmedPrice: 0,
-        condition: "",
+        condition: 0,
         categoryId: "",
         size: "",
         color: "",
@@ -128,7 +128,7 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
           value: 0,
           dealPrice: 0,
           confirmedPrice: 0,
-          condition: "",
+          condition: 0,
           categoryId: "",
           size: "",
           color: "",
@@ -144,7 +144,7 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
     try {
       setIsLoading(true);
       // Assuming you have an ApiService method for adding consignments
-      await ApiService.addConsignment(shopId, newConsign);
+      await ApiService.createConsignByStaff(shopId, newConsign);
       alert("Consignment added successfully");
       onAddSuccess();
       setNewConsign({
@@ -160,7 +160,7 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
             value: 0,
             dealPrice: 0,
             confirmedPrice: 0,
-            condition: "",
+            condition: 0,
             categoryId: "",
             size: "",
             color: "",
@@ -342,10 +342,12 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
                 </Grid>
                 <Grid item xs={12} sm={6} md={4}>
                   <TextField
+                    type="number"
                     label="Condition"
                     name="condition"
                     value={item.condition}
                     onChange={(e) => handleItemChange(e, index)}
+                    inputProps={{ max: 100 }}
                     fullWidth
                   />
                 </Grid>

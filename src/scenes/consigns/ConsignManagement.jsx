@@ -101,6 +101,28 @@ const ConsignManagement = () => {
     setSearchTerm(event.target.value); // Update searchTerm state on input change
   };
 
+  const handleStatusChange = async (consignSaleId, status) => {
+    if (status === "Received") {
+      const confirmed = window.confirm(
+        "Are you sure you want to mark this consignment as received?"
+      );
+      if (!confirmed) {
+        return;
+      }
+    }
+
+    try {
+      if (status === "Received") {
+        await ApiService.updateConsignStatusToRecieved(consignSaleId);
+      } else {
+        await ApiService.updateConsignStatus(consignSaleId, status);
+      }
+      fetchConsignments(page, pageSize, statusTabs[tabIndex].value, searchTerm); // Fetch consignments again after updating status
+    } catch (error) {
+      console.error(`Failed to update consignment status: ${error.message}`);
+    }
+  };
+
   return (
     <Box p={2}>
       <Typography variant="h4" gutterBottom>
@@ -179,7 +201,48 @@ const ConsignManagement = () => {
                       Detail
                     </Button>
                   </TableCell>
-                  <TableCell></TableCell>
+                  <TableCell>
+                    {consign.status === "Pending" && (
+                      <>
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          onClick={() =>
+                            handleStatusChange(
+                              consign.consignSaleId,
+                              "Rejected"
+                            )
+                          }
+                          sx={{ marginRight: "10px" }}
+                        >
+                          Reject
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() =>
+                            handleStatusChange(
+                              consign.consignSaleId,
+                              "AwaitDelivery"
+                            )
+                          }
+                        >
+                          Approve
+                        </Button>
+                      </>
+                    )}
+                    {consign.status === "AwaitDelivery" && (
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() =>
+                          handleStatusChange(consign.consignSaleId, "Received")
+                        }
+                      >
+                        Mark as Received
+                      </Button>
+                    )}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

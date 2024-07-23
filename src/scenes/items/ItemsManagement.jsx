@@ -97,10 +97,10 @@ const ItemsManagement = () => {
           setTotalCount(0);
         }
       } catch (error) {
-        alert("Failed to fetch items: " + error.message);
-
+        setSearchQuery("");
         setFashionItems([]);
         setTotalCount(0);
+        alert("Failed to fetch items: " + error.message);
       } finally {
         setIsLoading(false);
       }
@@ -196,17 +196,31 @@ const ItemsManagement = () => {
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Category</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell>Description</TableCell>
-            <TableCell>Price</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell>Type</TableCell>
-            <TableCell>Action</TableCell>
+            <TableCell>
+              <h2>Category</h2>
+            </TableCell>
+            <TableCell>
+              <h2>Name</h2>
+            </TableCell>
+            <TableCell>
+              <h2>Description</h2>
+            </TableCell>
+            <TableCell>
+              <h2>Price</h2>
+            </TableCell>
+            <TableCell>
+              <h2>Status</h2>
+            </TableCell>
+            <TableCell>
+              <h2>Type</h2>
+            </TableCell>
+            <TableCell>
+              <h2>Action</h2>
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {fashionItems.length > 0 ? (
+          {fashionItems.length >= 0 ? (
             fashionItems.map((item) => (
               <TableRow key={item.itemId}>
                 <TableCell>{item.categoryName}</TableCell>
@@ -242,7 +256,6 @@ const ItemsManagement = () => {
                   )}
                 </TableCell>
                 <TableCell>{item.type}</TableCell>
-
                 {item.type === "ConsignedForAuction" &&
                   item.status === "Available" && (
                     <TableCell>
@@ -259,10 +272,8 @@ const ItemsManagement = () => {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={tabIndex === 0 ? 7 : 6} align="center">
-                {searchQuery
-                  ? "No items match your search."
-                  : "No items available."}
+              <TableCell colSpan={7} align="center">
+                No items available
               </TableCell>
             </TableRow>
           )}

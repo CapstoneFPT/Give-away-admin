@@ -10,6 +10,26 @@ const axiosInstance = axios.create({
 });
 
 const ApiService = {
+  updateConsignStatus: async (consignSaleId, status) => {
+    try {
+      const response = await axiosInstance.put(
+        `/api/consginsales/${consignSaleId}/approval?consignStatus=${status}`
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  },
+  updateConsignStatusToRecieved: async (consignSaleId) => {
+    try {
+      const response = await axiosInstance.put(
+        `http://giveawayproject.jettonetto.org:8080/api/consginsales/${consignSaleId}/confirm-received`
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  },
   getCategoryByGender: async (genderId) => {
     try {
       const response = await axiosInstance.get(
