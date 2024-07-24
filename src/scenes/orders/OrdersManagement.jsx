@@ -21,6 +21,7 @@ import {
   Button,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import { debounce } from "lodash";
 import ApiService from "../../services/apiServices";
 import { useNavigate } from "react-router-dom";
 
@@ -89,10 +90,10 @@ const OrderManagement = () => {
     navigate(`/order-staff/${orderId}`);
   };
 
-  const handleSearchChange = (event) => {
+  const handleSearchChange = debounce((event) => {
     setSearchQuery(event.target.value);
     setPage(0);
-  };
+  }, 300);
 
   const handleCreateOrder = () => {
     navigate("/order-staff/create-order");
@@ -118,7 +119,7 @@ const OrderManagement = () => {
           {orders.length > 0 ? (
             orders.map((order) => (
               <TableRow key={order.orderId}>
-                <TableCell>{order.totalPrice}</TableCell>
+                <TableCell>{order.totalPrice.toLocaleString()}</TableCell>
                 <TableCell>{order.orderCode}</TableCell>
                 <TableCell>{order.customerName}</TableCell>
                 <TableCell>{order.recipientName}</TableCell>
@@ -174,7 +175,7 @@ const OrderManagement = () => {
           <InputBase
             sx={{ ml: 1, flex: 1 }}
             placeholder="Search"
-            value={searchQuery}
+            defaultValue={searchQuery}
             onChange={handleSearchChange}
           />
           <IconButton type="button" sx={{ p: 1 }}>

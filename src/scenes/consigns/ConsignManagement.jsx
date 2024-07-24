@@ -15,6 +15,7 @@ import {
   TextField,
 } from "@mui/material";
 import { Add } from "@mui/icons-material";
+import { debounce } from "lodash";
 import ApiService from "../../services/apiServices";
 import AddConsignment from "../../components/AddConsignment";
 
@@ -97,9 +98,10 @@ const ConsignManagement = () => {
     setPage(1); // Reset to first page when tab changes
   };
 
-  const handleSearchInputChange = (event) => {
-    setSearchTerm(event.target.value); // Update searchTerm state on input change
-  };
+  const handleSearchInputChange = debounce((event) => {
+    setSearchTerm(event.target.value || ""); // Update searchTerm state on input change
+    setPage(1); // Reset to first page when search term changes
+  }, 300);
 
   const handleStatusChange = async (consignSaleId, status) => {
     if (status === "Received") {
@@ -117,10 +119,14 @@ const ConsignManagement = () => {
       } else {
         await ApiService.updateConsignStatus(consignSaleId, status);
       }
-      fetchConsignments(page, pageSize, statusTabs[tabIndex].value, searchTerm); // Fetch consignments again after updating status
+      fetchConsignments(page, pageSize, statusTabs[tabIndex].value, searchTerm);
     } catch (error) {
       console.error(`Failed to update consignment status: ${error.message}`);
     }
+  };
+
+  const formatNumber = (num) => {
+    return num.toLocaleString("vn", { minimumFractionDigits: 0 });
   };
 
   return (
@@ -140,7 +146,6 @@ const ConsignManagement = () => {
       <TextField
         label="Search"
         variant="outlined"
-        value={searchTerm}
         onChange={handleSearchInputChange}
         fullWidth
         sx={{ mb: 2 }}
@@ -188,8 +193,8 @@ const ConsignManagement = () => {
                     {new Date(consign.endDate).toLocaleString()}
                   </TableCell>
                   <TableCell>{consign.status}</TableCell>
-                  <TableCell>{consign.totalPrice}</TableCell>
-                  <TableCell>{consign.soldPrice}</TableCell>
+                  <TableCell>{formatNumber(consign.totalPrice)} VND</TableCell>
+                  <TableCell>{formatNumber(consign.soldPrice)} VND </TableCell>
                   <TableCell>{consign.type}</TableCell>
                   <TableCell>
                     <Button

@@ -23,6 +23,7 @@ import ConsignDetail from "./scenes/consigns/ConsignDetail";
 import OrderManagement from "./scenes/orders/OrdersManagement.jsx";
 import OrderDetail from "./scenes/orders/OrderDetail.jsx";
 import CreateOrder from "./components/CreateOrder.jsx";
+import RefundManagement from "./scenes/refunds/RefundManagement.jsx";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -63,6 +64,14 @@ function App() {
               <Routes>
                 <Route path="/" element={<Navigate to="/login" />} />
                 <Route path="/login" element={<Login />} />
+                <Route
+                  path="/refund-staff"
+                  element={
+                    <ProtectedRoute allowedRoles={["Staff"]}>
+                      <RefundManagement />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path="/order-staff/create-order"
                   element={

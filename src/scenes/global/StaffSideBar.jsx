@@ -144,6 +144,13 @@ const StaffSideBar = () => {
               selected={selected}
               setSelected={setSelected}
             />
+            <Item
+              title="Refund"
+              to="/refund-staff"
+              icon={<ReceiptOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
 
             <Typography
               variant="h6"

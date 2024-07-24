@@ -10,6 +10,33 @@ const axiosInstance = axios.create({
 });
 
 const ApiService = {
+  updateOrderByStaff: async (orderId) => {
+    try {
+      const response = await axiosInstance.put(`/api/orders/${orderId}/cancel`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  },
+  cancelOrderByStaff: async (orderId) => {
+    try {
+      const response = await axiosInstance.put(`/api/orders/${orderId}/cancel`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  },
+
+  getRefundByShopId: async (shopId, searchDate) => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/refunds?ShopId=${shopId}&PreviousTime=${searchDate}`
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  },
   updateConsignStatus: async (consignSaleId, status) => {
     try {
       const response = await axiosInstance.put(
