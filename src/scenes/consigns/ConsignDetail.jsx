@@ -15,6 +15,9 @@ import {
 import ApiService from "../../services/apiServices";
 
 const ConsignDetail = () => {
+  const formatNumber = (num) => {
+    return num.toLocaleString("vn", { minimumFractionDigits: 0 });
+  };
   const { consignSaleCode } = useParams();
   const navigate = useNavigate();
   const [consignDetail, setConsignDetail] = useState(null);
@@ -70,9 +73,8 @@ const ConsignDetail = () => {
             </Typography>
             <Typography variant="h6">Status:{consignDetail.status}</Typography>
             <Typography variant="h6">
-              Total Price: ${consignDetail.totalPrice}
+              Total Price: {formatNumber(consignDetail.totalPrice)} VND
             </Typography>
-            <Typography variant="h6">Sold Price: $</Typography>
           </Paper>
           <Typography variant="h5" gutterBottom>
             Consignment Details
@@ -90,7 +92,9 @@ const ConsignDetail = () => {
                     <CardContent>
                       <Typography>Condition: {detail.condition}</Typography>
                       <Typography>Status: {detail.status}</Typography>
-                      <Typography>Deal Price: ${detail.dealPrice}</Typography>
+                      <Typography>
+                        Deal Price: {formatNumber(detail.dealPrice)} VND
+                      </Typography>
                       <Typography>
                         Confirmed Price: ${detail.confirmedPrice}
                       </Typography>

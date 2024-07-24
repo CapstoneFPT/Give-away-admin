@@ -29,7 +29,7 @@ const Step3 = ({ prevStep }) => {
     const orderData = {
       paymentMethod: "Cash",
       address: customerInfo.address || "",
-      fullname: customerInfo.fullname,
+      recipientName: customerInfo.fullname,
       phone: customerInfo.phone,
       email: customerInfo.email,
       listItemId: cartItems.map((item) => item.itemId),
