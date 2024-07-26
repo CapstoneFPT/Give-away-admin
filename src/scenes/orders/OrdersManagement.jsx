@@ -99,6 +99,26 @@ const OrderManagement = () => {
     navigate("/order-staff/create-order");
   };
 
+  const handleCancelOrder = async (orderId) => {
+    try {
+      await ApiService.cancelOrderByStaff(orderId);
+      alert("Order cancelled successfully.");
+      getOrders(page, pageSize, statusFilter, searchQuery);
+    } catch (error) {
+      alert("Failed to cancel order: " + error.message);
+    }
+  };
+
+  const handleConfirmDelivery = async (orderId) => {
+    try {
+      await ApiService.updateOrderByStaff(orderId);
+      alert("Order confirmed as delivered successfully.");
+      getOrders(page, pageSize, statusFilter, searchQuery);
+    } catch (error) {
+      alert("Failed to confirm delivery: " + error.message);
+    }
+  };
+
   const renderTable = () => (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -112,14 +132,17 @@ const OrderManagement = () => {
             <TableCell>Payment Method</TableCell>
             <TableCell>Created Date</TableCell>
             <TableCell>Purchase Type</TableCell>
-            <TableCell>Detail</TableCell>
+            <TableCell>Details</TableCell>
+            <TableCell style={{ display: "flex", justifyContent: "center" }}>
+              Actions
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {orders.length > 0 ? (
             orders.map((order) => (
               <TableRow key={order.orderId}>
-                <TableCell>{order.totalPrice.toLocaleString()}</TableCell>
+                <TableCell>{order.totalPrice.toLocaleString()} VND</TableCell>
                 <TableCell>{order.orderCode}</TableCell>
                 <TableCell>{order.customerName}</TableCell>
                 <TableCell>{order.recipientName}</TableCell>
@@ -137,6 +160,30 @@ const OrderManagement = () => {
                   >
                     Detail
                   </Button>
+                </TableCell>
+                <TableCell>
+                  <div style={{ display: "flex" }}>
+                    {order.status === "OnDelivery" && (
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => handleConfirmDelivery(order.orderId)}
+                        sx={{ ml: 1 }}
+                      >
+                        Confirm Delivery
+                      </Button>
+                    )}
+                    {order.status === "AwaitingPayment" && (
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={() => handleCancelOrder(order.orderId)}
+                        sx={{ ml: 1 }}
+                      >
+                        Cancel
+                      </Button>
+                    )}
+                  </div>
                 </TableCell>
               </TableRow>
             ))

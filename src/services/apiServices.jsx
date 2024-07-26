@@ -10,9 +10,22 @@ const axiosInstance = axios.create({
 });
 
 const ApiService = {
+  checkOutWithCash: async (shopId, orderId, amountGiven) => {
+    try {
+      const response = await axiosInstance.post(
+        `/api/shops/${shopId}/orders/${orderId}/pay-with-cash`,
+        amountGiven
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  },
   updateOrderByStaff: async (orderId) => {
     try {
-      const response = await axiosInstance.put(`/api/orders/${orderId}/cancel`);
+      const response = await axiosInstance.put(
+        `/api/orders/${orderId}/confirm-deliveried`
+      );
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || error.message);
