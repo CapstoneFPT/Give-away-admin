@@ -35,15 +35,16 @@ const RefundManagement = () => {
   const [selectedRefund, setSelectedRefund] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date()); // Default to today
-  console.log(refunds);
   const shopId = localStorage.getItem("shopId");
 
+  console.log(selectedDate);
   useEffect(() => {
     const fetchRefunds = async () => {
       try {
         const formattedDate = selectedDate.toISOString(); // Format date to ISO string
         const data = await ApiService.getRefundByShopId(shopId, formattedDate);
         setRefunds(data.data.items);
+        console.log(data);
       } catch (error) {
         console.error("Failed to fetch refunds:", error);
       } finally {
@@ -62,6 +63,11 @@ const RefundManagement = () => {
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setSelectedRefund(null);
+  };
+
+  const handleRequestRefund = () => {
+    // Implement the logic for requesting a refund
+    alert("Refund request functionality will be implemented here.");
   };
 
   if (isLoading) {
@@ -83,47 +89,60 @@ const RefundManagement = () => {
           />
         </LocalizationProvider>
       </Box>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Refund ID</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell>Created Date</TableCell>
-              <TableCell>Order Detail ID</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Amount</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {refunds.map((refund) => (
-              <TableRow key={refund.refundId}>
-                <TableCell>{refund.refundId}</TableCell>
-                <TableCell>{refund.description}</TableCell>
-                <TableCell>
-                  {new Date(refund.createdDate).toLocaleString()}
-                </TableCell>
-                <TableCell>{refund.orderDetailId}</TableCell>
-                <TableCell>{refund.refundStatus}</TableCell>
-                <TableCell>
-                  {formatCurrency(refund.orderDetailsResponse.unitPrice)}
-                </TableCell>{" "}
-                {/* Format amount */}
-                <TableCell>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => handleViewRefund(refund)}
-                  >
-                    View
-                  </Button>
-                </TableCell>
+      {refunds.length === 0 ? (
+        <Box>
+          <Typography variant="h6">No refunds available</Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleRequestRefund}
+          >
+            Request Refund
+          </Button>
+        </Box>
+      ) : (
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Refund ID</TableCell>
+                <TableCell>Description</TableCell>
+                <TableCell>Created Date</TableCell>
+                <TableCell>Order Detail ID</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Amount</TableCell>
+                <TableCell>Actions</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {refunds.map((refund) => (
+                <TableRow key={refund.refundId}>
+                  <TableCell>{refund.refundId}</TableCell>
+                  <TableCell>{refund.description}</TableCell>
+                  <TableCell>
+                    {new Date(refund.createdDate).toLocaleString()}
+                  </TableCell>
+                  <TableCell>{refund.orderDetailId}</TableCell>
+                  <TableCell>{refund.refundStatus}</TableCell>
+                  <TableCell>
+                    {formatCurrency(refund.orderDetailsResponse.unitPrice)}
+                  </TableCell>{" "}
+                  {/* Format amount */}
+                  <TableCell>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleViewRefund(refund)}
+                    >
+                      View
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>Refund Details</DialogTitle>
         <DialogContent>
