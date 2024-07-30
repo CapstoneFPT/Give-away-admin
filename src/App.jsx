@@ -51,6 +51,8 @@ function App() {
           style={{
             display: "flex",
             minHeight: "100vh",
+            height: "100vh",
+            overflow: "hidden", // Prevents scrollbars on the main container
           }}
         >
           {!isLoginPath &&
@@ -59,9 +61,22 @@ function App() {
             ) : (
               <StaffSideBar isSidebar={isSidebar} />
             ))}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+          <div
+            style={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              height: "100vh",
+            }}
+          >
             {!isLoginPath && <Topbar setIsSidebar={setIsSidebar} />}
-            <main style={{ flex: 1, padding: isLoginPath ? 0 : "20px" }}>
+            <main
+              style={{
+                flex: 1,
+                padding: isLoginPath ? 0 : "20px",
+                overflow: "auto", // Ensures content can scroll if needed
+              }}
+            >
               <Routes>
                 <Route path="/" element={<Navigate to="/login" />} />
                 <Route path="/login" element={<Login />} />
@@ -73,7 +88,6 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
-
                 <Route
                   path="/refund"
                   element={

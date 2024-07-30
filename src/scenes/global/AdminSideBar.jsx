@@ -35,10 +35,13 @@ const AdminSideBar = () => {
   const [selected, setSelected] = useState("Dashboard");
   const userName = localStorage.getItem("name");
   const role = localStorage.getItem("role");
+
   return (
     <Box
       sx={{
+        height: "100vh", // Ensure it takes the full height
         "& .pro-sidebar-inner": {
+          height: "100vh", // Ensure sidebar inner takes the full height
           background: `${colors.primary[400]} !important`,
         },
         "& .pro-icon-wrapper": {
@@ -116,7 +119,6 @@ const AdminSideBar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-
             <Item
               title="Manage Account"
               to="/manage-accounts"

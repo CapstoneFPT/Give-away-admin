@@ -143,10 +143,20 @@ const ApiService = {
       throw new Error(error.response?.data?.message || error.message);
     }
   },
-  getOrder: async (page, pageSize, shopId, status, searchTerm) => {
+  getOrderByShopId: async (shopId, page, pageSize, status, searchTerm) => {
     try {
       const response = await axiosInstance.get(
-        `/api/orders?PageNumber=${page}&PageSize=${pageSize}&ShopId=${shopId}&Status=${status}&OrderCode=${searchTerm}`
+        `/api/orders?ShopId=${shopId}&PageNumber=${page}&PageSize=${pageSize}&Status=${status}&OrderCode=${searchTerm}`
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  },
+  getOrderByAdmin: async (page, pageSize, status, searchTerm) => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/orders?&PageNumber=${page}&PageSize=${pageSize}&Status=${status}&OrderCode=${searchTerm}`
       );
       return response.data;
     } catch (error) {
