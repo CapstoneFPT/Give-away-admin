@@ -110,6 +110,7 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
         images: [],
       });
       onClose();
+      setIsLoading(false);
     } catch (error) {
       console.error("Failed to add item:", error);
       alert("Failed to add item: " + error.message);
@@ -293,26 +294,26 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={6}>
-            <input
-              accept="image/*"
-              id="upload-images"
-              multiple
-              type="file"
-              style={{ display: "none" }}
-              onChange={handleImageChange}
-              disabled={newItem.images.length >= 3} // Disable after 3 images
-            />
-            <label htmlFor="upload-images">
-              <Button
-                variant="contained"
-                component="span"
-                disabled={newItem.images.length >= 3} // Disable after 3 images
-              >
-                Upload Images
-              </Button>
-            </label>
-          </Grid>
+          <Grid item xs={6}></Grid>
+          <input
+            accept="image/*"
+            id="upload-images"
+            multiple
+            type="file"
+            style={{ display: "none" }}
+            onChange={handleImageChange}
+            disabled={newItem.images.length >= 3}
+          />
+          <label htmlFor="upload-images">
+            <Button
+              variant="contained"
+              component="span"
+              disabled={newItem.images.length >= 3}
+              style={{ marginLeft: "20px", marginTop: "30px" }}
+            >
+              Upload Images
+            </Button>
+          </label>
           <Grid item xs={12}>
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
               {newItem.images.map((url, index) => (
@@ -358,7 +359,7 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
           variant="contained"
           color="primary"
           fullWidth
-          sx={{ mt: 3, mb: 2 }}
+          sx={{ mt: 5, mb: 2 }}
           disabled={isLoading}
         >
           {isLoading ? "Adding..." : "Add Item"}

@@ -40,10 +40,10 @@ const OrderManagement = () => {
     async (page, pageSize, status, searchQuery) => {
       try {
         setIsLoading(true);
-        const response = await ApiService.getOrderByShopId(
-          shopId,
+        const response = await ApiService.getOrder(
           page + 1,
           pageSize,
+          shopId,
           status,
           searchQuery
         );
@@ -87,7 +87,7 @@ const OrderManagement = () => {
   };
 
   const handleDetailClick = (orderId) => {
-    navigate(`/order-staff/${orderId}`);
+    navigate(`/order/${orderId}`);
   };
 
   const handleSearchChange = debounce((event) => {
@@ -96,7 +96,7 @@ const OrderManagement = () => {
   }, 300);
 
   const handleCreateOrder = () => {
-    navigate("/order-staff/create-order");
+    navigate("/order/create-order");
   };
 
   const handleCancelOrder = async (orderId) => {

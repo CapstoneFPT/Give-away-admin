@@ -14,13 +14,29 @@ import {
 } from "@mui/material";
 import ApiService from "../../services/apiServices";
 
+function useDebounce(value, delay) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
 const AccountManagement = () => {
   const [accounts, setAccounts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const phone = "";
+  const debouncedSearchQuery = useDebounce(searchQuery, 500); // Debounce 500ms
   const pageSize = 5;
   const navigate = useNavigate();
 
@@ -31,8 +47,7 @@ const AccountManagement = () => {
         const data = await ApiService.getAllAccounts(
           page,
           pageSize,
-          phone,
-          searchQuery
+          debouncedSearchQuery
         );
         setAccounts(data.items);
         setTotalPage(data.totalPages);
@@ -43,7 +58,7 @@ const AccountManagement = () => {
       }
     };
     fetchAccounts();
-  }, [page, searchQuery]);
+  }, [page, debouncedSearchQuery]);
 
   const handleDetailClick = (accountId) => {
     navigate(`/manage-accounts/${accountId}`);
@@ -74,9 +89,9 @@ const AccountManagement = () => {
       </Typography>
       <Box mb={2}>
         <TextField
-          label="Search"
+          label="Search by Phone"
           variant="outlined"
-          placeholder="Enter username"
+          placeholder="Enter phone number"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           sx={{ width: "100%" }}

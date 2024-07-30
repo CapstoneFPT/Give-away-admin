@@ -24,6 +24,7 @@ import OrderManagement from "./scenes/orders/OrdersManagement.jsx";
 import OrderDetail from "./scenes/orders/OrderDetail.jsx";
 import CreateOrder from "./components/CreateOrder.jsx";
 import RefundManagement from "./scenes/refunds/RefundManagement.jsx";
+import AuctionManagement from "./scenes/auctions/AuctionsManagement.jsx";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -65,7 +66,16 @@ function App() {
                 <Route path="/" element={<Navigate to="/login" />} />
                 <Route path="/login" element={<Login />} />
                 <Route
-                  path="/refund-staff"
+                  path="/auction"
+                  element={
+                    <ProtectedRoute allowedRoles={["Staff", "Admin"]}>
+                      <AuctionManagement />
+                    </ProtectedRoute>
+                  }
+                />
+
+                <Route
+                  path="/refund"
                   element={
                     <ProtectedRoute allowedRoles={["Staff"]}>
                       <RefundManagement />
@@ -73,7 +83,7 @@ function App() {
                   }
                 />
                 <Route
-                  path="/order-staff/create-order"
+                  path="/order/create-order"
                   element={
                     <ProtectedRoute allowedRoles={["Staff"]}>
                       <CreateOrder />
@@ -81,17 +91,17 @@ function App() {
                   }
                 />
                 <Route
-                  path="/order-staff/:orderId"
+                  path="/order/:orderId"
                   element={
-                    <ProtectedRoute allowedRoles={["Staff"]}>
+                    <ProtectedRoute allowedRoles={["Staff", "Admin"]}>
                       <OrderDetail />
                     </ProtectedRoute>
                   }
                 />
                 <Route
-                  path="/order-staff"
+                  path="/order"
                   element={
-                    <ProtectedRoute allowedRoles={["Staff"]}>
+                    <ProtectedRoute allowedRoles={["Staff", "Admin"]}>
                       <OrderManagement />
                     </ProtectedRoute>
                   }

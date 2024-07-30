@@ -14,6 +14,7 @@ import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 
 import ArchiveIcon from "@mui/icons-material/Archive";
+import { GavelOutlined } from "@mui/icons-material";
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -139,15 +140,22 @@ const StaffSideBar = () => {
             />
             <Item
               title="Order"
-              to="/order-staff"
+              to="/order"
               icon={<ReceiptOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
               title="Refund"
-              to="/refund-staff"
+              to="/refund"
               icon={<ReceiptOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Auction"
+              to="/auction"
+              icon={<GavelOutlined />}
               selected={selected}
               setSelected={setSelected}
             />
