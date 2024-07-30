@@ -15,6 +15,7 @@ import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 
 import ArchiveIcon from "@mui/icons-material/Archive";
 import { GavelOutlined } from "@mui/icons-material";
+
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -41,11 +42,14 @@ const StaffSideBar = () => {
   const [selected, setSelected] = useState("Dashboard");
   const userName = localStorage.getItem("name");
   const role = localStorage.getItem("role");
+
   return (
     <Box
       sx={{
+        height: "100vh",
         "& .pro-sidebar-inner": {
           background: `${colors.primary[400]} !important`,
+          height: "100vh",
         },
         "& .pro-icon-wrapper": {
           backgroundColor: "transparent !important",
@@ -92,17 +96,7 @@ const StaffSideBar = () => {
           {!isCollapsed && (
             <Box mb="25px">
               <Box textAlign="center">
-                <Typography
-                  variant="h2"
-                  color={colors.grey[100]}
-                  fontWeight="bold"
-                  sx={{ m: "10px 0 0 0" }}
-                >
-                  {userName}
-                </Typography>
-                <Typography variant="h5" color={colors.greenAccent[500]}>
-                  {role}
-                </Typography>
+                <Typography variant="h2">{userName}</Typography>
               </Box>
             </Box>
           )}
@@ -115,75 +109,44 @@ const StaffSideBar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-
-            <Typography
-              variant="h6"
-              color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 20px" }}
-            >
-              Data
-            </Typography>
             <Item
-              title="Manage Item"
-              to="/manage-items"
-              icon={<ArchiveIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-
-            <Item
-              title="Consign"
-              to="/consign"
-              icon={<ReceiptOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Order"
+              title="Orders"
               to="/order"
               icon={<ReceiptOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
-              title="Refund"
-              to="/refund"
-              icon={<ReceiptOutlinedIcon />}
+              title="Consigns"
+              to="/consign"
+              icon={<ArchiveIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
-              title="Auction"
+              title="Auctions"
               to="/auction"
               icon={<GavelOutlined />}
               selected={selected}
               setSelected={setSelected}
             />
-
-            <Typography
-              variant="h6"
-              color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 20px" }}
-            >
-              Pages
-            </Typography>
             <Item
-              title="Profile Form"
-              to="/form"
-              icon={<PersonOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Calendar"
-              to="/calendar"
+              title="Manage Items"
+              to="/manage-items"
               icon={<CalendarTodayOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
-              title="FAQ Page"
-              to="/faq"
+              title="Profile"
+              to="/manage-accounts"
+              icon={<PersonOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Help"
+              to="/team"
               icon={<HelpOutlineOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
