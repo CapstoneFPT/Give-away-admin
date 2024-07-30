@@ -7,6 +7,7 @@ import { tokens } from "../../theme";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
+import { GavelOutlined, ReceiptOutlined } from "@mui/icons-material";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -109,9 +110,31 @@ const AdminSideBar = () => {
               setSelected={setSelected}
             />
             <Item
+              title="Item"
+              to="/manage-items"
+              icon={<ReceiptOutlined />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+
+            <Item
               title="Manage Account"
               to="/manage-accounts"
               icon={<PeopleOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Order"
+              to="/order"
+              icon={<ReceiptOutlined />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Auction"
+              to="/auction"
+              icon={<GavelOutlined />}
               selected={selected}
               setSelected={setSelected}
             />

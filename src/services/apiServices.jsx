@@ -1,7 +1,7 @@
 // src/services/apiServices.jsx
 import axios from "axios";
 
-const URL = `http://giveawayproject.jettonetto.org:8080`;
+const URL = `https://giveawayproject.jettonetto.org:8443`;
 const axiosInstance = axios.create({
   baseURL: URL,
   headers: {
@@ -10,6 +10,47 @@ const axiosInstance = axios.create({
 });
 
 const ApiService = {
+  approveAuctionByAdmin: async (auctionId) => {
+    try {
+      const response = await axiosInstance.put(
+        `/api/auctions/${auctionId}/approve`
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  },
+  rejectAuctionByAdmin: async (auctionId) => {
+    try {
+      const response = await axiosInstance.put(
+        `/api/auctions/${auctionId}/reject`
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  },
+  getAuction: async (searchTerm, page, pageSize) => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/auctions?SearchTerm=${searchTerm}&PageNumber=${page}&PageSize=${pageSize}&GetExpiredAuctions=true`
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  },
+  updateRefundStatus: async (refundId, refundData) => {
+    try {
+      const response = await axiosInstance.put(
+        `/api/refunds/${refundId}/approval`,
+        refundData
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  },
   checkOutWithCash: async (shopId, orderId, amountGiven) => {
     try {
       const response = await axiosInstance.post(
@@ -102,10 +143,10 @@ const ApiService = {
       throw new Error(error.response?.data?.message || error.message);
     }
   },
-  getOrderByShopId: async (shopId, page, pageSize, status, searchTerm) => {
+  getOrder: async (page, pageSize, shopId, status, searchTerm) => {
     try {
       const response = await axiosInstance.get(
-        `/api/shops/${shopId}/orders?PageNumber=${page}&PageSize=${pageSize}&Status=${status}&OrderCode=${searchTerm}`
+        `/api/orders?PageNumber=${page}&PageSize=${pageSize}&ShopId=${shopId}&Status=${status}&OrderCode=${searchTerm}`
       );
       return response.data;
     } catch (error) {
@@ -151,10 +192,10 @@ const ApiService = {
       throw new Error(error.response?.data?.message || error.message);
     }
   },
-  getAllAccounts: async (page, pageSize, phone, searchQuery) => {
+  getAllAccounts: async (page, pageSize, phone) => {
     try {
       const response = await axiosInstance.get(
-        `/api/accounts?Page=${page}&PageSize=${pageSize}&Phone=${phone}&Status=Active&Status=Inactive&SearchTerm=${searchQuery}`
+        `/api/accounts?Page=${page}&PageSize=${pageSize}&Phone=${phone}&Status=Active&Status=Inactive`
       );
 
       return response.data;
@@ -165,7 +206,7 @@ const ApiService = {
   getAccountByPhone: async (phone) => {
     try {
       const response = await axiosInstance.get(
-        `/api/accounts?Phone=${phone}&Status=Active`
+        `/api/accounts?Phone=${phone}&Status=Active&Role=Member`
       );
 
       return response.data;
@@ -184,57 +225,18 @@ const ApiService = {
       throw new Error(error.response?.data?.message || error.message);
     }
   },
-  createConsignByStaff: async (shopId, consignmentData) => {
+  createConsignByStaff: async (shopId, payload) => {
     try {
-      const formData = new FormData();
-      formData.append("type", consignmentData.type);
-      formData.append("recipientName", consignmentData.recipientName);
-      formData.append("phone", consignmentData.phone);
-      formData.append("address", consignmentData.address);
-      formData.append("email", consignmentData.email);
-
-      consignmentData.fashionItemForConsigns.forEach((item, index) => {
-        formData.append(`fashionItemForConsigns[${index}].name`, item.name);
-        formData.append(`fashionItemForConsigns[${index}].note`, item.note);
-        formData.append(`fashionItemForConsigns[${index}].value`, item.value);
-        formData.append(
-          `fashionItemForConsigns[${index}].dealPrice`,
-          item.dealPrice
-        );
-        formData.append(
-          `fashionItemForConsigns[${index}].confirmedPrice`,
-          item.confirmedPrice
-        );
-        formData.append(
-          `fashionItemForConsigns[${index}].condition`,
-          item.condition
-        );
-        formData.append(
-          `fashionItemForConsigns[${index}].categoryId`,
-          item.categoryId
-        );
-        formData.append(`fashionItemForConsigns[${index}].size`, item.size);
-        formData.append(`fashionItemForConsigns[${index}].color`, item.color);
-        formData.append(`fashionItemForConsigns[${index}].brand`, item.brand);
-        formData.append(`fashionItemForConsigns[${index}].gender`, item.gender);
-
-        item.image.forEach((image, imgIndex) => {
-          formData.append(
-            `fashionItemForConsigns[${index}].image[${imgIndex}]`,
-            image
-          );
-        });
-      });
-
       const response = await axiosInstance.post(
         `/api/shops/${shopId}/consignsales`,
-        formData
+        payload
       );
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || error.message);
     }
   },
+
   updateItemStatus: async (itemId) => {
     try {
       const response = await axiosInstance.put(
@@ -276,7 +278,7 @@ const ApiService = {
       const response = await axiosInstance.get(
         `/api/shops/${shopId}/consignsales?PageNumber=${page}&PageSize=${pageSize}&Status=${status}&ConsignSaleCode=${searchTerm}`
       );
-      console.log(response);
+
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || error.message);

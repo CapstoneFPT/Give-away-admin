@@ -31,7 +31,6 @@ const ItemsManagement = () => {
   const [fashionItems, setFashionItems] = useState([]);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(5);
-  const shopId = localStorage.getItem("shopId");
 
   const [isLoading, setIsLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
@@ -42,6 +41,8 @@ const ItemsManagement = () => {
   const [openAuctionForm, setOpenAuctionForm] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [statusFilter, setStatusFilter] = useState("Available");
+  const userRole = localStorage.getItem("role");
+  const shopId = userRole === "Admin" ? "" : localStorage.getItem("shopId");
   const statusOptions = {
     ConsignedForSale: [
       "Available",
@@ -73,6 +74,14 @@ const ItemsManagement = () => {
       "Returned",
     ],
   };
+
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(value);
+  };
+
   const getFashionItems = useCallback(
     async (page, pageSize, status, searchQuery, type) => {
       try {
@@ -180,6 +189,7 @@ const ItemsManagement = () => {
     setSelectedItem(item);
     setOpenAuctionForm(true);
   };
+
   const handleAuctionSubmit = async (auctionData) => {
     try {
       await ApiService.createAuction(auctionData);
@@ -235,7 +245,7 @@ const ItemsManagement = () => {
                     {item.note}
                   </Typography>
                 </TableCell>
-                <TableCell>{item.sellingPrice}</TableCell>
+                <TableCell>{formatCurrency(item.sellingPrice)}</TableCell>
                 <TableCell>
                   {item.status === "Available" ||
                   item.status === "Unavailable" ? (
@@ -249,7 +259,7 @@ const ItemsManagement = () => {
                       onClick={() => toggleStatus(item.itemId, item.status)}
                       disabled={isLoading}
                     >
-                      {item.status}
+                      {item.status === "Available" ? "Take down" : "Post"}
                     </Button>
                   ) : (
                     item.status
@@ -325,13 +335,15 @@ const ItemsManagement = () => {
           </FormControl>
         </Box>
 
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => setOpenAddItem(true)}
-        >
-          Add New Item
-        </Button>
+        {userRole !== "Admin" && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setOpenAddItem(true)}
+          >
+            Add New Item
+          </Button>
+        )}
       </Box>
       <Paper elevation={3}>
         <Tabs
@@ -353,6 +365,7 @@ const ItemsManagement = () => {
           renderTable()
         )}
       </Paper>
+
       <AddItem
         open={openAddItem}
         onClose={() => setOpenAddItem(false)}

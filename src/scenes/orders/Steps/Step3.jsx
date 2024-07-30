@@ -27,7 +27,8 @@ const Step3 = ({ prevStep }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [amountGiven, setAmountGiven] = useState("");
   const [change, setChange] = useState(null);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [orderId, setOrderId] = useState("");
   const [openModal, setOpenModal] = useState(false);
   const navigate = useNavigate();
@@ -50,10 +51,9 @@ const Step3 = ({ prevStep }) => {
 
     try {
       setIsLoading(true);
-      setError(null);
-      setChange(null);
+      setError("");
+      setSuccessMessage("");
 
-      // Create the order
       const orderResponse = await ApiService.createOrderbyStaff(
         shopId,
         orderData
@@ -84,7 +84,7 @@ const Step3 = ({ prevStep }) => {
 
     try {
       setIsLoading(true);
-      setError(null);
+      setError("");
       const checkoutResponse = await ApiService.checkOutWithCash(
         shopId,
         orderId,
@@ -93,12 +93,13 @@ const Step3 = ({ prevStep }) => {
 
       const changeAmount = checkoutResponse.change;
       setChange(changeAmount);
-      alert("Change: " + formatCurrency(changeAmount.toString()));
-      alert("Checked out successfully");
-      clearCart();
-
       setOpenModal(false);
-      navigate("/order-staff");
+      navigate("/order");
+      alert(
+        "Checked out successfully! Change: " +
+          formatCurrency(changeAmount.toString())
+      );
+      clearCart();
     } catch (error) {
       if (error.response && error.response.data.detail === "not enough money") {
         setError("Not enough money provided.");
@@ -210,6 +211,11 @@ const Step3 = ({ prevStep }) => {
           {error && (
             <Box sx={{ mt: 2 }}>
               <Alert severity="error">{error}</Alert>
+            </Box>
+          )}
+          {successMessage && (
+            <Box sx={{ mt: 2 }}>
+              <Alert severity="success">{successMessage}</Alert>
             </Box>
           )}
         </>
