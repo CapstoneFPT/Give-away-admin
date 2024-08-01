@@ -49,10 +49,20 @@ const Step1 = ({ nextStep }) => {
   return (
     <Container maxWidth="sm">
       <Box sx={{ mt: 4, mb: 4, textAlign: "center" }}>
-        <Typography variant="h4" gutterBottom>
-          Select Customer
+        <Typography
+          variant="h4"
+          fontWeight={50}
+          fontSize={40}
+          fontStyle={"inherit"}
+          mb={20}
+        >
+          Create order
         </Typography>
+
         <Box sx={{ mb: 2 }}>
+          <Typography variant="h4" gutterBottom>
+            Select Customer
+          </Typography>
           <Button
             variant={hasAccount ? "contained" : "outlined"}
             onClick={() => setHasAccount(true)}

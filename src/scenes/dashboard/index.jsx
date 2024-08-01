@@ -36,7 +36,7 @@ const Dashboard = () => {
       }
     };
     fetchUserFullName();
-  }, [userId]); // useEffect sẽ chạy lại khi userId thay đổi
+  }, [userId, userName]); // useEffect sẽ chạy lại khi userId thay đổi
   return (
     <Box m="20px">
       {/* HEADER */}
