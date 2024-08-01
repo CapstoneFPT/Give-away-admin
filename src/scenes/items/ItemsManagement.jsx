@@ -39,7 +39,7 @@ const ItemsManagement = () => {
   const [openAddItem, setOpenAddItem] = useState(false);
   const [type, setType] = useState("ItemBase");
   const [openAuctionForm, setOpenAuctionForm] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItem, setSelectedItem] = useState("");
   const [statusFilter, setStatusFilter] = useState("Available");
   const userRole = localStorage.getItem("role");
   const shopId = userRole === "Admin" ? "" : localStorage.getItem("shopId");
@@ -195,7 +195,7 @@ const ItemsManagement = () => {
       await ApiService.createAuction(auctionData);
       alert("Auction created successfully");
       setOpenAuctionForm(false);
-      getFashionItems(page, pageSize, searchQuery, type);
+      getFashionItems(page, pageSize, statusFilter, searchQuery, type);
     } catch (error) {
       alert("Failed to create auction: " + error.message);
     }

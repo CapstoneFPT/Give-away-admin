@@ -26,7 +26,7 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
     consigner: "",
     phone: "",
     address: "",
-    email: "",
+
     fashionItemForConsigns: [
       {
         name: "",
@@ -169,7 +169,7 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
         consigner: newConsign.consigner,
         phone: newConsign.phone,
         address: newConsign.address,
-        email: newConsign.email,
+
         fashionItemForConsigns: newConsign.fashionItemForConsigns.map(
           (item) => ({
             name: item.name,
@@ -198,7 +198,7 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
         consigner: "",
         phone: "",
         address: "",
-        email: "",
+
         fashionItemForConsigns: [
           {
             name: "",
@@ -307,15 +307,6 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
                   label="Address"
                   name="address"
                   value={newConsign.address}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Email"
-                  name="email"
-                  value={newConsign.email}
                   onChange={handleChange}
                 />
               </Grid>

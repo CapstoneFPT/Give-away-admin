@@ -48,7 +48,7 @@ const Step3 = ({ prevStep }) => {
       email: customerInfo.email,
       listItemId: cartItems.map((item) => item.itemId),
     };
-
+    console.log(orderData);
     try {
       setIsLoading(true);
       setError("");

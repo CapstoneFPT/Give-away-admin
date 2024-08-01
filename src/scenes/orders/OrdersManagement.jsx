@@ -36,7 +36,7 @@ const OrderManagement = () => {
   const [shopId, setShopId] = useState("");
   const [userRole, setUserRole] = useState("");
   const navigate = useNavigate();
-
+  console.log(orders);
   const fetchOrdersForStaff = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -153,7 +153,15 @@ const OrderManagement = () => {
       alert("Failed to cancel order: " + error.message);
     }
   };
-
+  const handleConfirmOrder = async (orderId) => {
+    try {
+      await ApiService.confirmOrder(orderId);
+      alert("Order confirmed successfully.");
+      getOrders();
+    } catch (error) {
+      alert("Failed to confirm delivery: " + error.message);
+    }
+  };
   const handleConfirmDelivery = async (orderId) => {
     try {
       await ApiService.updateOrderByStaff(orderId);
@@ -226,6 +234,16 @@ const OrderManagement = () => {
                 </TableCell>
                 <TableCell>
                   <div style={{ display: "flex" }}>
+                    {order.status === "Pending" && (
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => handleConfirmOrder(order.orderId)}
+                        sx={{ ml: 1 }}
+                      >
+                        Confirm Order
+                      </Button>
+                    )}
                     {order.status === "OnDelivery" && (
                       <Button
                         variant="contained"
@@ -309,6 +327,7 @@ const OrderManagement = () => {
               id="status-select"
             >
               <MenuItem value="">All</MenuItem>
+              <MenuItem value="Pending">Pending</MenuItem>
               <MenuItem value="AwaitingPayment">Awaiting Payment</MenuItem>
               <MenuItem value="OnDelivery">On Delivery</MenuItem>
               <MenuItem value="Completed">Completed</MenuItem>

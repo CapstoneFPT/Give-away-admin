@@ -17,7 +17,23 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
   rejectAuctionByAdmin: async (auctionId) => {
@@ -27,7 +43,23 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
   getAuction: async (searchTerm, page, pageSize) => {
@@ -37,7 +69,49 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
+    }
+  },
+  confirmRefundStatus: async (refundId) => {
+    try {
+      const response = await axiosInstance.put(
+        `/api/refunds/${refundId}/confirm-received-and-refund`
+      );
+      return response.data;
+    } catch (error) {
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
   updateRefundStatus: async (refundId, refundData) => {
@@ -48,7 +122,23 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
   checkOutWithCash: async (shopId, orderId, amountGiven) => {
@@ -59,7 +149,49 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
+    }
+  },
+  confirmOrder: async (orderId) => {
+    try {
+      const response = await axiosInstance.put(
+        `/api/orders/${orderId}/confirm-pending-order`
+      );
+      return response.data;
+    } catch (error) {
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
   updateOrderByStaff: async (orderId) => {
@@ -69,7 +201,23 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
   cancelOrderByStaff: async (orderId) => {
@@ -77,7 +225,23 @@ const ApiService = {
       const response = await axiosInstance.put(`/api/orders/${orderId}/cancel`);
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
 
@@ -88,7 +252,49 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
+    }
+  },
+  getAllRefunds: async (searchDate) => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/refunds?PreviousTime=${searchDate}`
+      );
+      return response.data;
+    } catch (error) {
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
   updateConsignStatus: async (consignSaleId, status) => {
@@ -98,7 +304,23 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
   updateConsignStatusToRecieved: async (consignSaleId) => {
@@ -108,7 +330,23 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
   getCategoryByGender: async (genderId) => {
@@ -118,7 +356,23 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
 
@@ -129,7 +383,23 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
   createOrderbyStaff: async (shopId, orderData) => {
@@ -140,7 +410,23 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
   getOrderByShopId: async (shopId, page, pageSize, status, searchTerm) => {
@@ -150,7 +436,49 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
+    }
+  },
+  getOneOrder: async (orderCode) => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/orders?OrderCode=${orderCode}`
+      );
+      return response.data;
+    } catch (error) {
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
   getOrderByAdmin: async (page, pageSize, status, searchTerm) => {
@@ -160,7 +488,23 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
   getLeavesCategories: async () => {
@@ -170,7 +514,23 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
   addItemByShopId: async (shopId, newItem) => {
@@ -181,7 +541,23 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
 
@@ -190,7 +566,23 @@ const ApiService = {
       const response = await axiosInstance.get(`/api/accounts/${accountId}`);
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
   updateAccountStatus: async (accountId) => {
@@ -199,7 +591,23 @@ const ApiService = {
 `);
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
   getAllAccounts: async (page, pageSize, phone) => {
@@ -210,7 +618,23 @@ const ApiService = {
 
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
   getAccountByPhone: async (phone) => {
@@ -221,7 +645,23 @@ const ApiService = {
 
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
   authLogin: async (email, password) => {
@@ -232,7 +672,23 @@ const ApiService = {
       });
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
   createConsignByStaff: async (shopId, payload) => {
@@ -243,7 +699,23 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
 
@@ -255,7 +727,23 @@ const ApiService = {
 
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
   getItemForOrder: async (searchQuery, shopId) => {
@@ -265,7 +753,23 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
   getItemsByShopId: async (
@@ -291,7 +795,23 @@ const ApiService = {
 
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
   getConsignDetailByCode: async (shopId, ConsignSaleCode) => {
@@ -301,7 +821,23 @@ const ApiService = {
       );
       return response.data.data.items[0];
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
   createAuction: async (auctionData) => {
@@ -310,7 +846,23 @@ const ApiService = {
 
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || error.message);
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   },
 };

@@ -40,9 +40,6 @@ const AuctionForm = ({ open, onClose, onSubmit, item }) => {
       shopId,
       auctionItemId: item.itemId,
     });
-    console.log(item.itemId);
-    console.log(auctionData);
-    console.log(shopId);
   };
 
   const today = new Date().toISOString().split("T")[0];
@@ -97,13 +94,13 @@ const AuctionForm = ({ open, onClose, onSubmit, item }) => {
             value={auctionData.timeslotId}
             onChange={handleChange}
           >
-            <MenuItem value="0cb73259-020a-cc63-76db-bce40eb3312f">
+            <MenuItem value="59339af2-e275-4d76-a540-c60e5c5c5ad3">
               Timeslot 1
             </MenuItem>
-            <MenuItem value="0cb73259-020a-cc63-76db-bce40eb3312f">
+            <MenuItem value="59339af2-e275-4d76-a540-c60e5c5c5ad3">
               Timeslot 2
             </MenuItem>
-            <MenuItem value="0cb73259-020a-cc63-76db-bce40eb3312f">
+            <MenuItem value="59339af2-e275-4d76-a540-c60e5c5c5ad3">
               Timeslot 3
             </MenuItem>
           </Select>

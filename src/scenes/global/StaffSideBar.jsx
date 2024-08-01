@@ -7,9 +7,6 @@ import { tokens } from "../../theme";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 
 import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
-import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 
@@ -48,8 +45,8 @@ const StaffSideBar = () => {
       sx={{
         height: "100vh",
         "& .pro-sidebar-inner": {
-          background: `${colors.primary[400]} !important`,
           height: "100vh",
+          background: `${colors.primary[400]} !important`,
         },
         "& .pro-icon-wrapper": {
           backgroundColor: "transparent !important",
@@ -110,6 +107,13 @@ const StaffSideBar = () => {
               setSelected={setSelected}
             />
             <Item
+              title="Item"
+              to="/manage-items"
+              icon={<ReceiptOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
               title="Orders"
               to="/order"
               icon={<ReceiptOutlinedIcon />}
@@ -130,24 +134,11 @@ const StaffSideBar = () => {
               selected={selected}
               setSelected={setSelected}
             />
+
             <Item
-              title="Manage Items"
-              to="/manage-items"
-              icon={<CalendarTodayOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Profile"
-              to="/manage-accounts"
-              icon={<PersonOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Help"
-              to="/team"
-              icon={<HelpOutlineOutlinedIcon />}
+              title="Refund"
+              to="/refund"
+              icon={<ReceiptOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />

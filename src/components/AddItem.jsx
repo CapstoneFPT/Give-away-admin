@@ -23,7 +23,7 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
     sellingPrice: 0,
     name: "",
     note: "",
-    value: 0,
+
     condition: "",
     brand: "",
     color: "",
@@ -100,7 +100,7 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
         sellingPrice: 0,
         name: "",
         note: "",
-        value: 0,
+
         condition: 0,
         brand: "",
         color: "",
@@ -181,19 +181,7 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
               onChange={handleItemChange}
             />
           </Grid>
-          <Grid item xs={6}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="value"
-              label="Value"
-              name="value"
-              type="number"
-              value={newItem.value}
-              onChange={handleItemChange}
-            />
-          </Grid>
+
           <Grid item xs={6}>
             <TextField
               margin="normal"
@@ -294,7 +282,7 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={6}></Grid>
+
           <input
             accept="image/*"
             id="upload-images"
