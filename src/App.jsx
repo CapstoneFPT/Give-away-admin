@@ -52,7 +52,7 @@ function App() {
             display: "flex",
             minHeight: "100vh",
             height: "100vh",
-            overflow: "hidden", // Prevents scrollbars on the main container
+            overflow: "hidden",
           }}
         >
           {!isLoginPath &&
@@ -74,7 +74,7 @@ function App() {
               style={{
                 flex: 1,
                 padding: isLoginPath ? 0 : "20px",
-                overflow: "auto", // Ensures content can scroll if needed
+                overflow: "auto",
               }}
             >
               <Routes>
@@ -91,7 +91,7 @@ function App() {
                 <Route
                   path="/refund"
                   element={
-                    <ProtectedRoute allowedRoles={["Staff"]}>
+                    <ProtectedRoute allowedRoles={["Staff", "Admin"]}>
                       <RefundManagement />
                     </ProtectedRoute>
                   }

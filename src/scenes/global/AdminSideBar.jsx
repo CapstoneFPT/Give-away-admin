@@ -134,6 +134,13 @@ const AdminSideBar = () => {
               setSelected={setSelected}
             />
             <Item
+              title="Refund"
+              to="/refund"
+              icon={<ReceiptOutlined />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
               title="Auction"
               to="/auction"
               icon={<GavelOutlined />}

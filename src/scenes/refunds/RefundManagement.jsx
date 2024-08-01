@@ -17,10 +17,15 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 import ApiService from "../../services/apiServices"; // Ensure the path is correct
 
@@ -30,33 +35,49 @@ const formatCurrency = (value) => {
 };
 
 const RefundManagement = () => {
+  const navigate = useNavigate(); // Initialize useNavigate
   const [refunds, setRefunds] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedRefund, setSelectedRefund] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date()); // Default to today
+  const [refundStatus, setRefundStatus] = useState("");
+  const [description, setDescription] = useState("");
+  const [refundPercentage, setRefundPercentage] = useState(0);
+  const [isRejecting, setIsRejecting] = useState(false);
   const shopId = localStorage.getItem("shopId");
+  const userRole = localStorage.getItem("role");
 
-  console.log(selectedDate);
   useEffect(() => {
     const fetchRefunds = async () => {
+      setIsLoading(true); // Set loading state
       try {
         const formattedDate = selectedDate.toISOString(); // Format date to ISO string
-        const data = await ApiService.getRefundByShopId(shopId, formattedDate);
+        let data;
+
+        if (userRole === "Admin") {
+          data = await ApiService.getAllRefunds(formattedDate);
+        } else {
+          data = await ApiService.getRefundByShopId(shopId, formattedDate);
+        }
+
         setRefunds(data.data.items);
-        console.log(data);
       } catch (error) {
         console.error("Failed to fetch refunds:", error);
       } finally {
-        setIsLoading(false);
+        setIsLoading(false); // Reset loading state
       }
     };
 
     fetchRefunds();
-  }, [shopId, selectedDate]);
+  }, [shopId, selectedDate, userRole]);
 
   const handleViewRefund = (refund) => {
     setSelectedRefund(refund);
+    setRefundStatus(refund.refundStatus); // Set initial status
+    setDescription(""); // Clear description
+    setRefundPercentage(refund.refundPercentage || 0); // Set refund percentage or default to 0
+    setIsRejecting(false);
     setOpenDialog(true);
   };
 
@@ -65,14 +86,69 @@ const RefundManagement = () => {
     setSelectedRefund(null);
   };
 
-  const handleRequestRefund = () => {
-    // Implement the logic for requesting a refund
-    alert("Refund request functionality will be implemented here.");
+  const handleUpdateRefundStatus = async () => {
+    if (
+      refundStatus === "Approved" &&
+      (refundPercentage < 0 || refundPercentage > 100)
+    ) {
+      alert("Refund percentage must be between 0 and 100");
+      return;
+    }
+
+    if (refundStatus === "Rejected" && description.trim() === "") {
+      alert("Description is required for rejection.");
+      return;
+    }
+
+    try {
+      const refundData = {
+        status: refundStatus,
+        refundPercentage: refundStatus === "Approved" ? refundPercentage : 0,
+        description: refundStatus === "Rejected" ? description : "",
+      };
+
+      await ApiService.updateRefundStatus(selectedRefund.refundId, refundData);
+      alert("Refund status updated successfully.");
+      handleCloseDialog();
+      navigate("/refund"); // Redirect to /refund page after update
+    } catch (error) {
+      alert(`Failed to update refund status: ${error.message}`);
+    }
   };
 
-  if (isLoading) {
-    return <CircularProgress />;
-  }
+  const handleConfirmRefund = async () => {
+    try {
+      await ApiService.confirmRefundStatus(selectedRefund.refundId);
+      alert("Refund delivery confirmed.");
+      handleCloseDialog();
+      navigate("/refund"); // Redirect to /refund page after confirmation
+    } catch (error) {
+      alert(`Failed to confirm refund delivery: ${error.message}`);
+    }
+  };
+
+  const handleRejectRefund = async () => {
+    if (description.trim() === "") {
+      alert("Description is required for rejection.");
+      return;
+    }
+
+    try {
+      await ApiService.updateRefundStatus(selectedRefund.refundId, {
+        status: "Rejected",
+        description,
+      });
+      alert("Refund rejected successfully.");
+      handleCloseDialog();
+      navigate("/refund"); // Redirect to /refund page after rejection
+    } catch (error) {
+      alert(`Failed to reject refund: ${error.message}`);
+    }
+  };
+
+  const handleRequestRefund = () => {
+    alert("Refund request functionality will be implemented here.");
+  };
 
   return (
     <Container sx={{ mt: 4 }}>
@@ -89,7 +165,11 @@ const RefundManagement = () => {
           />
         </LocalizationProvider>
       </Box>
-      {refunds.length === 0 ? (
+      {isLoading ? (
+        <Box display="flex" justifyContent="center" mt={4}>
+          <CircularProgress />
+        </Box>
+      ) : refunds.length === 0 ? (
         <Box>
           <Typography variant="h6">No refunds available</Typography>
           <Button
@@ -126,8 +206,7 @@ const RefundManagement = () => {
                   <TableCell>{refund.refundStatus}</TableCell>
                   <TableCell>
                     {formatCurrency(refund.orderDetailsResponse.unitPrice)}
-                  </TableCell>{" "}
-                  {/* Format amount */}
+                  </TableCell>
                   <TableCell>
                     <Button
                       variant="contained"
@@ -148,6 +227,7 @@ const RefundManagement = () => {
         <DialogContent>
           {selectedRefund && (
             <Box>
+              {/* Display Refund Details */}
               <Typography variant="h6">
                 Refund ID: {selectedRefund.refundId}
               </Typography>
@@ -160,6 +240,9 @@ const RefundManagement = () => {
                 Order Detail ID: {selectedRefund.orderDetailId}
               </Typography>
               <Typography>Status: {selectedRefund.refundStatus}</Typography>
+              <Typography>
+                Item Status: {selectedRefund.orderDetailsResponse.itemStatus}
+              </Typography>
               <Typography>
                 Refund Expiration Date:{" "}
                 {new Date(
@@ -175,7 +258,6 @@ const RefundManagement = () => {
               </Typography>
               {selectedRefund.images.length > 0 && (
                 <Box mt={2}>
-                  <Typography>Images:</Typography>
                   {selectedRefund.images.map((image, index) => (
                     <img
                       key={index}
@@ -189,6 +271,118 @@ const RefundManagement = () => {
                       }}
                     />
                   ))}
+                </Box>
+              )}
+
+              {selectedRefund.refundStatus === "Pending" && (
+                <Box mt={2}>
+                  <FormControl fullWidth margin="normal">
+                    <InputLabel>Status</InputLabel>
+                    <Select
+                      value={refundStatus}
+                      onChange={(e) => {
+                        const status = e.target.value;
+                        setRefundStatus(status);
+                        if (status === "Rejected") {
+                          setRefundPercentage(0);
+                        }
+                      }}
+                      label="Status"
+                    >
+                      <MenuItem value="Approved">Approved</MenuItem>
+                      <MenuItem value="Rejected">Rejected</MenuItem>
+                    </Select>
+                  </FormControl>
+                  {refundStatus === "Approved" && (
+                    <Box>
+                      <TextField
+                        label="Refund Percentage"
+                        type="number"
+                        value={refundPercentage}
+                        onChange={(e) =>
+                          setRefundPercentage(Number(e.target.value))
+                        }
+                        fullWidth
+                        margin="normal"
+                        InputProps={{ inputProps: { min: 0, max: 100 } }}
+                      />
+                      <TextField
+                        label="Description"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        fullWidth
+                        margin="normal"
+                      />
+                    </Box>
+                  )}
+                  {refundStatus === "Rejected" && (
+                    <TextField
+                      label="Description"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      fullWidth
+                      margin="normal"
+                    />
+                  )}
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleUpdateRefundStatus}
+                    style={{ marginTop: 10 }}
+                  >
+                    Update Status
+                  </Button>
+                </Box>
+              )}
+
+              {selectedRefund.refundStatus === "Approved" && (
+                <Box mt={2}>
+                  {!isRejecting ? (
+                    <>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={() => setIsRejecting(true)}
+                        style={{ marginRight: 10 }}
+                      >
+                        Reject
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleConfirmRefund}
+                      >
+                        Confirm Delivery
+                      </Button>
+                    </>
+                  ) : (
+                    <Box mt={2}>
+                      <TextField
+                        label="Description"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        fullWidth
+                        margin="normal"
+                      />
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={handleRejectRefund}
+                        style={{ marginTop: 10 }}
+                      >
+                        Update Status
+                      </Button>
+                    </Box>
+                  )}
+                </Box>
+              )}
+
+              {(selectedRefund.refundStatus === "Completed" ||
+                selectedRefund.refundStatus === "Rejected") && (
+                <Box mt={2}>
+                  <Typography>
+                    No actions available for this refund status.
+                  </Typography>
                 </Box>
               )}
             </Box>
