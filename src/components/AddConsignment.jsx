@@ -26,11 +26,12 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
     consigner: "",
     phone: "",
     address: "",
-
+    email: "",
     fashionItemForConsigns: [
       {
         name: "",
         note: "",
+        description: "",
         confirmedPrice: 0,
         condition: 0,
         categoryId: "", // New field
@@ -45,7 +46,8 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const shopId = localStorage.getItem("shopId");
-  console.log(newConsign);
+  console.log(shopId);
+
   const getCateByGender = async (genderId) => {
     try {
       const response = await ApiService.getCategoryByGender(genderId);
@@ -134,14 +136,14 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
           {
             name: "",
             note: "",
+            description: "",
             confirmedPrice: 0,
             condition: 0,
-            categoryId: "", // New field
-            size: "",
+            categoryId: "",
             color: "",
             brand: "",
             gender: "",
-            images: [], // Changed from image
+            images: [],
           },
         ],
       }));
@@ -162,18 +164,17 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
   const handleSubmit = async () => {
     try {
       setIsLoading(true);
-
-      // Prepare the payload
       const payload = {
         type: newConsign.type,
         consigner: newConsign.consigner,
         phone: newConsign.phone,
         address: newConsign.address,
-
+        email: newConsign.email,
         fashionItemForConsigns: newConsign.fashionItemForConsigns.map(
           (item) => ({
             name: item.name,
             note: item.note,
+            description: item.description,
             confirmedPrice: item.confirmedPrice,
             condition: item.condition,
             categoryId: item.categoryId,
@@ -181,18 +182,16 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
             color: item.color,
             brand: item.brand,
             gender: item.gender,
-            images: item.images, // assuming these are already URLs
+            images: item.images,
           })
         ),
       };
-
-      // Make the API call
+      console.log(payload);
       await ApiService.createConsignByStaff(shopId, payload);
 
       alert("Consignment added successfully");
       onAddSuccess();
 
-      // Reset the form
       setNewConsign({
         type: "",
         consigner: "",
@@ -203,6 +202,7 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
           {
             name: "",
             note: "",
+            description: "",
             confirmedPrice: 0,
             condition: 0,
             categoryId: "",
@@ -304,6 +304,15 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
               <Grid item xs={12}>
                 <TextField
                   fullWidth
+                  label="Email"
+                  name="email"
+                  value={newConsign.email}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
                   label="Address"
                   name="address"
                   value={newConsign.address}
@@ -335,6 +344,15 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
                       onChange={(e) => handleItemChange(e, index)}
                     />
                   </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      label="Description"
+                      name="description"
+                      value={item.description}
+                      onChange={(e) => handleItemChange(e, index)}
+                    />
+                  </Grid>
                   <Grid item xs={6}>
                     <TextField
                       fullWidth
@@ -344,7 +362,7 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
                       onChange={(e) => handleItemChange(e, index)}
                       InputProps={{
                         startAdornment: (
-                          <InputAdornment position="start">$</InputAdornment>
+                          <InputAdornment position="start">VND</InputAdornment>
                         ),
                       }}
                     />

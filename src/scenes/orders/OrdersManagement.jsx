@@ -36,7 +36,7 @@ const OrderManagement = () => {
   const [shopId, setShopId] = useState("");
   const [userRole, setUserRole] = useState("");
   const navigate = useNavigate();
-  console.log(orders);
+
   const fetchOrdersForStaff = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -153,6 +153,7 @@ const OrderManagement = () => {
       alert("Failed to cancel order: " + error.message);
     }
   };
+
   const handleConfirmOrder = async (orderId) => {
     try {
       await ApiService.confirmOrder(orderId);
@@ -162,6 +163,7 @@ const OrderManagement = () => {
       alert("Failed to confirm delivery: " + error.message);
     }
   };
+
   const handleConfirmDelivery = async (orderId) => {
     try {
       await ApiService.updateOrderByStaff(orderId);
@@ -171,7 +173,22 @@ const OrderManagement = () => {
       alert("Failed to confirm delivery: " + error.message);
     }
   };
-
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Completed":
+        return "green";
+      case "Cancelled":
+        return "red";
+      case "Pending":
+        return "#FFA700"; // yellow
+      case "OnDelivery":
+        return "#567de8"; // blue
+      case "AwaitingPayment":
+        return "#e27bb1";
+      default:
+        return "text.secondary";
+    }
+  };
   const renderTable = () => (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -204,7 +221,7 @@ const OrderManagement = () => {
             <TableCell>
               <h2>Details</h2>
             </TableCell>
-            <TableCell style={{ display: "flex", justifyContent: "center" }}>
+            <TableCell>
               <h2>Actions</h2>
             </TableCell>
           </TableRow>
@@ -217,7 +234,15 @@ const OrderManagement = () => {
                 <TableCell>{order.orderCode}</TableCell>
                 <TableCell>{order.customerName}</TableCell>
                 <TableCell>{order.recipientName}</TableCell>
-                <TableCell>{order.status}</TableCell>
+
+                <TableCell
+                  style={{
+                    color: getStatusColor(order.status),
+                    fontSize: "15px",
+                  }}
+                >
+                  <strong> {order.status}</strong>
+                </TableCell>
                 <TableCell>{order.paymentMethod}</TableCell>
                 <TableCell>
                   {new Date(order.createdDate).toLocaleString()}

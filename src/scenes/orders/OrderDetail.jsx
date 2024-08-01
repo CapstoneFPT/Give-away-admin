@@ -296,9 +296,6 @@ const OrderDetail = () => {
         <DialogContent>
           {selectedItem && (
             <Box>
-              <Typography variant="h6">
-                Item Name: {selectedItem.itemName}
-              </Typography>
               <img
                 src={selectedItem.itemImage[0]}
                 alt={selectedItem.itemName}
@@ -313,6 +310,10 @@ const OrderDetail = () => {
               >
                 Status: {selectedItem.itemStatus}
               </Typography>
+              <Typography variant="h6">
+                <strong>Item Name:</strong> {selectedItem.itemName}
+              </Typography>
+
               <Typography>
                 <strong>Price:</strong> {formatPrice(selectedItem.unitPrice)}{" "}
                 VND

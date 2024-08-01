@@ -22,7 +22,7 @@ const AuctionManagement = () => {
   const [pageSize, setPageSize] = useState(5);
   const [totalCount, setTotalCount] = useState(0);
   const userRole = localStorage.getItem("role");
-  console.log(auctions);
+
   const fetchAuctions = async (searchTerm, page, pageSize) => {
     setIsLoading(true);
     try {
@@ -76,6 +76,21 @@ const AuctionManagement = () => {
     }
   };
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Approved":
+        return "green";
+      case "Rejected":
+        return "red";
+      case "Pending":
+        return "#FFA700";
+      case "OnGoing":
+        return "#567de8";
+      default:
+        return "text.secondary";
+    }
+  };
+
   return (
     <Container>
       <Typography variant="h4" gutterBottom>
@@ -103,31 +118,43 @@ const AuctionManagement = () => {
         <Grid container spacing={2}>
           {auctions.map((auction) => (
             <Grid item xs={12} sm={6} md={4} key={auction.auctionId}>
-              <Card>
+              <Card style={{ height: "100%" }}>
                 <CardMedia
                   component="img"
                   height="140"
                   image={auction.imageUrl}
                   alt={auction.title}
                 />
-                <CardContent>
+                <CardContent style={{ flex: "1 0 auto" }}>
                   <Typography gutterBottom variant="h5" component="div">
                     {auction.title}
                   </Typography>
+                  <Box display="flex" alignItems="center">
+                    <Typography variant="body2" component="span">
+                      <strong>Status: </strong>
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      ml={1}
+                      fontSize={15}
+                      style={{ color: getStatusColor(auction.status) }}
+                    >
+                      {auction.status}
+                    </Typography>
+                  </Box>
                   <Typography variant="body2" color="text.secondary">
-                    Status: {auction.status}
+                    <strong> Start Date: </strong>{" "}
+                    {new Date(auction.startDate).toLocaleString()}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Start Date: {new Date(auction.startDate).toLocaleString()}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    End Date: {new Date(auction.endDate).toLocaleString()}
+                    <strong> End Date: </strong>{" "}
+                    {new Date(auction.endDate).toLocaleString()}
                   </Typography>
                   {userRole === "Admin" && auction.status === "Pending" && (
                     <Box mt={2}>
                       <Button
                         variant="contained"
-                        color="primary"
+                        color="secondary"
                         onClick={() => handleApprove(auction.auctionId)}
                         style={{ marginRight: "10px" }}
                       >
@@ -135,7 +162,7 @@ const AuctionManagement = () => {
                       </Button>
                       <Button
                         variant="contained"
-                        color="secondary"
+                        color="error"
                         onClick={() => handleReject(auction.auctionId)}
                       >
                         Reject

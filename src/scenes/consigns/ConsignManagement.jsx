@@ -18,19 +18,24 @@ import { Add } from "@mui/icons-material";
 import { debounce } from "lodash";
 import ApiService from "../../services/apiServices";
 import AddConsignment from "../../components/AddConsignment";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { DatePicker } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
 const ConsignManagement = () => {
   const [consignments, setConsignments] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
   const [open, setOpen] = useState(false);
-  const shopId = localStorage.getItem("shopId");
   const [pageSize, setPageSize] = useState(5);
-  const navigate = useNavigate();
   const [tabIndex, setTabIndex] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
-
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const shopId = localStorage.getItem("shopId");
+  const navigate = useNavigate();
+  console.log(startDate);
   const statusTabs = useMemo(
     () => [
       { label: "All", value: "" },
@@ -43,18 +48,50 @@ const ConsignManagement = () => {
     ],
     []
   );
-
   const fetchConsignments = useCallback(
-    async (page, pageSize, status, searchTerm) => {
+    async (page, pageSize, status, startDate, endDate, searchTerm) => {
       setIsLoading(true);
       try {
-        const response = await ApiService.getAllConsignments(
-          shopId,
-          page,
-          pageSize,
-          status,
-          searchTerm
-        );
+        let response;
+
+        if (startDate && endDate) {
+          response = await ApiService.getConsignmentsByBothDate(
+            shopId,
+            page,
+            pageSize,
+            status,
+            startDate.toISOString(),
+            endDate.toISOString(),
+            searchTerm
+          );
+        } else if (startDate) {
+          response = await ApiService.getConsignmentsByStartDate(
+            shopId,
+            page,
+            pageSize,
+            status,
+            startDate.toISOString(),
+            searchTerm
+          );
+        } else if (endDate) {
+          response = await ApiService.getConsignmentsByEndDate(
+            shopId,
+            page,
+            pageSize,
+            status,
+            endDate.toISOString(),
+            searchTerm
+          );
+        } else {
+          response = await ApiService.getAllConsignments(
+            shopId,
+            page,
+            pageSize,
+            status,
+            searchTerm
+          );
+        }
+
         const data = response.data;
         if (data && data.items) {
           setConsignments(data.items);
@@ -73,8 +110,24 @@ const ConsignManagement = () => {
   );
 
   useEffect(() => {
-    fetchConsignments(page, pageSize, statusTabs[tabIndex].value, searchTerm);
-  }, [fetchConsignments, page, pageSize, tabIndex, searchTerm, statusTabs]);
+    fetchConsignments(
+      page,
+      pageSize,
+      statusTabs[tabIndex].value,
+      startDate,
+      endDate,
+      searchTerm
+    );
+  }, [
+    fetchConsignments,
+    page,
+    pageSize,
+    tabIndex,
+    startDate,
+    endDate,
+    searchTerm,
+    statusTabs,
+  ]);
 
   const handleDetailClick = (consignSaleCode) => {
     navigate(`/consign/${consignSaleCode}`);
@@ -90,7 +143,14 @@ const ConsignManagement = () => {
 
   const handleAddSuccess = async () => {
     handleClose();
-    fetchConsignments(page, pageSize, statusTabs[tabIndex].value, searchTerm); // Fetch consignments again after adding a new one
+    fetchConsignments(
+      page,
+      pageSize,
+      statusTabs[tabIndex].value,
+      startDate,
+      endDate,
+      searchTerm
+    ); // Refresh consignments
   };
 
   const handleTabChange = (event, newValue) => {
@@ -119,7 +179,14 @@ const ConsignManagement = () => {
       } else {
         await ApiService.updateConsignStatus(consignSaleId, status);
       }
-      fetchConsignments(page, pageSize, statusTabs[tabIndex].value, searchTerm);
+      fetchConsignments(
+        page,
+        pageSize,
+        statusTabs[tabIndex].value,
+        startDate,
+        endDate,
+        searchTerm
+      );
     } catch (error) {
       console.error(`Failed to update consignment status: ${error.message}`);
     }
@@ -150,6 +217,22 @@ const ConsignManagement = () => {
         fullWidth
         sx={{ mb: 2 }}
       />
+      <Box mb={2} display="flex" gap={2}>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <DatePicker
+            label="Start Date"
+            value={startDate}
+            onChange={(date) => setStartDate(date)}
+            renderInput={(params) => <TextField {...params} />}
+          />
+          <DatePicker
+            label="End Date"
+            value={endDate}
+            onChange={(date) => setEndDate(date)}
+            renderInput={(params) => <TextField {...params} />}
+          />
+        </LocalizationProvider>
+      </Box>
       <Tabs value={tabIndex} onChange={handleTabChange} sx={{ mb: 2 }}>
         {statusTabs.map((tab, index) => (
           <Tab key={index} label={tab.label} />
@@ -172,6 +255,7 @@ const ConsignManagement = () => {
             <TableHead>
               <TableRow>
                 <TableCell>Consignment Code</TableCell>
+                <TableCell>Created Date</TableCell>
                 <TableCell>Start Date</TableCell>
                 <TableCell>End Date</TableCell>
                 <TableCell>Status</TableCell>
@@ -186,6 +270,9 @@ const ConsignManagement = () => {
               {consignments.map((consign) => (
                 <TableRow key={consign.consignSaleId}>
                   <TableCell>{consign.consignSaleCode}</TableCell>
+                  <TableCell>
+                    {new Date(consign.createdDate).toLocaleString()}
+                  </TableCell>
                   <TableCell>
                     {new Date(consign.startDate).toLocaleString()}
                   </TableCell>

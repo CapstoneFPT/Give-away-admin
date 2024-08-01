@@ -32,7 +32,7 @@ const Step3 = ({ prevStep }) => {
   const [orderId, setOrderId] = useState("");
   const [openModal, setOpenModal] = useState(false);
   const navigate = useNavigate();
-
+  console.log(cartItems);
   const handleBack = () => {
     clearCart();
     prevStep();
@@ -41,13 +41,13 @@ const Step3 = ({ prevStep }) => {
   const handleCreateOrder = async () => {
     const shopId = localStorage.getItem("shopId");
     const orderData = {
-      paymentMethod: "Cash",
       address: customerInfo.address || "",
       recipientName: customerInfo.fullname,
       phone: customerInfo.phone,
       email: customerInfo.email,
-      listItemId: cartItems.map((item) => item.itemId),
+      itemIds: cartItems.map((item) => item.itemId),
     };
+    console.log(shopId);
     console.log(orderData);
     try {
       setIsLoading(true);
@@ -232,7 +232,7 @@ const Step3 = ({ prevStep }) => {
       </Box>
 
       <Dialog open={openModal} onClose={() => setOpenModal(false)}>
-        <DialogTitle>Order Details</DialogTitle>
+        <DialogTitle>Order</DialogTitle>
         <DialogContent>
           <Box>
             <Typography>Name: {customerInfo.fullname}</Typography>
@@ -247,6 +247,7 @@ const Step3 = ({ prevStep }) => {
                   <TableCell>Name</TableCell>
                   <TableCell>Brand</TableCell>
                   <TableCell>Price</TableCell>
+                  <TableCell>Status</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -254,9 +255,11 @@ const Step3 = ({ prevStep }) => {
                   <TableRow key={item.itemId}>
                     <TableCell>{item.name}</TableCell>
                     <TableCell>{item.brand}</TableCell>
+
                     <TableCell>
                       {formatCurrency(item.sellingPrice.toString())}
                     </TableCell>
+                    <TableCell>{item.status}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
