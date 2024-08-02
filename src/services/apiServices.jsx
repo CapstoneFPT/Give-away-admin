@@ -297,58 +297,7 @@ const ApiService = {
       throw new Error(errorMessage);
     }
   },
-  updateConsignStatus: async (consignSaleId, status) => {
-    try {
-      const response = await axiosInstance.put(
-        `/api/consginsales/${consignSaleId}/approval?consignStatus=${status}`
-      );
-      return response.data;
-    } catch (error) {
-      // Handle and format the error message
-      let errorMessage = "An unknown error occurred.";
 
-      if (error.response && error.response.data) {
-        const { data } = error.response;
-        if (data.detail) {
-          errorMessage = data.detail;
-        } else if (data.message) {
-          errorMessage = data.message;
-        } else if (data.title) {
-          errorMessage = data.title;
-        }
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-
-      throw new Error(errorMessage);
-    }
-  },
-  updateConsignStatusToRecieved: async (consignSaleId) => {
-    try {
-      const response = await axiosInstance.put(
-        `http://giveawayproject.jettonetto.org:8080/api/consginsales/${consignSaleId}/confirm-received`
-      );
-      return response.data;
-    } catch (error) {
-      // Handle and format the error message
-      let errorMessage = "An unknown error occurred.";
-
-      if (error.response && error.response.data) {
-        const { data } = error.response;
-        if (data.detail) {
-          errorMessage = data.detail;
-        } else if (data.message) {
-          errorMessage = data.message;
-        } else if (data.title) {
-          errorMessage = data.title;
-        }
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-
-      throw new Error(errorMessage);
-    }
-  },
   getCategoryByGender: async (genderId) => {
     try {
       const response = await axiosInstance.get(
@@ -560,7 +509,73 @@ const ApiService = {
       throw new Error(errorMessage);
     }
   },
+  getItemForOrder: async (searchQuery, shopId) => {
+    try {
+      const response = await axiosInstance.get(
+        `api/fashionitems?SearchTerm=${searchQuery}&Status=Available&Type=ItemBase&Type=ConsignedForSale&ShopId=${shopId}`
+      );
+      return response.data;
+    } catch (error) {
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
 
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
+    }
+  },
+  getItemsByShopId: async (
+    page,
+    pageSize,
+    status,
+    searchQuery,
+    type,
+    shopId
+  ) => {
+    const response = await axiosInstance.get(
+      `/api/fashionitems?PageNumber=${page}&PageSize=${pageSize}&Status=${status}&SearchTerm=${searchQuery}&Type=${type}&ShopId=${shopId}`
+    );
+
+    return response.data;
+  },
+  updateItemStatus: async (itemId) => {
+    try {
+      const response = await axiosInstance.put(
+        `/api/fashionitems/${itemId}/check-availability`
+      );
+
+      return response.data;
+    } catch (error) {
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
+    }
+  },
   getAccountDetailById: async (accountId) => {
     try {
       const response = await axiosInstance.get(`/api/accounts/${accountId}`);
@@ -610,10 +625,10 @@ const ApiService = {
       throw new Error(errorMessage);
     }
   },
-  getAllAccounts: async (page, pageSize, phone) => {
+  getAllAccounts: async (page, pageSize, phone, status) => {
     try {
       const response = await axiosInstance.get(
-        `/api/accounts?Page=${page}&PageSize=${pageSize}&Phone=${phone}&Status=Active&Status=Inactive`
+        `/api/accounts?Page=${page}&PageSize=${pageSize}&Phone=${phone}&Status=${status}`
       );
 
       return response.data;
@@ -718,13 +733,12 @@ const ApiService = {
       throw new Error(errorMessage);
     }
   },
-
-  updateItemStatus: async (itemId) => {
+  updateConsignForApprove: async (consignSaleDetailId, updateData) => {
     try {
       const response = await axiosInstance.put(
-        `/api/fashionitems/${itemId}/check-availability`
+        `/api/consginsales/consignsaledetails/${consignSaleDetailId}/update-for-approve`,
+        updateData
       );
-
       return response.data;
     } catch (error) {
       // Handle and format the error message
@@ -746,10 +760,63 @@ const ApiService = {
       throw new Error(errorMessage);
     }
   },
-  getItemForOrder: async (searchQuery, shopId) => {
+  updateConsignStatus: async (consignSaleId, status) => {
+    try {
+      const response = await axiosInstance.put(
+        `/api/consginsales/${consignSaleId}/approval?consignStatus=${status}`
+      );
+      return response.data;
+    } catch (error) {
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
+    }
+  },
+  updateConsignStatusToRecieved: async (consignSaleId) => {
+    try {
+      const response = await axiosInstance.put(
+        `http://giveawayproject.jettonetto.org:8080/api/consginsales/${consignSaleId}/confirm-received`
+      );
+      return response.data;
+    } catch (error) {
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
+    }
+  },
+
+  getListOfItemsByConsignId: async (consignSaleId) => {
     try {
       const response = await axiosInstance.get(
-        `api/fashionitems?SearchTerm=${searchQuery}&Status=Available&Type=ItemBase&Type=ConsignedForSale&ShopId=${shopId}`
+        `/api/consginsales/${consignSaleId}/consignsaledetails`
       );
       return response.data;
     } catch (error) {
@@ -772,29 +839,34 @@ const ApiService = {
       throw new Error(errorMessage);
     }
   },
-  getItemsByShopId: async (
-    page,
-    pageSize,
-    status,
-    searchQuery,
-    type,
-    shopId
-  ) => {
-    const response = await axiosInstance.get(
-      `/api/fashionitems?PageNumber=${page}&PageSize=${pageSize}&Status=${status}&SearchTerm=${searchQuery}&Type=${type}&ShopId=${shopId}`
-    );
+  getOneBigConsignMents: async (consignSaleId) => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/consginsales/${consignSaleId}`
+      );
 
-    return response.data;
+      return response.data;
+    } catch (error) {
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
+    }
   },
-
-  getAllConsignments: async (
-    shopId,
-    page,
-    pageSize,
-    status,
-
-    searchTerm
-  ) => {
+  getAllConsignments: async (shopId, page, pageSize, status, searchTerm) => {
     try {
       const response = await axiosInstance.get(
         `/api/shops/${shopId}/consignsales?PageNumber=${page}&PageSize=${pageSize}&Status=${status}&ConsignSaleCode=${searchTerm}`
@@ -924,32 +996,7 @@ const ApiService = {
       throw new Error(errorMessage);
     }
   },
-  getConsignDetailByCode: async (shopId, ConsignSaleCode) => {
-    try {
-      const response = await axiosInstance.get(
-        `/api/shops/${shopId}/consignsales?ConsignSaleCode=${ConsignSaleCode}`
-      );
-      return response.data.data.items[0];
-    } catch (error) {
-      // Handle and format the error message
-      let errorMessage = "An unknown error occurred.";
 
-      if (error.response && error.response.data) {
-        const { data } = error.response;
-        if (data.detail) {
-          errorMessage = data.detail;
-        } else if (data.message) {
-          errorMessage = data.message;
-        } else if (data.title) {
-          errorMessage = data.title;
-        }
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-
-      throw new Error(errorMessage);
-    }
-  },
   createAuction: async (auctionData) => {
     try {
       const response = await axiosInstance.post(`/api/auctions`, auctionData);

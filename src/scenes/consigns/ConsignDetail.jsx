@@ -1,119 +1,284 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import ApiService from "../../services/apiServices";
 import {
   Box,
-  Button,
   CircularProgress,
   Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
   Paper,
   Divider,
-  Grid,
-  Card,
-  CardMedia,
-  CardContent,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  Button,
 } from "@mui/material";
-import ApiService from "../../services/apiServices";
+import { InfoOutlined } from "@mui/icons-material";
 
 const ConsignDetail = () => {
-  const formatNumber = (num) => {
-    return num.toLocaleString("vn", { minimumFractionDigits: 0 });
-  };
-  const { consignSaleCode } = useParams();
-  const navigate = useNavigate();
+  const { consignSaleId } = useParams();
   const [consignDetail, setConsignDetail] = useState(null);
+  const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const shopId = localStorage.getItem("shopId");
+  const [open, setOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  console.log(items);
   console.log(consignDetail);
+  const formatMoney = (num) => {
+    return num.toLocaleString("vn", { minimumFractionDigits: 0 }) + " VND";
+  };
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+    const timeOptions = {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    };
+
+    const formattedDate = date.toLocaleDateString(undefined, options);
+    const formattedTime = date.toLocaleTimeString(undefined, timeOptions);
+
+    return `${formattedDate} ---- ${formattedTime}`;
+  };
+  const handleClickOpen = (item) => {
+    setSelectedItem(item);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedItem(null);
+  };
+
   useEffect(() => {
-    const fetchConsign = async () => {
-      setIsLoading(true);
+    const fetchConsignDetail = async () => {
       try {
-        const data = await ApiService.getConsignDetailByCode(
-          shopId,
-          consignSaleCode
+        const detailResponse = await ApiService.getOneBigConsignMents(
+          consignSaleId
         );
-        setConsignDetail(data);
+        setConsignDetail(detailResponse);
+
+        const itemsResponse = await ApiService.getListOfItemsByConsignId(
+          consignSaleId
+        );
+        setItems(itemsResponse.data);
       } catch (error) {
-        console.error("Failed to fetch consignment:", error.message);
+        console.error("Failed to fetch consignment details:", error.message);
       } finally {
         setIsLoading(false);
       }
     };
-    fetchConsign();
-  }, [shopId, consignSaleCode]);
+
+    fetchConsignDetail();
+  }, [consignSaleId]);
+
+  if (isLoading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100%"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (!consignDetail) {
+    return (
+      <Box sx={{ p: 4 }}>
+        <Typography>No consignment details found.</Typography>
+      </Box>
+    );
+  }
 
   return (
-    <Box p={2}>
-      <Button variant="contained" onClick={() => navigate(-1)} sx={{ mb: 2 }}>
-        Back
-      </Button>
-      {isLoading ? (
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          height="100%"
-        >
-          <CircularProgress />
-        </Box>
-      ) : consignDetail ? (
-        <Box>
-          <Typography variant="h4" gutterBottom>
-            Consignment Detail
+    <Box sx={{ p: 4 }}>
+      <Paper elevation={3} sx={{ p: 2, mb: 3 }}>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Typography
+            variant="h6"
+            style={{ fontSize: "30px", fontWeight: "bold" }}
+          >
+            Consignment Code: {consignDetail.data.consignSaleCode}
           </Typography>
-          <Paper elevation={3} sx={{ p: 2, mb: 2 }}>
-            <Typography variant="h6">
-              Consignment Code: {consignDetail.consignSaleCode}
+          <Typography>
+            <strong>Date of creation:</strong>{" "}
+            {formatDate(consignDetail.data.createdDate)}
+          </Typography>
+        </Box>
+        <Box display="flex" justifyContent="space-between" alignItems="stretch">
+          <Paper
+            elevation={3}
+            sx={{
+              p: 2,
+              mb: 3,
+              flex: 1,
+              mr: 1,
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <Typography variant="h6" style={{ fontSize: "20px" }}>
+              Consigner Information
             </Typography>
-            <Typography variant="h6">
-              Start Date: {new Date(consignDetail.startDate).toLocaleString()}
+            <Typography>
+              <strong>Consigner Name: </strong>
+              {consignDetail.data.consginer}
             </Typography>
-            <Typography variant="h6">
-              End Date: {new Date(consignDetail.endDate).toLocaleString()}
-            </Typography>
-            <Typography variant="h6">Status:{consignDetail.status}</Typography>
-            <Typography variant="h6">
-              Total Price: {formatNumber(consignDetail.totalPrice)} VND
+            <Typography>
+              <strong>Consigner Phone: </strong>
+              {consignDetail.data.phone}
             </Typography>
           </Paper>
-          <Typography variant="h5" gutterBottom>
-            Consignment Details
-          </Typography>
-          <Divider sx={{ mb: 2 }} />
-          <Grid container spacing={2}>
-            {consignDetail.consignSaleDetails.map((detail) => (
-              <Grid item xs={12} md={6} lg={4} key={detail.consignSaleDetailId}>
-                <Paper elevation={3} sx={{ p: 2 }}>
-                  <Typography variant="h6">
-                    Item Name: {detail.itemName}
-                  </Typography>
-                  <Card sx={{ maxWidth: 300 }}>
-                    <CardMedia component="img" height="auto" />
-                    <CardContent>
-                      <Typography>Condition: {detail.condition}</Typography>
-                      <Typography>Status: {detail.status}</Typography>
-                      <Typography>
-                        Deal Price: {formatNumber(detail.dealPrice)} VND
-                      </Typography>
-                      <Typography>
-                        Confirmed Price: ${detail.confirmedPrice}
-                      </Typography>
-                      <Typography>Category: {detail.categoryName}</Typography>
-                      <Typography>Size: {detail.size}</Typography>
-                      <Typography>Color: {detail.color}</Typography>
-                      <Typography>Brand: {detail.brand}</Typography>
-                      <Typography>Gender: {detail.gender}</Typography>
-                      <Typography>Note: {detail.note}</Typography>
-                    </CardContent>
-                  </Card>
-                </Paper>
-              </Grid>
-            ))}
-          </Grid>
+          <Paper
+            elevation={3}
+            sx={{
+              p: 2,
+              mb: 3,
+              flex: 1,
+              mx: 1,
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <Typography variant="h6" style={{ fontSize: "20px" }}>
+              <strong>Total Price: </strong>{" "}
+              {formatMoney(consignDetail.data.totalPrice)}
+            </Typography>
+            <Typography variant="h6" style={{ fontSize: "20px" }}>
+              <strong>Money member received: </strong>
+              {formatMoney(consignDetail.data.memberReceivedAmount)}
+            </Typography>
+          </Paper>
+          <Paper
+            elevation={3}
+            sx={{
+              p: 2,
+              mb: 3,
+              flex: 1,
+              ml: 1,
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <Typography variant="h6" style={{ fontSize: "20px" }}>
+              <strong>Status:</strong> {consignDetail.data.status}
+            </Typography>
+          </Paper>
         </Box>
-      ) : (
-        <Typography variant="h6">Consignment not found</Typography>
-      )}
+      </Paper>
+
+      <Paper elevation={3} sx={{ p: 2, mb: 3 }}>
+        <Typography variant="h6" gutterBottom>
+          <h1>Consignment Items</h1>
+        </Typography>
+        <Typography>Total items: {items.length}</Typography>
+        <Divider />
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Image</TableCell>
+              <TableCell>Name</TableCell>
+              <TableCell>Condition</TableCell>
+              <TableCell>Size</TableCell>
+              <TableCell>Color</TableCell>
+              <TableCell>Brand</TableCell>
+              <TableCell>Gender</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {items.map((item) => (
+              <TableRow
+                key={item.consignSaleDetailId}
+                onClick={() => handleClickOpen(item)}
+                style={{ cursor: "pointer" }}
+              >
+                <TableCell>
+                  <img
+                    src={item.fashionItem.images[0]}
+                    alt={item.fashionItem.name}
+                    width="100"
+                  />
+                </TableCell>
+                <TableCell>{item.fashionItem.name}</TableCell>
+                <TableCell>{item.fashionItem.condition}</TableCell>
+                <TableCell>{item.fashionItem.size}</TableCell>
+                <TableCell>{item.fashionItem.color}</TableCell>
+                <TableCell>{item.fashionItem.brand}</TableCell>
+                <TableCell>{item.fashionItem.gender}</TableCell>
+              </TableRow>
+            ))}
+            <TableRow>
+              <TableCell colSpan={6}>
+                <strong>Total Price</strong>
+              </TableCell>
+              <TableCell>
+                <strong>{formatMoney(consignDetail.data.totalPrice)}</strong>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </Paper>
+
+      <Dialog open={open} onClose={handleClose}>
+        <Typography sx={{ fontWeight: "bold" }}>
+          Item Details <InfoOutlined sx={{ mr: 1, color: "primary.main" }} />
+        </Typography>
+        <DialogContent>
+          {selectedItem && (
+            <Box>
+              <img
+                src={selectedItem.fashionItem.images[0]}
+                alt={selectedItem.fashionItem.name}
+                width="200"
+              />
+              <Typography
+                style={{
+                  color: "#10771A",
+                  fontWeight: "bold",
+                  fontSize: "30px",
+                }}
+              >
+                Status: {selectedItem.fashionItem.condition}
+              </Typography>
+              <Typography variant="h6">
+                <strong>Item Name:</strong> {selectedItem.fashionItem.name}
+              </Typography>
+              <Typography>
+                <strong>Size:</strong> {selectedItem.fashionItem.size}
+              </Typography>
+              <Typography>
+                <strong>Color:</strong> {selectedItem.fashionItem.color}
+              </Typography>
+              <Typography>
+                <strong>Brand:</strong> {selectedItem.fashionItem.brand}
+              </Typography>
+              <Typography>
+                <strong>Gender:</strong> {selectedItem.fashionItem.gender}
+              </Typography>
+              <Typography>
+                <strong>Condition:</strong> {selectedItem.fashionItem.condition}
+                %
+              </Typography>
+              <Typography>
+                <strong>Note:</strong> {selectedItem.fashionItem.note}
+              </Typography>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

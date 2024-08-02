@@ -18,12 +18,12 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const role = localStorage.getItem("role");
+    const role = sessionStorage.getItem("role");
 
     if (role && (role === "Admin" || role === "Staff")) {
       navigate("/home");
     } else {
-      localStorage.removeItem("role");
+      sessionStorage.removeItem("role");
       navigate("/login");
     }
   }, [navigate]);
@@ -42,9 +42,9 @@ const Login = () => {
         setError("Only admin and staff roles are allowed");
         throw new Error("Unauthorized access");
       }
-      localStorage.setItem("shopId", shopId);
-      localStorage.setItem("role", role);
-      localStorage.setItem("userId", id);
+      sessionStorage.setItem("shopId", shopId);
+      sessionStorage.setItem("role", role);
+      sessionStorage.setItem("userId", id);
 
       alert("Login successful");
       navigate("/home");

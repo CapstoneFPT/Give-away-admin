@@ -33,8 +33,8 @@ const AdminSideBar = () => {
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
-  const userName = localStorage.getItem("name");
-  const role = localStorage.getItem("role");
+  const userName = sessionStorage.getItem("name");
+  const role = sessionStorage.getItem("role");
 
   return (
     <Box

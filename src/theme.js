@@ -1,7 +1,7 @@
 import { createContext, useState, useMemo } from "react";
 import { createTheme } from "@mui/material/styles";
 
-// color design tokens export
+// Define color tokens for both light and dark modes
 export const tokens = (mode) => ({
   ...(mode === "dark"
     ? {
@@ -77,7 +77,7 @@ export const tokens = (mode) => ({
           100: "#040509",
           200: "#080b12",
           300: "#0c101b",
-          400: "#f2f0f0", // manually changed
+          400: "#f2f0f0", // Adjusted value for light mode
           500: "#141b2d",
           600: "#1F2A40",
           700: "#727681",
@@ -120,47 +120,26 @@ export const tokens = (mode) => ({
       }),
 });
 
-// mui theme settings
+// Define MUI theme settings based on the color mode
 export const themeSettings = (mode) => {
   const colors = tokens(mode);
   return {
     palette: {
-      mode: mode,
-      ...(mode === "dark"
-        ? {
-            // palette values for dark mode
-            primary: {
-              main: colors.primary[500],
-            },
-            secondary: {
-              main: colors.greenAccent[500],
-            },
-            neutral: {
-              dark: colors.grey[700],
-              main: colors.grey[500],
-              light: colors.grey[100],
-            },
-            background: {
-              default: colors.primary[500],
-            },
-          }
-        : {
-            // palette values for light mode
-            primary: {
-              main: colors.primary[100],
-            },
-            secondary: {
-              main: colors.greenAccent[500],
-            },
-            neutral: {
-              dark: colors.grey[700],
-              main: colors.grey[500],
-              light: colors.grey[100],
-            },
-            background: {
-              default: "#fcfcfc",
-            },
-          }),
+      mode,
+      primary: {
+        main: colors.primary[500],
+      },
+      secondary: {
+        main: colors.greenAccent[500],
+      },
+      neutral: {
+        dark: colors.grey[700],
+        main: colors.grey[500],
+        light: colors.grey[100],
+      },
+      background: {
+        default: mode === "dark" ? colors.primary[500] : "#fcfcfc",
+      },
     },
     typography: {
       fontFamily: ["Source Sans Pro", "sans-serif"].join(","),
@@ -193,11 +172,12 @@ export const themeSettings = (mode) => {
   };
 };
 
-// context for color mode
+// Create context for color mode
 export const ColorModeContext = createContext({
   toggleColorMode: () => {},
 });
 
+// Custom hook to manage color mode and theme
 export const useMode = () => {
   const [mode, setMode] = useState("light");
 

@@ -27,7 +27,7 @@ const Step2 = ({ nextStep, prevStep }) => {
   const [error, setError] = useState(null);
   console.log(customerInfo);
   console.log(cartItems);
-  const shopId = localStorage.getItem("shopId");
+  const shopId = sessionStorage.getItem("shopId");
 
   useEffect(() => {
     const fetchItems = async () => {

@@ -21,7 +21,7 @@ const AuctionManagement = () => {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(5);
   const [totalCount, setTotalCount] = useState(0);
-  const userRole = localStorage.getItem("role");
+  const userRole = sessionStorage.getItem("role");
 
   const fetchAuctions = async (searchTerm, page, pageSize) => {
     setIsLoading(true);

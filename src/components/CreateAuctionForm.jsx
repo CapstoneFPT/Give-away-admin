@@ -6,7 +6,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 
 const AuctionForm = ({ open, onClose, onSubmit, item }) => {
-  const shopId = localStorage.getItem("shopId");
+  const shopId = sessionStorage.getItem("shopId");
   const [auctionData, setAuctionData] = useState({
     title: "",
     scheduleDate: "",

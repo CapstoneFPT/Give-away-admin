@@ -18,8 +18,8 @@ const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [userName, setUserName] = useState("");
-  const userId = localStorage.getItem("userId");
-  const shopId = localStorage.getItem("shopId");
+  const userId = sessionStorage.getItem("userId");
+  const shopId = sessionStorage.getItem("shopId");
   console.log(userName);
   console.log(shopId);
   console.log(userId);
@@ -29,7 +29,7 @@ const Dashboard = () => {
       try {
         const data = await ApiService.getAccountDetailById(userId);
         setUserName(data.data.fullname);
-        localStorage.setItem("name", userName);
+        sessionStorage.setItem("name", userName);
         // Giả sử API trả về đối tượng có thuộc tính fullName
       } catch (error) {
         console.error("Error fetching user data:", error);

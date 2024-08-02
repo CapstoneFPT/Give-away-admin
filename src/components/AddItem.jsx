@@ -23,7 +23,7 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
     sellingPrice: 0,
     name: "",
     note: "",
-
+    description: "",
     condition: "",
     brand: "",
     color: "",
@@ -34,7 +34,7 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
   });
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const shopId = localStorage.getItem("shopId");
+  const shopId = sessionStorage.getItem("shopId");
   console.log(newItem);
   useEffect(() => {
     if (newItem.gender) {
@@ -100,7 +100,7 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
         sellingPrice: 0,
         name: "",
         note: "",
-
+        description: "",
         condition: 0,
         brand: "",
         color: "",
@@ -181,7 +181,18 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
               onChange={handleItemChange}
             />
           </Grid>
-
+          <Grid item xs={12}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="description"
+              label="Description"
+              name="description"
+              value={newItem.description}
+              onChange={handleItemChange}
+            />
+          </Grid>
           <Grid item xs={6}>
             <TextField
               margin="normal"
