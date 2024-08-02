@@ -39,7 +39,7 @@ const Step3 = ({ prevStep }) => {
   };
 
   const handleCreateOrder = async () => {
-    const shopId = localStorage.getItem("shopId");
+    const shopId = sessionStorage.getItem("shopId");
     const orderData = {
       address: customerInfo.address || "",
       recipientName: customerInfo.fullname,
@@ -73,7 +73,7 @@ const Step3 = ({ prevStep }) => {
       return;
     }
 
-    const shopId = localStorage.getItem("shopId");
+    const shopId = sessionStorage.getItem("shopId");
     const totalAmount = getTotalPrice();
     const amountGivenFormatted = parseFloat(amountGiven.replace(/\./g, ""));
 

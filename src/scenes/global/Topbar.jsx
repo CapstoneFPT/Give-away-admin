@@ -24,7 +24,7 @@ const Topbar = ({ onSearch }) => {
   };
 
   const handleLogOut = () => {
-    localStorage.clear();
+    sessionStorage.clear();
     navigate("/login");
   };
 

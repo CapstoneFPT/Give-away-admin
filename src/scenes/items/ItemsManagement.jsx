@@ -41,8 +41,8 @@ const ItemsManagement = () => {
   const [openAuctionForm, setOpenAuctionForm] = useState(false);
   const [selectedItem, setSelectedItem] = useState("");
   const [statusFilter, setStatusFilter] = useState("Available");
-  const userRole = localStorage.getItem("role");
-  const shopId = userRole === "Admin" ? "" : localStorage.getItem("shopId");
+  const userRole = sessionStorage.getItem("role");
+  const shopId = userRole === "Admin" ? "" : sessionStorage.getItem("shopId");
   const statusOptions = {
     ConsignedForSale: [
       "Available",

@@ -11,6 +11,10 @@ import {
   TableRow,
   Typography,
   TextField,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import ApiService from "../../services/apiServices";
 
@@ -36,7 +40,9 @@ const AccountManagement = () => {
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("Active");
   const debouncedSearchQuery = useDebounce(searchQuery, 500); // Debounce 500ms
+  const debouncedStatusFilter = useDebounce(statusFilter, 500); // Debounce 500ms
   const pageSize = 5;
   const navigate = useNavigate();
 
@@ -47,8 +53,10 @@ const AccountManagement = () => {
         const data = await ApiService.getAllAccounts(
           page,
           pageSize,
-          debouncedSearchQuery
+          debouncedSearchQuery,
+          debouncedStatusFilter
         );
+        console.log(data);
         setAccounts(data.items);
         setTotalPage(data.totalPages);
       } catch (error) {
@@ -58,7 +66,7 @@ const AccountManagement = () => {
       }
     };
     fetchAccounts();
-  }, [page, debouncedSearchQuery]);
+  }, [page, debouncedSearchQuery, debouncedStatusFilter]);
 
   const handleDetailClick = (accountId) => {
     navigate(`/manage-accounts/${accountId}`);
@@ -82,20 +90,37 @@ const AccountManagement = () => {
     }
   };
 
+  const handleStatusChange = (e) => {
+    setStatusFilter(e.target.value);
+    setPage(1); // Reset to page 1 when status filter changes
+  };
+
   return (
     <Box p={2}>
       <Typography variant="h4" gutterBottom>
         Account Management
       </Typography>
-      <Box mb={2}>
+      <Box mb={2} display="flex" justifyContent="space-between">
         <TextField
           label="Search by Phone"
           variant="outlined"
           placeholder="Enter phone number"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          sx={{ width: "100%" }}
+          sx={{ width: "48%" }}
         />
+        <FormControl variant="outlined" sx={{ width: "48%" }}>
+          <InputLabel>Status</InputLabel>
+          <Select
+            value={statusFilter}
+            onChange={handleStatusChange}
+            label="Status"
+          >
+            <MenuItem value="Active">Active</MenuItem>
+            <MenuItem value="Inactive">Inactive</MenuItem>
+            <MenuItem value="NotVerified">Not verify</MenuItem>
+          </Select>
+        </FormControl>
       </Box>
       {isLoading ? (
         <Box
@@ -115,12 +140,24 @@ const AccountManagement = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Full Name</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Phone</TableCell>
-                <TableCell>Role</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Actions</TableCell>
+                <TableCell>
+                  <h2>Full Name</h2>
+                </TableCell>
+                <TableCell>
+                  <h2>Email</h2>
+                </TableCell>
+                <TableCell>
+                  <h2>Phone</h2>
+                </TableCell>
+                <TableCell>
+                  <h2>Role</h2>
+                </TableCell>
+                <TableCell>
+                  <h2>Status</h2>
+                </TableCell>
+                <TableCell>
+                  <h2>Actions</h2>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -140,6 +177,7 @@ const AccountManagement = () => {
                     >
                       Detail
                     </Button>
+                    {statusFilter === "NotVerified"}
                     <Button
                       variant="contained"
                       sx={{

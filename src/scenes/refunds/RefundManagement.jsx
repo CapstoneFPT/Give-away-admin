@@ -45,8 +45,8 @@ const RefundManagement = () => {
   const [description, setDescription] = useState("");
   const [refundPercentage, setRefundPercentage] = useState(0);
   const [isRejecting, setIsRejecting] = useState(false);
-  const shopId = localStorage.getItem("shopId");
-  const userRole = localStorage.getItem("role");
+  const shopId = sessionStorage.getItem("shopId");
+  const userRole = sessionStorage.getItem("role");
 
   useEffect(() => {
     const fetchRefunds = async () => {

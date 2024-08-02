@@ -24,14 +24,14 @@ const OrderDetail = () => {
   const [orderDetails, setOrderDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [userName, setUserName] = useState("");
-  const shopId = localStorage.getItem("shopId");
+  const shopId = sessionStorage.getItem("shopId");
   const [userPhone, setUserPhone] = useState("");
   const [userAddress, setUserAddress] = useState("");
   const [purchaseType, setPurchaseType] = useState("");
   const [open, setOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [status, setStatus] = useState("");
-
+  console.log(orderDetails);
   const handleClickOpen = (item) => {
     setSelectedItem(item);
     setOpen(true);
@@ -111,24 +111,24 @@ const OrderDetail = () => {
 
   const statusStyles = {
     AwaitingPayment: {
-      background: "rgba(255, 193, 7, 0.2)", // Dark yellow with opacity
-      color: "#FFC107", // Dark yellow color
+      background: "lightgreen",
+      color: "#e27bb1",
     },
     OnDelivery: {
-      background: "rgba(255, 255, 0, 0.2)", // Yellow with opacity
-      color: "#FFEB3B", // Yellow color
+      background: "lightgreen",
+      color: "#567de8",
     },
     Completed: {
-      background: "rgba(56, 142, 60, 0.2)", // Dark green with opacity
-      color: "#388E3C", // Dark green color
+      background: "lightgreen",
+      color: "#388E3C",
     },
     Cancelled: {
-      background: "rgba(244, 67, 54, 0.2)", // Red with opacity
-      color: "#F44336", // Red color
+      background: "rgba(244, 67, 54, 0.2)",
+      color: "#F44336",
     },
     Pending: {
-      background: "rgba(76, 175, 80, 0.2)", // Light green with opacity
-      color: "#4CAF50", // Light green color
+      background: "lightgreen",
+      color: "#4CAF50",
     },
   };
 

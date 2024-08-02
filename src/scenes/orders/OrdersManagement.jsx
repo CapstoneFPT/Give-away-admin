@@ -103,9 +103,9 @@ const OrderManagement = () => {
   }, [userRole, fetchOrdersForAdmin, fetchOrdersForStaff]);
 
   useEffect(() => {
-    // Fetch the shopId and userRole from localStorage
-    const id = localStorage.getItem("shopId");
-    const role = localStorage.getItem("role");
+    // Fetch the shopId and userRole from sessionStorage
+    const id = sessionStorage.getItem("shopId");
+    const role = sessionStorage.getItem("role");
     setShopId(id || "");
     setUserRole(role);
   }, []);
@@ -160,7 +160,7 @@ const OrderManagement = () => {
       alert("Order confirmed successfully.");
       getOrders();
     } catch (error) {
-      alert("Failed to confirm delivery: " + error.message);
+      alert("Failed to confirm order: " + error.message);
     }
   };
 
@@ -173,6 +173,7 @@ const OrderManagement = () => {
       alert("Failed to confirm delivery: " + error.message);
     }
   };
+
   const getStatusColor = (status) => {
     switch (status) {
       case "Completed":
@@ -189,6 +190,7 @@ const OrderManagement = () => {
         return "text.secondary";
     }
   };
+
   const renderTable = () => (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -270,14 +272,24 @@ const OrderManagement = () => {
                       </Button>
                     )}
                     {order.status === "OnDelivery" && (
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => handleConfirmDelivery(order.orderId)}
-                        sx={{ ml: 1 }}
-                      >
-                        Confirm Delivery
-                      </Button>
+                      <>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() => handleConfirmDelivery(order.orderId)}
+                          sx={{ ml: 1 }}
+                        >
+                          Confirm Delivery
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          color="error"
+                          onClick={() => handleCancelOrder(order.orderId)}
+                          sx={{ ml: 1 }}
+                        >
+                          Cancel
+                        </Button>
+                      </>
                     )}
                     {order.status === "AwaitingPayment" && (
                       <Button

@@ -32,10 +32,10 @@ function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const isLoginPath = location.pathname === "/login";
-  const role = localStorage.getItem("role");
+  const role = sessionStorage.getItem("role");
 
   useEffect(() => {
-    const shopId = localStorage.getItem("shopId");
+    const shopId = sessionStorage.getItem("shopId");
     if (role && shopId && isLoginPath) {
       // User is logged in and on login page, navigate to home
       navigate("/home");
@@ -53,13 +53,26 @@ function App() {
             minHeight: "100vh",
             height: "100vh",
             overflow: "hidden",
+            backgroundColor: "#f4f6f8", // Light background for better contrast
           }}
         >
           {!isLoginPath &&
             (role === "Admin" ? (
-              <AdminSideBar isSidebar={isSidebar} />
+              <AdminSideBar
+                isSidebar={isSidebar}
+                style={{
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                  borderRight: "1px solid #e0e0e0", // Border to separate sidebar from content
+                }}
+              />
             ) : (
-              <StaffSideBar isSidebar={isSidebar} />
+              <StaffSideBar
+                isSidebar={isSidebar}
+                style={{
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                  borderRight: "1px solid #e0e0e0", // Border to separate sidebar from content
+                }}
+              />
             ))}
           <div
             style={{
@@ -67,14 +80,23 @@ function App() {
               display: "flex",
               flexDirection: "column",
               height: "100vh",
+              backgroundColor: "#fff", // White background for content
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Shadow for main content area
+              borderRadius: "8px",
             }}
           >
-            {!isLoginPath && <Topbar setIsSidebar={setIsSidebar} />}
+            {!isLoginPath && (
+              <Topbar
+                setIsSidebar={setIsSidebar}
+                style={{ boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)" }}
+              />
+            )}
             <main
               style={{
                 flex: 1,
                 padding: isLoginPath ? 0 : "20px",
                 overflow: "auto",
+                backgroundColor: "#fff", // Ensure consistent background color
               }}
             >
               <Routes>
@@ -129,7 +151,7 @@ function App() {
                   }
                 />
                 <Route
-                  path="/consign/:consignSaleCode"
+                  path="/consign/:consignSaleId"
                   element={
                     <ProtectedRoute allowedRoles={["Staff"]}>
                       <ConsignDetail />

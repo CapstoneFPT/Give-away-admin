@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -16,6 +15,7 @@ import {
 } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { debounce } from "lodash";
+import { useNavigate } from "react-router-dom";
 import ApiService from "../../services/apiServices";
 import AddConsignment from "../../components/AddConsignment";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -33,9 +33,9 @@ const ConsignManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const shopId = localStorage.getItem("shopId");
+  const shopId = sessionStorage.getItem("shopId");
   const navigate = useNavigate();
-  console.log(startDate);
+  console.log(consignments);
   const statusTabs = useMemo(
     () => [
       { label: "All", value: "" },
@@ -48,6 +48,7 @@ const ConsignManagement = () => {
     ],
     []
   );
+
   const fetchConsignments = useCallback(
     async (page, pageSize, status, startDate, endDate, searchTerm) => {
       setIsLoading(true);
@@ -129,8 +130,8 @@ const ConsignManagement = () => {
     statusTabs,
   ]);
 
-  const handleDetailClick = (consignSaleCode) => {
-    navigate(`/consign/${consignSaleCode}`);
+  const handleDetailClick = (consignSaleId) => {
+    navigate(`/consign/${consignSaleId}`);
   };
 
   const handleOpen = () => {
@@ -263,7 +264,6 @@ const ConsignManagement = () => {
                 <TableCell>Sold Price</TableCell>
                 <TableCell>Type</TableCell>
                 <TableCell>Detail</TableCell>
-                <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -287,7 +287,7 @@ const ConsignManagement = () => {
                     <Button
                       variant="contained"
                       color="primary"
-                      onClick={() => handleDetailClick(consign.consignSaleCode)}
+                      onClick={() => handleDetailClick(consign.consignSaleId)}
                       sx={{ marginRight: "10px" }}
                     >
                       Detail
@@ -322,17 +322,6 @@ const ConsignManagement = () => {
                           Approve
                         </Button>
                       </>
-                    )}
-                    {consign.status === "AwaitDelivery" && (
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() =>
-                          handleStatusChange(consign.consignSaleId, "Received")
-                        }
-                      >
-                        Mark as Received
-                      </Button>
                     )}
                   </TableCell>
                 </TableRow>

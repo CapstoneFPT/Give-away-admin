@@ -8,6 +8,7 @@ const AccountDetail = () => {
   const [account, setAccount] = useState(null);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  console.log(account);
   useEffect(() => {
     // Fetch account details from the API
     const fetchAccountDetails = async () => {

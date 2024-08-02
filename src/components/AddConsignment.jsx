@@ -45,7 +45,7 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
   });
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const shopId = localStorage.getItem("shopId");
+  const shopId = sessionStorage.getItem("shopId");
   console.log(shopId);
 
   const getCateByGender = async (genderId) => {
