@@ -192,95 +192,107 @@ const OrderManagement = () => {
   };
 
   const renderTable = () => (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>
-              <h2>Total Price</h2>
-            </TableCell>
-            <TableCell>
-              <h2>Order Code</h2>
-            </TableCell>
-            <TableCell>
-              <h2>Customer Name</h2>
-            </TableCell>
-            <TableCell>
-              <h2>Recipient Name</h2>
-            </TableCell>
-            <TableCell>
-              <h2>Status</h2>
-            </TableCell>
-            <TableCell>
-              <h2>Payment Method</h2>
-            </TableCell>
-            <TableCell>
-              <h2>Created Date</h2>
-            </TableCell>
-            <TableCell>
-              <h2>Purchase Type</h2>
-            </TableCell>
-            <TableCell>
-              <h2>Details</h2>
-            </TableCell>
-            <TableCell>
-              <h2>Actions</h2>
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {orders.length > 0 ? (
-            orders.map((order) => (
-              <TableRow key={order.orderId}>
-                <TableCell>{order.totalPrice.toLocaleString()} VND</TableCell>
-                <TableCell>{order.orderCode}</TableCell>
-                <TableCell>{order.customerName}</TableCell>
-                <TableCell>{order.recipientName}</TableCell>
+    <Box border={1} borderRadius={5}>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                <h2>Total Price</h2>
+              </TableCell>
+              <TableCell>
+                <h2>Order Code</h2>
+              </TableCell>
+              <TableCell>
+                <h2>Customer Name</h2>
+              </TableCell>
+              <TableCell>
+                <h2>Recipient Name</h2>
+              </TableCell>
+              <TableCell>
+                <h2>Status</h2>
+              </TableCell>
+              <TableCell>
+                <h2>Payment Method</h2>
+              </TableCell>
+              <TableCell>
+                <h2>Created Date</h2>
+              </TableCell>
+              <TableCell>
+                <h2>Purchase Type</h2>
+              </TableCell>
+              <TableCell>
+                <h2>Details</h2>
+              </TableCell>
+              <TableCell>
+                <h2>Actions</h2>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {orders.length > 0 ? (
+              orders.map((order) => (
+                <TableRow key={order.orderId}>
+                  <TableCell>{order.totalPrice.toLocaleString()} VND</TableCell>
+                  <TableCell>{order.orderCode}</TableCell>
+                  <TableCell>{order.customerName}</TableCell>
+                  <TableCell>{order.recipientName}</TableCell>
 
-                <TableCell
-                  style={{
-                    color: getStatusColor(order.status),
-                    fontSize: "15px",
-                  }}
-                >
-                  <strong> {order.status}</strong>
-                </TableCell>
-                <TableCell>{order.paymentMethod}</TableCell>
-                <TableCell>
-                  {new Date(order.createdDate).toLocaleString()}
-                </TableCell>
-                <TableCell>{order.purchaseType}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => handleDetailClick(order.orderId)}
+                  <TableCell
+                    style={{
+                      color: getStatusColor(order.status),
+                      fontSize: "15px",
+                    }}
                   >
-                    Detail
-                  </Button>
-                </TableCell>
-                <TableCell>
-                  <div style={{ display: "flex" }}>
-                    {order.status === "Pending" && (
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => handleConfirmOrder(order.orderId)}
-                        sx={{ ml: 1 }}
-                      >
-                        Confirm Order
-                      </Button>
-                    )}
-                    {order.status === "OnDelivery" && (
-                      <>
+                    <strong> {order.status}</strong>
+                  </TableCell>
+                  <TableCell>{order.paymentMethod}</TableCell>
+                  <TableCell>
+                    {new Date(order.createdDate).toLocaleString()}
+                  </TableCell>
+                  <TableCell>{order.purchaseType}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleDetailClick(order.orderId)}
+                    >
+                      Detail
+                    </Button>
+                  </TableCell>
+                  <TableCell>
+                    <div style={{ display: "flex" }}>
+                      {order.status === "Pending" && (
                         <Button
                           variant="contained"
                           color="primary"
-                          onClick={() => handleConfirmDelivery(order.orderId)}
+                          onClick={() => handleConfirmOrder(order.orderId)}
                           sx={{ ml: 1 }}
                         >
-                          Confirm Delivery
+                          Confirm Order
                         </Button>
+                      )}
+                      {order.status === "OnDelivery" && (
+                        <>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => handleConfirmDelivery(order.orderId)}
+                            sx={{ ml: 1 }}
+                          >
+                            Confirm Delivery
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            color="error"
+                            onClick={() => handleCancelOrder(order.orderId)}
+                            sx={{ ml: 1 }}
+                          >
+                            Cancel
+                          </Button>
+                        </>
+                      )}
+                      {order.status === "AwaitingPayment" && (
                         <Button
                           variant="outlined"
                           color="error"
@@ -289,45 +301,35 @@ const OrderManagement = () => {
                         >
                           Cancel
                         </Button>
-                      </>
-                    )}
-                    {order.status === "AwaitingPayment" && (
-                      <Button
-                        variant="outlined"
-                        color="error"
-                        onClick={() => handleCancelOrder(order.orderId)}
-                        sx={{ ml: 1 }}
-                      >
-                        Cancel
-                      </Button>
-                    )}
-                  </div>
+                      )}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={10} align="center">
+                  {isLoading
+                    ? "Loading orders..."
+                    : searchQuery || status
+                    ? "No orders match your search or filter."
+                    : "No orders available."}
                 </TableCell>
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={10} align="center">
-                {isLoading
-                  ? "Loading orders..."
-                  : searchQuery || status
-                  ? "No orders match your search or filter."
-                  : "No orders available."}
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={totalCount}
-        rowsPerPage={pageSize}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-    </TableContainer>
+            )}
+          </TableBody>
+        </Table>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={totalCount}
+          rowsPerPage={pageSize}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </TableContainer>
+    </Box>
   );
 
   return (

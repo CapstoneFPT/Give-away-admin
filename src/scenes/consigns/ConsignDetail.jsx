@@ -17,9 +17,12 @@ import {
   DialogContent,
   Button,
   TextField,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { InfoOutlined } from "@mui/icons-material";
 import Slider from "react-slick";
+import { useSnackbar } from "../../services/SnackBar";
 
 const ConsignDetail = () => {
   const { consignSaleId } = useParams();
@@ -30,8 +33,32 @@ const ConsignDetail = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [description, setDescription] = useState("");
   const [sellingPrice, setSellingPrice] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [categories, setCategories] = useState([]);
+  const { showSnackBar } = useSnackbar();
 
-  console.log(selectedItem);
+  console.log(consignDetail);
+  useEffect(() => {
+    const fetchConsignDetail = async () => {
+      try {
+        const detailResponse = await ApiService.getOneBigConsignMents(
+          consignSaleId
+        );
+        setConsignDetail(detailResponse);
+
+        const itemsResponse = await ApiService.getListOfItemsByConsignId(
+          consignSaleId
+        );
+        setItems(itemsResponse.data);
+      } catch (error) {
+        console.error("Failed to fetch consignment details:", error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchConsignDetail();
+  }, [consignSaleId]);
 
   const formatMoney = (num) => {
     return num.toLocaleString("vn", { minimumFractionDigits: 0 }) + " VND";
@@ -57,6 +84,7 @@ const ConsignDetail = () => {
     setDescription(""); // Reset description
     setSellingPrice(""); // Reset selling price
     setOpen(true);
+    getCateByGender();
   };
 
   const handleClose = () => {
@@ -66,10 +94,9 @@ const ConsignDetail = () => {
 
   const handleUpdate = async () => {
     if (selectedItem) {
-      const categoryId = "bf17c36f-b50d-404f-a6a7-6187c2b298ce";
       const updatedData = {
         sellingPrice: parseFloat(sellingPrice),
-        categoryId: categoryId,
+        categoryId: selectedCategory,
         description: description,
       };
 
@@ -79,10 +106,15 @@ const ConsignDetail = () => {
 
           updatedData
         );
-        // Optionally refetch data or update state here
+
         handleClose();
+        showSnackBar(`Update item successfully`, `success`);
       } catch (error) {
         console.error("Failed to update item details:", error.message);
+        showSnackBar(
+          `Failed to update item details: + ${error.message}`,
+          `error`
+        );
       }
     }
   };
@@ -94,30 +126,51 @@ const ConsignDetail = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
     arrows: true,
+    autoplay: true,
+    autoplaySpeed: 2000,
+  };
+  useEffect(() => {
+    if (selectedItem) {
+      const genderId =
+        selectedItem.fashionItem.gender === "Male"
+          ? "c7c0ba52-8406-47c1-9be5-497cbeea5933"
+          : "8c3fe1f7-0082-4382-85de-6c70fcd76761";
+      getCateByGender(genderId);
+    }
+  }, [selectedItem]);
+  const getCateByGender = async (genderId) => {
+    try {
+      const response = await ApiService.getCategoryByGender(genderId);
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Error fetching categories:", error.message);
+    }
   };
 
-  useEffect(() => {
-    const fetchConsignDetail = async () => {
-      try {
-        const detailResponse = await ApiService.getOneBigConsignMents(
-          consignSaleId
-        );
-        setConsignDetail(detailResponse);
-
-        const itemsResponse = await ApiService.getListOfItemsByConsignId(
-          consignSaleId
-        );
-        setItems(itemsResponse.data);
-      } catch (error) {
-        console.error("Failed to fetch consignment details:", error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchConsignDetail();
-  }, [consignSaleId]);
-
+  const handleApproval = async (status) => {
+    try {
+      await ApiService.updateConsignApproved(consignSaleId, { status });
+      showSnackBar(
+        `Successfully ${
+          status === "AwaitDelivery" ? "approved" : "rejected"
+        } consignment`,
+        "success"
+      );
+    } catch (error) {
+      console.error(
+        `Failed to ${
+          status === "AwaitDelivery" ? "approve" : "reject"
+        } consignment:`,
+        error.message
+      );
+      showSnackBar(
+        `Failed to ${
+          status === "AwaitDelivery" ? "approve" : "reject"
+        } consignment: ${error.message}`,
+        "error"
+      );
+    }
+  };
   if (isLoading) {
     return (
       <Box
@@ -212,8 +265,23 @@ const ConsignDetail = () => {
             <Typography variant="h6" style={{ fontSize: "20px" }}>
               <strong>Status:</strong> {consignDetail.data.status}
             </Typography>
-            <Button>Reject</Button>
-            <Button>Approve</Button>
+            <Divider />
+            <Box mt={2} justifyContent={"space-around"} display={"flex"}>
+              <Button
+                variant="outlined"
+                color="success"
+                onClick={() => handleApproval("AwaitDelivery")}
+              >
+                Approve
+              </Button>
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={() => handleApproval("Reject")}
+              >
+                Reject
+              </Button>
+            </Box>
           </Paper>
         </Box>
       </Paper>
@@ -284,7 +352,7 @@ const ConsignDetail = () => {
         </Table>
       </Paper>
 
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog style={{ overflow: "hidden" }} open={open} onClose={handleClose}>
         <Typography
           sx={{
             fontWeight: "bold",
@@ -296,31 +364,38 @@ const ConsignDetail = () => {
           Item Details{" "}
           <InfoOutlined sx={{ mt: 1.5, mr: 1, color: "primary.main" }} />
         </Typography>
-        <DialogContent>
-          <div style={{ width: "800px", height: "10000px" }}>
+        <DialogContent style={{ overflow: "hidden" }}>
+          <Box>
             {selectedItem && (
               <Box>
-                <Box maxWidth={"90%"} ml={4}>
+                <Box maxWidth={"100%"}>
                   <Slider {...carouselSettings}>
                     {selectedItem.fashionItem.images
                       .slice(0, 3)
                       .map((image, index) => (
-                        <div key={index}>
+                        <Box
+                          key={index}
+                          display="flex"
+                          justifyContent="center"
+                          alignItems="center"
+                        >
                           <img
                             src={image}
                             alt={selectedItem.fashionItem.name}
                             style={{
-                              width: "100%",
-                              maxHeight: "400px",
-                              objectFit: "cover",
+                              marginLeft: "30%",
+                              width: "40%",
+                              maxHeight: "100%",
+                              objectFit: "contain",
                               borderRadius: "4px",
                               marginBottom: "10px",
                             }}
                           />
-                        </div>
+                        </Box>
                       ))}
                   </Slider>
                 </Box>
+
                 <Typography
                   style={{
                     color: "#10771A",
@@ -345,29 +420,61 @@ const ConsignDetail = () => {
                 <Typography>
                   <strong>Gender:</strong> {selectedItem.fashionItem.gender}
                 </Typography>
-                <Typography>
-                  <strong>Note:</strong> {selectedItem.fashionItem.note}
-                </Typography>
               </Box>
             )}
-            <TextField
-              label="Description"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-            <TextField
-              label="Selling Price"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              type="number"
-              value={sellingPrice}
-              onChange={(e) => setSellingPrice(e.target.value)}
-            />
-          </div>
+            <Divider style={{ marginTop: "10px" }} />
+            <Typography
+              justifyContent={"center"}
+              display={"flex"}
+              fontSize={30}
+            >
+              <strong>Enter to update the item</strong>
+            </Typography>
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              gap={2}
+            >
+              <Select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                displayEmpty
+                variant="outlined"
+                margin="normal"
+                fullWidth
+              >
+                <MenuItem value="" disabled>
+                  Select Category
+                </MenuItem>
+                {categories.map((category) => (
+                  <MenuItem
+                    key={category.categoryId}
+                    value={category.categoryId}
+                  >
+                    {category.name}
+                  </MenuItem>
+                ))}
+              </Select>
+              <TextField
+                label="Description"
+                variant="outlined"
+                margin="normal"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                fullWidth
+              />
+              <TextField
+                label="Selling Price"
+                variant="outlined"
+                margin="normal"
+                type="number"
+                value={sellingPrice}
+                onChange={(e) => setSellingPrice(e.target.value)}
+                fullWidth
+              />
+            </Box>
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button

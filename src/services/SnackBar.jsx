@@ -1,35 +1,30 @@
-// SnackbarProvider.js
-import React, { createContext, useState, useContext } from "react";
+// In ../../services/SnackBar.js
+import React, { createContext, useContext, useState } from "react";
 import { Snackbar, Alert } from "@mui/material";
 
 const SnackbarContext = createContext();
 
 export const SnackbarProvider = ({ children }) => {
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: "",
-    severity: "info",
-  });
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [severity, setSeverity] = useState("info");
 
-  const showSnackbar = (message, severity = "info") => {
-    setSnackbar({ open: true, message, severity });
+  const showSnackBar = (message, severity) => {
+    setMessage(message);
+    setSeverity(severity);
+    setOpen(true);
   };
 
   const handleClose = () => {
-    setSnackbar({ ...snackbar, open: false });
+    setOpen(false);
   };
 
   return (
-    <SnackbarContext.Provider value={{ showSnackbar }}>
+    <SnackbarContext.Provider value={{ showSnackBar }}>
       {children}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert onClose={handleClose} severity={snackbar.severity}>
-          {snackbar.message}
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity={severity}>
+          {message}
         </Alert>
       </Snackbar>
     </SnackbarContext.Provider>
