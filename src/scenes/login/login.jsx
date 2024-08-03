@@ -10,13 +10,14 @@ import {
   Paper,
 } from "@mui/material";
 import ApiService from "../../services/apiServices";
+import { useSnackbar } from "../../services/SnackBar";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-
+  const { showSnackbar } = useSnackbar();
   useEffect(() => {
     const role = sessionStorage.getItem("role");
 
@@ -46,11 +47,10 @@ const Login = () => {
       sessionStorage.setItem("role", role);
       sessionStorage.setItem("userId", id);
 
-      alert("Login successful");
+      showSnackbar(`Login successful`, `success`);
       navigate("/home");
     } catch (error) {
-      setError("Invalid credentials or network error");
-      alert("Login error:", error.message);
+      showSnackbar(`Login fail `, `error`);
     }
   };
 

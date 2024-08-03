@@ -28,6 +28,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 import ApiService from "../../services/apiServices"; // Ensure the path is correct
+import { useSnackbar } from "../../services/SnackBar";
 
 const formatCurrency = (value) => {
   if (typeof value !== "number") return value;
@@ -47,7 +48,7 @@ const RefundManagement = () => {
   const [isRejecting, setIsRejecting] = useState(false);
   const shopId = sessionStorage.getItem("shopId");
   const userRole = sessionStorage.getItem("role");
-
+  const { showSnackBar } = useSnackbar();
   useEffect(() => {
     const fetchRefunds = async () => {
       setIsLoading(true); // Set loading state
@@ -91,12 +92,12 @@ const RefundManagement = () => {
       refundStatus === "Approved" &&
       (refundPercentage < 0 || refundPercentage > 100)
     ) {
-      alert("Refund percentage must be between 0 and 100");
+      showSnackBar(`Refund percentage must be between 0 and 100`, `info`);
       return;
     }
 
     if (refundStatus === "Rejected" && description.trim() === "") {
-      alert("Description is required for rejection.");
+      showSnackBar(`Description is required for rejection.`, `info`);
       return;
     }
 
@@ -108,28 +109,31 @@ const RefundManagement = () => {
       };
 
       await ApiService.updateRefundStatus(selectedRefund.refundId, refundData);
-      alert("Refund status updated successfully.");
+      showSnackBar(`Refund status updated successfully.`, `success`);
       handleCloseDialog();
       navigate("/refund"); // Redirect to /refund page after update
     } catch (error) {
-      alert(`Failed to update refund status: ${error.message}`);
+      showSnackBar(`Failed to update refund status: ${error.message}`, `error`);
     }
   };
 
   const handleConfirmRefund = async () => {
     try {
       await ApiService.confirmRefundStatus(selectedRefund.refundId);
-      alert("Refund delivery confirmed.");
+      showSnackBar("Refund delivery confirmed.", `success`);
       handleCloseDialog();
       navigate("/refund"); // Redirect to /refund page after confirmation
     } catch (error) {
-      alert(`Failed to confirm refund delivery: ${error.message}`);
+      showSnackBar(
+        `Failed to confirm refund delivery: ${error.message}`,
+        `error`
+      );
     }
   };
 
   const handleRejectRefund = async () => {
     if (description.trim() === "") {
-      alert("Description is required for rejection.");
+      showSnackBar(`Description is required for rejection.`, `info`);
       return;
     }
 
@@ -138,21 +142,30 @@ const RefundManagement = () => {
         status: "Rejected",
         description,
       });
-      alert("Refund rejected successfully.");
+      showSnackBar(`Refund rejected successfully.`, `success`);
       handleCloseDialog();
       navigate("/refund"); // Redirect to /refund page after rejection
     } catch (error) {
-      alert(`Failed to reject refund: ${error.message}`);
+      showSnackBar(`Failed to reject refund: ${error.message}`, `error`);
     }
   };
 
   const handleRequestRefund = () => {
-    alert("Refund request functionality will be implemented here.");
+    showSnackBar(
+      `Refund request functionality will be implemented here.`,
+      `info`
+    );
   };
 
   return (
     <Container sx={{ mt: 4 }}>
-      <Typography variant="h4" gutterBottom>
+      <Typography
+        component="h1"
+        variant="h1"
+        align="center"
+        sx={{ mb: 5 }}
+        fontWeight={"bold"}
+      >
         Refund Management
       </Typography>
       <Box mb={2}>
@@ -182,16 +195,30 @@ const RefundManagement = () => {
         </Box>
       ) : (
         <TableContainer component={Paper}>
-          <Table>
+          <Table border={1}>
             <TableHead>
               <TableRow>
-                <TableCell>Refund ID</TableCell>
-                <TableCell>Description</TableCell>
-                <TableCell>Created Date</TableCell>
-                <TableCell>Order Detail ID</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Amount</TableCell>
-                <TableCell>Actions</TableCell>
+                <TableCell>
+                  <h2>Refund ID</h2>
+                </TableCell>
+                <TableCell>
+                  <h2>Description</h2>
+                </TableCell>
+                <TableCell>
+                  <h2>Created Date</h2>
+                </TableCell>
+                <TableCell>
+                  <h2>Order Detail ID</h2>
+                </TableCell>
+                <TableCell>
+                  <h2>Status</h2>
+                </TableCell>
+                <TableCell>
+                  <h2>Amount</h2>
+                </TableCell>
+                <TableCell>
+                  <h2>Actions</h2>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

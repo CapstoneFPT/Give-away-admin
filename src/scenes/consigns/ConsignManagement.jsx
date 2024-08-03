@@ -21,6 +21,7 @@ import AddConsignment from "../../components/AddConsignment";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DatePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { useSnackbar } from "../../services/SnackBar";
 
 const ConsignManagement = () => {
   const [consignments, setConsignments] = useState([]);
@@ -34,8 +35,9 @@ const ConsignManagement = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const shopId = sessionStorage.getItem("shopId");
+  const { showSnackBar } = useSnackbar();
   const navigate = useNavigate();
-  console.log(consignments);
+
   const statusTabs = useMemo(
     () => [
       { label: "All", value: "" },
@@ -48,7 +50,7 @@ const ConsignManagement = () => {
     ],
     []
   );
-
+  console.log(consignments);
   const fetchConsignments = useCallback(
     async (page, pageSize, status, startDate, endDate, searchTerm) => {
       setIsLoading(true);
@@ -151,35 +153,22 @@ const ConsignManagement = () => {
       startDate,
       endDate,
       searchTerm
-    ); // Refresh consignments
+    );
   };
 
   const handleTabChange = (event, newValue) => {
     setTabIndex(newValue);
-    setPage(1); // Reset to first page when tab changes
+    setPage(1);
   };
 
   const handleSearchInputChange = debounce((event) => {
-    setSearchTerm(event.target.value || ""); // Update searchTerm state on input change
-    setPage(1); // Reset to first page when search term changes
+    setSearchTerm(event.target.value || "");
+    setPage(1);
   }, 300);
 
-  const handleStatusChange = async (consignSaleId, status) => {
-    if (status === "Received") {
-      const confirmed = window.confirm(
-        "Are you sure you want to mark this consignment as received?"
-      );
-      if (!confirmed) {
-        return;
-      }
-    }
-
+  const handleStatusChange = async (consignSaleId) => {
     try {
-      if (status === "Received") {
-        await ApiService.updateConsignStatusToRecieved(consignSaleId);
-      } else {
-        await ApiService.updateConsignStatus(consignSaleId, status);
-      }
+      await ApiService.updateConsignStatusToRecieved(consignSaleId);
       fetchConsignments(
         page,
         pageSize,
@@ -188,6 +177,7 @@ const ConsignManagement = () => {
         endDate,
         searchTerm
       );
+      showSnackBar("Status changed successfully", "success");
     } catch (error) {
       console.error(`Failed to update consignment status: ${error.message}`);
     }
@@ -199,7 +189,13 @@ const ConsignManagement = () => {
 
   return (
     <Box p={2}>
-      <Typography variant="h4" gutterBottom>
+      <Typography
+        component="h1"
+        variant="h1"
+        align="center"
+        sx={{ mb: 5 }}
+        fontWeight={"bold"}
+      >
         Consignment Management
       </Typography>
       <Button
@@ -264,12 +260,14 @@ const ConsignManagement = () => {
                 <TableCell>Sold Price</TableCell>
                 <TableCell>Type</TableCell>
                 <TableCell>Detail</TableCell>
+                <TableCell>Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {consignments.map((consign) => (
                 <TableRow key={consign.consignSaleId}>
                   <TableCell>{consign.consignSaleCode}</TableCell>
+
                   <TableCell>
                     {new Date(consign.createdDate).toLocaleString()}
                   </TableCell>
@@ -294,32 +292,16 @@ const ConsignManagement = () => {
                     </Button>
                   </TableCell>
                   <TableCell>
-                    {consign.status === "Pending" && (
+                    {consign.status === "AwaitDelivery" && (
                       <>
-                        <Button
-                          variant="contained"
-                          color="secondary"
-                          onClick={() =>
-                            handleStatusChange(
-                              consign.consignSaleId,
-                              "Rejected"
-                            )
-                          }
-                          sx={{ marginRight: "10px" }}
-                        >
-                          Reject
-                        </Button>
                         <Button
                           variant="contained"
                           color="primary"
                           onClick={() =>
-                            handleStatusChange(
-                              consign.consignSaleId,
-                              "AwaitDelivery"
-                            )
+                            handleStatusChange(consign.consignSaleId)
                           }
                         >
-                          Approve
+                          Confirm Received
                         </Button>
                       </>
                     )}

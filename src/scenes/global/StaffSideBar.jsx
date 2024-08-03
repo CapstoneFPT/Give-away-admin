@@ -4,7 +4,7 @@ import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../theme";
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+// import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 
 import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
 
@@ -44,6 +44,11 @@ const StaffSideBar = () => {
     <Box
       sx={{
         height: "100vh",
+        background: colors.primary[400],
+        boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+        borderRight: `1px solid ${colors.grey[300]}`,
+        transition: "width 0.3s ease",
+
         "& .pro-sidebar-inner": {
           height: "100vh",
           background: `${colors.primary[400]} !important`,
@@ -99,13 +104,6 @@ const StaffSideBar = () => {
           )}
 
           <Box paddingLeft={isCollapsed ? undefined : "10%"}>
-            <Item
-              title="Dashboard"
-              to="/home"
-              icon={<HomeOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
             <Item
               title="Item"
               to="/manage-items"

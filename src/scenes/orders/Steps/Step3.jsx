@@ -13,7 +13,6 @@ import {
   Box,
   Button,
   TextField,
-  Alert,
   InputAdornment,
   Dialog,
   DialogTitle,
@@ -21,14 +20,14 @@ import {
   DialogActions,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "../../../services/SnackBar";
 
 const Step3 = ({ prevStep }) => {
   const { cartItems, customerInfo, clearCart } = useCart();
   const [isLoading, setIsLoading] = useState(false);
   const [amountGiven, setAmountGiven] = useState("");
   const [change, setChange] = useState(null);
-  const [error, setError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const { showSnackBar } = useSnackbar();
   const [orderId, setOrderId] = useState("");
   const [openModal, setOpenModal] = useState(false);
   const navigate = useNavigate();
@@ -51,8 +50,6 @@ const Step3 = ({ prevStep }) => {
     console.log(orderData);
     try {
       setIsLoading(true);
-      setError("");
-      setSuccessMessage("");
 
       const orderResponse = await ApiService.createOrderbyStaff(
         shopId,
@@ -61,7 +58,7 @@ const Step3 = ({ prevStep }) => {
       setOrderId(orderResponse.data.orderId);
       setOpenModal(true);
     } catch (error) {
-      setError("Failed to create order: " + error.message);
+      showSnackBar(`Failed to create order:  + ${error.message}`, `error`);
     } finally {
       setIsLoading(false);
     }
@@ -69,7 +66,7 @@ const Step3 = ({ prevStep }) => {
 
   const handleCheckOut = async () => {
     if (!orderId) {
-      setError("No order ID found. Please create an order first.");
+      showSnackBar(`No order ID found. Please create an order first.`, `error`);
       return;
     }
 
@@ -78,13 +75,13 @@ const Step3 = ({ prevStep }) => {
     const amountGivenFormatted = parseFloat(amountGiven.replace(/\./g, ""));
 
     if (amountGivenFormatted < totalAmount) {
-      setError("Not enough money provided.");
+      showSnackBar(`Not enough money provided.`, `error`);
       return;
     }
 
     try {
       setIsLoading(true);
-      setError("");
+
       const checkoutResponse = await ApiService.checkOutWithCash(
         shopId,
         orderId,
@@ -95,16 +92,20 @@ const Step3 = ({ prevStep }) => {
       setChange(changeAmount);
       setOpenModal(false);
       navigate("/order");
-      alert(
-        "Checked out successfully! Change: " +
-          formatCurrency(changeAmount.toString())
+      showSnackBar(
+        `Checked out successfully! Change:  +
+          ${formatCurrency(changeAmount.toString())}`,
+        `info`
       );
       clearCart();
     } catch (error) {
       if (error.response && error.response.data.detail === "not enough money") {
-        setError("Not enough money provided.");
+        showSnackBar(`Not enough money provided.`, `error`);
       } else {
-        setError("Failed to complete checkout: " + error.message);
+        showSnackBar(
+          `Failed to complete checkout:  + ${error.message}`,
+          `error`
+        );
       }
     } finally {
       setIsLoading(false);
@@ -208,16 +209,6 @@ const Step3 = ({ prevStep }) => {
               </Typography>
             </Box>
           )}
-          {error && (
-            <Box sx={{ mt: 2 }}>
-              <Alert severity="error">{error}</Alert>
-            </Box>
-          )}
-          {successMessage && (
-            <Box sx={{ mt: 2 }}>
-              <Alert severity="success">{successMessage}</Alert>
-            </Box>
-          )}
         </>
       )}
       <Box sx={{ mt: 2, textAlign: "right" }}>
@@ -287,11 +278,6 @@ const Step3 = ({ prevStep }) => {
               }}
             />
           </Box>
-          {error && (
-            <Box sx={{ mt: 2 }}>
-              <Alert severity="error">{error}</Alert>
-            </Box>
-          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenModal(false)} color="primary">
