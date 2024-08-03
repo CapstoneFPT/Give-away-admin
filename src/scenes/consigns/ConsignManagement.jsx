@@ -20,7 +20,7 @@ import ApiService from "../../services/apiServices";
 import AddConsignment from "../../components/AddConsignment";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DatePicker } from "@mui/x-date-pickers";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useSnackbar } from "../../services/SnackBar";
 
 const ConsignManagement = () => {
@@ -44,7 +44,7 @@ const ConsignManagement = () => {
       { label: "Pending", value: "Pending" },
       { label: "AwaitDelivery", value: "AwaitDelivery" },
       { label: "Received", value: "Received" },
-      { label: "Complete", value: "Complete" },
+      { label: "Completed", value: "Completed" },
       { label: "Rejected", value: "Rejected" },
       { label: "Cancelled", value: "Cancelled" },
     ],
@@ -59,39 +59,39 @@ const ConsignManagement = () => {
 
         if (startDate && endDate) {
           response = await ApiService.getConsignmentsByBothDate(
+            shopId,
             page,
             pageSize,
             status,
             startDate.toISOString(),
             endDate.toISOString(),
-            searchTerm,
-            shopId
+            searchTerm
           );
         } else if (startDate) {
           response = await ApiService.getConsignmentsByStartDate(
+            shopId,
             page,
             pageSize,
             status,
             startDate.toISOString(),
-            searchTerm,
-            shopId
+            searchTerm
           );
         } else if (endDate) {
           response = await ApiService.getConsignmentsByEndDate(
+            shopId,
             page,
             pageSize,
             status,
             endDate.toISOString(),
-            searchTerm,
-            shopId
+            searchTerm
           );
         } else {
           response = await ApiService.getAllConsignments(
+            shopId,
             page,
             pageSize,
             status,
-            searchTerm,
-            shopId
+            searchTerm
           );
         }
 

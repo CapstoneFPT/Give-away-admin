@@ -433,7 +433,7 @@ const ConsignDetail = () => {
                 </Typography>
                 <Typography>
                   <strong>Selling price:</strong>{" "}
-                  {selectedItem.fashionItem.sellingPrice}
+                  {selectedItem.fashionItem.confirmedPrice}
                 </Typography>
                 <Typography>
                   <strong>Category:</strong>{" "}
