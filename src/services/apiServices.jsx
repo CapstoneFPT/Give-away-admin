@@ -220,9 +220,11 @@ const ApiService = {
       throw new Error(errorMessage);
     }
   },
-  cancelOrderByStaff: async (orderId) => {
+  cancelOrderByStaff: async (shopId, orderId) => {
     try {
-      const response = await axiosInstance.put(`/api/orders/${orderId}/cancel`);
+      const response = await axiosInstance.put(
+        `/api/shops/${shopId}/orders/${orderId}/cancel`
+      );
       return response.data;
     } catch (error) {
       // Handle and format the error message

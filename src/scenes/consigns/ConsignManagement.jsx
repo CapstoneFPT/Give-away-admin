@@ -59,39 +59,39 @@ const ConsignManagement = () => {
 
         if (startDate && endDate) {
           response = await ApiService.getConsignmentsByBothDate(
-            shopId,
             page,
             pageSize,
             status,
             startDate.toISOString(),
             endDate.toISOString(),
-            searchTerm
+            searchTerm,
+            shopId
           );
         } else if (startDate) {
           response = await ApiService.getConsignmentsByStartDate(
-            shopId,
             page,
             pageSize,
             status,
             startDate.toISOString(),
-            searchTerm
+            searchTerm,
+            shopId
           );
         } else if (endDate) {
           response = await ApiService.getConsignmentsByEndDate(
-            shopId,
             page,
             pageSize,
             status,
             endDate.toISOString(),
-            searchTerm
+            searchTerm,
+            shopId
           );
         } else {
           response = await ApiService.getAllConsignments(
-            shopId,
             page,
             pageSize,
             status,
-            searchTerm
+            searchTerm,
+            shopId
           );
         }
 
