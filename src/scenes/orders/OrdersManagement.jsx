@@ -38,7 +38,8 @@ const OrderManagement = () => {
   const [userRole, setUserRole] = useState("");
   const navigate = useNavigate();
   const { showSnackBar } = useSnackbar();
-
+  console.log(orders);
+  console.log(shopId);
   const fetchOrdersForStaff = useCallback(async () => {
     try {
       setIsLoading(true);

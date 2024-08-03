@@ -392,7 +392,7 @@ const ConsignDetail = () => {
                             style={{
                               marginLeft: "30%",
                               width: "40%",
-                              maxHeight: "100%",
+                              maxHeight: "50px",
                               objectFit: "contain",
                               borderRadius: "4px",
                               marginBottom: "10px",

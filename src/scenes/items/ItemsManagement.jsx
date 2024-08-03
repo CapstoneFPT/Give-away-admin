@@ -42,6 +42,7 @@ const ItemsManagement = () => {
   const [openAuctionForm, setOpenAuctionForm] = useState(false);
   const [selectedItem, setSelectedItem] = useState("");
   const [statusFilter, setStatusFilter] = useState("Available");
+  console.log(fashionItems);
   const userRole = sessionStorage.getItem("role");
   const shopId = userRole === "Admin" ? "" : sessionStorage.getItem("shopId");
   const statusOptions = {
@@ -247,7 +248,7 @@ const ItemsManagement = () => {
                     noWrap
                     sx={{ maxWidth: 300 }}
                   >
-                    {item.note}
+                    {item.description}
                   </Typography>
                 </TableCell>
                 <TableCell>{formatCurrency(item.sellingPrice)}</TableCell>
