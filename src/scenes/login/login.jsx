@@ -10,14 +10,15 @@ import {
   Paper,
 } from "@mui/material";
 import ApiService from "../../services/apiServices";
-import { useSnackbar } from "../../services/SnackBar";
+import { useSnackbar } from "../../services/SnackBar"; // Ensure this path is correct
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { showSnackbar } = useSnackbar();
+  const { showSnackBar } = useSnackbar(); // Ensure this matches the exported function name
+
   useEffect(() => {
     const role = sessionStorage.getItem("role");
 
@@ -38,7 +39,6 @@ const Login = () => {
       const role = data.data.role;
       const id = data.data.id;
 
-      // Check if the role is admin or staff
       if (role !== "Admin" && role !== "Staff") {
         setError("Only admin and staff roles are allowed");
         throw new Error("Unauthorized access");
@@ -47,10 +47,10 @@ const Login = () => {
       sessionStorage.setItem("role", role);
       sessionStorage.setItem("userId", id);
 
-      showSnackbar(`Login successful`, `success`);
+      showSnackBar("Login successful", "success");
       navigate("/home");
     } catch (error) {
-      showSnackbar(`Login fail `, `error`);
+      showSnackBar("Login failed", "error");
     }
   };
 

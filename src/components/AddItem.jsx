@@ -20,7 +20,7 @@ import ApiService from "../services/apiServices";
 import { useSnackbar } from "../services/SnackBar";
 
 const AddItem = ({ open, onClose, onAddSuccess }) => {
-  const { showSnackbar } = useSnackbar();
+  const { showSnackBar } = useSnackbar();
   const [newItem, setNewItem] = useState({
     sellingPrice: 0,
     name: "",
@@ -97,7 +97,7 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
       setIsLoading(true);
       await ApiService.addItemByShopId(shopId, newItem);
 
-      showSnackbar(`Item added successfully`, "success");
+      showSnackBar(`Item added successfully`, "success");
       onAddSuccess();
       setNewItem({
         sellingPrice: 0,
@@ -116,7 +116,7 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
       setIsLoading(false);
     } catch (error) {
       console.error("Failed to add item:", error);
-      showSnackbar(`Failed to add item: + ${error.message}`, "success");
+      showSnackBar(`Failed to add item: `, "error");
       setIsLoading(false);
     }
   };

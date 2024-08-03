@@ -24,14 +24,15 @@ const OrderDetail = () => {
   const [orderDetails, setOrderDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [userName, setUserName] = useState("");
-  const shopId = sessionStorage.getItem("shopId");
   const [userPhone, setUserPhone] = useState("");
   const [userAddress, setUserAddress] = useState("");
   const [purchaseType, setPurchaseType] = useState("");
   const [open, setOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [status, setStatus] = useState("");
-  console.log(orderDetails);
+  const userRole = sessionStorage.getItem("role");
+  const shopId = userRole === "Admin" ? "" : sessionStorage.getItem("shopId");
+
   const handleClickOpen = (item) => {
     setSelectedItem(item);
     setOpen(true);

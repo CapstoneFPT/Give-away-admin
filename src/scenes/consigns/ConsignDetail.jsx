@@ -52,13 +52,17 @@ const ConsignDetail = () => {
         setItems(itemsResponse.data);
       } catch (error) {
         console.error("Failed to fetch consignment details:", error.message);
+        showSnackBar(
+          `Failed to fetch consignment details. +${error.message}`,
+          "error"
+        );
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchConsignDetail();
-  }, [consignSaleId]);
+  }, [consignSaleId, showSnackBar]);
 
   const formatMoney = (num) => {
     return num.toLocaleString("vn", { minimumFractionDigits: 0 }) + " VND";
@@ -111,9 +115,10 @@ const ConsignDetail = () => {
         showSnackBar(`Update item successfully`, `success`);
       } catch (error) {
         console.error("Failed to update item details:", error.message);
+        handleClose();
         showSnackBar(
           `Failed to update item details: + ${error.message}`,
-          `error`
+          "error"
         );
       }
     }
@@ -150,6 +155,7 @@ const ConsignDetail = () => {
   const handleApproval = async (status) => {
     try {
       await ApiService.updateConsignApproved(consignSaleId, { status });
+      handleClose();
       showSnackBar(
         `Successfully ${
           status === "AwaitDelivery" ? "approved" : "rejected"
@@ -163,6 +169,7 @@ const ConsignDetail = () => {
         } consignment:`,
         error.message
       );
+      handleClose();
       showSnackBar(
         `Failed to ${
           status === "AwaitDelivery" ? "approve" : "reject"

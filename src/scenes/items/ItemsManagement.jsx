@@ -32,7 +32,7 @@ const ItemsManagement = () => {
   const [fashionItems, setFashionItems] = useState([]);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(5);
-  const { showSnackbar } = useSnackbar();
+  const { showSnackBar } = useSnackbar();
   const [isLoading, setIsLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
   const [tabIndex, setTabIndex] = useState(0);
@@ -111,12 +111,12 @@ const ItemsManagement = () => {
         setFashionItems([]);
         setTotalCount(0);
 
-        showSnackbar(`Failed to fetch items: ${error.message}`, "error");
+        showSnackBar(`Failed to fetch items: ${error.message}`, "error");
       } finally {
         setIsLoading(false);
       }
     },
-    [shopId, showSnackbar]
+    [shopId, showSnackBar]
   );
 
   useEffect(() => {
@@ -133,7 +133,7 @@ const ItemsManagement = () => {
 
   const toggleStatus = async (itemId, currentStatus) => {
     if (currentStatus !== "Available" && currentStatus !== "Unavailable") {
-      showSnackbar(
+      showSnackBar(
         "Only items with status 'Available' or 'Unavailable' can be changed.",
         "info"
       );
@@ -146,10 +146,10 @@ const ItemsManagement = () => {
       setIsLoading(true);
       await ApiService.updateItemStatus(itemId, newStatus);
 
-      showSnackbar(`Status updated to ${newStatus} successfully`, `success`);
+      showSnackBar(`Status updated to ${newStatus} successfully`, `success`);
       getFashionItems(page, pageSize, statusFilter, searchQuery, type);
     } catch (error) {
-      showSnackbar(`Failed to update status`, "error");
+      showSnackBar(`Failed to update status`, "error");
     } finally {
       setIsLoading(false);
     }
@@ -198,11 +198,11 @@ const ItemsManagement = () => {
     try {
       await ApiService.createAuction(auctionData);
 
-      showSnackbar(`Auction created successfully`, "success");
+      showSnackBar(`Auction created successfully`, "success");
       setOpenAuctionForm(false);
       getFashionItems(page, pageSize, statusFilter, searchQuery, type);
     } catch (error) {
-      showSnackbar(`Fail to create auction: +${error.message}`, "error");
+      showSnackBar(`Fail to create auction: +${error.message}`, "error");
     }
   };
 

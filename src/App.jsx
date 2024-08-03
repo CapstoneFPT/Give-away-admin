@@ -43,8 +43,8 @@ function App() {
   }, [navigate, isLoginPath, role]);
 
   return (
-    <ColorModeContext.Provider value={colorMode}>
-      <SnackbarProvider>
+    <SnackbarProvider>
+      <ColorModeContext.Provider value={colorMode}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <div
@@ -204,8 +204,8 @@ function App() {
             </div>
           </div>
         </ThemeProvider>
-      </SnackbarProvider>
-    </ColorModeContext.Provider>
+      </ColorModeContext.Provider>
+    </SnackbarProvider>
   );
 }
 

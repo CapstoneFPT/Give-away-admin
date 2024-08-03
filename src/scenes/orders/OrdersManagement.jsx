@@ -25,6 +25,7 @@ import { debounce } from "lodash";
 import ApiService from "../../services/apiServices";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "../../services/SnackBar";
+
 const OrderManagement = () => {
   const [orders, setOrders] = useState([]);
   const [page, setPage] = useState(0);
@@ -36,7 +37,8 @@ const OrderManagement = () => {
   const [shopId, setShopId] = useState("");
   const [userRole, setUserRole] = useState("");
   const navigate = useNavigate();
-  const { showSnackbar } = useSnackbar();
+  const { showSnackBar } = useSnackbar();
+
   const fetchOrdersForStaff = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -58,13 +60,13 @@ const OrderManagement = () => {
         setTotalCount(0);
       }
     } catch (error) {
-      showSnackbar(`Failed to fetch orders:  + ${error.message}`, `error`);
+      showSnackBar(`Failed to fetch orders: ${error.message}`, "error");
       setOrders([]);
       setTotalCount(0);
     } finally {
       setIsLoading(false);
     }
-  }, [shopId, page, pageSize, status, searchQuery, showSnackbar]);
+  }, [shopId, page, pageSize, status, searchQuery, showSnackBar]);
 
   const fetchOrdersForAdmin = useCallback(async () => {
     try {
@@ -86,13 +88,13 @@ const OrderManagement = () => {
         setTotalCount(0);
       }
     } catch (error) {
-      showSnackbar(`Failed to fetch orders:  + ${error.message}`, `error`);
+      showSnackBar(`Failed to fetch orders: ${error.message}`, "error");
       setOrders([]);
       setTotalCount(0);
     } finally {
       setIsLoading(false);
     }
-  }, [page, pageSize, status, searchQuery, showSnackbar]);
+  }, [page, pageSize, status, searchQuery, showSnackBar]);
 
   const getOrders = useCallback(() => {
     if (userRole === "Admin") {
@@ -147,30 +149,32 @@ const OrderManagement = () => {
   const handleCancelOrder = async (orderId) => {
     try {
       await ApiService.cancelOrderByStaff(orderId);
-      showSnackbar("Order cancelled successfully.");
+      showSnackBar("Order cancelled successfully.", "success");
       getOrders();
     } catch (error) {
-      showSnackbar("Failed to cancel order: " + error.message);
+      showSnackBar(`Failed to cancel order: ${error.message}`, "error");
     }
   };
 
   const handleConfirmOrder = async (orderId) => {
+    setIsLoading(true);
     try {
       await ApiService.confirmOrder(orderId);
-      showSnackbar("Order confirmed successfully.");
+      setIsLoading(false);
+      showSnackBar("Order confirmed successfully.", "success");
       getOrders();
     } catch (error) {
-      showSnackbar(`"Failed to confirm order: " + ${error.message}`, `error`);
+      showSnackBar(`Failed to confirm order: ${error.message}`, "error");
     }
   };
 
   const handleConfirmDelivery = async (orderId) => {
     try {
       await ApiService.updateOrderByStaff(orderId);
-      showSnackbar(`Order confirmed as delivered successfully.`, `success`);
+      showSnackBar("Order confirmed as delivered successfully.", "success");
       getOrders();
     } catch (error) {
-      showSnackbar(`Failed to confirm delivery:  + ${error.message}`, `error`);
+      showSnackBar(`Failed to confirm delivery: ${error.message}`, "error");
     }
   };
 
@@ -283,24 +287,14 @@ const OrderManagement = () => {
                             Confirm Delivery
                           </Button>
                           <Button
-                            variant="outlined"
+                            variant="contained"
                             color="error"
                             onClick={() => handleCancelOrder(order.orderId)}
                             sx={{ ml: 1 }}
                           >
-                            Cancel
+                            Cancel Order
                           </Button>
                         </>
-                      )}
-                      {order.status === "AwaitingPayment" && (
-                        <Button
-                          variant="outlined"
-                          color="error"
-                          onClick={() => handleCancelOrder(order.orderId)}
-                          sx={{ ml: 1 }}
-                        >
-                          Cancel
-                        </Button>
                       )}
                     </div>
                   </TableCell>
@@ -308,96 +302,75 @@ const OrderManagement = () => {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={10} align="center">
-                  {isLoading
-                    ? "Loading orders..."
-                    : searchQuery || status
-                    ? "No orders match your search or filter."
-                    : "No orders available."}
+                <TableCell colSpan={9}>
+                  <Typography align="center">No orders found.</Typography>
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={totalCount}
-          rowsPerPage={pageSize}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
       </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={totalCount}
+        rowsPerPage={pageSize}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
     </Box>
   );
 
   return (
-    <Container component="main" maxWidth="lg">
-      <Typography
-        component="h1"
-        variant="h1"
-        align="center"
-        sx={{ mb: 15 }}
-        fontWeight={"bold"}
+    <Container>
+      <Box my={2}>
+        <Typography variant="h4">Order Management</Typography>
+      </Box>
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        mb={2}
       >
-        Order Management
-      </Typography>
-      <Box display="flex" justifyContent="space-between" mb={3}>
-        <Box
-          display="flex"
-          backgroundColor="white"
-          borderRadius="3px"
-          border={1}
-          p={1}
-        >
+        <FormControl sx={{ minWidth: 120 }}>
+          <InputLabel id="status-label">Status</InputLabel>
+          <Select
+            labelId="status-label"
+            value={status}
+            onChange={handleStatusChange}
+            autoWidth
+            label="Status"
+          >
+            <MenuItem value="">All</MenuItem>
+            <MenuItem value="Pending">Pending</MenuItem>
+            <MenuItem value="AwaitingPayment">Awaiting payment</MenuItem>
+            <MenuItem value="OnDelivery">On Delivery</MenuItem>
+            <MenuItem value="Completed">Completed</MenuItem>
+            <MenuItem value="Cancelled">Cancelled</MenuItem>
+          </Select>
+        </FormControl>
+        <Box display="flex" alignItems="center">
           <InputBase
-            sx={{ ml: 1, flex: 1 }}
-            placeholder="Search"
-            defaultValue={searchQuery}
+            placeholder="Search Orders"
             onChange={handleSearchChange}
+            sx={{
+              ml: 1,
+              flex: 1,
+              border: "1px solid #ddd",
+              borderRadius: "4px",
+              padding: "0 8px",
+            }}
           />
-          <IconButton type="button" sx={{ p: 1 }}>
+          <IconButton color="primary" aria-label="search">
             <SearchIcon />
           </IconButton>
         </Box>
-        <Box display="flex" justifyContent="space-between" gap={5} mb={3}>
-          <FormControl sx={{ minWidth: 120 }}>
-            <InputLabel id="status-select-label">Status</InputLabel>
-            <Select
-              value={status}
-              onChange={handleStatusChange}
-              labelId="status-select-label"
-              label="Status"
-              id="status-select"
-            >
-              <MenuItem value="">All</MenuItem>
-              <MenuItem value="Pending">Pending</MenuItem>
-              <MenuItem value="AwaitingPayment">Awaiting Payment</MenuItem>
-              <MenuItem value="OnDelivery">On Delivery</MenuItem>
-              <MenuItem value="Completed">Completed</MenuItem>
-              <MenuItem value="Cancelled">Cancelled</MenuItem>
-            </Select>
-          </FormControl>
-
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleCreateOrder}
-          >
-            Create Order
-          </Button>
-        </Box>
+        <Button variant="contained" color="primary" onClick={handleCreateOrder}>
+          Create Order
+        </Button>
       </Box>
-      <Paper elevation={3}>
-        {isLoading ? (
-          <Box display="flex" justifyContent="center" mt={5}>
-            <CircularProgress />
-          </Box>
-        ) : (
-          renderTable()
-        )}
-      </Paper>
+      {isLoading ? <CircularProgress /> : renderTable()}
     </Container>
   );
 };
