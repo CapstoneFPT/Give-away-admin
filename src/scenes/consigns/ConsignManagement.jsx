@@ -20,7 +20,7 @@ import ApiService from "../../services/apiServices";
 import AddConsignment from "../../components/AddConsignment";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DatePicker } from "@mui/x-date-pickers";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useSnackbar } from "../../services/SnackBar";
 
 const ConsignManagement = () => {
@@ -44,7 +44,7 @@ const ConsignManagement = () => {
       { label: "Pending", value: "Pending" },
       { label: "AwaitDelivery", value: "AwaitDelivery" },
       { label: "Received", value: "Received" },
-      { label: "Complete", value: "Complete" },
+      { label: "Completed", value: "Completed" },
       { label: "Rejected", value: "Rejected" },
       { label: "Cancelled", value: "Cancelled" },
     ],

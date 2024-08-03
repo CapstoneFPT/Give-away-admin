@@ -36,7 +36,7 @@ const ConsignDetail = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([]);
   const { showSnackBar } = useSnackbar();
-
+  console.log(selectedItem);
   console.log(consignDetail);
   useEffect(() => {
     const fetchConsignDetail = async () => {
@@ -392,7 +392,7 @@ const ConsignDetail = () => {
                             style={{
                               marginLeft: "30%",
                               width: "40%",
-                              maxHeight: "50px",
+                              maxHeight: "200px",
                               objectFit: "contain",
                               borderRadius: "4px",
                               marginBottom: "10px",
@@ -426,6 +426,18 @@ const ConsignDetail = () => {
                 </Typography>
                 <Typography>
                   <strong>Gender:</strong> {selectedItem.fashionItem.gender}
+                </Typography>
+                <Typography>
+                  <strong>Description:</strong>{" "}
+                  {selectedItem.fashionItem.description}
+                </Typography>
+                <Typography>
+                  <strong>Selling price:</strong>{" "}
+                  {selectedItem.fashionItem.confirmedPrice}
+                </Typography>
+                <Typography>
+                  <strong>Category:</strong>{" "}
+                  {selectedItem.fashionItem.categoryName}
                 </Typography>
               </Box>
             )}

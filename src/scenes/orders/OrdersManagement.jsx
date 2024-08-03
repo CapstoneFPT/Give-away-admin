@@ -149,7 +149,7 @@ const OrderManagement = () => {
 
   const handleCancelOrder = async (orderId) => {
     try {
-      await ApiService.cancelOrderByStaff(orderId);
+      await ApiService.cancelOrderByStaff(shopId, orderId);
       showSnackBar("Order cancelled successfully.", "success");
       getOrders();
     } catch (error) {
@@ -266,16 +266,26 @@ const OrderManagement = () => {
                     </Button>
                   </TableCell>
                   <TableCell>
-                    <div style={{ display: "flex" }}>
+                    <Box flexDirection={"row"} display={"flex"}>
                       {order.status === "Pending" && (
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={() => handleConfirmOrder(order.orderId)}
-                          sx={{ ml: 1 }}
-                        >
-                          Confirm Order
-                        </Button>
+                        <>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => handleConfirmOrder(order.orderId)}
+                            sx={{ ml: 1 }}
+                          >
+                            Confirm Order
+                          </Button>
+                          <Button
+                            variant="contained"
+                            color="error"
+                            onClick={() => handleCancelOrder(order.orderId)}
+                            sx={{ ml: 1 }}
+                          >
+                            Cancel Order
+                          </Button>
+                        </>
                       )}
                       {order.status === "OnDelivery" && (
                         <>
@@ -297,7 +307,7 @@ const OrderManagement = () => {
                           </Button>
                         </>
                       )}
-                    </div>
+                    </Box>
                   </TableCell>
                 </TableRow>
               ))
