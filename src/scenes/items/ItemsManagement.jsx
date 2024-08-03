@@ -26,12 +26,13 @@ import SearchIcon from "@mui/icons-material/Search";
 import ApiService from "../../services/apiServices";
 import AddItem from "../../components/AddItem";
 import AuctionForm from "../../components/CreateAuctionForm";
+import { useSnackbar } from "../../services/SnackBar";
 
 const ItemsManagement = () => {
   const [fashionItems, setFashionItems] = useState([]);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(5);
-
+  const { showSnackbar } = useSnackbar();
   const [isLoading, setIsLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
   const [tabIndex, setTabIndex] = useState(0);
@@ -109,12 +110,13 @@ const ItemsManagement = () => {
         setSearchQuery("");
         setFashionItems([]);
         setTotalCount(0);
-        alert("Failed to fetch items: " + error.message);
+
+        showSnackbar(`Failed to fetch items: ${error.message}`, "error");
       } finally {
         setIsLoading(false);
       }
     },
-    [shopId]
+    [shopId, showSnackbar]
   );
 
   useEffect(() => {
@@ -131,8 +133,9 @@ const ItemsManagement = () => {
 
   const toggleStatus = async (itemId, currentStatus) => {
     if (currentStatus !== "Available" && currentStatus !== "Unavailable") {
-      alert(
-        "Only items with status 'Available' or 'Unavailable' can be changed."
+      showSnackbar(
+        "Only items with status 'Available' or 'Unavailable' can be changed.",
+        "info"
       );
       return;
     }
@@ -142,10 +145,11 @@ const ItemsManagement = () => {
     try {
       setIsLoading(true);
       await ApiService.updateItemStatus(itemId, newStatus);
-      alert(`Status updated to ${newStatus} successfully`);
+
+      showSnackbar(`Status updated to ${newStatus} successfully`, `success`);
       getFashionItems(page, pageSize, statusFilter, searchQuery, type);
     } catch (error) {
-      alert("Failed to update status: " + error.message);
+      showSnackbar(`Failed to update status`, "error");
     } finally {
       setIsLoading(false);
     }
@@ -193,11 +197,12 @@ const ItemsManagement = () => {
   const handleAuctionSubmit = async (auctionData) => {
     try {
       await ApiService.createAuction(auctionData);
-      alert("Auction created successfully");
+
+      showSnackbar(`Auction created successfully`, "success");
       setOpenAuctionForm(false);
       getFashionItems(page, pageSize, statusFilter, searchQuery, type);
     } catch (error) {
-      alert("Failed to create auction: " + error.message);
+      showSnackbar(`Fail to create auction: +${error.message}`, "error");
     }
   };
 
@@ -303,11 +308,23 @@ const ItemsManagement = () => {
 
   return (
     <Container component="main" maxWidth="lg">
-      <Typography component="h1" variant="h5" align="center" sx={{ mb: 3 }}>
+      <Typography
+        component="h1"
+        variant="h1"
+        align="center"
+        sx={{ mb: 15 }}
+        fontWeight={"bold"}
+      >
         Item Management
       </Typography>
       <Box display="flex" justifyContent="space-between" mb={3}>
-        <Box display="flex" backgroundColor="white" borderRadius="3px" p={1}>
+        <Box
+          display="flex"
+          backgroundColor="white"
+          borderRadius="3px"
+          border={1}
+          p={1}
+        >
           <InputBase
             sx={{ ml: 1, flex: 1 }}
             placeholder="Search"
@@ -317,24 +334,23 @@ const ItemsManagement = () => {
           <IconButton type="button" sx={{ p: 1 }}>
             <SearchIcon />
           </IconButton>
-          <FormControl sx={{ minWidth: 120 }}>
-            <InputLabel id="status-select-label">Status</InputLabel>
-            <Select
-              value={statusFilter}
-              onChange={handleStatusChange}
-              labelId="status-select-label"
-              label="Status"
-              id="status-select"
-            >
-              {statusOptions[type].map((status) => (
-                <MenuItem key={status} value={status}>
-                  {status}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
         </Box>
-
+        <FormControl sx={{ minWidth: 120 }}>
+          <InputLabel id="status-select-label">Status</InputLabel>
+          <Select
+            value={statusFilter}
+            onChange={handleStatusChange}
+            labelId="status-select-label"
+            label="Status"
+            id="status-select"
+          >
+            {statusOptions[type].map((status) => (
+              <MenuItem key={status} value={status}>
+                {status}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         {userRole !== "Admin" && (
           <Button
             variant="contained"

@@ -24,7 +24,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { debounce } from "lodash";
 import ApiService from "../../services/apiServices";
 import { useNavigate } from "react-router-dom";
-
+import { useSnackbar } from "../../services/SnackBar";
 const OrderManagement = () => {
   const [orders, setOrders] = useState([]);
   const [page, setPage] = useState(0);
@@ -36,7 +36,7 @@ const OrderManagement = () => {
   const [shopId, setShopId] = useState("");
   const [userRole, setUserRole] = useState("");
   const navigate = useNavigate();
-
+  const { showSnackbar } = useSnackbar();
   const fetchOrdersForStaff = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -58,13 +58,13 @@ const OrderManagement = () => {
         setTotalCount(0);
       }
     } catch (error) {
-      alert("Failed to fetch orders: " + error.message);
+      showSnackbar(`Failed to fetch orders:  + ${error.message}`, `error`);
       setOrders([]);
       setTotalCount(0);
     } finally {
       setIsLoading(false);
     }
-  }, [shopId, page, pageSize, status, searchQuery]);
+  }, [shopId, page, pageSize, status, searchQuery, showSnackbar]);
 
   const fetchOrdersForAdmin = useCallback(async () => {
     try {
@@ -86,13 +86,13 @@ const OrderManagement = () => {
         setTotalCount(0);
       }
     } catch (error) {
-      alert("Failed to fetch orders: " + error.message);
+      showSnackbar(`Failed to fetch orders:  + ${error.message}`, `error`);
       setOrders([]);
       setTotalCount(0);
     } finally {
       setIsLoading(false);
     }
-  }, [page, pageSize, status, searchQuery]);
+  }, [page, pageSize, status, searchQuery, showSnackbar]);
 
   const getOrders = useCallback(() => {
     if (userRole === "Admin") {
@@ -147,30 +147,30 @@ const OrderManagement = () => {
   const handleCancelOrder = async (orderId) => {
     try {
       await ApiService.cancelOrderByStaff(orderId);
-      alert("Order cancelled successfully.");
+      showSnackbar("Order cancelled successfully.");
       getOrders();
     } catch (error) {
-      alert("Failed to cancel order: " + error.message);
+      showSnackbar("Failed to cancel order: " + error.message);
     }
   };
 
   const handleConfirmOrder = async (orderId) => {
     try {
       await ApiService.confirmOrder(orderId);
-      alert("Order confirmed successfully.");
+      showSnackbar("Order confirmed successfully.");
       getOrders();
     } catch (error) {
-      alert("Failed to confirm order: " + error.message);
+      showSnackbar(`"Failed to confirm order: " + ${error.message}`, `error`);
     }
   };
 
   const handleConfirmDelivery = async (orderId) => {
     try {
       await ApiService.updateOrderByStaff(orderId);
-      alert("Order confirmed as delivered successfully.");
+      showSnackbar(`Order confirmed as delivered successfully.`, `success`);
       getOrders();
     } catch (error) {
-      alert("Failed to confirm delivery: " + error.message);
+      showSnackbar(`Failed to confirm delivery:  + ${error.message}`, `error`);
     }
   };
 
@@ -332,7 +332,13 @@ const OrderManagement = () => {
 
   return (
     <Container component="main" maxWidth="lg">
-      <Typography component="h1" variant="h5" align="center" sx={{ mb: 3 }}>
+      <Typography
+        component="h1"
+        variant="h1"
+        align="center"
+        sx={{ mb: 15 }}
+        fontWeight={"bold"}
+      >
         Order Management
       </Typography>
       <Box display="flex" justifyContent="space-between" mb={3}>

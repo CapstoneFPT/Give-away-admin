@@ -17,8 +17,10 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { storage } from "../firebaseconfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import ApiService from "../services/apiServices";
+import { useSnackbar } from "../services/SnackBar";
 
 const AddItem = ({ open, onClose, onAddSuccess }) => {
+  const { showSnackbar } = useSnackbar();
   const [newItem, setNewItem] = useState({
     sellingPrice: 0,
     name: "",
@@ -94,7 +96,8 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
     try {
       setIsLoading(true);
       await ApiService.addItemByShopId(shopId, newItem);
-      alert("Item added successfully");
+
+      showSnackbar(`Item added successfully`, "success");
       onAddSuccess();
       setNewItem({
         sellingPrice: 0,
@@ -113,7 +116,7 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
       setIsLoading(false);
     } catch (error) {
       console.error("Failed to add item:", error);
-      alert("Failed to add item: " + error.message);
+      showSnackbar(`Failed to add item: + ${error.message}`, "success");
       setIsLoading(false);
     }
   };

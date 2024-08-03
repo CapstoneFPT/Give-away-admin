@@ -733,6 +733,33 @@ const ApiService = {
       throw new Error(errorMessage);
     }
   },
+  updateConsignApproved: async (consignSaleId, status) => {
+    try {
+      const response = await axiosInstance.put(
+        `/api/consginsales/${consignSaleId}/approval`,
+        status
+      );
+      return response.data;
+    } catch (error) {
+      // Handle and format the error message
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
+    }
+  },
   updateConsignForApprove: async (consignSaleDetailId, updateData) => {
     try {
       const response = await axiosInstance.put(
@@ -789,7 +816,7 @@ const ApiService = {
   updateConsignStatusToRecieved: async (consignSaleId) => {
     try {
       const response = await axiosInstance.put(
-        `http://giveawayproject.jettonetto.org:8080/api/consginsales/${consignSaleId}/confirm-received`
+        `/api/consginsales/${consignSaleId}/confirm-received`
       );
       return response.data;
     } catch (error) {

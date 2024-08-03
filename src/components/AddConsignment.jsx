@@ -19,8 +19,9 @@ import ApiService from "../services/apiServices";
 import { InputAdornment } from "@mui/material";
 import { storage } from "../firebaseconfig"; // Import your storage configuration
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-
+import { useSnackbar } from "../services/SnackBar";
 const AddConsignment = ({ open, onClose, onAddSuccess }) => {
+  const { showSnackbar } = useSnackbar();
   const [newConsign, setNewConsign] = useState({
     type: "ConsignedForSale",
     consigner: "",
@@ -148,7 +149,7 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
         ],
       }));
     } else {
-      alert("Maximum of 5 items allowed per consignment.");
+      showSnackbar("Maximum of 5 items allowed per consignment.", "info");
     }
   };
 
@@ -188,8 +189,8 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
       };
       console.log(payload);
       await ApiService.createConsignByStaff(shopId, payload);
+      showSnackbar("Consignment added successfully", "success");
 
-      alert("Consignment added successfully");
       onAddSuccess();
 
       setNewConsign({
@@ -218,7 +219,8 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
       onClose();
     } catch (error) {
       console.error("Failed to add consignment:", error);
-      alert("Failed to add consignment: " + error.message);
+
+      showSnackbar(`Failed to add consignment:  ${error.message}`, "success");
       setIsLoading(false);
     }
   };

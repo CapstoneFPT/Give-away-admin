@@ -13,6 +13,7 @@ import {
   Button,
 } from "@mui/material";
 import ApiService from "../../services/apiServices";
+import { useSnackbar } from "../../services/SnackBar";
 
 const AuctionManagement = () => {
   const [auctions, setAuctions] = useState([]);
@@ -22,7 +23,7 @@ const AuctionManagement = () => {
   const [pageSize, setPageSize] = useState(5);
   const [totalCount, setTotalCount] = useState(0);
   const userRole = sessionStorage.getItem("role");
-
+  const { showSnackbar } = useSnackbar();
   const fetchAuctions = async (searchTerm, page, pageSize) => {
     setIsLoading(true);
     try {
@@ -57,22 +58,26 @@ const AuctionManagement = () => {
   const handleApprove = async (auctionId) => {
     try {
       await ApiService.approveAuctionByAdmin(auctionId);
-      alert("Auction approved successfully");
+
+      showSnackbar(`Auction approved successfully`);
       fetchAuctions(searchTerm, page, pageSize); // Refresh auctions
     } catch (error) {
       console.error("Failed to approve auction:", error.message);
-      alert("Failed to approve auction: " + error.message);
+
+      showSnackbar(`Fail to approve auction + ${error.message}`);
     }
   };
 
   const handleReject = async (auctionId) => {
     try {
       await ApiService.rejectAuctionByAdmin(auctionId);
-      alert("Auction rejected successfully");
+
+      showSnackbar(`Auction rejected successfully`);
       fetchAuctions(searchTerm, page, pageSize); // Refresh auctions
     } catch (error) {
       console.error("Failed to reject auction:", error.message);
-      alert("Failed to reject auction: " + error.message);
+
+      showSnackbar(`Failed to reject auction:  + error.message`, `error`);
     }
   };
 
@@ -93,7 +98,13 @@ const AuctionManagement = () => {
 
   return (
     <Container>
-      <Typography variant="h4" gutterBottom>
+      <Typography
+        component="h1"
+        variant="h1"
+        align="center"
+        sx={{ mb: 5 }}
+        fontWeight={"bold"}
+      >
         Auction Management
       </Typography>
       <TextField

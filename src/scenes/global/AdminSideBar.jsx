@@ -39,7 +39,11 @@ const AdminSideBar = () => {
   return (
     <Box
       sx={{
-        height: "100vh", // Ensure it takes the full height
+        height: "100vh",
+        background: colors.primary[400],
+        boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+        borderRight: `1px solid ${colors.grey[300]}`,
+        transition: "width 0.3s ease",
         "& .pro-sidebar-inner": {
           height: "100vh", // Ensure sidebar inner takes the full height
           background: `${colors.primary[400]} !important`,
