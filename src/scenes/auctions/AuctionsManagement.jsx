@@ -20,10 +20,10 @@ const AuctionManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(6);
   const [totalCount, setTotalCount] = useState(0);
   const userRole = sessionStorage.getItem("role");
-  const { showSnackbar } = useSnackbar();
+  const { showSnackBar } = useSnackbar();
   const fetchAuctions = async (searchTerm, page, pageSize) => {
     setIsLoading(true);
     try {
@@ -59,12 +59,12 @@ const AuctionManagement = () => {
     try {
       await ApiService.approveAuctionByAdmin(auctionId);
 
-      showSnackbar(`Auction approved successfully`);
+      showSnackBar(`Auction approved successfully`);
       fetchAuctions(searchTerm, page, pageSize); // Refresh auctions
     } catch (error) {
       console.error("Failed to approve auction:", error.message);
 
-      showSnackbar(`Fail to approve auction + ${error.message}`);
+      showSnackBar(`Fail to approve auction + ${error.message}`);
     }
   };
 
@@ -72,12 +72,12 @@ const AuctionManagement = () => {
     try {
       await ApiService.rejectAuctionByAdmin(auctionId);
 
-      showSnackbar(`Auction rejected successfully`);
+      showSnackBar(`Auction rejected successfully`);
       fetchAuctions(searchTerm, page, pageSize); // Refresh auctions
     } catch (error) {
       console.error("Failed to reject auction:", error.message);
 
-      showSnackbar(`Failed to reject auction:  + error.message`, `error`);
+      showSnackBar(`Failed to reject auction:  + error.message`, `error`);
     }
   };
 
@@ -194,7 +194,7 @@ const AuctionManagement = () => {
           onPageChange={handleChangePage}
           rowsPerPage={pageSize}
           onRowsPerPageChange={handleChangeRowsPerPage}
-          rowsPerPageOptions={[5, 10, 15, 20]}
+          rowsPerPageOptions={[6, 12, 18, 24]}
         />
       </Box>
     </Container>

@@ -5,14 +5,14 @@ import { useSnackbar } from "../services/SnackBar";
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const navigate = useNavigate();
   const role = sessionStorage.getItem("role");
-  const { showSnackbar } = useSnackbar();
+  const { showSnackBar } = useSnackbar();
   useEffect(() => {
     if (!role || !allowedRoles.includes(role)) {
-      showSnackbar(`You do not have the permission`, "error");
+      showSnackBar(`You do not have the permission`, "error");
       navigate("/login");
       sessionStorage.removeItem("role");
     }
-  }, [role, allowedRoles, navigate, showSnackbar]);
+  }, [role, allowedRoles, navigate, showSnackBar]);
 
   return allowedRoles.includes(role) ? children : null;
 };
