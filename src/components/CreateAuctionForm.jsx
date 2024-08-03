@@ -16,6 +16,7 @@ const AuctionForm = ({ open, onClose, onSubmit, item }) => {
     depositFee: 0,
     shopId,
   });
+
   console.log(auctionData);
   const handleChange = (e) => {
     const { name, value } = e.target;
