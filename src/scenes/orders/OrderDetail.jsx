@@ -18,7 +18,7 @@ import {
 import { InfoOutlined } from "@mui/icons-material";
 import ApiService from "../../services/apiServices";
 import { useParams } from "react-router-dom";
-
+import Slider from "react-slick";
 const OrderDetail = () => {
   const { orderId } = useParams();
   const [orderDetails, setOrderDetails] = useState(null);
@@ -32,6 +32,7 @@ const OrderDetail = () => {
   const [status, setStatus] = useState("");
   const userRole = sessionStorage.getItem("role");
   const shopId = userRole === "Admin" ? "" : sessionStorage.getItem("shopId");
+  console.log(selectedItem);
 
   const handleClickOpen = (item) => {
     setSelectedItem(item);
@@ -132,7 +133,14 @@ const OrderDetail = () => {
       color: "#4CAF50",
     },
   };
-
+  const carouselSettings = {
+    infinite: false,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 2000,
+  };
   if (isLoading) {
     return (
       <Box
@@ -155,7 +163,7 @@ const OrderDetail = () => {
   }
 
   const totalPrice = calculateTotalPrice();
-  const currentStatusStyle = statusStyles[status] || {}; // Default to empty if status is not found
+  const currentStatusStyle = statusStyles[status] || {};
 
   return (
     <Box sx={{ p: 4 }}>
@@ -291,17 +299,51 @@ const OrderDetail = () => {
       </Paper>
 
       <Dialog open={open} onClose={handleClose}>
-        <Typography sx={{ fontWeight: "bold" }}>
+        <Typography
+          display={"flex"}
+          justifyContent={"center"}
+          sx={{ fontWeight: "bold" }}
+          fontSize={30}
+        >
           Item Details <InfoOutlined sx={{ mr: 1, color: "primary.main" }} />
         </Typography>
         <DialogContent>
           {selectedItem && (
             <Box>
-              <img
-                src={selectedItem.itemImage[0]}
-                alt={selectedItem.itemName}
-                width="200"
-              />
+              <Box maxWidth={150} ml={20}>
+                <Slider {...carouselSettings}>
+                  {selectedItem.itemImage.length > 0 ? (
+                    selectedItem.itemImage.slice(0, 3).map((image, index) => (
+                      <Box
+                        key={index}
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                      >
+                        <img
+                          src={image}
+                          alt={`Item Image ${index}`}
+                          style={{
+                            maxWidth: "300px",
+                            maxHeight: "200px",
+                            objectFit: "cover",
+                            borderRadius: "4px",
+                          }}
+                        />
+                      </Box>
+                    ))
+                  ) : (
+                    <Box
+                      display="flex"
+                      justifyContent="center"
+                      alignItems="center"
+                      height="200px"
+                    >
+                      <Typography>No Images Available</Typography>
+                    </Box>
+                  )}
+                </Slider>
+              </Box>
               <Typography
                 style={{
                   color: "#10771A",

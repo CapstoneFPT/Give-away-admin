@@ -33,25 +33,29 @@ const Login = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
-    try {
-      const data = await ApiService.authLogin(email, password);
-      const shopId = data.data.shopId;
-      const role = data.data.role;
-      const id = data.data.id;
 
-      if (role !== "Admin" && role !== "Staff") {
-        setError("Only admin and staff roles are allowed");
-        throw new Error("Unauthorized access");
-      }
-      sessionStorage.setItem("shopId", shopId);
-      sessionStorage.setItem("role", role);
-      sessionStorage.setItem("userId", id);
-
-      showSnackBar("Login successful", "success");
-      navigate("/home");
-    } catch (error) {
-      showSnackBar("Login failed", "error");
+    if (!email || !password) {
+      showSnackBar("Please enter both email and password", "error");
+      return;
     }
+
+    const data = await ApiService.authLogin(email, password);
+    console.log(data);
+
+    if (data.data == null) {
+      showSnackBar(`Login failed: ${data.messages}`, "error");
+      return;
+    }
+    const { shopId, role, id } = data.data;
+    if (role !== "Admin" && role !== "Staff") {
+      showSnackBar("Only admin and staff roles are allowed", "error");
+      throw new Error("Unauthorized access");
+    }
+    sessionStorage.setItem("shopId", shopId);
+    sessionStorage.setItem("role", role);
+    sessionStorage.setItem("userId", id);
+    showSnackBar("Login successful", "success");
+    navigate("/home");
   };
 
   return (
