@@ -20,7 +20,7 @@ import ApiService from "../../services/apiServices";
 import AddConsignment from "../../components/AddConsignment";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DatePicker } from "@mui/x-date-pickers";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 import { useSnackbar } from "../../services/SnackBar";
 
 const ConsignManagement = () => {
