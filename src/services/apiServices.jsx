@@ -17,7 +17,6 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -43,7 +42,6 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -67,9 +65,9 @@ const ApiService = {
       const response = await axiosInstance.get(
         `/api/auctions?SearchTerm=${searchTerm}&PageNumber=${page}&PageSize=${pageSize}&GetExpiredAuctions=true`
       );
+
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -95,7 +93,6 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -122,7 +119,6 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -149,7 +145,6 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -175,7 +170,6 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -201,7 +195,6 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -227,7 +220,6 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -254,7 +246,6 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -280,7 +271,6 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -307,7 +297,6 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -334,7 +323,6 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -361,7 +349,6 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -387,7 +374,6 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -413,7 +399,6 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -439,7 +424,6 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -465,7 +449,6 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -492,7 +475,6 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -518,7 +500,6 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -559,7 +540,6 @@ const ApiService = {
 
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -583,7 +563,6 @@ const ApiService = {
       const response = await axiosInstance.get(`/api/accounts/${accountId}`);
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -608,7 +587,6 @@ const ApiService = {
 `);
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -635,7 +613,6 @@ const ApiService = {
 
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -662,7 +639,6 @@ const ApiService = {
 
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -687,25 +663,11 @@ const ApiService = {
         email,
         password,
       });
+
       return response.data;
-    } catch (error) {
-      // Handle and format the error message
-      let errorMessage = "An unknown error occurred.";
-
-      if (error.response && error.response.data) {
-        const { data } = error.response;
-        if (data.detail) {
-          errorMessage = data.detail;
-        } else if (data.message) {
-          errorMessage = data.message;
-        } else if (data.title) {
-          errorMessage = data.title;
-        }
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-
-      throw new Error(errorMessage);
+    } catch (response) {
+      console.log(response.response.data);
+      return response.response.data;
     }
   },
 
@@ -717,7 +679,6 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -744,7 +705,6 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -771,7 +731,6 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -797,7 +756,6 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -823,7 +781,6 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -850,7 +807,6 @@ const ApiService = {
       );
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -877,7 +833,6 @@ const ApiService = {
 
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -904,7 +859,6 @@ const ApiService = {
 
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -939,7 +893,6 @@ const ApiService = {
 
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -973,7 +926,6 @@ const ApiService = {
 
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {
@@ -1007,7 +959,6 @@ const ApiService = {
 
       return response.data;
     } catch (error) {
-      // Handle and format the error message
       let errorMessage = "An unknown error occurred.";
 
       if (error.response && error.response.data) {

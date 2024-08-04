@@ -45,6 +45,7 @@ const ItemsManagement = () => {
   console.log(fashionItems);
   const userRole = sessionStorage.getItem("role");
   const shopId = userRole === "Admin" ? "" : sessionStorage.getItem("shopId");
+  console.log(fashionItems);
   const statusOptions = {
     ConsignedForSale: [
       "Available",
@@ -251,7 +252,12 @@ const ItemsManagement = () => {
                     {item.description}
                   </Typography>
                 </TableCell>
-                <TableCell>{formatCurrency(item.sellingPrice)}</TableCell>
+                <TableCell>
+                  {item.sellingPrice !== 0 && (
+                    <>{formatCurrency(item.sellingPrice)}</>
+                  )}
+                  {item.sellingPrice === 0 && <Typography>None</Typography>}
+                </TableCell>
                 <TableCell>
                   {item.status === "Available" ||
                   item.status === "Unavailable" ? (

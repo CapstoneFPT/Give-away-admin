@@ -35,9 +35,9 @@ const ConsignDetail = () => {
   const [sellingPrice, setSellingPrice] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([]);
+  const [isUpdateDisabled, setIsUpdateDisabled] = useState(true);
   const { showSnackBar } = useSnackbar();
-  console.log(selectedItem);
-  console.log(consignDetail);
+
   useEffect(() => {
     const fetchConsignDetail = async () => {
       try {
@@ -85,8 +85,8 @@ const ConsignDetail = () => {
 
   const handleClickOpen = (item) => {
     setSelectedItem(item);
-    setDescription(""); // Reset description
-    setSellingPrice(""); // Reset selling price
+    setDescription("");
+    setSellingPrice("");
     setOpen(true);
     getCateByGender();
   };
@@ -107,7 +107,6 @@ const ConsignDetail = () => {
       try {
         await ApiService.updateConsignForApprove(
           selectedItem.consignSaleDetailId,
-
           updatedData
         );
 
@@ -125,8 +124,7 @@ const ConsignDetail = () => {
   };
 
   const carouselSettings = {
-    dots: true,
-    infinite: true,
+    infinite: false,
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
@@ -151,17 +149,20 @@ const ConsignDetail = () => {
       console.error("Error fetching categories:", error.message);
     }
   };
+  console.log(consignSaleId);
 
   const handleApproval = async (status) => {
+    setIsLoading(true);
     try {
       await ApiService.updateConsignApproved(consignSaleId, { status });
-      handleClose();
+
       showSnackBar(
         `Successfully ${
           status === "AwaitDelivery" ? "approved" : "rejected"
         } consignment`,
         "success"
       );
+      setIsLoading(false);
     } catch (error) {
       console.error(
         `Failed to ${
@@ -169,7 +170,8 @@ const ConsignDetail = () => {
         } consignment:`,
         error.message
       );
-      handleClose();
+      console.log(status);
+
       showSnackBar(
         `Failed to ${
           status === "AwaitDelivery" ? "approve" : "reject"
@@ -178,6 +180,11 @@ const ConsignDetail = () => {
       );
     }
   };
+  useEffect(() => {
+    const isValid =
+      description.trim() && sellingPrice.trim() && selectedCategory.trim();
+    setIsUpdateDisabled(!isValid);
+  }, [description, sellingPrice, selectedCategory]);
   if (isLoading) {
     return (
       <Box
@@ -273,22 +280,26 @@ const ConsignDetail = () => {
               <strong>Status:</strong> {consignDetail.data.status}
             </Typography>
             <Divider />
-            <Box mt={2} justifyContent={"space-around"} display={"flex"}>
-              <Button
-                variant="outlined"
-                color="success"
-                onClick={() => handleApproval("AwaitDelivery")}
-              >
-                Approve
-              </Button>
-              <Button
-                variant="outlined"
-                color="error"
-                onClick={() => handleApproval("Reject")}
-              >
-                Reject
-              </Button>
-            </Box>
+            {consignDetail.data.status === "Pending" && (
+              <Box mt={2} justifyContent={"space-around"} display={"flex"}>
+                <Button
+                  variant="outlined"
+                  color="success"
+                  onClick={() => handleApproval("AwaitDelivery")}
+                  disabled={isLoading}
+                >
+                  Approve
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => handleApproval("Rejected")}
+                  disabled={isLoading}
+                >
+                  Reject
+                </Button>
+              </Box>
+            )}
           </Paper>
         </Box>
       </Paper>
@@ -333,11 +344,42 @@ const ConsignDetail = () => {
                 style={{ cursor: "pointer" }}
               >
                 <TableCell>
-                  <img
-                    src={item.fashionItem.images[0]}
-                    alt={item.fashionItem.name}
-                    width="100"
-                  />
+                  <Box maxWidth={100}>
+                    <Slider {...carouselSettings}>
+                      {item.fashionItem.images.length > 0 ? (
+                        item.fashionItem.images
+                          .slice(0, 3)
+                          .map((image, index) => (
+                            <Box
+                              key={index}
+                              display="flex"
+                              justifyContent="center"
+                              alignItems="center"
+                            >
+                              <img
+                                src={image}
+                                alt={`Item Image ${index}`}
+                                style={{
+                                  width: "100px",
+                                  maxHeight: "200px",
+                                  objectFit: "cover",
+                                  borderRadius: "4px",
+                                }}
+                              />
+                            </Box>
+                          ))
+                      ) : (
+                        <Box
+                          display="flex"
+                          justifyContent="center"
+                          alignItems="center"
+                          height="200px"
+                        >
+                          <Typography>No Images Available</Typography>
+                        </Box>
+                      )}
+                    </Slider>
+                  </Box>
                 </TableCell>
                 <TableCell>{item.fashionItem.name}</TableCell>
                 <TableCell>{item.fashionItem.condition}</TableCell>
@@ -375,33 +417,7 @@ const ConsignDetail = () => {
           <Box>
             {selectedItem && (
               <Box>
-                <Box maxWidth={"100%"}>
-                  <Slider {...carouselSettings}>
-                    {selectedItem.fashionItem.images
-                      .slice(0, 3)
-                      .map((image, index) => (
-                        <Box
-                          key={index}
-                          display="flex"
-                          justifyContent="center"
-                          alignItems="center"
-                        >
-                          <img
-                            src={image}
-                            alt={selectedItem.fashionItem.name}
-                            style={{
-                              marginLeft: "30%",
-                              width: "40%",
-                              maxHeight: "200px",
-                              objectFit: "contain",
-                              borderRadius: "4px",
-                              marginBottom: "10px",
-                            }}
-                          />
-                        </Box>
-                      ))}
-                  </Slider>
-                </Box>
+                <Box maxWidth={"100%"}></Box>
 
                 <Typography
                   style={{
@@ -433,7 +449,7 @@ const ConsignDetail = () => {
                 </Typography>
                 <Typography>
                   <strong>Selling price:</strong>{" "}
-                  {selectedItem.fashionItem.confirmedPrice}
+                  {formatMoney(selectedItem.confirmedPrice)}
                 </Typography>
                 <Typography>
                   <strong>Category:</strong>{" "}
@@ -441,57 +457,60 @@ const ConsignDetail = () => {
                 </Typography>
               </Box>
             )}
-            <Divider style={{ marginTop: "10px" }} />
-            <Typography
-              justifyContent={"center"}
-              display={"flex"}
-              fontSize={30}
-            >
-              <strong>Enter to update the item</strong>
-            </Typography>
-            <Box
-              display="flex"
-              flexDirection="column"
-              alignItems="center"
-              gap={2}
-            >
-              <Select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                displayEmpty
-                variant="outlined"
-                margin="normal"
-                fullWidth
+
+            <Box>
+              <Divider style={{ marginTop: "10px" }} />
+              <Typography
+                justifyContent={"center"}
+                display={"flex"}
+                fontSize={30}
               >
-                <MenuItem value="" disabled>
-                  Select Category
-                </MenuItem>
-                {categories.map((category) => (
-                  <MenuItem
-                    key={category.categoryId}
-                    value={category.categoryId}
-                  >
-                    {category.name}
+                <strong>Enter to update the item</strong>
+              </Typography>
+              <Box
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                gap={2}
+              >
+                <Select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  displayEmpty
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                >
+                  <MenuItem value="" disabled>
+                    Select Category
                   </MenuItem>
-                ))}
-              </Select>
-              <TextField
-                label="Description"
-                variant="outlined"
-                margin="normal"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                fullWidth
-              />
-              <TextField
-                label="Selling Price"
-                variant="outlined"
-                margin="normal"
-                type="number"
-                value={sellingPrice}
-                onChange={(e) => setSellingPrice(e.target.value)}
-                fullWidth
-              />
+                  {categories.map((category) => (
+                    <MenuItem
+                      key={category.categoryId}
+                      value={category.categoryId}
+                    >
+                      {category.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <TextField
+                  label="Description"
+                  variant="outlined"
+                  margin="dense"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  fullWidth
+                />
+                <TextField
+                  label="Selling Price"
+                  variant="outlined"
+                  margin="dense "
+                  type="number"
+                  value={sellingPrice}
+                  onChange={(e) => setSellingPrice(e.target.value)}
+                  fullWidth
+                />
+              </Box>
             </Box>
           </Box>
         </DialogContent>
