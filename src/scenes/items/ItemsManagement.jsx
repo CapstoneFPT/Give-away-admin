@@ -222,9 +222,11 @@ const ItemsManagement = () => {
             <TableCell>
               <h2>Description</h2>
             </TableCell>
-            <TableCell>
-              <h2>Price</h2>
-            </TableCell>
+            {fashionItems[0].type !== "ConsignedForAuction" && (
+              <TableCell>
+                <h2>Price</h2>
+              </TableCell>
+            )}
             <TableCell>
               <h2>Status</h2>
             </TableCell>
@@ -248,12 +250,14 @@ const ItemsManagement = () => {
                   <TableCell>{item.description}</TableCell>
                 )}
                 {item.description === `` && <TableCell>N/A</TableCell>}
-                <TableCell>
-                  {item.sellingPrice !== 0 && (
-                    <>{formatCurrency(item.sellingPrice)}</>
-                  )}
-                  {item.sellingPrice === 0 && <Typography>None</Typography>}
-                </TableCell>
+                {item.type !== "ConsignedForAuction" && (
+                  <TableCell>
+                    {item.sellingPrice !== 0 && (
+                      <>{formatCurrency(item.sellingPrice)}</>
+                    )}
+                    {item.sellingPrice === 0 && <Typography>None</Typography>}
+                  </TableCell>
+                )}
                 <TableCell>
                   {item.status === "Available" ||
                   item.status === "Unavailable" ? (

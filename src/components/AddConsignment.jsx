@@ -61,10 +61,21 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setNewConsign((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+
+    if (name === "condition") {
+      // Allow only numeric values and ensure the value does not exceed 100
+      if (/^\d{0,3}$/.test(value) && (value === "" || Number(value) <= 100)) {
+        setNewConsign((prevState) => ({
+          ...prevState,
+          [name]: value,
+        }));
+      }
+    } else {
+      setNewConsign((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
+    }
   };
 
   const handleItemChange = (event, index) => {
@@ -220,7 +231,7 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
     } catch (error) {
       console.error("Failed to add consignment:", error);
 
-      showSnackBar(`Failed to add consignment:  ${error.message}`, "success");
+      showSnackBar(`Failed to add consignment:  ${error.message}`, "error");
       setIsLoading(false);
     }
   };
@@ -376,6 +387,7 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
                       name="condition"
                       value={item.condition}
                       onChange={(e) => handleItemChange(e, index)}
+                      inputProps={{ maxLength: 3 }}
                     />
                   </Grid>
                   <Grid item xs={6}>
