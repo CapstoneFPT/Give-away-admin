@@ -156,7 +156,25 @@ const RefundManagement = () => {
       `info`
     );
   };
-
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Completed":
+        return "green";
+      case "Cancelled":
+        return "red";
+      case "Pending":
+        return "#FFA700"; // yellow
+      case "OnDelivery":
+        return "#567de8"; // blue
+      case "AwaitingPayment":
+        return "#e27bb1";
+      case "Unavailable":
+        return "#8B0000";
+      default:
+        return "text.secondary";
+    }
+  };
+  console.log(selectedRefund);
   return (
     <Container sx={{ mt: 4 }}>
       <Typography
@@ -168,7 +186,12 @@ const RefundManagement = () => {
       >
         Refund Management
       </Typography>
-      <Box mb={2}>
+      <Box
+        mb={2}
+        flexDirection={"row"}
+        justifyContent={"space-between"}
+        display={"flex"}
+      >
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <DatePicker
             label="Select Date to filter"
@@ -177,7 +200,17 @@ const RefundManagement = () => {
             renderInput={(params) => <TextField {...params} />}
           />
         </LocalizationProvider>
+
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleRequestRefund}
+          sx={{ mt: 1 }}
+        >
+          Request Refund
+        </Button>
       </Box>
+
       {isLoading ? (
         <Box display="flex" justifyContent="center" mt={4}>
           <CircularProgress />
@@ -230,7 +263,15 @@ const RefundManagement = () => {
                     {new Date(refund.createdDate).toLocaleString()}
                   </TableCell>
                   <TableCell>{refund.orderDetailId}</TableCell>
-                  <TableCell>{refund.refundStatus}</TableCell>
+                  <TableCell
+                    style={{
+                      color: getStatusColor(refund.refundStatus),
+                      fontSize: "15px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {refund.refundStatus}
+                  </TableCell>
                   <TableCell>
                     {formatCurrency(refund.orderDetailsResponse.unitPrice)}
                   </TableCell>
@@ -250,11 +291,24 @@ const RefundManagement = () => {
         </TableContainer>
       )}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>Refund Details</DialogTitle>
+        <DialogTitle
+          justifyContent={"center"}
+          display={"flex"}
+          fontWeight={"bold"}
+          fontSize={40}
+        >
+          Refund Details
+        </DialogTitle>
         <DialogContent>
           {selectedRefund && (
             <Box>
-              {/* Display Refund Details */}
+              <Typography
+                sx={{
+                  color: getStatusColor(selectedRefund.refundStatus),
+                }}
+              >
+                {selectedRefund.refundStatus}
+              </Typography>
               <Typography variant="h6">
                 Refund ID: {selectedRefund.refundId}
               </Typography>
@@ -266,10 +320,7 @@ const RefundManagement = () => {
               <Typography>
                 Order Detail ID: {selectedRefund.orderDetailId}
               </Typography>
-              <Typography>Status: {selectedRefund.refundStatus}</Typography>
-              <Typography>
-                Item Status: {selectedRefund.orderDetailsResponse.itemStatus}
-              </Typography>
+
               <Typography>
                 Refund Expiration Date:{" "}
                 {new Date(
@@ -300,7 +351,18 @@ const RefundManagement = () => {
                   ))}
                 </Box>
               )}
-
+              <Typography>
+                Item Status:
+                <Typography
+                  sx={{
+                    color: getStatusColor(
+                      selectedRefund.orderDetailsResponse.itemStatus
+                    ),
+                  }}
+                >
+                  {selectedRefund.orderDetailsResponse.itemStatus}
+                </Typography>
+              </Typography>
               {selectedRefund.refundStatus === "Pending" && (
                 <Box mt={2}>
                   <FormControl fullWidth margin="normal">
@@ -407,9 +469,7 @@ const RefundManagement = () => {
               {(selectedRefund.refundStatus === "Completed" ||
                 selectedRefund.refundStatus === "Rejected") && (
                 <Box mt={2}>
-                  <Typography>
-                    No actions available for this refund status.
-                  </Typography>
+                  <Typography>No actions available for this refund.</Typography>
                 </Box>
               )}
             </Box>

@@ -34,23 +34,25 @@ const ConsignManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const shopId = sessionStorage.getItem("shopId");
+
   const { showSnackBar } = useSnackbar();
   const navigate = useNavigate();
-
+  const userRole = sessionStorage.getItem("role");
+  const shopId = userRole === "Admin" ? "" : sessionStorage.getItem("shopId");
   const statusTabs = useMemo(
     () => [
       { label: "All", value: "" },
       { label: "Pending", value: "Pending" },
-      { label: "AwaitDelivery", value: "AwaitDelivery" },
+      { label: "Await Delivery", value: "AwaitDelivery" },
       { label: "Received", value: "Received" },
       { label: "Completed", value: "Completed" },
+      { label: "On Sale ", value: "OnSale" },
       { label: "Rejected", value: "Rejected" },
       { label: "Cancelled", value: "Cancelled" },
     ],
     []
   );
-  console.log(consignments);
+
   const fetchConsignments = useCallback(
     async (page, pageSize, status, startDate, endDate, searchTerm) => {
       setIsLoading(true);
@@ -123,6 +125,7 @@ const ConsignManagement = () => {
     );
   }, [
     fetchConsignments,
+
     page,
     pageSize,
     tabIndex,

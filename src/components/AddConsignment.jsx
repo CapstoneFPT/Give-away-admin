@@ -215,7 +215,7 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
           },
         ],
       });
-
+      setIsLoading(false);
       onClose();
     } catch (error) {
       console.error("Failed to add consignment:", error);

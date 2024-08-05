@@ -354,9 +354,15 @@ const OrderManagement = () => {
             <SearchIcon />
           </IconButton>
         </Box>
-        <Button variant="contained" color="primary" onClick={handleCreateOrder}>
-          Create Order
-        </Button>
+        {userRole !== "Admin" && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleCreateOrder}
+          >
+            Create Order
+          </Button>
+        )}
       </Box>
       {isLoading ? <CircularProgress /> : renderTable()}
     </Container>
