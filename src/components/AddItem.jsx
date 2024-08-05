@@ -142,7 +142,14 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
           p: 4,
         }}
       >
-        <Typography id="add-item-modal-title" variant="h6" component="h2">
+        <Typography
+          justifyContent="center"
+          display="flex"
+          id="add-item-modal-title"
+          variant="h1"
+          fontWeight={"bold"}
+          mb={5}
+        >
           Add New Item
         </Typography>
         <Grid container spacing={2}>

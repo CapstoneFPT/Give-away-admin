@@ -231,9 +231,11 @@ const ItemsManagement = () => {
             <TableCell>
               <h2>Type</h2>
             </TableCell>
-            <TableCell>
-              <h2>Action</h2>
-            </TableCell>
+            {tabIndex === 2 && (
+              <TableCell>
+                <h2>Action</h2>
+              </TableCell>
+            )}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -242,16 +244,10 @@ const ItemsManagement = () => {
               <TableRow key={item.itemId}>
                 <TableCell>{item.categoryName}</TableCell>
                 <TableCell>{item.name}</TableCell>
-                <TableCell>
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    noWrap
-                    sx={{ maxWidth: 300 }}
-                  >
-                    {item.description}
-                  </Typography>
-                </TableCell>
+                {item.description !== `` && (
+                  <TableCell>{item.description}</TableCell>
+                )}
+                {item.description === `` && <TableCell>N/A</TableCell>}
                 <TableCell>
                   {item.sellingPrice !== 0 && (
                     <>{formatCurrency(item.sellingPrice)}</>

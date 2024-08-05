@@ -41,7 +41,7 @@ const ConsignDetail = () => {
   useEffect(() => {
     const fetchConsignDetail = async () => {
       try {
-        const detailResponse = await ApiService.getOneBigConsignMents(
+        const detailResponse = await ApiService.getOneBigConsignMent(
           consignSaleId
         );
         setConsignDetail(detailResponse);
