@@ -42,8 +42,8 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
     if (newItem.gender) {
       const genderId =
         newItem.gender === "Male"
-          ? "c7c0ba52-8406-47c1-9be5-497cbeea5933"
-          : "8c3fe1f7-0082-4382-85de-6c70fcd76761";
+          ? "535d3b90-dc58-41e3-ad32-055e261bd6a7"
+          : "3e4c6370-a72b-44e3-a5eb-8f459764158f";
       getCateByGender(genderId);
     }
   }, [newItem.gender]);
