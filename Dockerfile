@@ -20,6 +20,6 @@ ENV TZ=Asia/Saigon
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 80 2053
+EXPOSE 2052 2053
 
 CMD ["nginx", "-g", "daemon off;"]
