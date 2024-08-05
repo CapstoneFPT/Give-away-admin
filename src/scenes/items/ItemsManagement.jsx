@@ -214,11 +214,15 @@ const ItemsManagement = () => {
         <TableHead>
           <TableRow>
             <TableCell>
-              <h2>Category</h2>
+              <h2>Image</h2>
             </TableCell>
             <TableCell>
               <h2>Name</h2>
             </TableCell>
+            <TableCell>
+              <h2>Category</h2>
+            </TableCell>
+
             <TableCell>
               <h2>Description</h2>
             </TableCell>
@@ -244,8 +248,12 @@ const ItemsManagement = () => {
           {fashionItems.length >= 0 ? (
             fashionItems.map((item) => (
               <TableRow key={item.itemId}>
-                <TableCell>{item.categoryName}</TableCell>
+                <TableCell>
+                  <img src={item.images[0]} alt={item.name} width="100" />
+                </TableCell>
                 <TableCell>{item.name}</TableCell>
+                <TableCell>{item.categoryName}</TableCell>
+
                 {item.description !== `` && (
                   <TableCell>{item.description}</TableCell>
                 )}
@@ -253,7 +261,9 @@ const ItemsManagement = () => {
                 {item.type !== "ConsignedForAuction" && (
                   <TableCell>
                     {item.sellingPrice !== 0 && (
-                      <>{formatCurrency(item.sellingPrice)}</>
+                      <Typography>
+                        {formatCurrency(item.sellingPrice)}
+                      </Typography>
                     )}
                     {item.sellingPrice === 0 && <Typography>None</Typography>}
                   </TableCell>

@@ -255,7 +255,7 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
       setIsLoading(false);
     }
   };
-
+  console.log(newConsign);
   return (
     <Modal
       open={open}

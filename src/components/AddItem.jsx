@@ -18,7 +18,7 @@ import { storage } from "../firebaseconfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import ApiService from "../services/apiServices";
 import { useSnackbar } from "../services/SnackBar";
-
+import { InputAdornment } from "@mui/material";
 const AddItem = ({ open, onClose, onAddSuccess }) => {
   const { showSnackBar } = useSnackbar();
   const [newItem, setNewItem] = useState({
@@ -64,7 +64,7 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
       setNewItem((prevState) => ({
         ...prevState,
         sellingPrice: numberValue,
-        formattedSellingPrice: formatNumber(numberValue),
+        // No need to set formattedSellingPrice here if it's not part of state
       }));
     }
   };
@@ -203,7 +203,17 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
               }
               onChange={handlePriceChange}
               inputMode="numeric"
-              inputProps={{ maxLength: 12 }}
+              inputProps={{
+                maxLength: 12, // Allows for 11 digits + optional decimal point
+                pattern: "[0-9]*", // Allow only numbers
+                type: "text", // Allows custom validation
+              }}
+              InputProps={{
+                maxLength: 11,
+                endAdornment: (
+                  <InputAdornment position="end">VND</InputAdornment>
+                ),
+              }}
             />
           </Grid>
           <Grid item xs={12}>
