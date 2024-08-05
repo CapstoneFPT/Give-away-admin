@@ -68,7 +68,7 @@ const ItemsManagement = () => {
     ConsignedForAuction: [
       "Available",
       "Unavailable",
-      "Pending",
+
       "PendingAuction",
       "AwaitingAuction",
       "Bidding",
@@ -222,7 +222,7 @@ const ItemsManagement = () => {
             <TableCell>
               <h2>Description</h2>
             </TableCell>
-            {fashionItems[0].type !== "ConsignedForAuction" && (
+            {tabIndex !== 2 && (
               <TableCell>
                 <h2>Price</h2>
               </TableCell>
