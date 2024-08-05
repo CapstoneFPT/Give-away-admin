@@ -110,6 +110,7 @@ const ConsignDetail = () => {
           updatedData
         );
 
+        console.log(selectedItem);
         handleClose();
         showSnackBar(`Update item successfully`, `success`);
       } catch (error) {
@@ -136,8 +137,8 @@ const ConsignDetail = () => {
     if (selectedItem) {
       const genderId =
         selectedItem.fashionItem.gender === "Male"
-          ? "c7c0ba52-8406-47c1-9be5-497cbeea5933"
-          : "8c3fe1f7-0082-4382-85de-6c70fcd76761";
+          ? "535d3b90-dc58-41e3-ad32-055e261bd6a7"
+          : "3e4c6370-a72b-44e3-a5eb-8f459764158f";
       getCateByGender(genderId);
     }
   }, [selectedItem]);
@@ -446,6 +447,10 @@ const ConsignDetail = () => {
                 <Typography>
                   <strong>Description:</strong>{" "}
                   {selectedItem.fashionItem.description}
+                </Typography>
+ <Typography>
+                  <strong>Deal price:</strong>{" "}
+                  {formatMoney(selectedItem.dealPrice)}
                 </Typography>
                 <Typography>
                   <strong>Selling price:</strong>{" "}
