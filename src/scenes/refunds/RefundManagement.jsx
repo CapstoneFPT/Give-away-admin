@@ -48,6 +48,7 @@ const RefundManagement = () => {
   const [isRejecting, setIsRejecting] = useState(false);
   const shopId = sessionStorage.getItem("shopId");
   const userRole = sessionStorage.getItem("role");
+  console.log(refunds);
   const { showSnackBar } = useSnackbar();
   useEffect(() => {
     const fetchRefunds = async () => {
@@ -232,37 +233,87 @@ const RefundManagement = () => {
             <TableHead>
               <TableRow>
                 <TableCell>
-                  <h2>Refund ID</h2>
+                  <Typography justifyContent={"center"} display={"flex"}>
+                    <h2>Taken Image</h2>
+                  </Typography>
                 </TableCell>
                 <TableCell>
-                  <h2>Description</h2>
+                  <Typography justifyContent={"center"} display={"flex"}>
+                    <h2>Reason</h2>
+                  </Typography>
                 </TableCell>
                 <TableCell>
-                  <h2>Created Date</h2>
+                  <Typography justifyContent={"center"} display={"flex"}>
+                    <h2>Customer name </h2>
+                  </Typography>
                 </TableCell>
                 <TableCell>
-                  <h2>Order Detail ID</h2>
+                  <Typography justifyContent={"center"} display={"flex"}>
+                    <h2>Customer phone</h2>
+                  </Typography>
+                </TableCell>
+
+                <TableCell>
+                  <Typography justifyContent={"center"} display={"flex"}>
+                    <h2>Created Date</h2>
+                  </Typography>
+                </TableCell>
+
+                <TableCell>
+                  <Typography justifyContent={"center"} display={"flex"}>
+                    <h2>Status</h2>
+                  </Typography>
                 </TableCell>
                 <TableCell>
-                  <h2>Status</h2>
+                  <Typography justifyContent={"center"} display={"flex"}>
+                    <h2>Item Price</h2>
+                  </Typography>
                 </TableCell>
                 <TableCell>
-                  <h2>Amount</h2>
-                </TableCell>
-                <TableCell>
-                  <h2>Actions</h2>
+                  <Typography justifyContent={"center"} display={"flex"}>
+                    <h2>Actions</h2>
+                  </Typography>
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {refunds.map((refund) => (
                 <TableRow key={refund.refundId}>
-                  <TableCell>{refund.refundId}</TableCell>
+                  <TableCell>
+                    <Box mt={2}>
+                      {refund.images.map((image, index) => (
+                        <img
+                          key={index}
+                          src={image}
+                          alt={`Refund ${index}`}
+                          style={{
+                            width: 100,
+                            height: 100,
+                            objectFit: "cover",
+                            marginRight: 10,
+                          }}
+                        />
+                      ))}
+                    </Box>
+                  </TableCell>
                   <TableCell>{refund.description}</TableCell>
                   <TableCell>
-                    {new Date(refund.createdDate).toLocaleString()}
+                    <Typography justifyContent={"center"} display={"flex"}>
+                      {refund.customerName}
+                    </Typography>
                   </TableCell>
-                  <TableCell>{refund.orderDetailId}</TableCell>
+                  <TableCell>
+                    <Typography justifyContent={"center"} display={"flex"}>
+                      {refund.customerPhone}
+                    </Typography>
+                  </TableCell>
+
+                  <TableCell>
+                    <Typography justifyContent={"center"} display={"flex"}>
+                      {new Date(refund.createdDate).toLocaleString()}{" "}
+                    </Typography>
+                  </TableCell>
+
                   <TableCell
                     style={{
                       color: getStatusColor(refund.refundStatus),
@@ -270,10 +321,14 @@ const RefundManagement = () => {
                       fontWeight: "bold",
                     }}
                   >
-                    {refund.refundStatus}
+                    <Typography justifyContent={"center"} display={"flex"}>
+                      {refund.refundStatus}
+                    </Typography>
                   </TableCell>
                   <TableCell>
-                    {formatCurrency(refund.orderDetailsResponse.unitPrice)}
+                    <Typography justifyContent={"center"} display={"flex"}>
+                      {formatCurrency(refund.orderDetailsResponse.unitPrice)}{" "}
+                    </Typography>
                   </TableCell>
                   <TableCell>
                     <Button
@@ -309,29 +364,27 @@ const RefundManagement = () => {
               >
                 {selectedRefund.refundStatus}
               </Typography>
-              <Typography variant="h6">
-                Refund ID: {selectedRefund.refundId}
-              </Typography>
-              <Typography>Description: {selectedRefund.description}</Typography>
+
               <Typography>
-                Created Date:{" "}
+                <strong>Reason: </strong> {selectedRefund.description}
+              </Typography>
+              <Typography>
+                <strong> Created Date: </strong>
                 {new Date(selectedRefund.createdDate).toLocaleString()}
-              </Typography>
-              <Typography>
-                Order Detail ID: {selectedRefund.orderDetailId}
               </Typography>
 
               <Typography>
-                Refund Expiration Date:{" "}
+                <strong>Refund Expiration Date: </strong>
                 {new Date(
                   selectedRefund.orderDetailsResponse.refundExpirationDate
                 ).toLocaleString()}
               </Typography>
               <Typography>
-                Item Name: {selectedRefund.orderDetailsResponse.itemName}
+                <strong> Item Name: </strong>
+                {selectedRefund.orderDetailsResponse.itemName}
               </Typography>
               <Typography>
-                Amount:{" "}
+                <strong> Amount: </strong>
                 {formatCurrency(selectedRefund.orderDetailsResponse.unitPrice)}
               </Typography>
               {selectedRefund.images.length > 0 && (
@@ -342,8 +395,8 @@ const RefundManagement = () => {
                       src={image}
                       alt={`Refund ${index}`}
                       style={{
-                        width: 100,
-                        height: 100,
+                        width: 200,
+                        height: 300,
                         objectFit: "cover",
                         marginRight: 10,
                       }}
@@ -352,7 +405,7 @@ const RefundManagement = () => {
                 </Box>
               )}
               <Typography>
-                Item Status:
+                <strong>Item Status: </strong>
                 <Typography
                   sx={{
                     color: getStatusColor(
