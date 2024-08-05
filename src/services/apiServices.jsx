@@ -2,6 +2,7 @@
 import axios from "axios";
 
 const URL = `https://giveawayproject.jettonetto.org:8443`;
+// const URL = `http://localhost:5039`;
 const axiosInstance = axios.create({
   baseURL: URL,
   headers: {

@@ -75,9 +75,9 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
     if (name === "gender") {
       genderId =
         value === "Male"
-          ? "c7c0ba52-8406-47c1-9be5-497cbeea5933"
+          ? "535d3b90-dc58-41e3-ad32-055e261bd6a7"
           : value === "Female"
-          ? "8c3fe1f7-0082-4382-85de-6c70fcd76761"
+          ? "3e4c6370-a72b-44e3-a5eb-8f459764158f"
           : null;
 
       if (genderId) {
