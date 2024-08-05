@@ -19,6 +19,8 @@ import { InfoOutlined } from "@mui/icons-material";
 import ApiService from "../../services/apiServices";
 import { useParams } from "react-router-dom";
 import Slider from "react-slick";
+import { useSnackbar } from "../../services/SnackBar";
+
 const OrderDetail = () => {
   const { orderId } = useParams();
   const [orderDetails, setOrderDetails] = useState(null);
@@ -32,7 +34,7 @@ const OrderDetail = () => {
   const [status, setStatus] = useState("");
   const userRole = sessionStorage.getItem("role");
   const shopId = userRole === "Admin" ? "" : sessionStorage.getItem("shopId");
-  console.log(selectedItem);
+  const { showSnackBar } = useSnackbar();
 
   const handleClickOpen = (item) => {
     setSelectedItem(item);
@@ -112,27 +114,13 @@ const OrderDetail = () => {
   };
 
   const statusStyles = {
-    AwaitingPayment: {
-      background: "lightgreen",
-      color: "#e27bb1",
-    },
-    OnDelivery: {
-      background: "lightgreen",
-      color: "#567de8",
-    },
-    Completed: {
-      background: "lightgreen",
-      color: "#388E3C",
-    },
-    Cancelled: {
-      background: "rgba(244, 67, 54, 0.2)",
-      color: "#F44336",
-    },
-    Pending: {
-      background: "lightgreen",
-      color: "#4CAF50",
-    },
+    AwaitingPayment: { background: "lightgreen", color: "#e27bb1" },
+    OnDelivery: { background: "lightgreen", color: "#567de8" },
+    Completed: { background: "lightgreen", color: "#388E3C" },
+    Cancelled: { background: "rgba(244, 67, 54, 0.2)", color: "#F44336" },
+    Pending: { background: "lightgreen", color: "#4CAF50" },
   };
+
   const carouselSettings = {
     infinite: false,
     speed: 500,
@@ -141,6 +129,18 @@ const OrderDetail = () => {
     autoplay: true,
     autoplaySpeed: 2000,
   };
+
+  const handleApprovedOrder = async (orderId, orderDetailId) => {
+    try {
+      await ApiService.confirmOrderByStaff(orderId, orderDetailId);
+      window.location.reload();
+
+      showSnackBar("Order confirmed to delivery!", "success");
+    } catch (error) {
+      showSnackBar(`Failed to confirm: ${error.message}`, "error");
+    }
+  };
+
   if (isLoading) {
     return (
       <Box
@@ -164,7 +164,8 @@ const OrderDetail = () => {
 
   const totalPrice = calculateTotalPrice();
   const currentStatusStyle = statusStyles[status] || {};
-
+  console.log(selectedItem);
+  console.log(orderDetails);
   return (
     <Box sx={{ p: 4 }}>
       <Paper elevation={3} sx={{ p: 2, mb: 3 }}>
@@ -191,7 +192,7 @@ const OrderDetail = () => {
           </Typography>
 
           <Typography>
-            <strong>Date of creation:</strong>
+            <strong>Date of creation:</strong>{" "}
             {formatDate(orderDetails.items[0].createdDate)}
           </Typography>
         </Box>
@@ -251,154 +252,137 @@ const OrderDetail = () => {
           </Paper>
         </Box>
       </Paper>
-      <Paper elevation={3} sx={{ p: 2, mb: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          <h1>Order detail</h1>
-        </Typography>
-        <Typography>Total item</Typography>
-        <Divider />
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Image</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Refund Expiration</TableCell>
-              <TableCell>Price</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {orderDetails.items.map((item, index) => (
-              <TableRow
-                key={index}
-                onClick={() => handleClickOpen(item)}
-                style={{ cursor: "pointer" }}
-              >
-                <TableCell>
-                  <img
-                    src={item.itemImage[0]}
-                    alt={item.itemName}
-                    width="100"
-                  />
-                </TableCell>
-                <TableCell>{item.itemName}</TableCell>
-                <TableCell>{formatDate(item.refundExpirationDate)}</TableCell>
-                <TableCell>{formatPrice(item.unitPrice)} VND</TableCell>
+      {orderDetails.items[0].pointPackageId === null && (
+        <Paper elevation={3} sx={{ p: 2, mb: 3 }}>
+          <Typography variant="h6" gutterBottom>
+            <h1>Order detail</h1>
+          </Typography>
+          <Typography>Total item</Typography>
+          <Divider />
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Image</TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Type</TableCell>
+                <TableCell>Price</TableCell>
+                {status === "Pending" && userRole === "Staff" && (
+                  <TableCell>Action</TableCell>
+                )}
+                <TableCell>View</TableCell>
               </TableRow>
-            ))}
-            <TableRow>
-              <TableCell colSpan={3}>
-                <strong>Total</strong>
-              </TableCell>
-
-              <TableCell>
-                <strong>{formatPrice(totalPrice)} VND</strong>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </Paper>
-
-      <Dialog open={open} onClose={handleClose}>
-        <Typography
-          display={"flex"}
-          justifyContent={"center"}
-          sx={{ fontWeight: "bold" }}
-          fontSize={30}
-        >
-          Item Details <InfoOutlined sx={{ mr: 1, color: "primary.main" }} />
-        </Typography>
-        <DialogContent>
-          {selectedItem && (
-            <Box>
-              <Box maxWidth={150} ml={20}>
-                <Slider {...carouselSettings}>
-                  {selectedItem.itemImage.length > 0 ? (
-                    selectedItem.itemImage.slice(0, 3).map((image, index) => (
-                      <Box
-                        key={index}
-                        display="flex"
-                        justifyContent="center"
-                        alignItems="center"
+            </TableHead>
+            <TableBody>
+              {orderDetails.items.map((item, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    <img
+                      src={item.itemImage[0]}
+                      alt={item.itemName}
+                      width="100"
+                    />
+                  </TableCell>
+                  <TableCell>{item.itemName}</TableCell>
+                  <TableCell>{item.itemType}</TableCell>
+                  <TableCell>{item.itemNote}</TableCell>
+                  <TableCell>{formatPrice(item.unitPrice)} VND</TableCell>
+                  {status === "Pending" && userRole === "Staff" && (
+                    <TableCell>
+                      <Button
+                        onClick={() =>
+                          handleApprovedOrder(orderId, item.orderDetailId)
+                        }
+                        variant="contained"
+                        color="primary"
                       >
-                        <img
-                          src={image}
-                          alt={`Item Image ${index}`}
-                          style={{
-                            maxWidth: "300px",
-                            maxHeight: "200px",
-                            objectFit: "cover",
-                            borderRadius: "4px",
-                          }}
-                        />
-                      </Box>
-                    ))
-                  ) : (
-                    <Box
-                      display="flex"
-                      justifyContent="center"
-                      alignItems="center"
-                      height="200px"
-                    >
-                      <Typography>No Images Available</Typography>
-                    </Box>
+                        Approve
+                      </Button>
+                    </TableCell>
                   )}
-                </Slider>
-              </Box>
-              <Typography
-                style={{
-                  color: "#10771A",
-                  fontWeight: "bold",
-                  fontSize: "30px",
-                }}
-              >
-                Status: {selectedItem.itemStatus}
-              </Typography>
-              <Typography variant="h6">
-                <strong>Item Name:</strong> {selectedItem.itemName}
-              </Typography>
+                  <TableCell>
+                    <Button
+                      onClick={() => handleClickOpen(item)}
+                      variant="contained"
+                      color="secondary"
+                      style={{ marginLeft: "10px" }}
+                    >
+                      View
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Paper>
+      )}
+      {orderDetails.items[0].pointPackageId !== null && (
+        <Paper elevation={3} sx={{ p: 2, mb: 3 }}>
+          <Typography variant="h6" gutterBottom>
+            <h1>Package detail</h1>
+          </Typography>
 
-              <Typography>
-                <strong>Price:</strong> {formatPrice(selectedItem.unitPrice)}{" "}
-                VND
-              </Typography>
-              <Typography>
-                <strong>Category:</strong> {selectedItem.categoryName}
-              </Typography>
-              <Typography>
-                <strong>Size:</strong> {selectedItem.itemSize}
-              </Typography>
-              <Typography>
-                <strong>Color:</strong> {selectedItem.itemColor}
-              </Typography>
-              <Typography>
-                <strong>Brand:</strong> {selectedItem.itemBrand}
-              </Typography>
-              <Typography>
-                <strong>Gender:</strong> {selectedItem.itemGender}
-              </Typography>
-              <Typography>
-                <strong>Condition:</strong> {selectedItem.condition}%
-              </Typography>
-              <Typography>
-                <strong>Note:</strong> {selectedItem.itemNote}
-              </Typography>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Create date</TableCell>
+                <TableCell>Price</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {orderDetails.items.map((item, index) => (
+                <TableRow key={index}>
+                  <TableCell>{formatDate(item.createdDate)}</TableCell>
+                  <TableCell>{formatPrice(item.unitPrice)} VND</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Paper>
+      )}
 
-              <Typography>
-                <strong>Shop Address:</strong> {selectedItem.shopAddress}
-              </Typography>
-              <Typography>
-                <strong>Created Date:</strong>{" "}
-                {formatDate(selectedItem.createdDate)}
-              </Typography>
+      {selectedItem && (
+        <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+          <DialogContent>
+            <Typography
+              justifyContent={"center"}
+              display={"flex"}
+              fontSize={50}
+              fontWeight={"bold"}
+              variant="h1"
+            >
+              Item Details
+            </Typography>
+            <Typography fontSize={20} variant="subtitle1">
+              <strong>Name:</strong> {selectedItem.itemName}
+            </Typography>
+            <Typography fontSize={20} variant="subtitle1">
+              <strong>Price:</strong> {formatPrice(selectedItem.unitPrice)} VND
+            </Typography>
+            <Typography fontSize={20} variant="subtitle1">
+              <strong>Refund Expiration</strong>
+            </Typography>
+            <Typography fontSize={20} variant="subtitle1"></Typography>
+            <Box overflow={"hidden"} maxHeight={600}>
+              <Slider {...carouselSettings}>
+                {selectedItem.itemImage.map((image, index) => (
+                  <div key={index}>
+                    <img
+                      src={image}
+                      alt={`Image ${index}`}
+                      style={{ width: "100%" }}
+                    />
+                  </div>
+                ))}
+              </Slider>
             </Box>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} color="primary">
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
     </Box>
   );
 };

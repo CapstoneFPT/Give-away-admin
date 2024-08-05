@@ -163,10 +163,10 @@ const ApiService = {
       throw new Error(errorMessage);
     }
   },
-  confirmOrder: async (orderId) => {
+  confirmOrderByStaff: async (orderId, orderDetailId) => {
     try {
       const response = await axiosInstance.put(
-        `/api/orders/${orderId}/confirm-pending-order`
+        `/api/orders/${orderId}/orderdetails/${orderDetailId}/confirm-pending-order`
       );
       return response.data;
     } catch (error) {
@@ -188,7 +188,7 @@ const ApiService = {
       throw new Error(errorMessage);
     }
   },
-  updateOrderByStaff: async (orderId) => {
+  confirmOrderByAdmin: async (orderId) => {
     try {
       const response = await axiosInstance.put(
         `/api/orders/${orderId}/confirm-deliveried`
@@ -213,10 +213,10 @@ const ApiService = {
       throw new Error(errorMessage);
     }
   },
-  cancelOrderByStaff: async (shopId, orderId) => {
+  cancelOrderByAdmin: async (orderId) => {
     try {
       const response = await axiosInstance.put(
-        `/api/shops/${shopId}/orders/${orderId}/cancel`
+        `/api/orders//${orderId}/cancelbyadmin`
       );
       return response.data;
     } catch (error) {
@@ -367,6 +367,7 @@ const ApiService = {
       throw new Error(errorMessage);
     }
   },
+
   getOrderByShopId: async (shopId, page, pageSize, status, searchTerm) => {
     try {
       const response = await axiosInstance.get(
@@ -825,7 +826,7 @@ const ApiService = {
       throw new Error(errorMessage);
     }
   },
-  getOneBigConsignMents: async (consignSaleId) => {
+  getOneBigConsignMent: async (consignSaleId) => {
     try {
       const response = await axiosInstance.get(
         `/api/consginsales/${consignSaleId}`
@@ -854,7 +855,7 @@ const ApiService = {
   getAllConsignments: async (shopId, page, pageSize, status, searchTerm) => {
     try {
       const response = await axiosInstance.get(
-        `/api/shops/${shopId}/consignsales?PageNumber=${page}&PageSize=${pageSize}&Status=${status}&ConsignSaleCode=${searchTerm}`
+        `/api/consginsales?ShopId=${shopId}&PageNumber=${page}&PageSize=${pageSize}&Status=${status}&ConsignSaleCode=${searchTerm}`
       );
 
       return response.data;
@@ -888,7 +889,7 @@ const ApiService = {
   ) => {
     try {
       const response = await axiosInstance.get(
-        `/api/shops/${shopId}/consignsales?PageNumber=${page}&PageSize=${pageSize}&Status=${status}&StartDate=${startDate}&EndDate=${endDate}&ConsignSaleCode=${searchTerm}`
+        `/api/consginsales?ShopId=${shopId}&PageNumber=${page}&PageSize=${pageSize}&Status=${status}&StartDate=${startDate}&EndDate=${endDate}&ConsignSaleCode=${searchTerm}`
       );
 
       return response.data;
@@ -921,7 +922,7 @@ const ApiService = {
   ) => {
     try {
       const response = await axiosInstance.get(
-        `/api/shops/${shopId}/consignsales?PageNumber=${page}&PageSize=${pageSize}&Status=${status}&EndDate=${endDate}&ConsignSaleCode=${searchTerm}`
+        `/api/consginsales?ShopId=${shopId}&PageNumber=${page}&PageSize=${pageSize}&Status=${status}&EndDate=${endDate}&ConsignSaleCode=${searchTerm}`
       );
 
       return response.data;
@@ -954,7 +955,7 @@ const ApiService = {
   ) => {
     try {
       const response = await axiosInstance.get(
-        `/api/shops/${shopId}/consignsales?PageNumber=${page}&PageSize=${pageSize}&Status=${status}&StartDate=${startDate}&ConsignSaleCode=${searchTerm}`
+        `/api/consginsales?ShopId=${shopId}&PageNumber=${page}&PageSize=${pageSize}&Status=${status}&StartDate=${startDate}&ConsignSaleCode=${searchTerm}`
       );
 
       return response.data;

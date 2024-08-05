@@ -15,6 +15,7 @@ import {
   Select,
   FormControl,
   InputLabel,
+  Card,
 } from "@mui/material";
 import ApiService from "../../services/apiServices";
 
@@ -97,7 +98,14 @@ const AccountManagement = () => {
 
   return (
     <Box p={2}>
-      <Typography variant="h4" gutterBottom>
+      <Typography
+        fontWeight={"bold"}
+        fontSize={40}
+        variant="h1"
+        justifyContent={"center"}
+        display={"flex"}
+        mb={10}
+      >
         Account Management
       </Typography>
       <Box mb={2} display="flex" justifyContent="space-between">
@@ -128,6 +136,7 @@ const AccountManagement = () => {
           justifyContent="center"
           alignItems="center"
           height="100%"
+          border={1}
         >
           <CircularProgress />
         </Box>
@@ -136,7 +145,7 @@ const AccountManagement = () => {
           No accounts available
         </Typography>
       ) : (
-        <>
+        <Card>
           <Table>
             <TableHead>
               <TableRow>
@@ -209,6 +218,7 @@ const AccountManagement = () => {
               variant="contained"
               disabled={page === 1}
               onClick={() => setPage(page - 1)}
+              sx={{ ml: 3, mb: 2 }}
             >
               Previous
             </Button>
@@ -219,11 +229,12 @@ const AccountManagement = () => {
               variant="contained"
               disabled={page === totalPage}
               onClick={() => setPage(page + 1)}
+              sx={{ mr: 3, mb: 2 }}
             >
               Next
             </Button>
           </Box>
-        </>
+        </Card>
       )}
     </Box>
   );

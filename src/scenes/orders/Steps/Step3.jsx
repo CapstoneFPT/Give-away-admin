@@ -30,6 +30,7 @@ const Step3 = ({ prevStep }) => {
   const { showSnackBar } = useSnackbar();
   const [orderId, setOrderId] = useState("");
   const [openModal, setOpenModal] = useState(false);
+  console.log(customerInfo);
   const navigate = useNavigate();
   console.log(cartItems);
   const handleBack = () => {
@@ -122,7 +123,7 @@ const Step3 = ({ prevStep }) => {
 
   return (
     <Box sx={{ mt: 4, mb: 4, textAlign: "center" }}>
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h1" fontSize={50} fontWeight={"bold"} gutterBottom>
         Review Order
       </Typography>
       <Box sx={{ mb: 2 }}>
@@ -223,13 +224,26 @@ const Step3 = ({ prevStep }) => {
       </Box>
 
       <Dialog open={openModal} onClose={() => setOpenModal(false)}>
-        <DialogTitle>Order</DialogTitle>
+        <DialogTitle fontWeight={"bold"} fontSize={40}>
+          Order detail
+        </DialogTitle>
         <DialogContent>
           <Box>
-            <Typography>Name: {customerInfo.fullname}</Typography>
-            <Typography>Phone: {customerInfo.phone}</Typography>
-            <Typography>Email: {customerInfo.email}</Typography>
-            <Typography>Address: {customerInfo.address}</Typography>
+            <Typography>
+              <strong>Name:</strong> {customerInfo.fullname}
+            </Typography>
+            <Typography>
+              <strong>Phone:</strong> {customerInfo.phone}
+            </Typography>
+            <Typography>
+              <strong>Email: </strong> {customerInfo.email}
+            </Typography>
+            {customerInfo.address !== "" && (
+              <Typography>
+                <strong>Address:</strong> {customerInfo.address}
+              </Typography>
+            )}
+            {customerInfo.address === "" && <Typography>N/A</Typography>}
           </Box>
           <TableContainer>
             <Table>
