@@ -144,7 +144,7 @@ function App() {
                     }
                   />
                   <Route
-                    path="/consign/"
+                    path="/consign"
                     element={
                       <ProtectedRoute allowedRoles={["Staff", "Admin"]}>
                         <ConsignManagement />
@@ -192,11 +192,11 @@ function App() {
                     }
                   />
                   <Route
-                    path="/team"
+                    path="/transaction"
                     element={
-                      <ProtectedRoute allowedRoles={["Admin"]}>
-                        <Team />
-                      </ProtectedRoute>
+                      <ProtectedRoute
+                        allowedRoles={["Staff", "Admin"]}
+                      ></ProtectedRoute>
                     }
                   />
                 </Routes>

@@ -11,6 +11,30 @@ const axiosInstance = axios.create({
 });
 
 const ApiService = {
+  createAuction: async (auctionData) => {
+    try {
+      const response = await axiosInstance.post(`/api/auctions`, auctionData);
+
+      return response.data;
+    } catch (error) {
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
+    }
+  },
   approveAuctionByAdmin: async (auctionId) => {
     try {
       const response = await axiosInstance.put(
@@ -87,10 +111,86 @@ const ApiService = {
       throw new Error(errorMessage);
     }
   },
+  createRefundByStaff: async (shopId, refundData) => {
+    try {
+      const response = await axiosInstance.post(
+        `/api/shops/${shopId}/refunds`,
+        refundData
+      );
+      return response.data;
+    } catch (error) {
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
+    }
+  },
   confirmRefundStatus: async (refundId) => {
     try {
       const response = await axiosInstance.put(
         `/api/refunds/${refundId}/confirm-received-and-refund`
+      );
+      return response.data;
+    } catch (error) {
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
+    }
+  },
+  getRefundByShopId: async (shopId, searchDate) => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/refunds?ShopId=${shopId}&PreviousTime=${searchDate}`
+      );
+      return response.data;
+    } catch (error) {
+      let errorMessage = "An unknown error occurred.";
+
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.title) {
+          errorMessage = data.title;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
+    }
+  },
+  getAllRefunds: async (searchDate) => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/refunds?PreviousTime=${searchDate}`
       );
       return response.data;
     } catch (error) {
@@ -218,57 +318,6 @@ const ApiService = {
     try {
       const response = await axiosInstance.put(
         `/api/orders//${orderId}/cancelbyadmin`
-      );
-      return response.data;
-    } catch (error) {
-      let errorMessage = "An unknown error occurred.";
-
-      if (error.response && error.response.data) {
-        const { data } = error.response;
-        if (data.detail) {
-          errorMessage = data.detail;
-        } else if (data.message) {
-          errorMessage = data.message;
-        } else if (data.title) {
-          errorMessage = data.title;
-        }
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-
-      throw new Error(errorMessage);
-    }
-  },
-
-  getRefundByShopId: async (shopId, searchDate) => {
-    try {
-      const response = await axiosInstance.get(
-        `/api/refunds?ShopId=${shopId}&PreviousTime=${searchDate}`
-      );
-      return response.data;
-    } catch (error) {
-      let errorMessage = "An unknown error occurred.";
-
-      if (error.response && error.response.data) {
-        const { data } = error.response;
-        if (data.detail) {
-          errorMessage = data.detail;
-        } else if (data.message) {
-          errorMessage = data.message;
-        } else if (data.title) {
-          errorMessage = data.title;
-        }
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-
-      throw new Error(errorMessage);
-    }
-  },
-  getAllRefunds: async (searchDate) => {
-    try {
-      const response = await axiosInstance.get(
-        `/api/refunds?PreviousTime=${searchDate}`
       );
       return response.data;
     } catch (error) {
@@ -958,31 +1007,6 @@ const ApiService = {
       const response = await axiosInstance.get(
         `/api/consginsales?ShopId=${shopId}&PageNumber=${page}&PageSize=${pageSize}&Status=${status}&StartDate=${startDate}&ConsignSaleCode=${searchTerm}`
       );
-
-      return response.data;
-    } catch (error) {
-      let errorMessage = "An unknown error occurred.";
-
-      if (error.response && error.response.data) {
-        const { data } = error.response;
-        if (data.detail) {
-          errorMessage = data.detail;
-        } else if (data.message) {
-          errorMessage = data.message;
-        } else if (data.title) {
-          errorMessage = data.title;
-        }
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-
-      throw new Error(errorMessage);
-    }
-  },
-
-  createAuction: async (auctionData) => {
-    try {
-      const response = await axiosInstance.post(`/api/auctions`, auctionData);
 
       return response.data;
     } catch (error) {
