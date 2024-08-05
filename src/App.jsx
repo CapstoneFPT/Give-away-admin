@@ -146,7 +146,7 @@ function App() {
                   <Route
                     path="/consign/"
                     element={
-                      <ProtectedRoute allowedRoles={["Staff"]}>
+                      <ProtectedRoute allowedRoles={["Staff", "Admin"]}>
                         <ConsignManagement />
                       </ProtectedRoute>
                     }

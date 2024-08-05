@@ -195,7 +195,7 @@ const RefundManagement = () => {
         </Box>
       ) : (
         <TableContainer component={Paper}>
-          <Table border={1}>
+          <Table>
             <TableHead>
               <TableRow>
                 <TableCell>

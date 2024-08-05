@@ -19,6 +19,7 @@ import {
   FormControl,
   InputLabel,
   Button,
+  Card,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { debounce } from "lodash";
@@ -38,8 +39,7 @@ const OrderManagement = () => {
   const [userRole, setUserRole] = useState("");
   const navigate = useNavigate();
   const { showSnackBar } = useSnackbar();
-  console.log(orders);
-  console.log(shopId);
+  console.log(status);
   const fetchOrdersForStaff = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -149,7 +149,7 @@ const OrderManagement = () => {
 
   const handleCancelOrder = async (orderId) => {
     try {
-      await ApiService.cancelOrderByStaff(shopId, orderId);
+      await ApiService.cancelOrderByAdmin(orderId);
       showSnackBar("Order cancelled successfully.", "success");
       getOrders();
     } catch (error) {
@@ -157,23 +157,13 @@ const OrderManagement = () => {
     }
   };
 
-  const handleConfirmOrder = async (orderId) => {
+  const handleConfirmDelivery = async (orderId) => {
     setIsLoading(true);
     try {
-      await ApiService.confirmOrder(orderId);
-      setIsLoading(false);
-      showSnackBar("Order confirmed successfully.", "success");
-      getOrders();
-    } catch (error) {
-      showSnackBar(`Failed to confirm order: ${error.message}`, "error");
-    }
-  };
-
-  const handleConfirmDelivery = async (orderId) => {
-    try {
-      await ApiService.updateOrderByStaff(orderId);
+      await ApiService.confirmOrderByAdmin(orderId);
       showSnackBar("Order confirmed as delivered successfully.", "success");
       getOrders();
+      setIsLoading(false);
     } catch (error) {
       showSnackBar(`Failed to confirm delivery: ${error.message}`, "error");
     }
@@ -197,7 +187,7 @@ const OrderManagement = () => {
   };
 
   const renderTable = () => (
-    <Box border={1} borderRadius={5}>
+    <Card>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -226,9 +216,7 @@ const OrderManagement = () => {
               <TableCell>
                 <h2>Purchase Type</h2>
               </TableCell>
-              <TableCell>
-                <h2>Details</h2>
-              </TableCell>
+
               <TableCell>
                 <h2>Actions</h2>
               </TableCell>
@@ -241,8 +229,10 @@ const OrderManagement = () => {
                   <TableCell>{order.totalPrice.toLocaleString()} VND</TableCell>
                   <TableCell>{order.orderCode}</TableCell>
                   <TableCell>{order.customerName}</TableCell>
-                  <TableCell>{order.recipientName}</TableCell>
-
+                  {order.recipientName !== null && (
+                    <TableCell>{order.recipientName}</TableCell>
+                  )}
+                  {order.recipientName === null && <TableCell>N/A</TableCell>}
                   <TableCell
                     style={{
                       color: getStatusColor(order.status),
@@ -256,7 +246,9 @@ const OrderManagement = () => {
                     {new Date(order.createdDate).toLocaleString()}
                   </TableCell>
                   <TableCell>{order.purchaseType}</TableCell>
-                  <TableCell>
+                  <TableCell
+                    sx={{ flexDirection: "row", display: "flex", gap: "4px" }}
+                  >
                     <Button
                       variant="contained"
                       color="primary"
@@ -264,50 +256,27 @@ const OrderManagement = () => {
                     >
                       Detail
                     </Button>
-                  </TableCell>
-                  <TableCell>
-                    <Box flexDirection={"row"} display={"flex"}>
-                      {order.status === "Pending" && (
-                        <>
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={() => handleConfirmOrder(order.orderId)}
-                            sx={{ ml: 1 }}
-                          >
-                            Confirm Order
-                          </Button>
-                          <Button
-                            variant="contained"
-                            color="error"
-                            onClick={() => handleCancelOrder(order.orderId)}
-                            sx={{ ml: 1 }}
-                          >
-                            Cancel Order
-                          </Button>
-                        </>
-                      )}
-                      {order.status === "OnDelivery" && (
-                        <>
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={() => handleConfirmDelivery(order.orderId)}
-                            sx={{ ml: 1 }}
-                          >
-                            Confirm Delivery
-                          </Button>
-                          <Button
-                            variant="contained"
-                            color="error"
-                            onClick={() => handleCancelOrder(order.orderId)}
-                            sx={{ ml: 1 }}
-                          >
-                            Cancel Order
-                          </Button>
-                        </>
-                      )}
-                    </Box>
+                    {userRole === "Admin" && order.status === "OnDelivery" && (
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => handleConfirmDelivery(order.orderId)}
+                        sx={{ ml: 5 }}
+                      >
+                        Delivered
+                      </Button>
+                    )}
+
+                    {userRole === "Admin" && order.status === "OnDelivery" && (
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => handleCancelOrder(order.orderId)}
+                        sx={{ mr: 1 }}
+                      >
+                        Cancel
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               ))
@@ -330,13 +299,21 @@ const OrderManagement = () => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-    </Box>
+    </Card>
   );
 
   return (
     <Container>
       <Box my={2}>
-        <Typography variant="h4">Order Management</Typography>
+        <Typography
+          fontWeight={"bold"}
+          fontSize={40}
+          variant="h1"
+          justifyContent={"center"}
+          display={"flex"}
+        >
+          Order Management
+        </Typography>
       </Box>
       <Box
         display="flex"
