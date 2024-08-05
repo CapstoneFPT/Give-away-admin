@@ -47,12 +47,35 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
       getCateByGender(genderId);
     }
   }, [newItem.gender]);
+  const formatNumber = (num) => {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  };
+  const handlePriceChange = (event) => {
+    const { name, value } = event.target;
 
+    if (name === "sellingPrice") {
+      // Remove non-numeric characters except for the decimal point
+      const rawValue = value.replace(/[^\d]/g, "");
+
+      // Convert formatted value to number
+      const numberValue = parseInt(rawValue, 10) || 0;
+
+      // Update state with formatted and raw values
+      setNewItem((prevState) => ({
+        ...prevState,
+        sellingPrice: numberValue,
+        formattedSellingPrice: formatNumber(numberValue),
+      }));
+    }
+  };
   const handleItemChange = (event) => {
     const { name, value } = event.target;
+    const sanitizedValue =
+      name === "condition" ? Math.max(0, Math.min(100, value)) : value;
+
     setNewItem((prevItem) => ({
       ...prevItem,
-      [name]: value,
+      [name]: sanitizedValue,
     }));
   };
 
@@ -174,9 +197,13 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
               id="sellingPrice"
               label="Selling Price"
               name="sellingPrice"
-              type="number"
-              value={newItem.sellingPrice}
-              onChange={handleItemChange}
+              value={
+                newItem.formattedSellingPrice ||
+                formatNumber(newItem.sellingPrice)
+              }
+              onChange={handlePriceChange}
+              inputMode="numeric"
+              inputProps={{ maxLength: 12 }}
             />
           </Grid>
           <Grid item xs={12}>
@@ -214,6 +241,10 @@ const AddItem = ({ open, onClose, onAddSuccess }) => {
               name="condition"
               value={newItem.condition}
               onChange={handleItemChange}
+              inputProps={{
+                min: 0,
+                max: 100,
+              }}
             />
           </Grid>
           <Grid item xs={6}>

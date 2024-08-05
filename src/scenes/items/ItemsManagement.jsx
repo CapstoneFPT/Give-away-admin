@@ -233,7 +233,7 @@ const ItemsManagement = () => {
             <TableCell>
               <h2>Type</h2>
             </TableCell>
-            {tabIndex === 2 && (
+            {tabIndex === 2 && statusFilter === "Available" && (
               <TableCell>
                 <h2>Action</h2>
               </TableCell>

@@ -61,19 +61,37 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
+    setNewConsign((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+  const formatNumber = (num) => {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  };
+  const handlePriceChange = (event, index) => {
+    const { name, value } = event.target;
 
-    if (name === "condition") {
-      // Allow only numeric values and ensure the value does not exceed 100
-      if (/^\d{0,3}$/.test(value) && (value === "" || Number(value) <= 100)) {
-        setNewConsign((prevState) => ({
-          ...prevState,
-          [name]: value,
-        }));
-      }
-    } else {
+    if (name === "confirmedPrice") {
+      // Remove non-numeric characters except for the decimal point
+      const rawValue = value.replace(/[^\d]/g, "");
+
+      // Convert formatted value to number
+      const numberValue = parseInt(rawValue, 10) || 0;
+
+      // Update state with formatted and raw values
       setNewConsign((prevState) => ({
         ...prevState,
-        [name]: value,
+        fashionItemForConsigns: prevState.fashionItemForConsigns.map(
+          (item, i) =>
+            i === index
+              ? {
+                  ...item,
+                  confirmedPrice: numberValue,
+                  formattedSellingPrice: formatNumber(numberValue),
+                }
+              : item
+        ),
       }));
     }
   };
@@ -82,7 +100,9 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
     const { name, value } = event.target;
     let updatedValue = value;
     let genderId = null;
-
+    if (name === "condition" && value > 100) {
+      updatedValue = 100;
+    }
     if (name === "gender") {
       genderId =
         value === "Male"
@@ -371,11 +391,17 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
                       fullWidth
                       label="Confirmed Price"
                       name="confirmedPrice"
-                      value={item.confirmedPrice}
-                      onChange={(e) => handleItemChange(e, index)}
+                      value={formatNumber(item.confirmedPrice)} // Display formatted price
+                      onChange={(e) => handlePriceChange(e, index)} // Use handlePriceChange
+                      inputProps={{
+                        maxLength: 12, // Allows for 11 digits + optional decimal point
+                        pattern: "[0-9]*", // Allow only numbers
+                        type: "text", // Allows custom validation
+                      }}
                       InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">VND</InputAdornment>
+                        maxLength: 11,
+                        endAdornment: (
+                          <InputAdornment position="end">VND</InputAdornment>
                         ),
                       }}
                     />
@@ -387,7 +413,12 @@ const AddConsignment = ({ open, onClose, onAddSuccess }) => {
                       name="condition"
                       value={item.condition}
                       onChange={(e) => handleItemChange(e, index)}
-                      inputProps={{ maxLength: 3 }}
+                      inputProps={{
+                        maxLength: 3,
+                        type: "number",
+                        min: 0,
+                        max: 3,
+                      }}
                     />
                   </Grid>
                   <Grid item xs={6}>
