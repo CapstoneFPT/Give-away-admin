@@ -21,8 +21,8 @@ const loginSchema = Yup.object().shape({
 });
 
 const initialValues = {
-  email: "admin@demo.com",
-  password: "demo",
+  email: "staff1@example.com",
+  password: "staff1@example.com",
 };
 
 /*
