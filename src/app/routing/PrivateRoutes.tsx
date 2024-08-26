@@ -7,6 +7,7 @@ import {MenuTestPage} from '../pages/MenuTestPage'
 import {getCSSVariableValue} from '../../_metronic/assets/ts/_utils'
 import {WithChildren} from '../../_metronic/helpers'
 import BuilderPageWrapper from '../pages/layout-builder/BuilderPageWrapper'
+import ProductPage from '../pages/product/ProductPage'
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import('../modules/profile/ProfilePage'))
@@ -21,10 +22,13 @@ const PrivateRoutes = () => {
       <Route element={<MasterLayout />}>
         {/* Redirect to Dashboard after success login/registartion */}
         <Route path='auth/*' element={<Navigate to='/dashboard' />} />
+      
         {/* Pages */}
         <Route path='dashboard' element={<DashboardWrapper />} />
         <Route path='builder' element={<BuilderPageWrapper />} />
         <Route path='menu-test' element={<MenuTestPage />} />
+        <Route path='/product/' element={<ProductPage />}/>
+        
         {/* Lazy Modules */}
         <Route
           path='crafted/pages/profile/*'
@@ -74,6 +78,8 @@ const PrivateRoutes = () => {
             </SuspensedView>
           }
         />
+         
+        
         {/* Page Not Found */}
         <Route path='*' element={<Navigate to='/error/404' />} />
       </Route>

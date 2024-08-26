@@ -9,6 +9,8 @@ export function MenuInner() {
     <>
       <MenuItem title={intl.formatMessage({id: 'MENU.DASHBOARD'})} to='/dashboard' />
       <MenuItem title='Layout Builder' to='/builder' />
+      <MenuItem title='Product' to='/product' />
+      <MenuItem title='Menu Test' to='/menu-test' />
       <MenuInnerWithSub
         title='Crafted'
         to='/crafted'
@@ -36,6 +38,7 @@ export function MenuInner() {
             <MenuItem to='/crafted/pages/profile/projects' title='Projects' hasBullet={true} />
             <MenuItem to='/crafted/pages/profile/campaigns' title='Campaigns' hasBullet={true} />
             <MenuItem to='/crafted/pages/profile/documents' title='Documents' hasBullet={true} />
+            <MenuItem title='Product' to='apps/pages/product' />
             <MenuItem
               to='/crafted/pages/profile/connections'
               title='Connections'
