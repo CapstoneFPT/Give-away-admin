@@ -1,13 +1,10 @@
+import {KTCardBody, KTIcon} from "../../../_metronic/helpers";
 import React, {useEffect, useState} from "react";
-import {KTIcon, toAbsoluteUrl} from "../../../_metronic/helpers";
-import {FashionItemApi, MasterItemListResponse} from "../../../api";
+import {ConsignSale, ConsignSaleApi} from "../../../api";
 import {useQuery} from "react-query";
 
-type Props = {
-    className: string;
-};
 
-const FashionItemsTable: React.FC<Props> = ({className}) => {
+const ConsignTable: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
@@ -19,18 +16,15 @@ const FashionItemsTable: React.FC<Props> = ({className}) => {
     }, [searchTerm]);
 
     const result = useQuery(
-        ['FashionItems',debouncedSearchTerm,currentPage,pageSize],
+        ['Consign', debouncedSearchTerm, currentPage, pageSize],
         async () => {
-            const fashionItemApi = new FashionItemApi()
-            const response = await fashionItemApi.apiFashionitemsMasterItemsGet(
-                debouncedSearchTerm,
-                null!,
-                currentPage,
-                pageSize,
+            const consignSaleApi = new ConsignSaleApi()
+            const response = await consignSaleApi.apiConsginsalesGet(
+                null!, null!, currentPage, pageSize, null!, null!, searchTerm
             );
             return response.data;
         },
-        {refetchOnWindowFocus: false,keepPreviousData:true}
+        {refetchOnWindowFocus: false, keepPreviousData: true}
     );
 
     const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
@@ -50,14 +44,13 @@ const FashionItemsTable: React.FC<Props> = ({className}) => {
     if (result.isLoading) return <div>Loading...</div>;
     if (result.error) return <div>An error occurred: {(result.error as Error).message}</div>;
 
-
     return (
-        <div className={`card ${className}`}>
-            {/* begin::Header */}
+        <>
             <div className='card-header border-0 pt-5'>
                 <h3 className='card-title align-items-start flex-column'>
-                    <span className='card-label fw-bold fs-3 mb-1'>Product List</span>
-                    <span className='text-muted mt-1 fw-semibold fs-7'>Over {result.data?.totalCount} products</span>
+                    <span className='card-label fw-bold fs-3 mb-1'>Consignment List</span>
+                    <span
+                        className='text-muted mt-1 fw-semibold fs-7'>Over {result.data?.data?.totalCount} consignments</span>
                 </h3>
                 <div className='card-toolbar'>
                     <form onSubmit={handleSearch} className="d-flex align-items-center">
@@ -75,18 +68,16 @@ const FashionItemsTable: React.FC<Props> = ({className}) => {
                     </a>
                 </div>
             </div>
-            {/* end::Header */}
-            {/* begin::Body */}
-            <div className='card-body py-3'>
-                {/* begin::Table container */}
+            <KTCardBody className={'py-4'}>
                 <div className='table-responsive'>
-                    {/* begin::Table */}
-                    <table className='table align-middle gs-0 gy-4'>
-                        {/* begin::Table head */}
+                    <table
+                        id='kt_table_consignments'
+                        className='table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer'
+                    >
                         <thead>
                         <tr className='fw-bold text-muted bg-light'>
-                            <th className='ps-4 min-w-125px rounded-start'>Item Code</th>
-                            <th className='min-w-200px'>Product</th>
+                            <th className='ps-4 min-w-125px rounded-start'>Consignment Code</th>
+                            <th className='min-w-200px'>Consignment</th>
                             <th className='min-w-200px'>Description</th>
                             <th className='min-w-125px'>Stock Count</th>
                             <th className='min-w-150px'>Created Date</th>
@@ -94,52 +85,50 @@ const FashionItemsTable: React.FC<Props> = ({className}) => {
                             <th className='min-w-200px text-end rounded-end'></th>
                         </tr>
                         </thead>
-                        {/* end::Table head */}
-                        {/* begin::Table body */}
                         <tbody>
-                        {result.data?.items!.map((product : MasterItemListResponse) => (
-                            <tr key={product.masterItemId}>
+                        {result.data?.data?.items!.map((consignSale: ConsignSale) => (
+                            <tr key={consignSale.consignSaleCode}>
                                 <td>
                                     <a href='#' className='text-gray-900 fw-bold text-hover-primary mb-1 fs-6'>
-                                        {product.itemCode}
+                                        {consignSale.consignSaleCode}
                                     </a>
                                 </td>
                                 <td>
                                     <div className='d-flex align-items-center'>
                                         <div className='symbol symbol-50px me-5'>
-                                            <img
-                                                src={product.images![0] || toAbsoluteUrl('media/stock/600x400/img-placeholder.jpg')}
-                                                alt={product.name || 'N/A'}
-                                            />
+                                            {/*<img*/}
+                                            {/*    src={consignSale.images![0] || toAbsoluteUrl('media/stock/600x400/img-placeholder.jpg')}*/}
+                                            {/*    alt={consignSale.name || 'N/A'}*/}
+                                            {/*/>*/}
                                         </div>
                                         <div className='d-flex justify-content-start flex-column'>
-                                            <a href='#' className='text-gray-900 fw-bold text-hover-primary mb-1 fs-6'>
-                                                {product.name}
-                                            </a>
+                                            {/*<a href='#' className='text-gray-900 fw-bold text-hover-primary mb-1 fs-6'>*/}
+                                            {/*    {consignSale.name}*/}
+                                            {/*</a>*/}
                                             <span className='text-muted fw-semibold text-muted d-block fs-7'>
-                          {product.gender}
+                          {/*{consignSale.gender}*/}
                         </span>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
                     <span className='text-muted fw-semibold text-muted d-block fs-7'>
-                      {product.description}
+                      {/*{consignSale.description}*/}
                     </span>
                                 </td>
                                 <td>
                     <span className='text-muted fw-semibold text-muted d-block fs-7'>
-                      <strong>{product.stockCount}</strong>
+                      {/*<strong>{consignSale.stockCount}</strong>*/}
                     </span>
                                 </td>
                                 <td>
                     <span className='text-muted fw-semibold text-muted d-block fs-7'>
-                      {new Date(product.createdDate!).toLocaleDateString()}
+                      {new Date(consignSale.createdDate!).toLocaleDateString()}
                     </span>
                                 </td>
                                 <td>
-                                    <span
-                                        className='text-muted fw-semibold text-muted d-block fs-7'>{product.brand}</span>
+                                    {/*<span*/}
+                                    {/*    className='text-muted fw-semibold text-muted d-block fs-7'>{consignSale.brand}</span>*/}
                                 </td>
                                 <td className='text-end'>
                                     <a href='#'
@@ -157,17 +146,12 @@ const FashionItemsTable: React.FC<Props> = ({className}) => {
                             </tr>
                         ))}
                         </tbody>
-                        {/* end::Table body */}
                     </table>
-                    {/* end::Table */}
                 </div>
-                {/* end::Table container */}
-            </div>
-            {/* end::Body */}
-            {/* begin::Footer */}
+            </KTCardBody>
             <div className='card-footer d-flex justify-content-between align-items-center'>
                 <div>
-                    Showing {(currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, result!.data!.totalCount!)} of {result.data?.totalCount} entries
+                    Showing {(currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, result!.data!.data!.totalCount!)} of {result.data?.data!.totalCount} entries
                 </div>
                 <div>
                     <button
@@ -177,7 +161,7 @@ const FashionItemsTable: React.FC<Props> = ({className}) => {
                     >
                         Previous
                     </button>
-                    {Array.from({length: result!.data!.totalPages!}, (_, i) => i + 1).map((page) => (
+                    {Array.from({length: result!.data!.data!.totalPages!}, (_, i) => i + 1).map((page) => (
                         <button
                             key={page}
                             className={`btn btn-sm ${page === currentPage ? 'btn-primary' : 'btn-light-primary'} me-2`}
@@ -189,15 +173,14 @@ const FashionItemsTable: React.FC<Props> = ({className}) => {
                     <button
                         className='btn btn-sm btn-light-primary'
                         onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === result!.data!.totalPages!}
+                        disabled={currentPage === result!.data!.data!.totalPages!}
                     >
                         Next
                     </button>
                 </div>
             </div>
-            {/* end::Footer */}
-        </div>
+        </>
     );
-}
+};
 
-export default FashionItemsTable;
+export default ConsignTable

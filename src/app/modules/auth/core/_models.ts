@@ -1,3 +1,5 @@
+import {Roles} from "../../../../api";
+
 export interface AuthModel {
   api_token: string;
   refreshToken?: string;
@@ -44,7 +46,7 @@ export interface UserSocialNetworksModel {
 }
 
 export interface CurrentUserModel {
-  role: string;
+  role: Roles;
   id: string;
   email: string;
   shopId: string;

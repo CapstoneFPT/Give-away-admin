@@ -1,9 +1,10 @@
 import React, { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../modules/auth";
+import {Roles} from "../../api";
 
 interface ProtectedRouteProps {
-  roles: string[];
+  roles: Roles[];
   children: ReactNode; // Ensure children is typed correctly
 }
 
