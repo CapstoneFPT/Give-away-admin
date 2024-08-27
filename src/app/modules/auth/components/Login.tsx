@@ -21,8 +21,8 @@ const loginSchema = Yup.object().shape({
 });
 
 const initialValues = {
-  email: "staff1@example.com",
-  password: "staff1@example.com",
+  email: "admin@gmail.com",
+  password: "admin",
 };
 
 /*
@@ -48,7 +48,7 @@ export function Login() {
           password: values.password,
         });
         saveAuth({ api_token: data.data!.accessToken! });
-
+        console.log(data.data!.role);
         setCurrentUser({
           id: data.data!.id!,
           email: data.data!.email!,
