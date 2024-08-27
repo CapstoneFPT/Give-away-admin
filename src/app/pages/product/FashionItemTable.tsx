@@ -17,8 +17,8 @@ const FashionItemsTable: React.FC<Props> = ({ className }) => {
   const fetchMasterProduct = async (page: number, search: string) => {
     try {
       const productApi = new FashionItemApi();
-      const response = await productApi.apiFashionitemsGet(
-        search, // itemCode
+      const response = await productApi.apiFashionitemsMasterItemsGet(
+        search,
         undefined, // memberId
         undefined, // gender
         undefined, // color
@@ -26,16 +26,26 @@ const FashionItemsTable: React.FC<Props> = ({ className }) => {
         undefined, // condition
         undefined, // minPrice
         undefined, // maxPrice
-        undefined, // status
-        undefined, // type
-        undefined, // sortBy
-        undefined, // sortDescending
-        page,
-        pageSize
+      
       );
-      setProducts(response.data.items || []);
+      
+      // Map dữ liệu từ API
+      const mappedProducts = response.data.items!.map((items: any) => ({
+        itemId: items.masterItemId,
+        name: items.name,
+        itemCode: items.itemCode,
+        description: items.description,
+        createdDate: items.createdDate,
+        brand: items.brand,
+        gender: items.gender,
+        image: items.images.length > 0 ? items.images[0] : toAbsoluteUrl('media/stock/600x400/img-placeholder.jpg'),
+        stockCount: items.stockCount,
+      }));
+
+      setProducts(mappedProducts);
       setTotalPages(response.data.totalPages || 1);
       setTotalCount(response.data.totalCount || 0);
+      console.log(response.data);
     } catch (error) {
       console.error("There was an error fetching the products!", error);
     }
@@ -92,11 +102,12 @@ const FashionItemsTable: React.FC<Props> = ({ className }) => {
             {/* begin::Table head */}
             <thead>
               <tr className='fw-bold text-muted bg-light'>
-                <th className='ps-4 min-w-325px rounded-start'>Product</th>
-                <th className='min-w-125px'>Price</th>
-                <th className='min-w-200px'>Condition</th>
+                <th className='ps-4 min-w-125px rounded-start'>Item Code</th>
+                <th className='min-w-200px'>Product</th>
+                <th className='min-w-200px'>Description</th>
+                <th className='min-w-125px'>Stock Count</th>
+                <th className='min-w-150px'>Created Date</th>
                 <th className='min-w-150px'>Brand</th>
-                <th className='min-w-150px'>Status</th>
                 <th className='min-w-200px text-end rounded-end'></th>
               </tr>
             </thead>
@@ -105,6 +116,11 @@ const FashionItemsTable: React.FC<Props> = ({ className }) => {
             <tbody>
               {products.map((product) => (
                 <tr key={product.itemId}>
+                  <td>
+                    <a href='#' className='text-gray-900 fw-bold text-hover-primary mb-1 fs-6'>
+                      {product.itemCode}
+                    </a>
+                  </td>
                   <td>
                     <div className='d-flex align-items-center'>
                       <div className='symbol symbol-50px me-5'>
@@ -118,28 +134,28 @@ const FashionItemsTable: React.FC<Props> = ({ className }) => {
                           {product.name}
                         </a>
                         <span className='text-muted fw-semibold text-muted d-block fs-7'>
-                          {product.gender}, {product.size}
+                          {product.gender}
                         </span>
                       </div>
                     </div>
                   </td>
                   <td>
-                    <a href='#' className='text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6'>
-                      {product.sellingPrice.toLocaleString()} VND
-                    </a>
+                    <span className='text-muted fw-semibold text-muted d-block fs-7'>
+                      {product.description}
+                    </span>
                   </td>
                   <td>
-                    <span className='text-muted fw-semibold text-muted d-block fs-7'>{product.condition}</span>
+                    <span className='text-muted fw-semibold text-muted d-block fs-7'>
+                      <strong>{product.stockCount}</strong>
+                    </span>
+                  </td>
+                  <td>
+                    <span className='text-muted fw-semibold text-muted d-block fs-7'>
+                      {new Date(product.createdDate).toLocaleDateString()}
+                    </span>
                   </td>
                   <td>
                     <span className='text-muted fw-semibold text-muted d-block fs-7'>{product.brand}</span>
-                  </td>
-                  <td>
-                    <span className={`badge fs-7 fw-semibold ${
-                      product.status === 'PendingForOrder' ? 'badge-light-warning' : 'badge-light-success'
-                    }`}>
-                      {product.status}
-                    </span>
                   </td>
                   <td className='text-end'>
                     <a href='#' className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
