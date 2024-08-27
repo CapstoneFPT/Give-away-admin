@@ -9,9 +9,10 @@ import {WithChildren} from '../../_metronic/helpers'
 import BuilderPageWrapper from '../pages/layout-builder/BuilderPageWrapper'
 import FashionItemsPage from '../pages/product/FashionItemPage'
 import Auction from '../pages/auction/Auction'
-import OrderList from '../pages/order/OrderList'
+import OrderList from '../pages/order/OrderPage.tsx'
 import RefundList from '../pages/refund/RefundList'
 import ProtectedRoute from "./ProtectedRoutes.tsx";
+import OrderPage from '../pages/order/OrderPage.tsx'
 
 const PrivateRoutes = () => {
     const ProfilePage = lazy(() => import('../modules/profile/ProfilePage'))
@@ -31,12 +32,12 @@ const PrivateRoutes = () => {
                 <Route path='builder' element={<BuilderPageWrapper/>}/>
                 <Route path='menu-test' element={<MenuTestPage/>}/>
                 <Route path='auction' element={<Auction/>}/>
-                <Route path='order' element={<OrderList/>}/>
+                <Route path='order/*' element={<OrderPage/>}/>
                 <Route path='refund' element={<RefundList/>}/>
                 <Route path='product/*' element={<ProtectedRoute roles={[
-                    'Admin','Staff'
+                    'Staff'
                 ]} children={<FashionItemsPage/>}/>}/>
-                <Route path='consignment/*' element={<FashionItemsPage/>}/>
+                <Route path='consignment/*' element={<ProtectedRoute roles={['Staff']} children={<FashionItemsPage/>}/>}/>
 
                 {/* Lazy Modules */}
                 <Route
@@ -89,6 +90,8 @@ const PrivateRoutes = () => {
                 />
                 {/* Page Not Found */}
                 <Route path='*' element={<Navigate to='/error/404'/>}/>
+                {/* <Route path='*' element={<Navigate to='/error/403'/>}/> */}
+
             </Route>
         </Routes>
     )

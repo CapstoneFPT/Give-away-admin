@@ -12,24 +12,6 @@ const FashionItemsPage = () => {
             path="product-list"
             element={
               <>
-                <PageTitle
-                  breadcrumbs={[
-                    {
-                      title: "Fashion Items",
-                      path: "/product/product-list",
-                      isActive: true,
-                      isSeparator: true,
-                    },
-                    {
-                      title: "Test",
-                      path: "",
-                      isActive: false,
-                      isSeparator: true,
-                    }
-                  ]}
-                >
-                  Fashion Items
-                </PageTitle>
                 <FashionItemsTable className="mb-5 mb-xl-8" />
               </>
             }

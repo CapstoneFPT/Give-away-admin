@@ -11,7 +11,7 @@ export function MenuInner() {
       <MenuItem title='Product' to='/product' />
       <MenuItem title='Consign List' to='/builder' />
       <MenuItem title='Auction' to='auction' />
-      <MenuItem title='Order List' to='order' />
+      <MenuItem title='Order List' to='/order' />
       <MenuItem title='Refund List' to='refund' />
 
 
