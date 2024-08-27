@@ -4,8 +4,8 @@ import { PrivateRoutes } from "./PrivateRoutes";
 import { ErrorsPage } from "../modules/errors/ErrorsPage";
 import { Logout, AuthPage, useAuth } from "../modules/auth";
 import { App } from "../App";
-import ProtectedRoute from "./ProtectedRoutes"; // Import the ProtectedRoute component
-import ProductPage from "../";
+import ProtectedRoute from "./ProtectedRoutes";
+import UsersPage from "../modules/apps/user-management/UsersPage.tsx"; // Import the ProtectedRoute component
 const { BASE_URL } = import.meta.env;
 
 const AppRoutes: FC = () => {
@@ -30,8 +30,7 @@ const AppRoutes: FC = () => {
                 path="/admin-dashboard"
                 element={
                   <ProtectedRoute roles={["Admin"]}>
-                    <ProductPage />
-                    {/* Replace with your actual component */}
+                      <UsersPage/>
                   </ProtectedRoute>
                 }
               />
