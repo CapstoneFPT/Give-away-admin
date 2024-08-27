@@ -21,6 +21,8 @@ const PrivateRoutes = () => {
     const WidgetsPage = lazy(() => import('../modules/widgets/WidgetsPage'))
     const ChatPage = lazy(() => import('../modules/apps/chat/ChatPage'))
     const UsersPage = lazy(() => import('../modules/apps/user-management/UsersPage'))
+    const ConsignmentPage = lazy(() => import('../pages/consign/ConsignmentPage.tsx'))
+    const FashionItemsPage = lazy(() => import('../pages/product/FashionItemPage'))
 
     return (
         <Routes>
@@ -34,10 +36,24 @@ const PrivateRoutes = () => {
                 <Route path='auction' element={<Auction/>}/>
                 <Route path='order/*' element={<OrderPage/>}/>
                 <Route path='refund' element={<RefundList/>}/>
-                <Route path='product/*' element={<ProtectedRoute roles={[
-                    'Staff'
-                ]} children={<FashionItemsPage/>}/>}/>
-                <Route path='consignment/*' element={<ProtectedRoute roles={['Staff']} children={<FashionItemsPage/>}/>}/>
+                <Route path='product/*'
+                       element={<ProtectedRoute roles={[
+                           'Admin', 'Staff'
+                       ]} children={
+                           <SuspensedView>
+                           <FashionItemsPage/>
+                           </SuspensedView>
+                           }/>}
+                />
+                <Route path='consignment/*' element={
+                    <ProtectedRoute roles={[
+                        'Staff'
+                    ]} children={
+                        <SuspensedView>
+                            <ConsignmentPage/>
+                        </SuspensedView>
+                    }/>
+                }/>
 
                 {/* Lazy Modules */}
                 <Route

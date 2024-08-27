@@ -2,6 +2,7 @@ import {useIntl} from 'react-intl'
 import {KTIcon} from '../../../../helpers'
 import {SidebarMenuItemWithSub} from './SidebarMenuItemWithSub'
 import {SidebarMenuItem} from './SidebarMenuItem'
+import {MenuItem} from "../../header/header-menus/MenuItem.tsx";
 
 const SidebarMenuMain = () => {
   const intl = useIntl()
@@ -14,6 +15,13 @@ const SidebarMenuMain = () => {
         title={intl.formatMessage({id: 'MENU.DASHBOARD'})}
         fontIcon='bi-app-indicator'
       />
+        <SidebarMenuItem to={'/consignment'} title={
+            'Consignment'
+        } icon={'element-11'}/>
+        <SidebarMenuItem title='Product' to='/product' icon={'element-11'} />
+        <SidebarMenuItem title='Auction' to='auction' icon={'element-11'}/>
+        <SidebarMenuItem title='Order List' to='order' icon={'element-11'} />
+        <SidebarMenuItem title='Refund List' to='refund' icon={'element-11'}/>
       <SidebarMenuItem to='/builder' icon='switch' title='Layout Builder' fontIcon='bi-layers' />
       <div className='menu-item'>
         <div className='menu-content pt-8 pb-2'>
