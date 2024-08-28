@@ -50,6 +50,12 @@ export function Login() {
           password: values.password,
         });
 
+        if (data.data?.role !== 'Admin' && data.data?.role !== 'Staff') {
+          setStatus("Unauthorized");
+          setSubmitting(false);
+          setLoading(false);
+           return;
+        }
 
         saveAuth({ api_token: data.data!.accessToken! });
         console.log(data.data!.role);
