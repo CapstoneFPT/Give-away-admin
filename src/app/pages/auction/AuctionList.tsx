@@ -16,7 +16,7 @@ const AuctionList = () => {
   }, [searchTerm]);
 
   const { data, isLoading, error } = useQuery(
-    ["Consign", debouncedSearchTerm, currentPage, pageSize],
+    ["Auction", debouncedSearchTerm, currentPage, pageSize],
     async () => {
       const auctionItemApi = new FashionItemApi();
       const response = await auctionItemApi.apiFashionitemsGet(null!);
