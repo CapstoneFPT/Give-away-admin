@@ -2,7 +2,7 @@ import { FC } from "react";
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import { PrivateRoutes } from "./PrivateRoutes";
 import { ErrorsPage } from "../modules/errors/ErrorsPage";
-import { Logout, AuthPage, useAuth } from "../modules/auth";
+import {Logout, AuthPage, useAuth, getAuth} from "../modules/auth";
 import { App } from "../App";
 import ProtectedRoute from "./ProtectedRoutes";
 import UsersPage from "../modules/apps/user-management/UsersPage.tsx"; // Import the ProtectedRoute component
@@ -10,6 +10,8 @@ const { BASE_URL } = import.meta.env;
 
 const AppRoutes: FC = () => {
   const { currentUser } = useAuth(); // Get the current user
+
+
 
   return (
     <BrowserRouter basename={BASE_URL}>
@@ -23,7 +25,12 @@ const AppRoutes: FC = () => {
             <>
               {/* Private routes for authenticated users */}
               <Route path="/*" element={<PrivateRoutes />} />
-              <Route index element={<Navigate to="/dashboard" />} />
+              {/*<Route index element={*/}
+              {/*    currentUser.role === 'Admin' ?(*/}
+              {/*    <Navigate to="/product/product-list" />) :*/}
+              {/*        (*/}
+              {/*        <Navigate to="/consignment" />*/}
+              {/*        )} />*/}
 
               {/* Example of a protected route with specific roles */}
               <Route

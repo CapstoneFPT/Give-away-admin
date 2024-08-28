@@ -158,6 +158,12 @@ export interface AccountResponse {
      * @memberof AccountResponse
      */
     'status'?: AccountStatus;
+    /**
+     * 
+     * @type {string}
+     * @memberof AccountResponse
+     */
+    'shopId'?: string | null;
 }
 
 
@@ -1678,12 +1684,6 @@ export interface ConsignSale {
     'createdDate'?: string;
     /**
      * 
-     * @type {number}
-     * @memberof ConsignSale
-     */
-    'consignDuration'?: number | null;
-    /**
-     * 
      * @type {string}
      * @memberof ConsignSale
      */
@@ -2232,12 +2232,6 @@ export interface ConsignSaleResponse {
      * @memberof ConsignSaleResponse
      */
     'createdDate'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof ConsignSaleResponse
-     */
-    'consignDuration'?: number | null;
     /**
      * 
      * @type {string}
@@ -2984,6 +2978,12 @@ export interface CreateIndividualItemRequestForConsign {
      * @memberof CreateIndividualItemRequestForConsign
      */
     'note'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof CreateIndividualItemRequestForConsign
+     */
+    'confirmPrice'?: number;
     /**
      * 
      * @type {Array<string>}
@@ -11295,6 +11295,39 @@ export const AccountApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiAccountsGetCurrentAccountPost: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/accounts/get-current-account`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {string} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11645,6 +11678,17 @@ export const AccountApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiAccountsGetCurrentAccountPost(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AccountResponseResult>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiAccountsGetCurrentAccountPost(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['AccountApi.apiAccountsGetCurrentAccountPost']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {string} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11885,6 +11929,14 @@ export const AccountApiFactory = function (configuration?: Configuration, basePa
          */
         apiAccountsGet(page?: number, pageSize?: number, searchTerm?: string, phone?: string, role?: Roles, status?: Array<AccountStatus>, options?: RawAxiosRequestConfig): AxiosPromise<AccountResponsePaginationResponse> {
             return localVarFp.apiAccountsGet(page, pageSize, searchTerm, phone, role, status, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiAccountsGetCurrentAccountPost(options?: RawAxiosRequestConfig): AxiosPromise<AccountResponseResult> {
+            return localVarFp.apiAccountsGetCurrentAccountPost(options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -12159,6 +12211,16 @@ export class AccountApi extends BaseAPI {
      */
     public apiAccountsGet(page?: number, pageSize?: number, searchTerm?: string, phone?: string, role?: Roles, status?: Array<AccountStatus>, options?: RawAxiosRequestConfig) {
         return AccountApiFp(this.configuration).apiAccountsGet(page, pageSize, searchTerm, phone, role, status, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AccountApi
+     */
+    public apiAccountsGetCurrentAccountPost(options?: RawAxiosRequestConfig) {
+        return AccountApiFp(this.configuration).apiAccountsGetCurrentAccountPost(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
