@@ -50,7 +50,13 @@ export function Login() {
           password: values.password,
         });
 
-        if (data.data?.role !== 'Admin' && data.data?.role !== 'Staff') {
+        const tokenReponse = await accountApi.apiAccountsGetCurrentAccountPost({
+          headers : {
+            Authorization: `Bearer ${data.data!.accessToken!}`,
+          }
+        })
+
+        if (tokenReponse.data?.data?.role !== 'Admin' && tokenReponse.data?.data!.role !== 'Staff') {
           setStatus("Unauthorized");
           setSubmitting(false);
           setLoading(false);
@@ -60,11 +66,7 @@ export function Login() {
         saveAuth({ api_token: data.data!.accessToken! });
         console.log(data.data!.role);
 
-        const tokenReponse = await accountApi.apiAccountsGetCurrentAccountPost({
-          headers : {
-            Authorization: `Bearer ${data.data!.accessToken!}`,
-          }
-        })
+
 
         const currentUser : CurrentUserModel = {
           role: data.data!.role!,
@@ -72,6 +74,7 @@ export function Login() {
           shopId: tokenReponse.data.data!.shopId!,
           id: tokenReponse.data.data!.accountId!,
         }
+
 
         setCurrentUser(currentUser);
       } catch (error) {

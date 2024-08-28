@@ -25,12 +25,6 @@ const AppRoutes: FC = () => {
             <>
               {/* Private routes for authenticated users */}
               <Route path="/*" element={<PrivateRoutes />} />
-              {/*<Route index element={*/}
-              {/*    currentUser.role === 'Admin' ?(*/}
-              {/*    <Navigate to="/product/product-list" />) :*/}
-              {/*        (*/}
-              {/*        <Navigate to="/consignment" />*/}
-              {/*        )} />*/}
 
               {/* Example of a protected route with specific roles */}
               <Route
