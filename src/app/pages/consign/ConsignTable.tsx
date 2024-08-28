@@ -60,7 +60,7 @@ const ConsignTable: React.FC = () => {
                         <input
                             type='text'
                             className='form-control form-control-solid w-250px me-2'
-                            placeholder='Search by Name'
+                            placeholder='Search by Consignment Code'
                             value={searchTerm}
                             onChange={handleSearchInputChange}
                         />
@@ -92,7 +92,7 @@ const ConsignTable: React.FC = () => {
                             <tr key={consignSale.consignSaleId}>
                                 <td>{consignSale.consignSaleCode}</td>
                                 <td>{consignSale.type}</td>
-                                <td>{new Date(consignSale.createdDate!).toLocaleDateString()}</td>
+                                <td>{new Date(consignSale.createdDate!).toLocaleString()}</td>
                                 <td>
                     <span className={`badge badge-light-${getStatusColor(consignSale.status)}`}>
                       {consignSale.status}
