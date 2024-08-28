@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { KTIcon } from '../../../../src/_metronic/helpers';
+import { KTIcon } from "../../../../src/_metronic/helpers";
 import { OrderApi, OrderResponse } from "../../../api";
+import { formatBalance } from "../utils/utils";
 
 type Props = {
   className: string;
@@ -17,12 +18,10 @@ const OrderList: React.FC<Props> = ({ className }) => {
   const fetchOrders = async (page: number, search: string) => {
     try {
       const orderApi = new OrderApi();
-      const response = await orderApi.apiOrdersGet()
-      
+      const response = await orderApi.apiOrdersGet();
 
-       
       setOrders(response.data.data?.items || []);
-     
+
       setTotalCount(totalCount);
       setTotalPages(totalPages);
     } catch (error) {
@@ -78,22 +77,43 @@ const OrderList: React.FC<Props> = ({ className }) => {
                 <tr key={order.orderId}>
                   <td>
                     <div className="form-check form-check-sm form-check-custom form-check-solid">
-                      <input className="form-check-input widget-13-check" type="checkbox" value="1" />
+                      <input
+                        className="form-check-input widget-13-check"
+                        type="checkbox"
+                        value="1"
+                      />
                     </div>
                   </td>
                   <td>
-                    <a href="#" className="text-gray-900 fw-bold text-hover-primary fs-6">
+                    <a
+                      href="#"
+                      className="text-gray-900 fw-bold text-hover-primary fs-6"
+                    >
                       {order.orderCode}
                     </a>
                   </td>
                   <td>
-                    <a href="#" className="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6">
+                    <a
+                      href="#"
+                      className="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6"
+                    >
                       {order.customerName}
                     </a>
                   </td>
                   <td>
-                    <a href="#" className="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6">
-                      {new Date(order.createdDate!).toLocaleDateString()}
+                    <a
+                      href="#"
+                      className="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6"
+                    >
+                      {new Date(order.createdDate!).toLocaleString("vi-VN", {
+                        timeZone: "Asia/Ho_Chi_Minh",
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                      })}
                     </a>
                   </td>
                   <td>
@@ -102,10 +122,14 @@ const OrderList: React.FC<Props> = ({ className }) => {
                     </span>
                   </td>
                   <td className="text-gray-900 fw-bold text-hover-primary fs-6">
-                    {order.totalPrice!.toFixed(2)}VND
+                    <strong>{formatBalance(order.totalPrice!)} VND </strong>
                   </td>
                   <td>
-                    <span className={`badge badge-light-${getStatusBadge(order.status!)}`}>
+                    <span
+                      className={`badge badge-light-${getStatusBadge(
+                        order.status!
+                      )}`}
+                    >
                       {order.status}
                     </span>
                   </td>
@@ -122,7 +146,10 @@ const OrderList: React.FC<Props> = ({ className }) => {
                     >
                       <KTIcon iconName="pencil" className="fs-3" />
                     </a>
-                    <a href="#" className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
+                    <a
+                      href="#"
+                      className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm"
+                    >
                       <KTIcon iconName="trash" className="fs-3" />
                     </a>
                   </td>

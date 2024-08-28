@@ -1,8 +1,11 @@
 import React from 'react'
+import AuctionList from './AuctionList'
 
 const Auction = () => {
   return (
-    <div>Auction</div>
+   <>
+      <AuctionList/>
+   </>
   )
 }
 

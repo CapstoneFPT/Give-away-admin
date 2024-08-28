@@ -13,6 +13,7 @@ import OrderList from '../pages/order/OrderPage.tsx'
 import RefundList from '../pages/refund/RefundList'
 import ProtectedRoute from "./ProtectedRoutes.tsx";
 import OrderPage from '../pages/order/OrderPage.tsx'
+import RefundPage from '../pages/refund/RefundPage.tsx'
 
 const PrivateRoutes = () => {
     const ProfilePage = lazy(() => import('../modules/profile/ProfilePage'))
@@ -35,7 +36,7 @@ const PrivateRoutes = () => {
                 <Route path='menu-test' element={<MenuTestPage/>}/>
                 <Route path='auction' element={<Auction/>}/>
                 <Route path='order/*' element={<OrderPage/>}/>
-                <Route path='refund' element={<RefundList/>}/>
+                <Route path='refund' element={<RefundPage/>}/>
                 <Route path='product/*'
                        element={<ProtectedRoute roles={[
                            'Admin', 'Staff'
