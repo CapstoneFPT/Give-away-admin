@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useQuery } from 'react-query';
-import { KTCardBody, KTIcon } from '../../../_metronic/helpers';
-import { ConsignSale, ConsignSaleApi } from '../../../api';
+import React, {useEffect, useState} from 'react';
+import {useQuery} from 'react-query';
+import {KTCardBody, KTIcon} from '../../../_metronic/helpers';
+import {ConsignSale, ConsignSaleApi} from '../../../api';
 import {formatBalance} from "../utils/utils.ts";
 
 const ConsignTable: React.FC = () => {
@@ -15,18 +15,17 @@ const ConsignTable: React.FC = () => {
         return () => clearTimeout(timer);
     }, [searchTerm]);
 
-    const { data, isLoading, error } = useQuery(
+    const {data, isLoading, error} = useQuery(
         ['Consign', debouncedSearchTerm, currentPage, pageSize],
         async () => {
             const consignSaleApi = new ConsignSaleApi();
             const response = await consignSaleApi.apiConsginsalesGet(
-                null!, null!, currentPage, pageSize, null!, null!, searchTerm
+                currentPage, pageSize, null!, searchTerm, null!, null!, null!, null!, null!, null!, null!
             );
             return response.data;
         },
-        { refetchOnWindowFocus: false, keepPreviousData: true }
+        {refetchOnWindowFocus: false, keepPreviousData: true}
     );
-
 
 
     const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
@@ -52,7 +51,7 @@ const ConsignTable: React.FC = () => {
                 <h3 className='card-title align-items-start flex-column'>
                     <span className='card-label fw-bold fs-3 mb-1'>Consignment List</span>
                     <span className='text-muted mt-1 fw-semibold fs-7'>
-            Over {data?.data?.totalCount} consignments
+            Over {data?.totalCount} consignments
           </span>
                 </h3>
                 <div className='card-toolbar'>
@@ -66,7 +65,7 @@ const ConsignTable: React.FC = () => {
                         />
                     </form>
                     <a href='#' className='btn btn-sm btn-light-primary'>
-                        <KTIcon iconName='plus' className='fs-2' />
+                        <KTIcon iconName='plus' className='fs-2'/>
                         New Product
                     </a>
                 </div>
@@ -88,7 +87,7 @@ const ConsignTable: React.FC = () => {
                         </tr>
                         </thead>
                         <tbody className='text-gray-600 fw-semibold'>
-                        {data?.data!.items?.map((consignSale: ConsignSale) => (
+                        {data!.items?.map((consignSale: ConsignSale) => (
                             <tr key={consignSale.consignSaleId}>
                                 <td>{consignSale.consignSaleCode}</td>
                                 <td>{consignSale.type}</td>
@@ -104,19 +103,19 @@ const ConsignTable: React.FC = () => {
                                         href='#'
                                         className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                                     >
-                                        <KTIcon iconName='switch' className='fs-3' />
+                                        <KTIcon iconName='switch' className='fs-3'/>
                                     </a>
                                     <a
                                         href='#'
                                         className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                                     >
-                                        <KTIcon iconName='pencil' className='fs-3' />
+                                        <KTIcon iconName='pencil' className='fs-3'/>
                                     </a>
                                     <a
                                         href='#'
                                         className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
                                     >
-                                        <KTIcon iconName='trash' className='fs-3' />
+                                        <KTIcon iconName='trash' className='fs-3'/>
                                     </a>
                                 </td>
                             </tr>
@@ -128,7 +127,7 @@ const ConsignTable: React.FC = () => {
             <div className='card-footer d-flex justify-content-between align-items-center'>
                 <div>
                     Showing {(currentPage - 1) * pageSize + 1} to{' '}
-                    {Math.min(currentPage * pageSize, data!.data!.totalCount!)} of {data?.data!.totalCount} entries
+                    {Math.min(currentPage * pageSize, data!.totalCount!)} of {data!.totalCount} entries
                 </div>
                 <div>
                     <button
@@ -138,7 +137,7 @@ const ConsignTable: React.FC = () => {
                     >
                         Previous
                     </button>
-                    {Array.from({ length: data!.data!.totalPages! }, (_, i) => i + 1).map((page) => (
+                    {Array.from({length: data!.totalPages!}, (_, i) => i + 1).map((page) => (
                         <button
                             key={page}
                             className={`btn btn-sm ${
@@ -152,7 +151,7 @@ const ConsignTable: React.FC = () => {
                     <button
                         className='btn btn-sm btn-light-primary'
                         onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === data!.data!.totalPages!}
+                        disabled={currentPage === data!.totalPages!}
                     >
                         Next
                     </button>
