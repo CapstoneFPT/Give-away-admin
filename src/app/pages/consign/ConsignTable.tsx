@@ -20,7 +20,7 @@ const ConsignTable: React.FC = () => {
         ['Consign', debouncedSearchTerm, currentPage, pageSize],
         async () => {
             const consignSaleApi = new ConsignSaleApi();
-            const response = await consignSaleApi.apiConsginsalesGet(
+            const response = await consignSaleApi.apiConsignsalesGet(
                 currentPage, pageSize, null!, searchTerm, null!, null!, null!, null!, null!, null!, null!
             );
             return response.data;

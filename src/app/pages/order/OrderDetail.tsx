@@ -1,57 +1,59 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { OrderApi, OrderDetailsResponse } from '../../../api';
+import {OrderApi, OrderDetailedResponse, OrderLineItem, OrderLineItemApi} from '../../../api';
 import { KTCard, KTCardBody, KTIcon } from '../../../_metronic/helpers';
 import { Card, Col, Row } from 'react-bootstrap';
 import { dateTimeOptions, formatBalance, VNLocale } from '../utils/utils';
 
 const OrderDetail: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>();
-  const [order, setOrder] = useState<OrderDetailsResponse[] | null>(null);
+  const [orderDetail, setOrderDetail] = useState<OrderDetailedResponse | null>(null);
+  const [orderLineItem, setOrderLineItem] = useState<OrderLineItem[] | null>(null);
 
   useEffect(() => {
-    const fetchOrderDetail = async () => {
+    const fetchData = async () => {
       try {
         const orderApi = new OrderApi();
-        const response = await orderApi.apiOrdersOrderIdOrderdetailsGet(orderId!);
-        setOrder(response.data.data?.items || []);
-        console.log(response);
+        const orderLineItemResponse = await orderApi.apiOrdersOrderIdOrderlineitemsGet(orderId!);
+        const orderDetailedResponse= await orderApi.apiOrdersOrderIdGet(orderId!);
+        setOrderLineItem(orderLineItemResponse.data.data?.items || []);
+        setOrderDetail(orderDetailedResponse.data || null);
+        console.log(orderLineItemResponse);
       } catch (error) {
         console.error('Failed to fetch order details', error);
       }
     };
 
-    fetchOrderDetail();
+
+    fetchData()
+
   }, [orderId]);
 
-  if (!order) {
+  if (!orderLineItem) {
     return <div>Loading...</div>;
   }
 
   // Extract the order information from the first object in the array
-  const orderInfo = order[0];
 
   return (
     <KTCard>
       <h1>Order Detail</h1>
-      {orderInfo && (
         <Card className="mb-5 table-row-bordered table-row-gray-100 gs-0 gy-3">
           <Card.Body>
             <Row>
-              <Col><strong>Order ID:</strong> {orderInfo.orderCode}</Col>
+              <Col><strong>Order Code:</strong> {orderDetail ? orderDetail.orderCode : 'N/A'}</Col>
               <Col><strong>Customer Name:</strong> </Col>
             </Row>
             <Row>
-              <Col><strong>Date:</strong> {new Date(orderInfo.createdDate!).toLocaleString(VNLocale,dateTimeOptions)}</Col>
-              <Col><strong>Payment Method:</strong> {orderInfo.paymentDate}</Col>
+              {/*<Col><strong>Created Date:</strong> {new Date(orderDetail!.c).toLocaleString(VNLocale,dateTimeOptions)}</Col>*/}
+              <Col><strong>Payment Method:</strong> {orderDetail!.paymentDate}</Col>
             </Row>
             <Row>
-              <Col><strong>Total:</strong> {formatBalance(orderInfo.unitPrice!)} VND</Col>
-              <Col><strong>Status:</strong> </Col>
+              <Col><strong>Total:</strong> {formatBalance(orderDetail?.totalPrice || 0)} VND</Col>
+              <Col><strong>Status:</strong>{orderDetail?.status} </Col>
             </Row>
           </Card.Body>
         </Card>
-      )}
 
       <KTCardBody className="card-body py-3">
         <div className="table-responsive">
@@ -77,7 +79,7 @@ const OrderDetail: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {order.map((item, index) => (
+              {orderLineItem.map((item, index) => (
                 <tr key={index}>
                   <td>
                     <div className="form-check form-check-sm form-check-custom form-check-solid">
@@ -90,7 +92,7 @@ const OrderDetail: React.FC = () => {
                   </td>
                   <td>
                     <span className="text-gray-900 fw-bold text-hover-primary fs-6">
-                      {item.itemName}
+                      {/*{item.}*/}
                     </span>
                   </td>
                   <td>
