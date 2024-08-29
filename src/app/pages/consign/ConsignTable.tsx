@@ -3,6 +3,7 @@ import {useQuery} from 'react-query';
 import {KTCardBody, KTIcon} from '../../../_metronic/helpers';
 import {ConsignSale, ConsignSaleApi} from '../../../api';
 import {formatBalance} from "../utils/utils.ts";
+import {Link} from "react-router-dom";
 
 const ConsignTable: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -83,7 +84,7 @@ const ConsignTable: React.FC = () => {
                             <th className='min-w-125px'>Created Date</th>
                             <th className='min-w-125px'>Status</th>
                             <th className='min-w-125px'>Total Price</th>
-                            <th className='text-end min-w-100px'>Actions</th>
+                            <th className='text-end min-w-100px'></th>
                         </tr>
                         </thead>
                         <tbody className='text-gray-600 fw-semibold'>
@@ -103,20 +104,21 @@ const ConsignTable: React.FC = () => {
                                         href='#'
                                         className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                                     >
-                                        <KTIcon iconName='switch' className='fs-3'/>
+                                        {/*<KTIcon iconName='eye' className='fs-3'/>*/}
+                                        View Details
                                     </a>
-                                    <a
-                                        href='#'
-                                        className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
-                                    >
-                                        <KTIcon iconName='pencil' className='fs-3'/>
-                                    </a>
-                                    <a
-                                        href='#'
-                                        className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
-                                    >
-                                        <KTIcon iconName='trash' className='fs-3'/>
-                                    </a>
+                                    {/*<a*/}
+                                    {/*    href='#'*/}
+                                    {/*    className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'*/}
+                                    {/*>*/}
+                                    {/*    <KTIcon iconName='pencil' className='fs-3'/>*/}
+                                    {/*</a>*/}
+                                    {/*<a*/}
+                                    {/*    href='#'*/}
+                                    {/*    className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'*/}
+                                    {/*>*/}
+                                    {/*    <KTIcon iconName='trash' className='fs-3'/>*/}
+                                    {/*</a>*/}
                                 </td>
                             </tr>
                         ))}
