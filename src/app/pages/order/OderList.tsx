@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { KTIcon } from "../../../../src/_metronic/helpers";
+import { KTCardBody, KTIcon } from "../../../../src/_metronic/helpers";
 import { OrderApi, OrderResponse } from "../../../api";
-import { formatBalance } from "../utils/utils";
+import { dateTimeOptions, formatBalance, VNLocale } from "../utils/utils";
+import { Link } from "react-router-dom";
 
 type Props = {
   className: string;
@@ -21,6 +22,7 @@ const OrderList: React.FC<Props> = ({ className }) => {
       const response = await orderApi.apiOrdersGet();
 
       setOrders(response.data.data?.items || []);
+      console.log(response)
 
       setTotalCount(totalCount);
       setTotalPages(totalPages);
@@ -32,6 +34,12 @@ const OrderList: React.FC<Props> = ({ className }) => {
   useEffect(() => {
     fetchOrders(currentPage, searchTerm);
   }, [currentPage, searchTerm]);
+
+
+  const handleDetail = (order: OrderResponse) => {
+
+    
+  }
 
   return (
     <div className={`card ${className}`}>
@@ -47,7 +55,8 @@ const OrderList: React.FC<Props> = ({ className }) => {
         </div>
       </div>
 
-      <div className="card-body py-3">
+      <KTCardBody className="card-body py-3">
+
         <div className="table-responsive">
           <table className="table table-row-bordered table-row-gray-100 align-middle gs-0 gy-3">
             <thead>
@@ -105,15 +114,7 @@ const OrderList: React.FC<Props> = ({ className }) => {
                       href="#"
                       className="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6"
                     >
-                      {new Date(order.createdDate!).toLocaleString("vi-VN", {
-                        timeZone: "Asia/Ho_Chi_Minh",
-                        year: "numeric",
-                        month: "2-digit",
-                        day: "2-digit",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                      })}
+                      {new Date(order.createdDate!).toLocaleString(VNLocale,dateTimeOptions)}
                     </a>
                   </td>
                   <td>
@@ -134,31 +135,19 @@ const OrderList: React.FC<Props> = ({ className }) => {
                     </span>
                   </td>
                   <td className="text-end">
-                    <a
-                      href="#"
-                      className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
-                    >
-                      <KTIcon iconName="switch" className="fs-3" />
-                    </a>
-                    <a
-                      href="#"
-                      className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
-                    >
+                  <Link to={`/order-detail/${order.orderId}`} className="btn btn-success hover-rotate-end">
                       <KTIcon iconName="pencil" className="fs-3" />
-                    </a>
-                    <a
-                      href="#"
-                      className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm"
-                    >
-                      <KTIcon iconName="trash" className="fs-3" />
-                    </a>
+                      Detail
+                    </Link>
+                    
+                   
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-      </div>
+      </KTCardBody>
     </div>
   );
 };
