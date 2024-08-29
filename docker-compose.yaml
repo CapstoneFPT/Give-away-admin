@@ -6,8 +6,8 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8880:2052"
-      - "443:2053"
+      - "2052:2052"
+      - "2053:2053"
     volumes:
       - ./src:/app/src
       - /etc/letsencrypt/live/giveawayproject.jettonetto.org:/etc/letsencrypt/live/giveawayproject.jettonetto.org:ro

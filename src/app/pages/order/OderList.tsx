@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { KTIcon } from "../../../../src/_metronic/helpers";
 import { OrderApi, OrderResponse } from "../../../api";
+import { formatBalance } from "../utils/utils";
 
 type Props = {
   className: string;
@@ -105,7 +105,15 @@ const OrderList: React.FC<Props> = ({ className }) => {
                       href="#"
                       className="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6"
                     >
-                      {new Date(order.createdDate!).toLocaleDateString()}
+                      {new Date(order.createdDate!).toLocaleString("vi-VN", {
+                        timeZone: "Asia/Ho_Chi_Minh",
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                      })}
                     </a>
                   </td>
                   <td>

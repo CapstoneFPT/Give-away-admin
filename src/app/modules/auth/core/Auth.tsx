@@ -13,6 +13,7 @@ import { AuthModel, CurrentUserModel } from "./_models";
 import * as authHelper from "./AuthHelpers";
 import { getUserByToken } from "./_requests";
 import { WithChildren } from "../../../../_metronic/helpers";
+import {AccountApi} from "../../../../api";
 
 type AuthContextProps = {
   auth: AuthModel | undefined;
@@ -73,9 +74,19 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
     const requestUser = async (apiToken: string) => {
       try {
         if (!currentUser) {
-          const { data } = await getUserByToken(apiToken);
+          const accountApi = new AccountApi();
+          const { data } = await accountApi.apiAccountsGetCurrentAccountPost({
+            headers: {
+              Authorization: `Bearer ${apiToken}`,
+            }
+          });
           if (data) {
-            setCurrentUser(data);
+            setCurrentUser({
+              shopId: data.data!.shopId || '',
+              id: data.data!.accountId || '',
+              email: data.data!.email || '',
+              role: data.data!.role!
+            });
           }
         }
       } catch (error) {
