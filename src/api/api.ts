@@ -7676,97 +7676,211 @@ export interface OrderLineItemDetailedResponse {
 /**
  * 
  * @export
- * @interface OrderLineItemDetailedResponsePaginationResponse
+ * @interface OrderLineItemListResponse
  */
-export interface OrderLineItemDetailedResponsePaginationResponse {
+export interface OrderLineItemListResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof OrderLineItemListResponse
+     */
+    'orderCode'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof OrderLineItemListResponse
+     */
+    'orderLineItemId'?: string;
     /**
      * 
      * @type {number}
-     * @memberof OrderLineItemDetailedResponsePaginationResponse
+     * @memberof OrderLineItemListResponse
+     */
+    'unitPrice'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof OrderLineItemListResponse
+     */
+    'quantity'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof OrderLineItemListResponse
+     */
+    'refundExpirationDate'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof OrderLineItemListResponse
+     */
+    'itemName'?: string | null;
+    /**
+     * 
+     * @type {FashionItemType}
+     * @memberof OrderLineItemListResponse
+     */
+    'itemType'?: FashionItemType;
+    /**
+     * 
+     * @type {string}
+     * @memberof OrderLineItemListResponse
+     */
+    'itemCode'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof OrderLineItemListResponse
+     */
+    'itemNote'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof OrderLineItemListResponse
+     */
+    'condition'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof OrderLineItemListResponse
+     */
+    'categoryName'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof OrderLineItemListResponse
+     */
+    'itemColor'?: string | null;
+    /**
+     * 
+     * @type {SizeType}
+     * @memberof OrderLineItemListResponse
+     */
+    'itemSize'?: SizeType;
+    /**
+     * 
+     * @type {string}
+     * @memberof OrderLineItemListResponse
+     */
+    'itemBrand'?: string | null;
+    /**
+     * 
+     * @type {GenderType}
+     * @memberof OrderLineItemListResponse
+     */
+    'itemGender'?: GenderType;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof OrderLineItemListResponse
+     */
+    'itemImage'?: Array<string> | null;
+    /**
+     * 
+     * @type {FashionItemStatus}
+     * @memberof OrderLineItemListResponse
+     */
+    'itemStatus'?: FashionItemStatus;
+    /**
+     * 
+     * @type {string}
+     * @memberof OrderLineItemListResponse
+     */
+    'shopAddress'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof OrderLineItemListResponse
+     */
+    'shopId'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof OrderLineItemListResponse
+     */
+    'pointPackageId'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof OrderLineItemListResponse
+     */
+    'createdDate'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof OrderLineItemListResponse
+     */
+    'paymentDate'?: string | null;
+}
+
+
+/**
+ * 
+ * @export
+ * @interface OrderLineItemListResponsePaginationResponse
+ */
+export interface OrderLineItemListResponsePaginationResponse {
+    /**
+     * 
+     * @type {number}
+     * @memberof OrderLineItemListResponsePaginationResponse
      */
     'pageNumber'?: number;
     /**
      * 
      * @type {number}
-     * @memberof OrderLineItemDetailedResponsePaginationResponse
+     * @memberof OrderLineItemListResponsePaginationResponse
      */
     'pageSize'?: number;
     /**
      * 
      * @type {string}
-     * @memberof OrderLineItemDetailedResponsePaginationResponse
+     * @memberof OrderLineItemListResponsePaginationResponse
      */
     'searchTerm'?: string | null;
     /**
      * 
      * @type {Array<string>}
-     * @memberof OrderLineItemDetailedResponsePaginationResponse
+     * @memberof OrderLineItemListResponsePaginationResponse
      */
     'filters'?: Array<string> | null;
     /**
      * 
      * @type {string}
-     * @memberof OrderLineItemDetailedResponsePaginationResponse
+     * @memberof OrderLineItemListResponsePaginationResponse
      */
     'orderBy'?: string | null;
     /**
      * 
      * @type {number}
-     * @memberof OrderLineItemDetailedResponsePaginationResponse
+     * @memberof OrderLineItemListResponsePaginationResponse
      */
     'totalCount'?: number;
     /**
      * 
      * @type {number}
-     * @memberof OrderLineItemDetailedResponsePaginationResponse
+     * @memberof OrderLineItemListResponsePaginationResponse
      */
     'totalPages'?: number;
     /**
      * 
      * @type {boolean}
-     * @memberof OrderLineItemDetailedResponsePaginationResponse
+     * @memberof OrderLineItemListResponsePaginationResponse
      */
     'hasNext'?: boolean;
     /**
      * 
      * @type {boolean}
-     * @memberof OrderLineItemDetailedResponsePaginationResponse
+     * @memberof OrderLineItemListResponsePaginationResponse
      */
     'hasPrevious'?: boolean;
     /**
      * 
-     * @type {Array<OrderLineItemDetailedResponse>}
-     * @memberof OrderLineItemDetailedResponsePaginationResponse
+     * @type {Array<OrderLineItemListResponse>}
+     * @memberof OrderLineItemListResponsePaginationResponse
      */
-    'items'?: Array<OrderLineItemDetailedResponse> | null;
+    'items'?: Array<OrderLineItemListResponse> | null;
 }
-/**
- * 
- * @export
- * @interface OrderLineItemDetailedResponsePaginationResponseResult
- */
-export interface OrderLineItemDetailedResponsePaginationResponseResult {
-    /**
-     * 
-     * @type {OrderLineItemDetailedResponsePaginationResponse}
-     * @memberof OrderLineItemDetailedResponsePaginationResponseResult
-     */
-    'data'?: OrderLineItemDetailedResponsePaginationResponse;
-    /**
-     * 
-     * @type {ResultStatus}
-     * @memberof OrderLineItemDetailedResponsePaginationResponseResult
-     */
-    'resultStatus'?: ResultStatus;
-    /**
-     * 
-     * @type {Array<string>}
-     * @memberof OrderLineItemDetailedResponsePaginationResponseResult
-     */
-    'messages'?: Array<string> | null;
-}
-
-
 /**
  * 
  * @export
@@ -18620,7 +18734,7 @@ export const OrderApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiOrdersOrderIdOrderlineitemsGet(orderId: string, pageNumber?: number, pageSize?: number, shopId?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrderLineItemDetailedResponsePaginationResponseResult>> {
+        async apiOrdersOrderIdOrderlineitemsGet(orderId: string, pageNumber?: number, pageSize?: number, shopId?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrderLineItemListResponsePaginationResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiOrdersOrderIdOrderlineitemsGet(orderId, pageNumber, pageSize, shopId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['OrderApi.apiOrdersOrderIdOrderlineitemsGet']?.[localVarOperationServerIndex]?.url;
@@ -18735,7 +18849,7 @@ export const OrderApiFactory = function (configuration?: Configuration, basePath
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiOrdersOrderIdOrderlineitemsGet(orderId: string, pageNumber?: number, pageSize?: number, shopId?: string, options?: RawAxiosRequestConfig): AxiosPromise<OrderLineItemDetailedResponsePaginationResponseResult> {
+        apiOrdersOrderIdOrderlineitemsGet(orderId: string, pageNumber?: number, pageSize?: number, shopId?: string, options?: RawAxiosRequestConfig): AxiosPromise<OrderLineItemListResponsePaginationResponse> {
             return localVarFp.apiOrdersOrderIdOrderlineitemsGet(orderId, pageNumber, pageSize, shopId, options).then((request) => request(axios, basePath));
         },
         /**

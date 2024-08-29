@@ -1,22 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import {OrderApi, OrderDetailedResponse, OrderLineItem, OrderLineItemApi} from '../../../api';
-import { KTCard, KTCardBody, KTIcon } from '../../../_metronic/helpers';
+import {  useParams } from 'react-router-dom';
+import {
+  OrderApi,
+  OrderDetailedResponse,
+  OrderLineItemListResponse
+} from '../../../api';
+import { KTCard, KTCardBody } from '../../../_metronic/helpers';
 import { Card, Col, Row } from 'react-bootstrap';
-import { dateTimeOptions, formatBalance, VNLocale } from '../utils/utils';
+import {  formatBalance } from '../utils/utils';
+import {useAuth} from "../../modules/auth";
 
 const OrderDetail: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>();
   const [orderDetail, setOrderDetail] = useState<OrderDetailedResponse | null>(null);
-  const [orderLineItem, setOrderLineItem] = useState<OrderLineItem[] | null>(null);
+  const [orderLineItem, setOrderLineItem] = useState<OrderLineItemListResponse[] | null>(null);
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const orderApi = new OrderApi();
-        const orderLineItemResponse = await orderApi.apiOrdersOrderIdOrderlineitemsGet(orderId!);
+        const orderLineItemResponse = await orderApi.apiOrdersOrderIdOrderlineitemsGet(orderId!,null!,null!,currentUser?.shopId);
         const orderDetailedResponse= await orderApi.apiOrdersOrderIdGet(orderId!);
-        setOrderLineItem(orderLineItemResponse.data.data?.items || []);
+        console.log(orderDetailedResponse);
+        setOrderLineItem(orderLineItemResponse.data.items || []);
         setOrderDetail(orderDetailedResponse.data || null);
         console.log(orderLineItemResponse);
       } catch (error) {
@@ -92,7 +99,7 @@ const OrderDetail: React.FC = () => {
                   </td>
                   <td>
                     <span className="text-gray-900 fw-bold text-hover-primary fs-6">
-                      {/*{item.}*/}
+                      {item.itemName}
                     </span>
                   </td>
                   <td>
@@ -103,11 +110,6 @@ const OrderDetail: React.FC = () => {
                   <td>
                     <span className="text-gray-900 fw-bold text-hover-primary fs-6">
                       {formatBalance(item.unitPrice!)} VND
-                    </span>
-                  </td>
-                  <td>
-                    <span className="text-gray-900 fw-bold text-hover-primary fs-6">
-                      {/* {item.quantity * item.unitPrice} VND */}
                     </span>
                   </td>
                   <td className="text-end">
