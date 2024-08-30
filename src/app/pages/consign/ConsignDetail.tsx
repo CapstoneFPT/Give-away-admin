@@ -30,36 +30,66 @@ export const ConsignDetail: React.FC = () => {
                         <div className='col-xl-6'>
                             <h3 className='fs-2 fw-bold mb-5'>Consignment Details</h3>
                             <div className='d-flex flex-wrap'>
-                                <div className='border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3'>
+                                <div
+                                    className='border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3'>
                                     <div className='d-flex align-items-center'>
                                         <KTIcon iconName='calendar' className='fs-3 text-primary me-2'/>
                                         <div className='fs-6 text-gray-800 fw-bold'>Date Added</div>
                                     </div>
-                                    <div className='fs-7 text-gray-600 mt-2'>{new Date(consignSaleResponse.createdDate!).toLocaleString()}</div>
+                                    <div
+                                        className='fs-7 text-gray-600 mt-2'>{new Date(consignSaleResponse.createdDate!).toLocaleString()}</div>
                                 </div>
-                                <div className='border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3'>
+                                <div
+                                    className='border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3'>
                                     <div className='d-flex align-items-center'>
                                         <KTIcon iconName='tag' className='fs-3 text-primary me-2'/>
                                         <div className='fs-6 text-gray-800 fw-bold'>Consignment Code</div>
                                     </div>
                                     <div className='fs-7 text-gray-600 mt-2'>{consignSaleResponse.consignSaleCode}</div>
                                 </div>
-                                <div className='border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3'>
+                                <div
+                                    className='border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3'>
                                     <div className='d-flex align-items-center'>
                                         <KTIcon iconName='information' className='fs-3 text-primary me-2'/>
                                         <div className='fs-6 text-gray-800 fw-bold'>Type</div>
                                     </div>
                                     <div className='fs-7 text-gray-600 mt-2'>{consignSaleResponse.type}</div>
                                 </div>
-                                <div className='border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3'>
+                                <div
+                                    className='border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3'>
                                     <div className='d-flex align-items-center'>
                                         <KTIcon iconName='status' className='fs-3 text-primary me-2'/>
                                         <div className='fs-6 text-gray-800 fw-bold'>Status</div>
                                     </div>
                                     <div className='fs-7 mt-2'>
-                                        <span className={`badge badge-light-${getStatusColor(consignSaleResponse.status)}`}>
+                                        <span
+                                            className={`badge badge-light-${getStatusColor(consignSaleResponse.status)}`}>
                                             {consignSaleResponse.status}
                                         </span>
+                                    </div>
+                                </div>
+                                <div
+                                    className='border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3'>
+                                    <div className='d-flex align-items-center'>
+                                        <KTIcon iconName='calendar-add' className='fs-3 text-primary me-2'/>
+                                        <div className='fs-6 text-gray-800 fw-bold'>Start Date</div>
+                                    </div>
+                                    <div className='fs-7 text-gray-600 mt-2'>
+                                        {consignSaleResponse.startDate
+                                            ? new Date(consignSaleResponse.startDate).toLocaleString()
+                                            : 'N/A'}
+                                    </div>
+                                </div>
+                                <div
+                                    className='border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3'>
+                                    <div className='d-flex align-items-center'>
+                                        <KTIcon iconName='calendar-tick' className='fs-3 text-primary me-2'/>
+                                        <div className='fs-6 text-gray-800 fw-bold'>End Date</div>
+                                    </div>
+                                    <div className='fs-7 text-gray-600 mt-2'>
+                                        {consignSaleResponse.endDate
+                                            ? new Date(consignSaleResponse.endDate).toLocaleString()
+                                            : 'N/A'}
                                     </div>
                                 </div>
                             </div>
