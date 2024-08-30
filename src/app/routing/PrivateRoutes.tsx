@@ -11,7 +11,6 @@ import Auction from "../pages/auction/Auction";
 import ProtectedRoute from "./ProtectedRoutes.tsx";
 import OrderPage from "../pages/order/OrderPage.tsx";
 import RefundPage from "../pages/refund/RefundPage.tsx";
-import FashionItemsAdminPage from "../admin/product/FashionItemsAdmin.tsx";
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
@@ -49,19 +48,6 @@ const PrivateRoutes = () => {
               children={
                 <SuspensedView>
                   <FashionItemsPage />
-                </SuspensedView>
-              }
-            />
-          }
-        />
-        <Route
-          path="product-admin/*"
-          element={
-            <ProtectedRoute
-              roles={["Admin"]}
-              children={
-                <SuspensedView>
-                  <FashionItemsAdminPage />
                 </SuspensedView>
               }
             />
