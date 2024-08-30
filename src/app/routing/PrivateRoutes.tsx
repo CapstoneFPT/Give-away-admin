@@ -11,7 +11,8 @@ import Auction from "../pages/auction/Auction";
 import ProtectedRoute from "./ProtectedRoutes.tsx";
 import OrderPage from "../pages/order/OrderPage.tsx";
 import RefundPage from "../pages/refund/RefundPage.tsx";
-
+import ConsignDetail from "../pages/consign/ConsignDetail.tsx";
+import FashionItemsAdminPage from "../admin/product/FashionItemsAdmin.tsx";
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
   const WizardsPage = lazy(() => import("../modules/wizards/WizardsPage"));
@@ -41,6 +42,19 @@ const PrivateRoutes = () => {
         <Route path="order/*" element={<OrderPage />} />
         <Route path="refund" element={<RefundPage />} />
         <Route
+          path="product-admin/*"
+          element={
+            <ProtectedRoute
+              roles={["Admin"]}
+              children={
+                <SuspensedView>
+                  <FashionItemsAdminPage />
+                </SuspensedView>
+              }
+            />
+          }
+        />
+        <Route
           path="product/*"
           element={
             <ProtectedRoute
@@ -48,6 +62,19 @@ const PrivateRoutes = () => {
               children={
                 <SuspensedView>
                   <FashionItemsPage />
+                </SuspensedView>
+              }
+            />
+          }
+        />
+        <Route
+          path="consignment/:consignSaleId"
+          element={
+            <ProtectedRoute
+              roles={["Staff"]}
+              children={
+                <SuspensedView>
+                  <ConsignDetail />
                 </SuspensedView>
               }
             />

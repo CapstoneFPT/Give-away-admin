@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { KTIcon, toAbsoluteUrl } from "../../../_metronic/helpers";
 import { FashionItemApi, MasterItemListResponse } from "../../../api";
 import { useQuery } from "react-query";
+import AddFashionItem from "./AddFashionItem";
 
 type Props = {
   className: string;
@@ -11,6 +13,7 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+  const [showAddModal, setShowAddModal] = useState(false);
   const pageSize = 10; // Items per page
 
   useEffect(() => {
@@ -47,6 +50,12 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
     setCurrentPage(newPage);
   };
 
+  const handleShowAddModal = () => setShowAddModal(true);
+  const handleCloseAddModal = () => setShowAddModal(false);
+  const handleItemCreated = () => {
+    handleCloseAddModal();
+  };
+
   if (result.isLoading) return <div>Loading...</div>;
   if (result.error)
     return <div>An error occurred: {(result.error as Error).message}</div>;
@@ -73,10 +82,13 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
               onChange={handleSearchInputChange}
             />
           </form>
-          <a href="#" className="btn btn-sm btn-light-primary">
+          <button
+            className="btn btn-sm btn-light-primary"
+            onClick={handleShowAddModal}
+          >
             <KTIcon iconName="plus" className="fs-2" />
             New Master Product
-          </a>
+          </button>
         </div>
       </div>
       {/* end::Header */}
@@ -225,6 +237,11 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
           </button>
         </div>
       </div>
+      <AddFashionItem
+        show={showAddModal}
+        handleClose={handleCloseAddModal}
+        handleSave={handleItemCreated}
+      />
       {/* end::Footer */}
     </div>
   );
