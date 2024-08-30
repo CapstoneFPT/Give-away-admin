@@ -35,7 +35,7 @@ export const ConsignDetail: React.FC = () => {
                                         <KTIcon iconName='calendar' className='fs-3 text-primary me-2'/>
                                         <div className='fs-6 text-gray-800 fw-bold'>Date Added</div>
                                     </div>
-                                    <div className='fs-7 text-gray-600 mt-2'>{new Date(consignSaleResponse.createdDate!).toLocaleDateString()}</div>
+                                    <div className='fs-7 text-gray-600 mt-2'>{new Date(consignSaleResponse.createdDate!).toLocaleString()}</div>
                                 </div>
                                 <div className='border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3'>
                                     <div className='d-flex align-items-center'>
