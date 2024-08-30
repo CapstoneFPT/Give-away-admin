@@ -290,13 +290,18 @@ export const ConsignDetail: React.FC = () => {
                           : "N/A"}
                       </td>
                       <td>{item.note || "N/A"}</td>
-                      <td>
+                      <td className="text-end">
                         <Link
-                          to={`/consignment/${consignSaleId}/line-item/${item.consignSaleLineItemId}`}
-                          className="btn btn-sm btn-light-primary"
+                          to={`/consignment/${consignSaleResponse.consignSaleId}/line-item/${item.consignSaleLineItemId}`}
+                          className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
                         >
-                          <KTIcon iconName="eye" className="fs-2" />
-                          Review
+                          <KTIcon iconName="eye" className="fs-3" />
+                        </Link>
+                        <Link
+                          to={`/create-item/${consignSaleResponse.consignSaleId}/line-item/${item.consignSaleLineItemId}`}
+                          className="btn btn-icon btn-bg-light btn-active-color-success btn-sm"
+                        >
+                          <KTIcon iconName="plus" className="fs-3" />
                         </Link>
                       </td>
                     </tr>

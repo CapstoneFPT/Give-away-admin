@@ -14,6 +14,7 @@ import RefundPage from "../pages/refund/RefundPage.tsx";
 import OrderDetail from "../pages/order/OrderDetail.tsx";
 import { ConsignDetail } from "../pages/consign/ConsignDetail.tsx";
 import ConsignLineItemReview from "../pages/consign/ConsignLineItemReview.tsx";
+import ProductCreationFromConsignmentForm from "../pages/consign/ProductCreationFromConsignmentForm.tsx";
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
@@ -112,6 +113,10 @@ const PrivateRoutes = () => {
         <Route
           path="/consignment/:consignSaleId/line-item/:lineItemId"
           element={<ConsignLineItemReview />}
+        />
+        <Route
+          path="/create-item/:consignSaleId/line-item/:lineItemId"
+          element={<ProductCreationFromConsignmentForm />}
         />
         <Route
           path="consignment/:consignSaleId"
