@@ -22,6 +22,8 @@ export const ConsignLineItemReview: React.FC = () => {
             productName: "Sample Product",
             brand: "Sample Brand",
             color: "Red",
+            consignSaleCode: "ABC123",
+            fashionItemStatus: "Available",
             size: SizeType.M,
             gender: GenderType.Male,
             condition: "Good",
@@ -77,7 +79,7 @@ export const ConsignLineItemReview: React.FC = () => {
                             <h3 className='fs-2 fw-bold mb-5'>Consignment Details</h3>
                             <div className='row mb-5'>
                                 <div className='col-6'>
-                                    <p><strong>Consign Sale ID:</strong> {lineItem.consignSaleId}</p>
+                                    <p><strong>Consignment Code :</strong> {lineItem.consignSaleCode}</p>
                                     <p><strong>Line Item ID:</strong> {lineItem.consignSaleLineItemId}</p>
                                     <p><strong>Created Date:</strong> {new Date(lineItem.createdDate!).toLocaleString()}</p>
                                 </div>

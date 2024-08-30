@@ -2138,6 +2138,12 @@ export interface ConsignSaleLineItemDetailedResponse {
     'consignSaleId'?: string;
     /**
      * 
+     * @type {string}
+     * @memberof ConsignSaleLineItemDetailedResponse
+     */
+    'consignSaleCode'?: string | null;
+    /**
+     * 
      * @type {number}
      * @memberof ConsignSaleLineItemDetailedResponse
      */
@@ -2196,6 +2202,12 @@ export interface ConsignSaleLineItemDetailedResponse {
      * @memberof ConsignSaleLineItemDetailedResponse
      */
     'createdDate'?: string;
+    /**
+     * 
+     * @type {FashionItemStatus}
+     * @memberof ConsignSaleLineItemDetailedResponse
+     */
+    'fashionItemStatus'?: FashionItemStatus;
     /**
      * 
      * @type {Array<string>}
