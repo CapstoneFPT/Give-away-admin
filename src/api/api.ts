@@ -2307,6 +2307,33 @@ export interface ConsignSaleLineItemsListResponse {
 /**
  * 
  * @export
+ * @interface ConsignSaleLineItemsListResponseResult
+ */
+export interface ConsignSaleLineItemsListResponseResult {
+    /**
+     * 
+     * @type {ConsignSaleLineItemsListResponse}
+     * @memberof ConsignSaleLineItemsListResponseResult
+     */
+    'data'?: ConsignSaleLineItemsListResponse;
+    /**
+     * 
+     * @type {ResultStatus}
+     * @memberof ConsignSaleLineItemsListResponseResult
+     */
+    'resultStatus'?: ResultStatus;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof ConsignSaleLineItemsListResponseResult
+     */
+    'messages'?: Array<string> | null;
+}
+
+
+/**
+ * 
+ * @export
  * @interface ConsignSaleListResponse
  */
 export interface ConsignSaleListResponse {
@@ -3084,12 +3111,6 @@ export interface CreateIndividualItemRequestForConsign {
      * @memberof CreateIndividualItemRequestForConsign
      */
     'note'?: string | null;
-    /**
-     * 
-     * @type {number}
-     * @memberof CreateIndividualItemRequestForConsign
-     */
-    'confirmPrice'?: number;
     /**
      * 
      * @type {Array<string>}
@@ -6132,136 +6153,6 @@ export type InquiryStatus = typeof InquiryStatus[keyof typeof InquiryStatus];
 /**
  * 
  * @export
- * @interface ItemVariationResponse
- */
-export interface ItemVariationResponse {
-    /**
-     * 
-     * @type {string}
-     * @memberof ItemVariationResponse
-     */
-    'variationId'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ItemVariationResponse
-     */
-    'masterItemId'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ItemVariationResponse
-     */
-    'condition'?: string | null;
-    /**
-     * 
-     * @type {number}
-     * @memberof ItemVariationResponse
-     */
-    'price'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ItemVariationResponse
-     */
-    'color'?: string | null;
-    /**
-     * 
-     * @type {SizeType}
-     * @memberof ItemVariationResponse
-     */
-    'size'?: SizeType;
-    /**
-     * 
-     * @type {number}
-     * @memberof ItemVariationResponse
-     */
-    'stockCount'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ItemVariationResponse
-     */
-    'createdDate'?: string;
-    /**
-     * 
-     * @type {Array<IndividualItemListResponse>}
-     * @memberof ItemVariationResponse
-     */
-    'individualItems'?: Array<IndividualItemListResponse> | null;
-}
-
-
-/**
- * 
- * @export
- * @interface ItemVariationResponsePaginationResponse
- */
-export interface ItemVariationResponsePaginationResponse {
-    /**
-     * 
-     * @type {number}
-     * @memberof ItemVariationResponsePaginationResponse
-     */
-    'pageNumber'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ItemVariationResponsePaginationResponse
-     */
-    'pageSize'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ItemVariationResponsePaginationResponse
-     */
-    'searchTerm'?: string | null;
-    /**
-     * 
-     * @type {Array<string>}
-     * @memberof ItemVariationResponsePaginationResponse
-     */
-    'filters'?: Array<string> | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ItemVariationResponsePaginationResponse
-     */
-    'orderBy'?: string | null;
-    /**
-     * 
-     * @type {number}
-     * @memberof ItemVariationResponsePaginationResponse
-     */
-    'totalCount'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ItemVariationResponsePaginationResponse
-     */
-    'totalPages'?: number;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ItemVariationResponsePaginationResponse
-     */
-    'hasNext'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ItemVariationResponsePaginationResponse
-     */
-    'hasPrevious'?: boolean;
-    /**
-     * 
-     * @type {Array<ItemVariationResponse>}
-     * @memberof ItemVariationResponsePaginationResponse
-     */
-    'items'?: Array<ItemVariationResponse> | null;
-}
-/**
- * 
- * @export
  * @interface LoginRequest
  */
 export interface LoginRequest {
@@ -6746,16 +6637,10 @@ export interface MasterItemResponse {
     'shopId'?: string;
     /**
      * 
-     * @type {ItemVariationResponse}
+     * @type {number}
      * @memberof MasterItemResponse
      */
-    'itemVariationResponse'?: ItemVariationResponse;
-    /**
-     * 
-     * @type {ItemVariationResponsePaginationResponse}
-     * @memberof MasterItemResponse
-     */
-    'listItemVariationResponses'?: ItemVariationResponsePaginationResponse;
+    'stockCount'?: number;
 }
 
 
@@ -10402,6 +10287,76 @@ export interface UpdateFashionItemStatusRequest {
      * @memberof UpdateFashionItemStatusRequest
      */
     'status'?: FashionItemStatus;
+}
+
+
+/**
+ * 
+ * @export
+ * @interface UpdateMasterImageRequest
+ */
+export interface UpdateMasterImageRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateMasterImageRequest
+     */
+    'imageId'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateMasterImageRequest
+     */
+    'url'?: string | null;
+}
+/**
+ * 
+ * @export
+ * @interface UpdateMasterItemRequest
+ */
+export interface UpdateMasterItemRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateMasterItemRequest
+     */
+    'name'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateMasterItemRequest
+     */
+    'brand'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateMasterItemRequest
+     */
+    'description'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateMasterItemRequest
+     */
+    'categoryId'?: string | null;
+    /**
+     * 
+     * @type {GenderType}
+     * @memberof UpdateMasterItemRequest
+     */
+    'gender'?: GenderType;
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateMasterItemRequest
+     */
+    'stockCount'?: number | null;
+    /**
+     * 
+     * @type {Array<UpdateMasterImageRequest>}
+     * @memberof UpdateMasterItemRequest
+     */
+    'imageRequests'?: Array<UpdateMasterImageRequest> | null;
 }
 
 
@@ -15425,6 +15380,48 @@ export const ConsignLineItemApiAxiosParamCreator = function (configuration?: Con
         /**
          * 
          * @param {string} consignLineItemId 
+         * @param {number} [price] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiConsignlineitemsConsignLineItemIdConfirmPricePut: async (consignLineItemId: string, price?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'consignLineItemId' is not null or undefined
+            assertParamExists('apiConsignlineitemsConsignLineItemIdConfirmPricePut', 'consignLineItemId', consignLineItemId)
+            const localVarPath = `/api/consignlineitems/{consignLineItemId}/confirm-price`
+                .replace(`{${"consignLineItemId"}}`, encodeURIComponent(String(consignLineItemId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (price !== undefined) {
+                localVarQueryParameter['price'] = price;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} consignLineItemId 
          * @param {string} masterItemId 
          * @param {CreateIndividualItemRequestForConsign} [createIndividualItemRequestForConsign] 
          * @param {*} [options] Override http request option.
@@ -15517,6 +15514,19 @@ export const ConsignLineItemApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @param {string} consignLineItemId 
+         * @param {number} [price] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiConsignlineitemsConsignLineItemIdConfirmPricePut(consignLineItemId: string, price?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConsignSaleLineItemsListResponseResult>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiConsignlineitemsConsignLineItemIdConfirmPricePut(consignLineItemId, price, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ConsignLineItemApi.apiConsignlineitemsConsignLineItemIdConfirmPricePut']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} consignLineItemId 
          * @param {string} masterItemId 
          * @param {CreateIndividualItemRequestForConsign} [createIndividualItemRequestForConsign] 
          * @param {*} [options] Override http request option.
@@ -15553,6 +15563,16 @@ export const ConsignLineItemApiFactory = function (configuration?: Configuration
         /**
          * 
          * @param {string} consignLineItemId 
+         * @param {number} [price] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiConsignlineitemsConsignLineItemIdConfirmPricePut(consignLineItemId: string, price?: number, options?: RawAxiosRequestConfig): AxiosPromise<ConsignSaleLineItemsListResponseResult> {
+            return localVarFp.apiConsignlineitemsConsignLineItemIdConfirmPricePut(consignLineItemId, price, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} consignLineItemId 
          * @param {string} masterItemId 
          * @param {CreateIndividualItemRequestForConsign} [createIndividualItemRequestForConsign] 
          * @param {*} [options] Override http request option.
@@ -15580,6 +15600,18 @@ export const ConsignLineItemApiFactory = function (configuration?: Configuration
  * @extends {BaseAPI}
  */
 export class ConsignLineItemApi extends BaseAPI {
+    /**
+     * 
+     * @param {string} consignLineItemId 
+     * @param {number} [price] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ConsignLineItemApi
+     */
+    public apiConsignlineitemsConsignLineItemIdConfirmPricePut(consignLineItemId: string, price?: number, options?: RawAxiosRequestConfig) {
+        return ConsignLineItemApiFp(this.configuration).apiConsignlineitemsConsignLineItemIdConfirmPricePut(consignLineItemId, price, options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * 
      * @param {string} consignLineItemId 
@@ -17255,6 +17287,47 @@ export const FashionItemApiAxiosParamCreator = function (configuration?: Configu
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @param {string} masteritemId 
+         * @param {UpdateMasterItemRequest} [updateMasterItemRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiFashionitemsMasteritemIdUpdateMasteritemPut: async (masteritemId: string, updateMasterItemRequest?: UpdateMasterItemRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'masteritemId' is not null or undefined
+            assertParamExists('apiFashionitemsMasteritemIdUpdateMasteritemPut', 'masteritemId', masteritemId)
+            const localVarPath = `/api/fashionitems/{masteritemId}/update-masteritem`
+                .replace(`{${"masteritemId"}}`, encodeURIComponent(String(masteritemId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(updateMasterItemRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -17451,6 +17524,19 @@ export const FashionItemApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['FashionItemApi.apiFashionitemsMasterItemsPost']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
+        /**
+         * 
+         * @param {string} masteritemId 
+         * @param {UpdateMasterItemRequest} [updateMasterItemRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiFashionitemsMasteritemIdUpdateMasteritemPut(masteritemId: string, updateMasterItemRequest?: UpdateMasterItemRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterItemResponseResult>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiFashionitemsMasteritemIdUpdateMasteritemPut(masteritemId, updateMasterItemRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['FashionItemApi.apiFashionitemsMasteritemIdUpdateMasteritemPut']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
     }
 };
 
@@ -17610,6 +17696,16 @@ export const FashionItemApiFactory = function (configuration?: Configuration, ba
          */
         apiFashionitemsMasterItemsPost(createMasterItemRequest?: CreateMasterItemRequest, options?: RawAxiosRequestConfig): AxiosPromise<MasterItemResponseResult> {
             return localVarFp.apiFashionitemsMasterItemsPost(createMasterItemRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} masteritemId 
+         * @param {UpdateMasterItemRequest} [updateMasterItemRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiFashionitemsMasteritemIdUpdateMasteritemPut(masteritemId: string, updateMasterItemRequest?: UpdateMasterItemRequest, options?: RawAxiosRequestConfig): AxiosPromise<MasterItemResponseResult> {
+            return localVarFp.apiFashionitemsMasteritemIdUpdateMasteritemPut(masteritemId, updateMasterItemRequest, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -17793,6 +17889,18 @@ export class FashionItemApi extends BaseAPI {
      */
     public apiFashionitemsMasterItemsPost(createMasterItemRequest?: CreateMasterItemRequest, options?: RawAxiosRequestConfig) {
         return FashionItemApiFp(this.configuration).apiFashionitemsMasterItemsPost(createMasterItemRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} masteritemId 
+     * @param {UpdateMasterItemRequest} [updateMasterItemRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof FashionItemApi
+     */
+    public apiFashionitemsMasteritemIdUpdateMasteritemPut(masteritemId: string, updateMasterItemRequest?: UpdateMasterItemRequest, options?: RawAxiosRequestConfig) {
+        return FashionItemApiFp(this.configuration).apiFashionitemsMasteritemIdUpdateMasteritemPut(masteritemId, updateMasterItemRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
