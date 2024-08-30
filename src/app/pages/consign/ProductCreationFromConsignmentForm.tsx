@@ -4,9 +4,11 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useDropzone } from 'react-dropzone';
+import Select from 'react-select';
 import { KTCard, KTCardBody, KTIcon } from "../../../_metronic/helpers";
 import { Content } from "../../../_metronic/layout/components/content";
 import { ConsignLineItemApi, CreateIndividualItemRequestForConsign, SizeType } from '../../../api';
+import {useThemeMode} from "../../../_metronic/partials";
 
 const fetchMasterItems = async () => {
     // Replace with actual API call
@@ -16,15 +18,12 @@ const fetchMasterItems = async () => {
     ];
 };
 
-
-
 const fetchLineItemDetails = async (lineItemId: string) => {
     // const api = new ConsignLineItemApi();
     // return await api.apiConsignlineitemsConsignLineItemIdGet(lineItemId);
-    return {
-
-    }
+    return {}
 };
+
 
 const validationSchema = Yup.object().shape({
     masterItemId: Yup.string().required('Master Item is required'),
@@ -35,10 +34,13 @@ const validationSchema = Yup.object().shape({
     note: Yup.string(),
 });
 
+const sizeOptions = Object.values(SizeType).map(size => ({ value: size, label: size }));
+
 export const ProductCreationFromConsignmentForm: React.FC = () => {
     const { consignSaleId, lineItemId } = useParams<{ consignSaleId: string; lineItemId: string }>();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    const {mode ,menuMode,updateMode,updateMenuMode} = useThemeMode();
     const [files, setFiles] = useState<File[]>([]);
 
     const { data: masterItems } = useQuery('masterItems', fetchMasterItems);
@@ -114,7 +116,7 @@ export const ProductCreationFromConsignmentForm: React.FC = () => {
                             }
                         }}
                     >
-                        {({ isSubmitting }) => (
+                        {({ isSubmitting, setFieldValue, values }) => (
                             <Form placeholder={""}>
                                 <div className="card card-flush py-4">
                                     <div className="card-header">
@@ -125,12 +127,14 @@ export const ProductCreationFromConsignmentForm: React.FC = () => {
                                     <div className="card-body pt-0">
                                         <div className="mb-10">
                                             <label className="form-label">Master Items</label>
-                                            <Field as="select" name="masterItemId" className='form-select form-select-lg form-select-solid'>
-                                                <option value="">Select Master Item...</option>
-                                                {masterItems.map((item) => (
-                                                    <option key={item.value} value={item.value}>{item.label}</option>
-                                                ))}
-                                            </Field>
+                                            <Select
+                                                options={masterItems}
+                                                name="masterItemId"
+                                                onChange={(option) => setFieldValue('masterItemId', option?.value)}
+                                                placeholder="Select Master Item..."
+                                                className="react-select-container"
+                                                classNamePrefix="react-select"
+                                            />
                                             <ErrorMessage name="masterItemId" component="div" className="text-danger mt-2" />
                                         </div>
 
@@ -148,11 +152,14 @@ export const ProductCreationFromConsignmentForm: React.FC = () => {
 
                                         <div className="mb-10">
                                             <label className="form-label">Size</label>
-                                            <Field as="select" name="size" className="form-select">
-                                                {Object.values(SizeType).map((size) => (
-                                                    <option key={size} value={size}>{size}</option>
-                                                ))}
-                                            </Field>
+                                            <Select
+                                                options={sizeOptions}
+                                                name="size"
+                                                onChange={(option) => setFieldValue('size', option?.value)}
+                                                value={sizeOptions.find(option => option.value === values.size)}
+                                                className="react-select-container"
+                                                classNamePrefix="react-select"
+                                            />
                                             <ErrorMessage name="size" component="div" className="text-danger mt-2" />
                                         </div>
 
