@@ -2121,6 +2121,93 @@ export interface ConsignSaleLineItem {
 /**
  * 
  * @export
+ * @interface ConsignSaleLineItemDetailedResponse
+ */
+export interface ConsignSaleLineItemDetailedResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof ConsignSaleLineItemDetailedResponse
+     */
+    'consignSaleLineItemId'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConsignSaleLineItemDetailedResponse
+     */
+    'consignSaleId'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof ConsignSaleLineItemDetailedResponse
+     */
+    'dealPrice'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConsignSaleLineItemDetailedResponse
+     */
+    'note'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof ConsignSaleLineItemDetailedResponse
+     */
+    'confirmedPrice'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConsignSaleLineItemDetailedResponse
+     */
+    'productName'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConsignSaleLineItemDetailedResponse
+     */
+    'brand'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConsignSaleLineItemDetailedResponse
+     */
+    'color'?: string | null;
+    /**
+     * 
+     * @type {SizeType}
+     * @memberof ConsignSaleLineItemDetailedResponse
+     */
+    'size'?: SizeType;
+    /**
+     * 
+     * @type {GenderType}
+     * @memberof ConsignSaleLineItemDetailedResponse
+     */
+    'gender'?: GenderType;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConsignSaleLineItemDetailedResponse
+     */
+    'condition'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConsignSaleLineItemDetailedResponse
+     */
+    'createdDate'?: string;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof ConsignSaleLineItemDetailedResponse
+     */
+    'images'?: Array<string> | null;
+}
+
+
+/**
+ * 
+ * @export
  * @interface ConsignSaleLineItemsListResponse
  */
 export interface ConsignSaleLineItemsListResponse {
@@ -2909,6 +2996,30 @@ export interface CreateIndividualItemRequest {
      * @type {string}
      * @memberof CreateIndividualItemRequest
      */
+    'condition'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof CreateIndividualItemRequest
+     */
+    'retailPrice'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateIndividualItemRequest
+     */
+    'color'?: string | null;
+    /**
+     * 
+     * @type {SizeType}
+     * @memberof CreateIndividualItemRequest
+     */
+    'size'?: SizeType;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateIndividualItemRequest
+     */
     'note'?: string | null;
     /**
      * 
@@ -2923,12 +3034,38 @@ export interface CreateIndividualItemRequest {
      */
     'images'?: Array<string> | null;
 }
+
+
 /**
  * 
  * @export
  * @interface CreateIndividualItemRequestForConsign
  */
 export interface CreateIndividualItemRequestForConsign {
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateIndividualItemRequestForConsign
+     */
+    'condition'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof CreateIndividualItemRequestForConsign
+     */
+    'retailPrice'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateIndividualItemRequestForConsign
+     */
+    'color'?: string | null;
+    /**
+     * 
+     * @type {SizeType}
+     * @memberof CreateIndividualItemRequestForConsign
+     */
+    'size'?: SizeType;
     /**
      * 
      * @type {string}
@@ -2948,6 +3085,8 @@ export interface CreateIndividualItemRequestForConsign {
      */
     'images'?: Array<string> | null;
 }
+
+
 /**
  * 
  * @export
@@ -3015,84 +3154,6 @@ export interface CreateInquiryResponse {
      * @memberof CreateInquiryResponse
      */
     'memberId'?: string;
-}
-
-
-/**
- * 
- * @export
- * @interface CreateItemVariationRequest
- */
-export interface CreateItemVariationRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof CreateItemVariationRequest
-     */
-    'condition'?: string | null;
-    /**
-     * 
-     * @type {number}
-     * @memberof CreateItemVariationRequest
-     */
-    'price'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof CreateItemVariationRequest
-     */
-    'color'?: string | null;
-    /**
-     * 
-     * @type {SizeType}
-     * @memberof CreateItemVariationRequest
-     */
-    'size'?: SizeType;
-    /**
-     * 
-     * @type {number}
-     * @memberof CreateItemVariationRequest
-     */
-    'stockCount'?: number;
-    /**
-     * 
-     * @type {Array<CreateIndividualItemRequest>}
-     * @memberof CreateItemVariationRequest
-     */
-    'individualItems'?: Array<CreateIndividualItemRequest> | null;
-}
-
-
-/**
- * 
- * @export
- * @interface CreateItemVariationRequestForConsign
- */
-export interface CreateItemVariationRequestForConsign {
-    /**
-     * 
-     * @type {string}
-     * @memberof CreateItemVariationRequestForConsign
-     */
-    'condition'?: string | null;
-    /**
-     * 
-     * @type {number}
-     * @memberof CreateItemVariationRequestForConsign
-     */
-    'price'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof CreateItemVariationRequestForConsign
-     */
-    'color'?: string | null;
-    /**
-     * 
-     * @type {SizeType}
-     * @memberof CreateItemVariationRequestForConsign
-     */
-    'size'?: SizeType;
 }
 
 
@@ -3189,6 +3250,12 @@ export interface CreateMasterItemRequest {
      * @memberof CreateMasterItemRequest
      */
     'gender'?: GenderType;
+    /**
+     * 
+     * @type {number}
+     * @memberof CreateMasterItemRequest
+     */
+    'stockCount'?: number;
     /**
      * 
      * @type {Array<string>}
@@ -4038,6 +4105,12 @@ export interface FashionItemDetailResponse {
     'description'?: string | null;
     /**
      * 
+     * @type {number}
+     * @memberof FashionItemDetailResponse
+     */
+    'retailPrice'?: number;
+    /**
+     * 
      * @type {string}
      * @memberof FashionItemDetailResponse
      */
@@ -4317,12 +4390,6 @@ export interface FashionItemList {
      * @type {string}
      * @memberof FashionItemList
      */
-    'variationId'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof FashionItemList
-     */
     'shopId'?: string;
     /**
      * 
@@ -4366,6 +4433,12 @@ export interface FashionItemList {
      * @memberof FashionItemList
      */
     'condition'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof FashionItemList
+     */
+    'retailPrice'?: string | null;
     /**
      * 
      * @type {string}
@@ -4519,75 +4592,6 @@ export const FashionItemType = {
 } as const;
 
 export type FashionItemType = typeof FashionItemType[keyof typeof FashionItemType];
-
-
-/**
- * 
- * @export
- * @interface FashionItemVariation
- */
-export interface FashionItemVariation {
-    /**
-     * 
-     * @type {string}
-     * @memberof FashionItemVariation
-     */
-    'variationId'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof FashionItemVariation
-     */
-    'masterItemId'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof FashionItemVariation
-     */
-    'condition'?: string | null;
-    /**
-     * 
-     * @type {number}
-     * @memberof FashionItemVariation
-     */
-    'price'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof FashionItemVariation
-     */
-    'color'?: string | null;
-    /**
-     * 
-     * @type {SizeType}
-     * @memberof FashionItemVariation
-     */
-    'size'?: SizeType;
-    /**
-     * 
-     * @type {number}
-     * @memberof FashionItemVariation
-     */
-    'stockCount'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof FashionItemVariation
-     */
-    'createdDate'?: string;
-    /**
-     * 
-     * @type {MasterFashionItem}
-     * @memberof FashionItemVariation
-     */
-    'masterItem'?: MasterFashionItem;
-    /**
-     * 
-     * @type {Array<IndividualFashionItem>}
-     * @memberof FashionItemVariation
-     */
-    'individualItems'?: Array<IndividualFashionItem> | null;
-}
 
 
 /**
@@ -5614,7 +5618,7 @@ export interface IndividualAuctionFashionItem {
      * @type {string}
      * @memberof IndividualAuctionFashionItem
      */
-    'variationId'?: string;
+    'masterItemId'?: string;
     /**
      * 
      * @type {string}
@@ -5635,16 +5639,40 @@ export interface IndividualAuctionFashionItem {
     'status'?: FashionItemStatus;
     /**
      * 
+     * @type {number}
+     * @memberof IndividualAuctionFashionItem
+     */
+    'retailPrice'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof IndividualAuctionFashionItem
+     */
+    'color'?: string | null;
+    /**
+     * 
+     * @type {SizeType}
+     * @memberof IndividualAuctionFashionItem
+     */
+    'size'?: SizeType;
+    /**
+     * 
+     * @type {string}
+     * @memberof IndividualAuctionFashionItem
+     */
+    'condition'?: string | null;
+    /**
+     * 
      * @type {FashionItemType}
      * @memberof IndividualAuctionFashionItem
      */
     'type'?: FashionItemType;
     /**
      * 
-     * @type {FashionItemVariation}
+     * @type {MasterFashionItem}
      * @memberof IndividualAuctionFashionItem
      */
-    'variation'?: FashionItemVariation;
+    'masterItem'?: MasterFashionItem;
     /**
      * 
      * @type {ConsignSaleLineItem}
@@ -5707,7 +5735,7 @@ export interface IndividualFashionItem {
      * @type {string}
      * @memberof IndividualFashionItem
      */
-    'variationId'?: string;
+    'masterItemId'?: string;
     /**
      * 
      * @type {string}
@@ -5728,16 +5756,40 @@ export interface IndividualFashionItem {
     'status'?: FashionItemStatus;
     /**
      * 
+     * @type {number}
+     * @memberof IndividualFashionItem
+     */
+    'retailPrice'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof IndividualFashionItem
+     */
+    'color'?: string | null;
+    /**
+     * 
+     * @type {SizeType}
+     * @memberof IndividualFashionItem
+     */
+    'size'?: SizeType;
+    /**
+     * 
+     * @type {string}
+     * @memberof IndividualFashionItem
+     */
+    'condition'?: string | null;
+    /**
+     * 
      * @type {FashionItemType}
      * @memberof IndividualFashionItem
      */
     'type'?: FashionItemType;
     /**
      * 
-     * @type {FashionItemVariation}
+     * @type {MasterFashionItem}
      * @memberof IndividualFashionItem
      */
-    'variation'?: FashionItemVariation;
+    'masterItem'?: MasterFashionItem;
     /**
      * 
      * @type {ConsignSaleLineItem}
@@ -5788,7 +5840,7 @@ export interface IndividualItemListResponse {
      * @type {string}
      * @memberof IndividualItemListResponse
      */
-    'variationId'?: string;
+    'masterItemId'?: string;
     /**
      * 
      * @type {number}
@@ -6068,157 +6120,6 @@ export type InquiryStatus = typeof InquiryStatus[keyof typeof InquiryStatus];
 /**
  * 
  * @export
- * @interface ItemVariationListResponse
- */
-export interface ItemVariationListResponse {
-    /**
-     * 
-     * @type {string}
-     * @memberof ItemVariationListResponse
-     */
-    'variationId'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ItemVariationListResponse
-     */
-    'masterItemId'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ItemVariationListResponse
-     */
-    'condition'?: string | null;
-    /**
-     * 
-     * @type {number}
-     * @memberof ItemVariationListResponse
-     */
-    'price'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ItemVariationListResponse
-     */
-    'color'?: string | null;
-    /**
-     * 
-     * @type {SizeType}
-     * @memberof ItemVariationListResponse
-     */
-    'size'?: SizeType;
-    /**
-     * 
-     * @type {number}
-     * @memberof ItemVariationListResponse
-     */
-    'stockCount'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ItemVariationListResponse
-     */
-    'createdDate'?: string;
-}
-
-
-/**
- * 
- * @export
- * @interface ItemVariationListResponsePaginationResponse
- */
-export interface ItemVariationListResponsePaginationResponse {
-    /**
-     * 
-     * @type {number}
-     * @memberof ItemVariationListResponsePaginationResponse
-     */
-    'pageNumber'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ItemVariationListResponsePaginationResponse
-     */
-    'pageSize'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ItemVariationListResponsePaginationResponse
-     */
-    'searchTerm'?: string | null;
-    /**
-     * 
-     * @type {Array<string>}
-     * @memberof ItemVariationListResponsePaginationResponse
-     */
-    'filters'?: Array<string> | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ItemVariationListResponsePaginationResponse
-     */
-    'orderBy'?: string | null;
-    /**
-     * 
-     * @type {number}
-     * @memberof ItemVariationListResponsePaginationResponse
-     */
-    'totalCount'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ItemVariationListResponsePaginationResponse
-     */
-    'totalPages'?: number;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ItemVariationListResponsePaginationResponse
-     */
-    'hasNext'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ItemVariationListResponsePaginationResponse
-     */
-    'hasPrevious'?: boolean;
-    /**
-     * 
-     * @type {Array<ItemVariationListResponse>}
-     * @memberof ItemVariationListResponsePaginationResponse
-     */
-    'items'?: Array<ItemVariationListResponse> | null;
-}
-/**
- * 
- * @export
- * @interface ItemVariationListResponseResult
- */
-export interface ItemVariationListResponseResult {
-    /**
-     * 
-     * @type {ItemVariationListResponse}
-     * @memberof ItemVariationListResponseResult
-     */
-    'data'?: ItemVariationListResponse;
-    /**
-     * 
-     * @type {ResultStatus}
-     * @memberof ItemVariationListResponseResult
-     */
-    'resultStatus'?: ResultStatus;
-    /**
-     * 
-     * @type {Array<string>}
-     * @memberof ItemVariationListResponseResult
-     */
-    'messages'?: Array<string> | null;
-}
-
-
-/**
- * 
- * @export
  * @interface ItemVariationResponse
  */
 export interface ItemVariationResponse {
@@ -6346,33 +6247,6 @@ export interface ItemVariationResponsePaginationResponse {
      */
     'items'?: Array<ItemVariationResponse> | null;
 }
-/**
- * 
- * @export
- * @interface ItemVariationResponseResult
- */
-export interface ItemVariationResponseResult {
-    /**
-     * 
-     * @type {ItemVariationResponse}
-     * @memberof ItemVariationResponseResult
-     */
-    'data'?: ItemVariationResponse;
-    /**
-     * 
-     * @type {ResultStatus}
-     * @memberof ItemVariationResponseResult
-     */
-    'resultStatus'?: ResultStatus;
-    /**
-     * 
-     * @type {Array<string>}
-     * @memberof ItemVariationResponseResult
-     */
-    'messages'?: Array<string> | null;
-}
-
-
 /**
  * 
  * @export
@@ -6544,10 +6418,16 @@ export interface MasterFashionItem {
     'shopId'?: string;
     /**
      * 
-     * @type {Array<FashionItemVariation>}
+     * @type {number}
      * @memberof MasterFashionItem
      */
-    'variations'?: Array<FashionItemVariation> | null;
+    'stockCount'?: number;
+    /**
+     * 
+     * @type {Array<IndividualFashionItem>}
+     * @memberof MasterFashionItem
+     */
+    'individualFashionItems'?: Array<IndividualFashionItem> | null;
 }
 
 
@@ -15533,19 +15413,19 @@ export const ConsignLineItemApiAxiosParamCreator = function (configuration?: Con
         /**
          * 
          * @param {string} consignLineItemId 
-         * @param {string} variationId 
+         * @param {string} masterItemId 
          * @param {CreateIndividualItemRequestForConsign} [createIndividualItemRequestForConsign] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiConsignlineitemsConsignLineItemIdFashionitemsVariationIdCreateIndividualPost: async (consignLineItemId: string, variationId: string, createIndividualItemRequestForConsign?: CreateIndividualItemRequestForConsign, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        apiConsignlineitemsConsignLineItemIdFashionitemsMasterItemIdCreateIndividualPost: async (consignLineItemId: string, masterItemId: string, createIndividualItemRequestForConsign?: CreateIndividualItemRequestForConsign, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'consignLineItemId' is not null or undefined
-            assertParamExists('apiConsignlineitemsConsignLineItemIdFashionitemsVariationIdCreateIndividualPost', 'consignLineItemId', consignLineItemId)
-            // verify required parameter 'variationId' is not null or undefined
-            assertParamExists('apiConsignlineitemsConsignLineItemIdFashionitemsVariationIdCreateIndividualPost', 'variationId', variationId)
-            const localVarPath = `/api/consignlineitems/{consignLineItemId}/fashionitems/{variationId}/create-individual`
+            assertParamExists('apiConsignlineitemsConsignLineItemIdFashionitemsMasterItemIdCreateIndividualPost', 'consignLineItemId', consignLineItemId)
+            // verify required parameter 'masterItemId' is not null or undefined
+            assertParamExists('apiConsignlineitemsConsignLineItemIdFashionitemsMasterItemIdCreateIndividualPost', 'masterItemId', masterItemId)
+            const localVarPath = `/api/consignlineitems/{consignLineItemId}/fashionitems/{masterItemId}/create-individual`
                 .replace(`{${"consignLineItemId"}}`, encodeURIComponent(String(consignLineItemId)))
-                .replace(`{${"variationId"}}`, encodeURIComponent(String(variationId)));
+                .replace(`{${"masterItemId"}}`, encodeURIComponent(String(masterItemId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -15575,6 +15455,43 @@ export const ConsignLineItemApiAxiosParamCreator = function (configuration?: Con
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @param {string} consignLineItemId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiConsignlineitemsConsignLineItemIdGet: async (consignLineItemId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'consignLineItemId' is not null or undefined
+            assertParamExists('apiConsignlineitemsConsignLineItemIdGet', 'consignLineItemId', consignLineItemId)
+            const localVarPath = `/api/consignlineitems/{consignLineItemId}`
+                .replace(`{${"consignLineItemId"}}`, encodeURIComponent(String(consignLineItemId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -15588,15 +15505,27 @@ export const ConsignLineItemApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @param {string} consignLineItemId 
-         * @param {string} variationId 
+         * @param {string} masterItemId 
          * @param {CreateIndividualItemRequestForConsign} [createIndividualItemRequestForConsign] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiConsignlineitemsConsignLineItemIdFashionitemsVariationIdCreateIndividualPost(consignLineItemId: string, variationId: string, createIndividualItemRequestForConsign?: CreateIndividualItemRequestForConsign, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FashionItemDetailResponseResult>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiConsignlineitemsConsignLineItemIdFashionitemsVariationIdCreateIndividualPost(consignLineItemId, variationId, createIndividualItemRequestForConsign, options);
+        async apiConsignlineitemsConsignLineItemIdFashionitemsMasterItemIdCreateIndividualPost(consignLineItemId: string, masterItemId: string, createIndividualItemRequestForConsign?: CreateIndividualItemRequestForConsign, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FashionItemDetailResponseResult>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiConsignlineitemsConsignLineItemIdFashionitemsMasterItemIdCreateIndividualPost(consignLineItemId, masterItemId, createIndividualItemRequestForConsign, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['ConsignLineItemApi.apiConsignlineitemsConsignLineItemIdFashionitemsVariationIdCreateIndividualPost']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['ConsignLineItemApi.apiConsignlineitemsConsignLineItemIdFashionitemsMasterItemIdCreateIndividualPost']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} consignLineItemId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiConsignlineitemsConsignLineItemIdGet(consignLineItemId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConsignSaleLineItemDetailedResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiConsignlineitemsConsignLineItemIdGet(consignLineItemId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ConsignLineItemApi.apiConsignlineitemsConsignLineItemIdGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
@@ -15612,13 +15541,22 @@ export const ConsignLineItemApiFactory = function (configuration?: Configuration
         /**
          * 
          * @param {string} consignLineItemId 
-         * @param {string} variationId 
+         * @param {string} masterItemId 
          * @param {CreateIndividualItemRequestForConsign} [createIndividualItemRequestForConsign] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiConsignlineitemsConsignLineItemIdFashionitemsVariationIdCreateIndividualPost(consignLineItemId: string, variationId: string, createIndividualItemRequestForConsign?: CreateIndividualItemRequestForConsign, options?: RawAxiosRequestConfig): AxiosPromise<FashionItemDetailResponseResult> {
-            return localVarFp.apiConsignlineitemsConsignLineItemIdFashionitemsVariationIdCreateIndividualPost(consignLineItemId, variationId, createIndividualItemRequestForConsign, options).then((request) => request(axios, basePath));
+        apiConsignlineitemsConsignLineItemIdFashionitemsMasterItemIdCreateIndividualPost(consignLineItemId: string, masterItemId: string, createIndividualItemRequestForConsign?: CreateIndividualItemRequestForConsign, options?: RawAxiosRequestConfig): AxiosPromise<FashionItemDetailResponseResult> {
+            return localVarFp.apiConsignlineitemsConsignLineItemIdFashionitemsMasterItemIdCreateIndividualPost(consignLineItemId, masterItemId, createIndividualItemRequestForConsign, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} consignLineItemId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiConsignlineitemsConsignLineItemIdGet(consignLineItemId: string, options?: RawAxiosRequestConfig): AxiosPromise<ConsignSaleLineItemDetailedResponse> {
+            return localVarFp.apiConsignlineitemsConsignLineItemIdGet(consignLineItemId, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -15633,14 +15571,25 @@ export class ConsignLineItemApi extends BaseAPI {
     /**
      * 
      * @param {string} consignLineItemId 
-     * @param {string} variationId 
+     * @param {string} masterItemId 
      * @param {CreateIndividualItemRequestForConsign} [createIndividualItemRequestForConsign] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ConsignLineItemApi
      */
-    public apiConsignlineitemsConsignLineItemIdFashionitemsVariationIdCreateIndividualPost(consignLineItemId: string, variationId: string, createIndividualItemRequestForConsign?: CreateIndividualItemRequestForConsign, options?: RawAxiosRequestConfig) {
-        return ConsignLineItemApiFp(this.configuration).apiConsignlineitemsConsignLineItemIdFashionitemsVariationIdCreateIndividualPost(consignLineItemId, variationId, createIndividualItemRequestForConsign, options).then((request) => request(this.axios, this.basePath));
+    public apiConsignlineitemsConsignLineItemIdFashionitemsMasterItemIdCreateIndividualPost(consignLineItemId: string, masterItemId: string, createIndividualItemRequestForConsign?: CreateIndividualItemRequestForConsign, options?: RawAxiosRequestConfig) {
+        return ConsignLineItemApiFp(this.configuration).apiConsignlineitemsConsignLineItemIdFashionitemsMasterItemIdCreateIndividualPost(consignLineItemId, masterItemId, createIndividualItemRequestForConsign, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} consignLineItemId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ConsignLineItemApi
+     */
+    public apiConsignlineitemsConsignLineItemIdGet(consignLineItemId: string, options?: RawAxiosRequestConfig) {
+        return ConsignLineItemApiFp(this.configuration).apiConsignlineitemsConsignLineItemIdGet(consignLineItemId, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -15847,47 +15796,6 @@ export const ConsignSaleApiAxiosParamCreator = function (configuration?: Configu
         },
         /**
          * 
-         * @param {string} masteritemId 
-         * @param {CreateItemVariationRequestForConsign} [createItemVariationRequestForConsign] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        apiConsignsalesFashionitemsMasteritemIdCreateVariationPost: async (masteritemId: string, createItemVariationRequestForConsign?: CreateItemVariationRequestForConsign, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'masteritemId' is not null or undefined
-            assertParamExists('apiConsignsalesFashionitemsMasteritemIdCreateVariationPost', 'masteritemId', masteritemId)
-            const localVarPath = `/api/consignsales/fashionitems/{masteritemId}/create-variation`
-                .replace(`{${"masteritemId"}}`, encodeURIComponent(String(masteritemId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication Bearer required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(createItemVariationRequestForConsign, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
          * @param {number} [page] 
          * @param {number} [pageSize] 
          * @param {string} [shopId] 
@@ -16052,19 +15960,6 @@ export const ConsignSaleApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {string} masteritemId 
-         * @param {CreateItemVariationRequestForConsign} [createItemVariationRequestForConsign] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async apiConsignsalesFashionitemsMasteritemIdCreateVariationPost(masteritemId: string, createItemVariationRequestForConsign?: CreateItemVariationRequestForConsign, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ItemVariationListResponseResult>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiConsignsalesFashionitemsMasteritemIdCreateVariationPost(masteritemId, createItemVariationRequestForConsign, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['ConsignSaleApi.apiConsignsalesFashionitemsMasteritemIdCreateVariationPost']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
          * @param {number} [page] 
          * @param {number} [pageSize] 
          * @param {string} [shopId] 
@@ -16141,16 +16036,6 @@ export const ConsignSaleApiFactory = function (configuration?: Configuration, ba
          */
         apiConsignsalesConsignsaleIdCreateMasteritemPost(consignsaleId: string, createMasterItemForConsignRequest?: CreateMasterItemForConsignRequest, options?: RawAxiosRequestConfig): AxiosPromise<MasterItemResponseResult> {
             return localVarFp.apiConsignsalesConsignsaleIdCreateMasteritemPost(consignsaleId, createMasterItemForConsignRequest, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {string} masteritemId 
-         * @param {CreateItemVariationRequestForConsign} [createItemVariationRequestForConsign] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        apiConsignsalesFashionitemsMasteritemIdCreateVariationPost(masteritemId: string, createItemVariationRequestForConsign?: CreateItemVariationRequestForConsign, options?: RawAxiosRequestConfig): AxiosPromise<ItemVariationListResponseResult> {
-            return localVarFp.apiConsignsalesFashionitemsMasteritemIdCreateVariationPost(masteritemId, createItemVariationRequestForConsign, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -16236,18 +16121,6 @@ export class ConsignSaleApi extends BaseAPI {
      */
     public apiConsignsalesConsignsaleIdCreateMasteritemPost(consignsaleId: string, createMasterItemForConsignRequest?: CreateMasterItemForConsignRequest, options?: RawAxiosRequestConfig) {
         return ConsignSaleApiFp(this.configuration).apiConsignsalesConsignsaleIdCreateMasteritemPost(consignsaleId, createMasterItemForConsignRequest, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {string} masteritemId 
-     * @param {CreateItemVariationRequestForConsign} [createItemVariationRequestForConsign] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof ConsignSaleApi
-     */
-    public apiConsignsalesFashionitemsMasteritemIdCreateVariationPost(masteritemId: string, createItemVariationRequestForConsign?: CreateItemVariationRequestForConsign, options?: RawAxiosRequestConfig) {
-        return ConsignSaleApiFp(this.configuration).apiConsignsalesFashionitemsMasteritemIdCreateVariationPost(masteritemId, createItemVariationRequestForConsign, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -17006,6 +16879,124 @@ export const FashionItemApiAxiosParamCreator = function (configuration?: Configu
         },
         /**
          * 
+         * @param {string} masterItemId 
+         * @param {string} [searchItemCode] 
+         * @param {number} [pageNumber] 
+         * @param {number} [pageSize] 
+         * @param {string} [memberId] 
+         * @param {number} [minSellingPrice] 
+         * @param {number} [maxSellingPrice] 
+         * @param {Array<FashionItemStatus>} [status] 
+         * @param {Array<FashionItemType>} [types] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiFashionitemsMasterItemIdIndividualItemsGet: async (masterItemId: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, memberId?: string, minSellingPrice?: number, maxSellingPrice?: number, status?: Array<FashionItemStatus>, types?: Array<FashionItemType>, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'masterItemId' is not null or undefined
+            assertParamExists('apiFashionitemsMasterItemIdIndividualItemsGet', 'masterItemId', masterItemId)
+            const localVarPath = `/api/fashionitems/{masterItemId}/individual-items`
+                .replace(`{${"masterItemId"}}`, encodeURIComponent(String(masterItemId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (searchItemCode !== undefined) {
+                localVarQueryParameter['SearchItemCode'] = searchItemCode;
+            }
+
+            if (pageNumber !== undefined) {
+                localVarQueryParameter['PageNumber'] = pageNumber;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['PageSize'] = pageSize;
+            }
+
+            if (memberId !== undefined) {
+                localVarQueryParameter['MemberId'] = memberId;
+            }
+
+            if (minSellingPrice !== undefined) {
+                localVarQueryParameter['MinSellingPrice'] = minSellingPrice;
+            }
+
+            if (maxSellingPrice !== undefined) {
+                localVarQueryParameter['MaxSellingPrice'] = maxSellingPrice;
+            }
+
+            if (status) {
+                localVarQueryParameter['Status'] = status;
+            }
+
+            if (types) {
+                localVarQueryParameter['Types'] = types;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} masterItemId 
+         * @param {Array<CreateIndividualItemRequest>} [createIndividualItemRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiFashionitemsMasterItemIdIndividualItemsPost: async (masterItemId: string, createIndividualItemRequest?: Array<CreateIndividualItemRequest>, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'masterItemId' is not null or undefined
+            assertParamExists('apiFashionitemsMasterItemIdIndividualItemsPost', 'masterItemId', masterItemId)
+            const localVarPath = `/api/fashionitems/{masterItemId}/individual-items`
+                .replace(`{${"masterItemId"}}`, encodeURIComponent(String(masterItemId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(createIndividualItemRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {string} [masterItemCode] 
          * @param {string} [name] 
          * @param {string} [masterItemId] 
@@ -17252,237 +17243,6 @@ export const FashionItemApiAxiosParamCreator = function (configuration?: Configu
                 options: localVarRequestOptions,
             };
         },
-        /**
-         * 
-         * @param {string} masteritemId 
-         * @param {number} [pageNumber] 
-         * @param {number} [pageSize] 
-         * @param {number} [minPrice] 
-         * @param {number} [maxPrice] 
-         * @param {string} [condition] 
-         * @param {string} [color] 
-         * @param {Array<SizeType>} [size] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        apiFashionitemsMasteritemIdItemVariantsGet: async (masteritemId: string, pageNumber?: number, pageSize?: number, minPrice?: number, maxPrice?: number, condition?: string, color?: string, size?: Array<SizeType>, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'masteritemId' is not null or undefined
-            assertParamExists('apiFashionitemsMasteritemIdItemVariantsGet', 'masteritemId', masteritemId)
-            const localVarPath = `/api/fashionitems/{masteritemId}/item-variants`
-                .replace(`{${"masteritemId"}}`, encodeURIComponent(String(masteritemId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication Bearer required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-            if (pageNumber !== undefined) {
-                localVarQueryParameter['PageNumber'] = pageNumber;
-            }
-
-            if (pageSize !== undefined) {
-                localVarQueryParameter['PageSize'] = pageSize;
-            }
-
-            if (minPrice !== undefined) {
-                localVarQueryParameter['MinPrice'] = minPrice;
-            }
-
-            if (maxPrice !== undefined) {
-                localVarQueryParameter['MaxPrice'] = maxPrice;
-            }
-
-            if (condition !== undefined) {
-                localVarQueryParameter['Condition'] = condition;
-            }
-
-            if (color !== undefined) {
-                localVarQueryParameter['Color'] = color;
-            }
-
-            if (size) {
-                localVarQueryParameter['Size'] = size;
-            }
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string} masteritemId 
-         * @param {CreateItemVariationRequest} [createItemVariationRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        apiFashionitemsMasteritemIdItemVariantsPost: async (masteritemId: string, createItemVariationRequest?: CreateItemVariationRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'masteritemId' is not null or undefined
-            assertParamExists('apiFashionitemsMasteritemIdItemVariantsPost', 'masteritemId', masteritemId)
-            const localVarPath = `/api/fashionitems/{masteritemId}/item-variants`
-                .replace(`{${"masteritemId"}}`, encodeURIComponent(String(masteritemId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication Bearer required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(createItemVariationRequest, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string} variationId 
-         * @param {string} [searchItemCode] 
-         * @param {number} [pageNumber] 
-         * @param {number} [pageSize] 
-         * @param {string} [memberId] 
-         * @param {number} [minSellingPrice] 
-         * @param {number} [maxSellingPrice] 
-         * @param {Array<FashionItemStatus>} [status] 
-         * @param {Array<FashionItemType>} [types] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        apiFashionitemsVariationIdIndividualItemsGet: async (variationId: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, memberId?: string, minSellingPrice?: number, maxSellingPrice?: number, status?: Array<FashionItemStatus>, types?: Array<FashionItemType>, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'variationId' is not null or undefined
-            assertParamExists('apiFashionitemsVariationIdIndividualItemsGet', 'variationId', variationId)
-            const localVarPath = `/api/fashionitems/{variationId}/individual-items`
-                .replace(`{${"variationId"}}`, encodeURIComponent(String(variationId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication Bearer required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-            if (searchItemCode !== undefined) {
-                localVarQueryParameter['SearchItemCode'] = searchItemCode;
-            }
-
-            if (pageNumber !== undefined) {
-                localVarQueryParameter['PageNumber'] = pageNumber;
-            }
-
-            if (pageSize !== undefined) {
-                localVarQueryParameter['PageSize'] = pageSize;
-            }
-
-            if (memberId !== undefined) {
-                localVarQueryParameter['MemberId'] = memberId;
-            }
-
-            if (minSellingPrice !== undefined) {
-                localVarQueryParameter['MinSellingPrice'] = minSellingPrice;
-            }
-
-            if (maxSellingPrice !== undefined) {
-                localVarQueryParameter['MaxSellingPrice'] = maxSellingPrice;
-            }
-
-            if (status) {
-                localVarQueryParameter['Status'] = status;
-            }
-
-            if (types) {
-                localVarQueryParameter['Types'] = types;
-            }
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string} variationId 
-         * @param {Array<CreateIndividualItemRequest>} [createIndividualItemRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        apiFashionitemsVariationIdIndividualItemsPost: async (variationId: string, createIndividualItemRequest?: Array<CreateIndividualItemRequest>, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'variationId' is not null or undefined
-            assertParamExists('apiFashionitemsVariationIdIndividualItemsPost', 'variationId', variationId)
-            const localVarPath = `/api/fashionitems/{variationId}/individual-items`
-                .replace(`{${"variationId"}}`, encodeURIComponent(String(variationId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication Bearer required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(createIndividualItemRequest, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
     }
 };
 
@@ -17576,6 +17336,39 @@ export const FashionItemApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {string} masterItemId 
+         * @param {string} [searchItemCode] 
+         * @param {number} [pageNumber] 
+         * @param {number} [pageSize] 
+         * @param {string} [memberId] 
+         * @param {number} [minSellingPrice] 
+         * @param {number} [maxSellingPrice] 
+         * @param {Array<FashionItemStatus>} [status] 
+         * @param {Array<FashionItemType>} [types] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiFashionitemsMasterItemIdIndividualItemsGet(masterItemId: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, memberId?: string, minSellingPrice?: number, maxSellingPrice?: number, status?: Array<FashionItemStatus>, types?: Array<FashionItemType>, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IndividualItemListResponsePaginationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiFashionitemsMasterItemIdIndividualItemsGet(masterItemId, searchItemCode, pageNumber, pageSize, memberId, minSellingPrice, maxSellingPrice, status, types, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['FashionItemApi.apiFashionitemsMasterItemIdIndividualItemsGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} masterItemId 
+         * @param {Array<CreateIndividualItemRequest>} [createIndividualItemRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiFashionitemsMasterItemIdIndividualItemsPost(masterItemId: string, createIndividualItemRequest?: Array<CreateIndividualItemRequest>, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IndividualItemListResponseListResult>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiFashionitemsMasterItemIdIndividualItemsPost(masterItemId, createIndividualItemRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['FashionItemApi.apiFashionitemsMasterItemIdIndividualItemsPost']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {string} [masterItemCode] 
          * @param {string} [name] 
          * @param {string} [masterItemId] 
@@ -17644,71 +17437,6 @@ export const FashionItemApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiFashionitemsMasterItemsPost(createMasterItemRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['FashionItemApi.apiFashionitemsMasterItemsPost']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @param {string} masteritemId 
-         * @param {number} [pageNumber] 
-         * @param {number} [pageSize] 
-         * @param {number} [minPrice] 
-         * @param {number} [maxPrice] 
-         * @param {string} [condition] 
-         * @param {string} [color] 
-         * @param {Array<SizeType>} [size] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async apiFashionitemsMasteritemIdItemVariantsGet(masteritemId: string, pageNumber?: number, pageSize?: number, minPrice?: number, maxPrice?: number, condition?: string, color?: string, size?: Array<SizeType>, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ItemVariationListResponsePaginationResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiFashionitemsMasteritemIdItemVariantsGet(masteritemId, pageNumber, pageSize, minPrice, maxPrice, condition, color, size, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['FashionItemApi.apiFashionitemsMasteritemIdItemVariantsGet']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @param {string} masteritemId 
-         * @param {CreateItemVariationRequest} [createItemVariationRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async apiFashionitemsMasteritemIdItemVariantsPost(masteritemId: string, createItemVariationRequest?: CreateItemVariationRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ItemVariationResponseResult>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiFashionitemsMasteritemIdItemVariantsPost(masteritemId, createItemVariationRequest, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['FashionItemApi.apiFashionitemsMasteritemIdItemVariantsPost']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @param {string} variationId 
-         * @param {string} [searchItemCode] 
-         * @param {number} [pageNumber] 
-         * @param {number} [pageSize] 
-         * @param {string} [memberId] 
-         * @param {number} [minSellingPrice] 
-         * @param {number} [maxSellingPrice] 
-         * @param {Array<FashionItemStatus>} [status] 
-         * @param {Array<FashionItemType>} [types] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async apiFashionitemsVariationIdIndividualItemsGet(variationId: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, memberId?: string, minSellingPrice?: number, maxSellingPrice?: number, status?: Array<FashionItemStatus>, types?: Array<FashionItemType>, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IndividualItemListResponsePaginationResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiFashionitemsVariationIdIndividualItemsGet(variationId, searchItemCode, pageNumber, pageSize, memberId, minSellingPrice, maxSellingPrice, status, types, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['FashionItemApi.apiFashionitemsVariationIdIndividualItemsGet']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @param {string} variationId 
-         * @param {Array<CreateIndividualItemRequest>} [createIndividualItemRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async apiFashionitemsVariationIdIndividualItemsPost(variationId: string, createIndividualItemRequest?: Array<CreateIndividualItemRequest>, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IndividualItemListResponseListResult>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiFashionitemsVariationIdIndividualItemsPost(variationId, createIndividualItemRequest, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['FashionItemApi.apiFashionitemsVariationIdIndividualItemsPost']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
@@ -17789,6 +17517,33 @@ export const FashionItemApiFactory = function (configuration?: Configuration, ba
         },
         /**
          * 
+         * @param {string} masterItemId 
+         * @param {string} [searchItemCode] 
+         * @param {number} [pageNumber] 
+         * @param {number} [pageSize] 
+         * @param {string} [memberId] 
+         * @param {number} [minSellingPrice] 
+         * @param {number} [maxSellingPrice] 
+         * @param {Array<FashionItemStatus>} [status] 
+         * @param {Array<FashionItemType>} [types] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiFashionitemsMasterItemIdIndividualItemsGet(masterItemId: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, memberId?: string, minSellingPrice?: number, maxSellingPrice?: number, status?: Array<FashionItemStatus>, types?: Array<FashionItemType>, options?: RawAxiosRequestConfig): AxiosPromise<IndividualItemListResponsePaginationResponse> {
+            return localVarFp.apiFashionitemsMasterItemIdIndividualItemsGet(masterItemId, searchItemCode, pageNumber, pageSize, memberId, minSellingPrice, maxSellingPrice, status, types, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} masterItemId 
+         * @param {Array<CreateIndividualItemRequest>} [createIndividualItemRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiFashionitemsMasterItemIdIndividualItemsPost(masterItemId: string, createIndividualItemRequest?: Array<CreateIndividualItemRequest>, options?: RawAxiosRequestConfig): AxiosPromise<IndividualItemListResponseListResult> {
+            return localVarFp.apiFashionitemsMasterItemIdIndividualItemsPost(masterItemId, createIndividualItemRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @param {string} [masterItemCode] 
          * @param {string} [name] 
          * @param {string} [masterItemId] 
@@ -17843,59 +17598,6 @@ export const FashionItemApiFactory = function (configuration?: Configuration, ba
          */
         apiFashionitemsMasterItemsPost(createMasterItemRequest?: CreateMasterItemRequest, options?: RawAxiosRequestConfig): AxiosPromise<MasterItemResponseResult> {
             return localVarFp.apiFashionitemsMasterItemsPost(createMasterItemRequest, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {string} masteritemId 
-         * @param {number} [pageNumber] 
-         * @param {number} [pageSize] 
-         * @param {number} [minPrice] 
-         * @param {number} [maxPrice] 
-         * @param {string} [condition] 
-         * @param {string} [color] 
-         * @param {Array<SizeType>} [size] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        apiFashionitemsMasteritemIdItemVariantsGet(masteritemId: string, pageNumber?: number, pageSize?: number, minPrice?: number, maxPrice?: number, condition?: string, color?: string, size?: Array<SizeType>, options?: RawAxiosRequestConfig): AxiosPromise<ItemVariationListResponsePaginationResponse> {
-            return localVarFp.apiFashionitemsMasteritemIdItemVariantsGet(masteritemId, pageNumber, pageSize, minPrice, maxPrice, condition, color, size, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {string} masteritemId 
-         * @param {CreateItemVariationRequest} [createItemVariationRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        apiFashionitemsMasteritemIdItemVariantsPost(masteritemId: string, createItemVariationRequest?: CreateItemVariationRequest, options?: RawAxiosRequestConfig): AxiosPromise<ItemVariationResponseResult> {
-            return localVarFp.apiFashionitemsMasteritemIdItemVariantsPost(masteritemId, createItemVariationRequest, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {string} variationId 
-         * @param {string} [searchItemCode] 
-         * @param {number} [pageNumber] 
-         * @param {number} [pageSize] 
-         * @param {string} [memberId] 
-         * @param {number} [minSellingPrice] 
-         * @param {number} [maxSellingPrice] 
-         * @param {Array<FashionItemStatus>} [status] 
-         * @param {Array<FashionItemType>} [types] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        apiFashionitemsVariationIdIndividualItemsGet(variationId: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, memberId?: string, minSellingPrice?: number, maxSellingPrice?: number, status?: Array<FashionItemStatus>, types?: Array<FashionItemType>, options?: RawAxiosRequestConfig): AxiosPromise<IndividualItemListResponsePaginationResponse> {
-            return localVarFp.apiFashionitemsVariationIdIndividualItemsGet(variationId, searchItemCode, pageNumber, pageSize, memberId, minSellingPrice, maxSellingPrice, status, types, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {string} variationId 
-         * @param {Array<CreateIndividualItemRequest>} [createIndividualItemRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        apiFashionitemsVariationIdIndividualItemsPost(variationId: string, createIndividualItemRequest?: Array<CreateIndividualItemRequest>, options?: RawAxiosRequestConfig): AxiosPromise<IndividualItemListResponseListResult> {
-            return localVarFp.apiFashionitemsVariationIdIndividualItemsPost(variationId, createIndividualItemRequest, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -17985,6 +17687,37 @@ export class FashionItemApi extends BaseAPI {
 
     /**
      * 
+     * @param {string} masterItemId 
+     * @param {string} [searchItemCode] 
+     * @param {number} [pageNumber] 
+     * @param {number} [pageSize] 
+     * @param {string} [memberId] 
+     * @param {number} [minSellingPrice] 
+     * @param {number} [maxSellingPrice] 
+     * @param {Array<FashionItemStatus>} [status] 
+     * @param {Array<FashionItemType>} [types] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof FashionItemApi
+     */
+    public apiFashionitemsMasterItemIdIndividualItemsGet(masterItemId: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, memberId?: string, minSellingPrice?: number, maxSellingPrice?: number, status?: Array<FashionItemStatus>, types?: Array<FashionItemType>, options?: RawAxiosRequestConfig) {
+        return FashionItemApiFp(this.configuration).apiFashionitemsMasterItemIdIndividualItemsGet(masterItemId, searchItemCode, pageNumber, pageSize, memberId, minSellingPrice, maxSellingPrice, status, types, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} masterItemId 
+     * @param {Array<CreateIndividualItemRequest>} [createIndividualItemRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof FashionItemApi
+     */
+    public apiFashionitemsMasterItemIdIndividualItemsPost(masterItemId: string, createIndividualItemRequest?: Array<CreateIndividualItemRequest>, options?: RawAxiosRequestConfig) {
+        return FashionItemApiFp(this.configuration).apiFashionitemsMasterItemIdIndividualItemsPost(masterItemId, createIndividualItemRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @param {string} [masterItemCode] 
      * @param {string} [name] 
      * @param {string} [masterItemId] 
@@ -18048,67 +17781,6 @@ export class FashionItemApi extends BaseAPI {
      */
     public apiFashionitemsMasterItemsPost(createMasterItemRequest?: CreateMasterItemRequest, options?: RawAxiosRequestConfig) {
         return FashionItemApiFp(this.configuration).apiFashionitemsMasterItemsPost(createMasterItemRequest, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {string} masteritemId 
-     * @param {number} [pageNumber] 
-     * @param {number} [pageSize] 
-     * @param {number} [minPrice] 
-     * @param {number} [maxPrice] 
-     * @param {string} [condition] 
-     * @param {string} [color] 
-     * @param {Array<SizeType>} [size] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof FashionItemApi
-     */
-    public apiFashionitemsMasteritemIdItemVariantsGet(masteritemId: string, pageNumber?: number, pageSize?: number, minPrice?: number, maxPrice?: number, condition?: string, color?: string, size?: Array<SizeType>, options?: RawAxiosRequestConfig) {
-        return FashionItemApiFp(this.configuration).apiFashionitemsMasteritemIdItemVariantsGet(masteritemId, pageNumber, pageSize, minPrice, maxPrice, condition, color, size, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {string} masteritemId 
-     * @param {CreateItemVariationRequest} [createItemVariationRequest] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof FashionItemApi
-     */
-    public apiFashionitemsMasteritemIdItemVariantsPost(masteritemId: string, createItemVariationRequest?: CreateItemVariationRequest, options?: RawAxiosRequestConfig) {
-        return FashionItemApiFp(this.configuration).apiFashionitemsMasteritemIdItemVariantsPost(masteritemId, createItemVariationRequest, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {string} variationId 
-     * @param {string} [searchItemCode] 
-     * @param {number} [pageNumber] 
-     * @param {number} [pageSize] 
-     * @param {string} [memberId] 
-     * @param {number} [minSellingPrice] 
-     * @param {number} [maxSellingPrice] 
-     * @param {Array<FashionItemStatus>} [status] 
-     * @param {Array<FashionItemType>} [types] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof FashionItemApi
-     */
-    public apiFashionitemsVariationIdIndividualItemsGet(variationId: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, memberId?: string, minSellingPrice?: number, maxSellingPrice?: number, status?: Array<FashionItemStatus>, types?: Array<FashionItemType>, options?: RawAxiosRequestConfig) {
-        return FashionItemApiFp(this.configuration).apiFashionitemsVariationIdIndividualItemsGet(variationId, searchItemCode, pageNumber, pageSize, memberId, minSellingPrice, maxSellingPrice, status, types, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {string} variationId 
-     * @param {Array<CreateIndividualItemRequest>} [createIndividualItemRequest] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof FashionItemApi
-     */
-    public apiFashionitemsVariationIdIndividualItemsPost(variationId: string, createIndividualItemRequest?: Array<CreateIndividualItemRequest>, options?: RawAxiosRequestConfig) {
-        return FashionItemApiFp(this.configuration).apiFashionitemsVariationIdIndividualItemsPost(variationId, createIndividualItemRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

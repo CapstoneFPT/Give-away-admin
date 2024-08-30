@@ -1,26 +1,41 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import React, {useState} from 'react';
+import {Link, useParams} from 'react-router-dom';
 import { KTCard, KTCardBody, KTIcon } from "../../../_metronic/helpers";
 import { formatBalance } from "../utils/utils";
 import { useConsignSale, useConsignSaleLineItems } from './consignSaleHooks';
 import { Content } from "../../../_metronic/layout/components/content";
+import {getMockConsignLineItems} from "./consignLineItemGenerator.ts";
 
 export const ConsignDetail: React.FC = () => {
     const { consignSaleId } = useParams<{ consignSaleId: string }>();
     const { data: consignSaleResponse, isLoading: isLoadingSale, error: saleError } = useConsignSale(consignSaleId!);
-    const { data: lineItemsResponse, isLoading: isLoadingItems, error: itemsError } = useConsignSaleLineItems(consignSaleId!);
+    // const { data: lineItemsResponse, isLoading: isLoadingItems, error: itemsError } = useConsignSaleLineItems(consignSaleId!);
+    const [comment, setComment] = useState<string>('');
 
-    if (isLoadingSale || isLoadingItems) {
-        return <div>Loading...</div>;
-    }
+    const lineItemsResponse = getMockConsignLineItems();
 
-    if (saleError || itemsError) {
-        return <div>Error: {(saleError as Error)?.message || (itemsError as Error)?.message}</div>;
-    }
+    // if (isLoadingSale || isLoadingItems) {
+    //     return <div>Loading...</div>;
+    // }
+    //
+    // if (saleError || itemsError) {
+    //     return <div>Error: {(saleError as Error)?.message || (itemsError as Error)?.message}</div>;
+    // }
 
     if (!consignSaleResponse) {
         return <div>No consignment data found.</div>;
     }
+
+    const handleApprove = () => {
+        // Implement approval logic here
+        console.log('Approved with comment:', comment);
+    };
+
+    const handleReject = () => {
+        // Implement rejection logic here
+        console.log('Rejected with comment:', comment);
+    };
+
 
     return (
         <Content>
@@ -133,6 +148,43 @@ export const ConsignDetail: React.FC = () => {
 
             <KTCard className="mb-5 mb-xl-8">
                 <KTCardBody>
+                    <h3 className='fs-2 fw-bold mb-5'>Consignment Approval</h3>
+                    <div className='row mb-5'>
+                        <div className='col-12'>
+                            <label htmlFor="approvalComment" className="form-label">Comment</label>
+                            <textarea
+                                id="approvalComment"
+                                className="form-control"
+                                rows={3}
+                                value={comment}
+                                onChange={(e) => setComment(e.target.value)}
+                                placeholder="Enter your comment here..."
+                            ></textarea>
+                        </div>
+                    </div>
+                    <div className='row'>
+                        <div className='col-12'>
+                            <button
+                                className='btn btn-success me-3'
+                                onClick={handleApprove}
+                            >
+                                <KTIcon iconName='check' className='fs-2 me-2'/>
+                                Approve
+                            </button>
+                            <button
+                                className='btn btn-danger'
+                                onClick={handleReject}
+                            >
+                                <KTIcon iconName='cross' className='fs-2 me-2'/>
+                                Reject
+                            </button>
+                        </div>
+                    </div>
+                </KTCardBody>
+            </KTCard>
+
+            <KTCard className="mb-5 mb-xl-8">
+                <KTCardBody>
                     <h3 className='fs-2 fw-bold mb-5'>Financial Details</h3>
                     <div className='d-flex flex-wrap'>
                         <div className='border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3'>
@@ -176,6 +228,7 @@ export const ConsignDetail: React.FC = () => {
                                 <th>Deal Price</th>
                                 <th>Confirmed Price</th>
                                 <th>Note</th>
+                                <th>Actions</th>
                             </tr>
                             </thead>
                             <tbody className='fw-semibold text-gray-600'>
@@ -190,6 +243,15 @@ export const ConsignDetail: React.FC = () => {
                                     <td>{formatBalance(item.dealPrice || 0)}</td>
                                     <td>{item.confirmedPrice ? formatBalance(item.confirmedPrice) : 'N/A'}</td>
                                     <td>{item.note || 'N/A'}</td>
+                                    <td>
+                                        <Link
+                                            to={`/consignment/${consignSaleId}/line-item/${item.consignSaleLineItemId}`}
+                                            className="btn btn-sm btn-light-primary"
+                                        >
+                                            <KTIcon iconName='eye' className='fs-2'/>
+                                            Review
+                                        </Link>
+                                    </td>
                                 </tr>
                             ))}
                             </tbody>

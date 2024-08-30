@@ -1,4 +1,4 @@
-import { FC, lazy, Suspense } from "react";
+import React, { FC, lazy, Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { MasterLayout } from "../../_metronic/layout/MasterLayout";
 import TopBarProgress from "react-topbar-progress-indicator";
@@ -13,6 +13,7 @@ import OrderPage from "../pages/order/OrderPage.tsx";
 import RefundPage from "../pages/refund/RefundPage.tsx";
 import OrderDetail from "../pages/order/OrderDetail.tsx";
 import {ConsignDetail} from "../pages/consign/ConsignDetail.tsx";
+import ConsignLineItemReview from "../pages/consign/ConsignLineItemReview.tsx";
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
@@ -82,6 +83,7 @@ const PrivateRoutes = () => {
             />
           }
         />
+          <Route path="/consignment/:consignSaleId/line-item/:lineItemId" element={<ConsignLineItemReview />} />
           <Route
               path="consignment/:consignSaleId"
               element={
