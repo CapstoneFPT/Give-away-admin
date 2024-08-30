@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FC } from "react";
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import { PrivateRoutes } from "./PrivateRoutes";
 import { ErrorsPage } from "../modules/errors/ErrorsPage";
-import {Logout, AuthPage, useAuth, getAuth} from "../modules/auth";
+import { Logout, AuthPage, useAuth, getAuth } from "../modules/auth";
 import { App } from "../App";
 import ProtectedRoute from "./ProtectedRoutes";
 import UsersPage from "../modules/apps/user-management/UsersPage.tsx"; // Import the ProtectedRoute component
@@ -10,8 +11,6 @@ const { BASE_URL } = import.meta.env;
 
 const AppRoutes: FC = () => {
   const { currentUser } = useAuth(); // Get the current user
-
-
 
   return (
     <BrowserRouter basename={BASE_URL}>
@@ -31,7 +30,7 @@ const AppRoutes: FC = () => {
                 path="/admin-dashboard"
                 element={
                   <ProtectedRoute roles={["Admin"]}>
-                      <UsersPage/>
+                    <UsersPage />
                   </ProtectedRoute>
                 }
               />
