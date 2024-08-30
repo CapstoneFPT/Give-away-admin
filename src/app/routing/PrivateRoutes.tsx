@@ -12,6 +12,7 @@ import ProtectedRoute from "./ProtectedRoutes.tsx";
 import OrderPage from "../pages/order/OrderPage.tsx";
 import RefundPage from "../pages/refund/RefundPage.tsx";
 import OrderDetail from "../pages/order/OrderDetail.tsx";
+import {ConsignDetail} from "../pages/consign/ConsignDetail.tsx";
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
@@ -81,6 +82,19 @@ const PrivateRoutes = () => {
             />
           }
         />
+          <Route
+              path="consignment/:consignSaleId"
+              element={
+                  <ProtectedRoute
+                      roles={["Staff"]}
+                      children={
+                          <SuspensedView>
+                              <ConsignDetail />
+                          </SuspensedView>
+                      }
+                  />
+              }
+          />
 
         {/* Lazy Modules */}
         <Route

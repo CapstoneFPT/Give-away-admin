@@ -1790,6 +1790,238 @@ export interface ConsignSale {
 /**
  * 
  * @export
+ * @interface ConsignSaleDetailedResponse
+ */
+export interface ConsignSaleDetailedResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof ConsignSaleDetailedResponse
+     */
+    'consignSaleId'?: string;
+    /**
+     * 
+     * @type {ConsignSaleType}
+     * @memberof ConsignSaleDetailedResponse
+     */
+    'type'?: ConsignSaleType;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConsignSaleDetailedResponse
+     */
+    'consignSaleCode'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConsignSaleDetailedResponse
+     */
+    'createdDate'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConsignSaleDetailedResponse
+     */
+    'startDate'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConsignSaleDetailedResponse
+     */
+    'endDate'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConsignSaleDetailedResponse
+     */
+    'shopId'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConsignSaleDetailedResponse
+     */
+    'memberId'?: string | null;
+    /**
+     * 
+     * @type {ConsignSaleStatus}
+     * @memberof ConsignSaleDetailedResponse
+     */
+    'status'?: ConsignSaleStatus;
+    /**
+     * 
+     * @type {ConsignSaleMethod}
+     * @memberof ConsignSaleDetailedResponse
+     */
+    'consignSaleMethod'?: ConsignSaleMethod;
+    /**
+     * 
+     * @type {number}
+     * @memberof ConsignSaleDetailedResponse
+     */
+    'totalPrice'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ConsignSaleDetailedResponse
+     */
+    'soldPrice'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ConsignSaleDetailedResponse
+     */
+    'memberReceivedAmount'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConsignSaleDetailedResponse
+     */
+    'consginer'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConsignSaleDetailedResponse
+     */
+    'phone'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConsignSaleDetailedResponse
+     */
+    'address'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConsignSaleDetailedResponse
+     */
+    'email'?: string | null;
+}
+
+
+/**
+ * 
+ * @export
+ * @interface ConsignSaleDetailedResponsePaginationResponse
+ */
+export interface ConsignSaleDetailedResponsePaginationResponse {
+    /**
+     * 
+     * @type {number}
+     * @memberof ConsignSaleDetailedResponsePaginationResponse
+     */
+    'pageNumber'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ConsignSaleDetailedResponsePaginationResponse
+     */
+    'pageSize'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConsignSaleDetailedResponsePaginationResponse
+     */
+    'searchTerm'?: string | null;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof ConsignSaleDetailedResponsePaginationResponse
+     */
+    'filters'?: Array<string> | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConsignSaleDetailedResponsePaginationResponse
+     */
+    'orderBy'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof ConsignSaleDetailedResponsePaginationResponse
+     */
+    'totalCount'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ConsignSaleDetailedResponsePaginationResponse
+     */
+    'totalPages'?: number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ConsignSaleDetailedResponsePaginationResponse
+     */
+    'hasNext'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ConsignSaleDetailedResponsePaginationResponse
+     */
+    'hasPrevious'?: boolean;
+    /**
+     * 
+     * @type {Array<ConsignSaleDetailedResponse>}
+     * @memberof ConsignSaleDetailedResponsePaginationResponse
+     */
+    'items'?: Array<ConsignSaleDetailedResponse> | null;
+}
+/**
+ * 
+ * @export
+ * @interface ConsignSaleDetailedResponsePaginationResponseResult
+ */
+export interface ConsignSaleDetailedResponsePaginationResponseResult {
+    /**
+     * 
+     * @type {ConsignSaleDetailedResponsePaginationResponse}
+     * @memberof ConsignSaleDetailedResponsePaginationResponseResult
+     */
+    'data'?: ConsignSaleDetailedResponsePaginationResponse;
+    /**
+     * 
+     * @type {ResultStatus}
+     * @memberof ConsignSaleDetailedResponsePaginationResponseResult
+     */
+    'resultStatus'?: ResultStatus;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof ConsignSaleDetailedResponsePaginationResponseResult
+     */
+    'messages'?: Array<string> | null;
+}
+
+
+/**
+ * 
+ * @export
+ * @interface ConsignSaleDetailedResponseResult
+ */
+export interface ConsignSaleDetailedResponseResult {
+    /**
+     * 
+     * @type {ConsignSaleDetailedResponse}
+     * @memberof ConsignSaleDetailedResponseResult
+     */
+    'data'?: ConsignSaleDetailedResponse;
+    /**
+     * 
+     * @type {ResultStatus}
+     * @memberof ConsignSaleDetailedResponseResult
+     */
+    'resultStatus'?: ResultStatus;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof ConsignSaleDetailedResponseResult
+     */
+    'messages'?: Array<string> | null;
+}
+
+
+/**
+ * 
+ * @export
  * @interface ConsignSaleLineItem
  */
 export interface ConsignSaleLineItem {
@@ -2163,238 +2395,6 @@ export const ConsignSaleMethod = {
 } as const;
 
 export type ConsignSaleMethod = typeof ConsignSaleMethod[keyof typeof ConsignSaleMethod];
-
-
-/**
- * 
- * @export
- * @interface ConsignSaleResponse
- */
-export interface ConsignSaleResponse {
-    /**
-     * 
-     * @type {string}
-     * @memberof ConsignSaleResponse
-     */
-    'consignSaleId'?: string;
-    /**
-     * 
-     * @type {ConsignSaleType}
-     * @memberof ConsignSaleResponse
-     */
-    'type'?: ConsignSaleType;
-    /**
-     * 
-     * @type {string}
-     * @memberof ConsignSaleResponse
-     */
-    'consignSaleCode'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ConsignSaleResponse
-     */
-    'createdDate'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ConsignSaleResponse
-     */
-    'startDate'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ConsignSaleResponse
-     */
-    'endDate'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ConsignSaleResponse
-     */
-    'shopId'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ConsignSaleResponse
-     */
-    'memberId'?: string | null;
-    /**
-     * 
-     * @type {ConsignSaleStatus}
-     * @memberof ConsignSaleResponse
-     */
-    'status'?: ConsignSaleStatus;
-    /**
-     * 
-     * @type {ConsignSaleMethod}
-     * @memberof ConsignSaleResponse
-     */
-    'consignSaleMethod'?: ConsignSaleMethod;
-    /**
-     * 
-     * @type {number}
-     * @memberof ConsignSaleResponse
-     */
-    'totalPrice'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ConsignSaleResponse
-     */
-    'soldPrice'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ConsignSaleResponse
-     */
-    'memberReceivedAmount'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ConsignSaleResponse
-     */
-    'consginer'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ConsignSaleResponse
-     */
-    'phone'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ConsignSaleResponse
-     */
-    'address'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ConsignSaleResponse
-     */
-    'email'?: string | null;
-}
-
-
-/**
- * 
- * @export
- * @interface ConsignSaleResponsePaginationResponse
- */
-export interface ConsignSaleResponsePaginationResponse {
-    /**
-     * 
-     * @type {number}
-     * @memberof ConsignSaleResponsePaginationResponse
-     */
-    'pageNumber'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ConsignSaleResponsePaginationResponse
-     */
-    'pageSize'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ConsignSaleResponsePaginationResponse
-     */
-    'searchTerm'?: string | null;
-    /**
-     * 
-     * @type {Array<string>}
-     * @memberof ConsignSaleResponsePaginationResponse
-     */
-    'filters'?: Array<string> | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ConsignSaleResponsePaginationResponse
-     */
-    'orderBy'?: string | null;
-    /**
-     * 
-     * @type {number}
-     * @memberof ConsignSaleResponsePaginationResponse
-     */
-    'totalCount'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ConsignSaleResponsePaginationResponse
-     */
-    'totalPages'?: number;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ConsignSaleResponsePaginationResponse
-     */
-    'hasNext'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ConsignSaleResponsePaginationResponse
-     */
-    'hasPrevious'?: boolean;
-    /**
-     * 
-     * @type {Array<ConsignSaleResponse>}
-     * @memberof ConsignSaleResponsePaginationResponse
-     */
-    'items'?: Array<ConsignSaleResponse> | null;
-}
-/**
- * 
- * @export
- * @interface ConsignSaleResponsePaginationResponseResult
- */
-export interface ConsignSaleResponsePaginationResponseResult {
-    /**
-     * 
-     * @type {ConsignSaleResponsePaginationResponse}
-     * @memberof ConsignSaleResponsePaginationResponseResult
-     */
-    'data'?: ConsignSaleResponsePaginationResponse;
-    /**
-     * 
-     * @type {ResultStatus}
-     * @memberof ConsignSaleResponsePaginationResponseResult
-     */
-    'resultStatus'?: ResultStatus;
-    /**
-     * 
-     * @type {Array<string>}
-     * @memberof ConsignSaleResponsePaginationResponseResult
-     */
-    'messages'?: Array<string> | null;
-}
-
-
-/**
- * 
- * @export
- * @interface ConsignSaleResponseResult
- */
-export interface ConsignSaleResponseResult {
-    /**
-     * 
-     * @type {ConsignSaleResponse}
-     * @memberof ConsignSaleResponseResult
-     */
-    'data'?: ConsignSaleResponse;
-    /**
-     * 
-     * @type {ResultStatus}
-     * @memberof ConsignSaleResponseResult
-     */
-    'resultStatus'?: ResultStatus;
-    /**
-     * 
-     * @type {Array<string>}
-     * @memberof ConsignSaleResponseResult
-     */
-    'messages'?: Array<string> | null;
-}
 
 
 /**
@@ -11732,7 +11732,7 @@ export const AccountApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiAccountsAccountIdConsignsalesGet(accountId: string, pageNumber?: number, pageSize?: number, shopId?: string, consignSaleCode?: string, status?: ConsignSaleStatus, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConsignSaleResponsePaginationResponseResult>> {
+        async apiAccountsAccountIdConsignsalesGet(accountId: string, pageNumber?: number, pageSize?: number, shopId?: string, consignSaleCode?: string, status?: ConsignSaleStatus, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConsignSaleDetailedResponsePaginationResponseResult>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiAccountsAccountIdConsignsalesGet(accountId, pageNumber, pageSize, shopId, consignSaleCode, status, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['AccountApi.apiAccountsAccountIdConsignsalesGet']?.[localVarOperationServerIndex]?.url;
@@ -11745,7 +11745,7 @@ export const AccountApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiAccountsAccountIdConsignsalesPost(accountId: string, createConsignSaleRequest?: CreateConsignSaleRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConsignSaleResponseResult>> {
+        async apiAccountsAccountIdConsignsalesPost(accountId: string, createConsignSaleRequest?: CreateConsignSaleRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConsignSaleDetailedResponseResult>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiAccountsAccountIdConsignsalesPost(accountId, createConsignSaleRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['AccountApi.apiAccountsAccountIdConsignsalesPost']?.[localVarOperationServerIndex]?.url;
@@ -12028,7 +12028,7 @@ export const AccountApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiAccountsAccountIdConsignsalesGet(accountId: string, pageNumber?: number, pageSize?: number, shopId?: string, consignSaleCode?: string, status?: ConsignSaleStatus, options?: RawAxiosRequestConfig): AxiosPromise<ConsignSaleResponsePaginationResponseResult> {
+        apiAccountsAccountIdConsignsalesGet(accountId: string, pageNumber?: number, pageSize?: number, shopId?: string, consignSaleCode?: string, status?: ConsignSaleStatus, options?: RawAxiosRequestConfig): AxiosPromise<ConsignSaleDetailedResponsePaginationResponseResult> {
             return localVarFp.apiAccountsAccountIdConsignsalesGet(accountId, pageNumber, pageSize, shopId, consignSaleCode, status, options).then((request) => request(axios, basePath));
         },
         /**
@@ -12038,7 +12038,7 @@ export const AccountApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiAccountsAccountIdConsignsalesPost(accountId: string, createConsignSaleRequest?: CreateConsignSaleRequest, options?: RawAxiosRequestConfig): AxiosPromise<ConsignSaleResponseResult> {
+        apiAccountsAccountIdConsignsalesPost(accountId: string, createConsignSaleRequest?: CreateConsignSaleRequest, options?: RawAxiosRequestConfig): AxiosPromise<ConsignSaleDetailedResponseResult> {
             return localVarFp.apiAccountsAccountIdConsignsalesPost(accountId, createConsignSaleRequest, options).then((request) => request(axios, basePath));
         },
         /**
@@ -15995,7 +15995,7 @@ export const ConsignSaleApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiConsignsalesConsignSaleIdApprovalPut(consignSaleId: string, approveConsignSaleRequest?: ApproveConsignSaleRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConsignSaleResponseResult>> {
+        async apiConsignsalesConsignSaleIdApprovalPut(consignSaleId: string, approveConsignSaleRequest?: ApproveConsignSaleRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConsignSaleDetailedResponseResult>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiConsignsalesConsignSaleIdApprovalPut(consignSaleId, approveConsignSaleRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['ConsignSaleApi.apiConsignsalesConsignSaleIdApprovalPut']?.[localVarOperationServerIndex]?.url;
@@ -16019,7 +16019,7 @@ export const ConsignSaleApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiConsignsalesConsignSaleIdGet(consignSaleId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConsignSaleResponse>> {
+        async apiConsignsalesConsignSaleIdGet(consignSaleId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConsignSaleDetailedResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiConsignsalesConsignSaleIdGet(consignSaleId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['ConsignSaleApi.apiConsignsalesConsignSaleIdGet']?.[localVarOperationServerIndex]?.url;
@@ -16102,7 +16102,7 @@ export const ConsignSaleApiFactory = function (configuration?: Configuration, ba
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiConsignsalesConsignSaleIdApprovalPut(consignSaleId: string, approveConsignSaleRequest?: ApproveConsignSaleRequest, options?: RawAxiosRequestConfig): AxiosPromise<ConsignSaleResponseResult> {
+        apiConsignsalesConsignSaleIdApprovalPut(consignSaleId: string, approveConsignSaleRequest?: ApproveConsignSaleRequest, options?: RawAxiosRequestConfig): AxiosPromise<ConsignSaleDetailedResponseResult> {
             return localVarFp.apiConsignsalesConsignSaleIdApprovalPut(consignSaleId, approveConsignSaleRequest, options).then((request) => request(axios, basePath));
         },
         /**
@@ -16120,7 +16120,7 @@ export const ConsignSaleApiFactory = function (configuration?: Configuration, ba
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiConsignsalesConsignSaleIdGet(consignSaleId: string, options?: RawAxiosRequestConfig): AxiosPromise<ConsignSaleResponse> {
+        apiConsignsalesConsignSaleIdGet(consignSaleId: string, options?: RawAxiosRequestConfig): AxiosPromise<ConsignSaleDetailedResponse> {
             return localVarFp.apiConsignsalesConsignSaleIdGet(consignSaleId, options).then((request) => request(axios, basePath));
         },
         /**
@@ -20527,7 +20527,7 @@ export const ShopApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiShopsShopIdConsignsalesPost(shopId: string, createConsignSaleByShopRequest?: CreateConsignSaleByShopRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConsignSaleResponseResult>> {
+        async apiShopsShopIdConsignsalesPost(shopId: string, createConsignSaleByShopRequest?: CreateConsignSaleByShopRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConsignSaleDetailedResponseResult>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiShopsShopIdConsignsalesPost(shopId, createConsignSaleByShopRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['ShopApi.apiShopsShopIdConsignsalesPost']?.[localVarOperationServerIndex]?.url;
@@ -20689,7 +20689,7 @@ export const ShopApiFactory = function (configuration?: Configuration, basePath?
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiShopsShopIdConsignsalesPost(shopId: string, createConsignSaleByShopRequest?: CreateConsignSaleByShopRequest, options?: RawAxiosRequestConfig): AxiosPromise<ConsignSaleResponseResult> {
+        apiShopsShopIdConsignsalesPost(shopId: string, createConsignSaleByShopRequest?: CreateConsignSaleByShopRequest, options?: RawAxiosRequestConfig): AxiosPromise<ConsignSaleDetailedResponseResult> {
             return localVarFp.apiShopsShopIdConsignsalesPost(shopId, createConsignSaleByShopRequest, options).then((request) => request(axios, basePath));
         },
         /**
