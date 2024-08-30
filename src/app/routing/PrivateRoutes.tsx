@@ -1,4 +1,4 @@
-import { FC, lazy, Suspense } from "react";
+import React, { FC, lazy, Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { MasterLayout } from "../../_metronic/layout/MasterLayout";
 import TopBarProgress from "react-topbar-progress-indicator";
@@ -11,8 +11,10 @@ import Auction from "../pages/auction/Auction";
 import ProtectedRoute from "./ProtectedRoutes.tsx";
 import OrderPage from "../pages/order/OrderPage.tsx";
 import RefundPage from "../pages/refund/RefundPage.tsx";
-import ConsignDetail from "../pages/consign/ConsignDetail.tsx";
-import FashionItemsAdminPage from "../admin/product/FashionItemsAdmin.tsx";
+import OrderDetail from "../pages/order/OrderDetail.tsx";
+import { ConsignDetail } from "../pages/consign/ConsignDetail.tsx";
+import ConsignLineItemReview from "../pages/consign/ConsignLineItemReview.tsx";
+
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
   const WizardsPage = lazy(() => import("../modules/wizards/WizardsPage"));
@@ -88,6 +90,37 @@ const PrivateRoutes = () => {
               children={
                 <SuspensedView>
                   <ConsignmentPage />
+                </SuspensedView>
+              }
+            />
+          }
+        />
+
+        <Route
+          path="order-detail/:orderId"
+          element={
+            <ProtectedRoute
+              roles={["Staff"]}
+              children={
+                <SuspensedView>
+                  <OrderDetail />
+                </SuspensedView>
+              }
+            />
+          }
+        />
+        <Route
+          path="/consignment/:consignSaleId/line-item/:lineItemId"
+          element={<ConsignLineItemReview />}
+        />
+        <Route
+          path="consignment/:consignSaleId"
+          element={
+            <ProtectedRoute
+              roles={["Staff"]}
+              children={
+                <SuspensedView>
+                  <ConsignDetail />
                 </SuspensedView>
               }
             />
