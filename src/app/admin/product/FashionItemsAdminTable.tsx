@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { KTIcon, toAbsoluteUrl } from "../../../_metronic/helpers";
-import { FashionItemApi, MasterItemListResponse } from "../../../api";
+import {
+  FashionItemApi,
+  MasterItemApi,
+  MasterItemListResponse,
+} from "../../../api";
 import { useQuery } from "react-query";
 import AddFashionItem from "./AddFashionItem";
 
@@ -14,7 +18,7 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
-  const pageSize = 10; // Items per page
+  const pageSize = 10;
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearchTerm(searchTerm), 200);
@@ -24,9 +28,9 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
   const result = useQuery(
     ["FashionItems", debouncedSearchTerm, currentPage, pageSize],
     async () => {
-      const fashionItemApi = new FashionItemApi();
-      const response = await fashionItemApi.apiFashionitemsMasterItemsGet(
-        debouncedSearchTerm,
+      const fashionItemApi = new MasterItemApi();
+      const response = await fashionItemApi.apiMasterItemsGet(
+        searchTerm,
         null!,
         currentPage,
         pageSize
