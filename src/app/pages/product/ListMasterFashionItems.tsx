@@ -1,41 +1,59 @@
 import React, { useEffect, useState } from "react";
-import { KTIcon, toAbsoluteUrl } from "../../../_metronic/helpers";
-import {FashionItemApi, MasterItemApi, MasterItemListResponse} from "../../../api";
+import { KTIcon } from "../../../_metronic/helpers";
+import { FashionItemApi, FashionItemList } from "../../../api";
 import { useQuery } from "react-query";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { Button } from "react-bootstrap";
 
 type Props = {
   className: string;
 };
 
-const FashionItemsTable: React.FC<Props> = ({ className }) => {
+const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
+  const { masterItemId } = useParams<{ masterItemId: string }>();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const pageSize = 10; // Items per page
-
+console.log(masterItemId)
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearchTerm(searchTerm), 200);
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
   const result = useQuery(
+    
     ["FashionItems", debouncedSearchTerm, currentPage, pageSize],
     async () => {
-      const fashionItemApi = new MasterItemApi();
-      const response = await fashionItemApi.apiMasterItemsGet(
-        debouncedSearchTerm,
-        null!,
-        currentPage,
-        pageSize
+      const fashionItemApi = new FashionItemApi();
+      const response = await fashionItemApi.apiFashionitemsGet(
+        null!,               // itemCode
+        null!,               // memberId
+        null!,               // gender
+        null!,               // color
+        null!,               // size
+        null!,               // condition
+        null!,               // minPrice
+        null!,               // maxPrice
+        null!,               // status
+        null!,               // type
+        null!,               // sortBy
+        false,              // sortDescending
+        currentPage,        // pageNumber
+        pageSize,           // pageSize
+        debouncedSearchTerm, // name
+        null!,               // categoryId
+        null!,               // shopId
+        masterItemId,      // masterItemId
+        null!,               // masterItemCode
       );
-      console.log('hihi',response)
       return response.data;
+      console.log('hihi', response)
+
     },
+    
     { refetchOnWindowFocus: false, keepPreviousData: true }
   );
-  
-
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -55,6 +73,9 @@ const FashionItemsTable: React.FC<Props> = ({ className }) => {
   if (result.error)
     return <div>An error occurred: {(result.error as Error).message}</div>;
 
+  const totalItems = result.data?.totalCount || 0;
+  const totalPages = result.data?.totalPages || 1;
+
   return (
     <div className={`card ${className}`}>
       <div className="card-header border-0 pt-5">
@@ -63,7 +84,7 @@ const FashionItemsTable: React.FC<Props> = ({ className }) => {
             Master Fashion Items List
           </span>
           <span className="text-muted mt-1 fw-semibold fs-7">
-            Over {result.data?.totalCount} products
+            Over {totalItems} products
           </span>
         </h3>
         <div className="card-toolbar">
@@ -90,15 +111,15 @@ const FashionItemsTable: React.FC<Props> = ({ className }) => {
                 <th className="ps-4 min-w-125px rounded-start">Item Code</th>
                 <th className="min-w-200px">Product</th>
                 <th className="min-w-200px">Description</th>
-                <th className="min-w-125px">Stock Count</th>
-                <th className="min-w-150px">Created Date</th>
+                <th className="min-w-125px">Selling Price</th>
+                <th className="min-w-125px">Condition</th>
                 <th className="min-w-150px">Brand</th>
                 <th className="min-w-200px text-end rounded-end"></th>
               </tr>
             </thead>
             <tbody>
-              {result.data?.items!.map((product: MasterItemListResponse) => (
-                <tr key={product.masterItemId}>
+              {result.data?.items?.map((product: FashionItemList) => (
+                <tr key={product.itemId}>
                   <td>
                     <a
                       href="#"
@@ -111,12 +132,7 @@ const FashionItemsTable: React.FC<Props> = ({ className }) => {
                     <div className="d-flex align-items-center">
                       <div className="symbol symbol-50px me-5">
                         <img
-                          src={
-                            product.images !== undefined ? product.images! [0]:
-                            toAbsoluteUrl(
-                              "media/stock/600x400/img-placeholder.jpg"
-                            )
-                          }
+                          src={product.image!}
                           alt={product.name || "N/A"}
                         />
                       </div>
@@ -135,17 +151,17 @@ const FashionItemsTable: React.FC<Props> = ({ className }) => {
                   </td>
                   <td>
                     <span className="text-muted fw-semibold text-muted d-block fs-7">
-                      {product.description}
+                      {product.note || "N/A"}
                     </span>
                   </td>
                   <td>
                     <span className="text-muted fw-semibold text-muted d-block fs-7">
-                      <strong>{product.stockCount}</strong>
+                      {product.sellingPrice ? product.sellingPrice.toLocaleString() : "N/A"} VND
                     </span>
                   </td>
                   <td>
                     <span className="text-muted fw-semibold text-muted d-block fs-7">
-                      {new Date(product.createdDate!).toLocaleDateString()}
+                      {product.condition}
                     </span>
                   </td>
                   <td>
@@ -154,12 +170,13 @@ const FashionItemsTable: React.FC<Props> = ({ className }) => {
                     </span>
                   </td>
                   <td className="text-end">
-                  
-                    <Link to={`/product/product-list/list-fashion/${product.masterItemId}`}
-                                          className="btn btn-success hover-rotate-end">
-                                        <KTIcon iconName="pencil" className="fs-3"/>
-                                        Go to list fashion
-                                    </Link>
+                    <Button
+                      
+                      className="btn btn-success hover-rotate-end"
+                    >
+                      <KTIcon iconName="pencil" className="fs-3" />
+                    Details
+                    </Button>
                   </td>
                 </tr>
               ))}
@@ -170,8 +187,7 @@ const FashionItemsTable: React.FC<Props> = ({ className }) => {
       <div className="card-footer d-flex justify-content-between align-items-center">
         <div>
           Showing {(currentPage - 1) * pageSize + 1} to{" "}
-          {Math.min(currentPage * pageSize, result!.data!.totalCount!)} of{" "}
-          {result.data?.totalCount} entries
+          {Math.min(currentPage * pageSize, totalItems)} of {totalItems} entries
         </div>
         <div>
           <button
@@ -181,10 +197,7 @@ const FashionItemsTable: React.FC<Props> = ({ className }) => {
           >
             Previous
           </button>
-          {Array.from(
-            { length: result!.data!.totalPages! },
-            (_, i) => i + 1
-          ).map((page) => (
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <button
               key={page}
               className={`btn btn-sm ${
@@ -198,15 +211,14 @@ const FashionItemsTable: React.FC<Props> = ({ className }) => {
           <button
             className="btn btn-sm btn-light-primary"
             onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === result!.data!.totalPages!}
+            disabled={currentPage === totalPages}
           >
             Next
           </button>
         </div>
       </div>
-      {/* end::Footer */}
     </div>
   );
 };
 
-export default FashionItemsTable;
+export default ListMasterFashionItems;
