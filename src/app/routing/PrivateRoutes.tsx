@@ -16,6 +16,8 @@ import { ConsignDetail } from "../pages/consign/ConsignDetail.tsx";
 import ConsignLineItemReview from "../pages/consign/ConsignLineItemReview.tsx";
 import ProductCreationFromConsignmentForm from "../pages/consign/ProductCreationFromConsignmentForm.tsx";
 import FashionItemsAdminPage from "../admin/product/master/MasterFashionItemsAdmin.tsx";
+import ListMasterFashionItems from "../pages/product/ListMasterFashionItems.tsx";
+
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
   const WizardsPage = lazy(() => import("../modules/wizards/WizardsPage"));
@@ -105,6 +107,19 @@ const PrivateRoutes = () => {
               children={
                 <SuspensedView>
                   <OrderDetail />
+                </SuspensedView>
+              }
+            />
+          }
+        />
+        <Route
+          path="/product/product-list/list-fashion/:masterItemId"
+          element={
+            <ProtectedRoute
+              roles={["Staff"]}
+              children={
+                <SuspensedView>
+                  <ListMasterFashionItems className="mb-5 mb-xl-8" />
                 </SuspensedView>
               }
             />
