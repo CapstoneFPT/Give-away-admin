@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { KTIcon, toAbsoluteUrl } from "../../../_metronic/helpers";
+import { KTIcon, toAbsoluteUrl } from "../../../../_metronic/helpers";
 import {
   FashionItemApi,
   MasterItemApi,
   MasterItemListResponse,
-} from "../../../api";
+} from "../../../../api";
 import { useQuery } from "react-query";
-import AddFashionItem from "./AddFashionItem";
+import AddMasterItem from "./AddMasterFashionItem";
 
 type Props = {
   className: string;
 };
 
-const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
+const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
@@ -241,7 +241,7 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
           </button>
         </div>
       </div>
-      <AddFashionItem
+      <AddMasterItem
         show={showAddModal}
         handleClose={handleCloseAddModal}
         handleSave={handleItemCreated}
@@ -251,4 +251,4 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
   );
 };
 
-export default FashionItemsAdminTable;
+export default MasterFashionItemsAdminTable;

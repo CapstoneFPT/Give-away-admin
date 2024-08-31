@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useCallback } from "react";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "../../../firebaseconfig"; // Adjust the import path as necessary
-import { CategoryApi, MasterItemApi, ShopApi } from "../../../api";
+import { storage } from "../../../../firebaseconfig"; // Adjust the import path as necessary
+import { CategoryApi, MasterItemApi, ShopApi } from "../../../../api";
 import { useDropzone } from "react-dropzone";
-import { KTCard, KTCardBody, KTIcon } from "../../../_metronic/helpers";
+import { KTCard, KTCardBody, KTIcon } from "../../../../_metronic/helpers";
 interface AddFashionItemProps {
   show: boolean;
   handleClose: () => void;
@@ -34,7 +34,7 @@ interface FashionItem {
 }
 type GenderType = "Male" | "Female";
 
-const AddFashionItem: React.FC<AddFashionItemProps> = ({
+const AddMasterItem: React.FC<AddFashionItemProps> = ({
   show,
   handleClose,
   handleSave,
@@ -246,7 +246,16 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
       <div className="modal-dialog" role="document">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">Add Fashion Item</h5>
+            <h3
+              style={{
+                fontSize: 40,
+                display: "flex",
+                justifyContent: "center",
+              }}
+              className="modal-title"
+            >
+              Add Fashion Item
+            </h3>
             <button
               type="button"
               className="close"
@@ -433,4 +442,4 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
   );
 };
 
-export default AddFashionItem;
+export default AddMasterItem;

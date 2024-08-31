@@ -1,8 +1,8 @@
-import FashionItemsAdminTable from "./FashionItemsAdminTable";
+import FashionItemsAdminTable from "./MasterFashionItemsAdminTable";
 
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 
-const FashionItemsAdminPage = () => {
+const MasterFashionItemsAdminPage = () => {
   return (
     <>
       <Routes>
@@ -23,4 +23,4 @@ const FashionItemsAdminPage = () => {
   );
 };
 
-export default FashionItemsAdminPage;
+export default MasterFashionItemsAdminPage;
