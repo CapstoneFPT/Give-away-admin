@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { KTIcon } from "../../../_metronic/helpers";
 import { FashionItemApi, FashionItemList } from "../../../api";
 import { useQuery } from "react-query";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Button } from "react-bootstrap";
 
 type Props = {
@@ -15,43 +15,41 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const pageSize = 10; // Items per page
-console.log(masterItemId)
+  console.log(masterItemId);
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearchTerm(searchTerm), 200);
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
   const result = useQuery(
-    
     ["FashionItems", debouncedSearchTerm, currentPage, pageSize],
     async () => {
       const fashionItemApi = new FashionItemApi();
       const response = await fashionItemApi.apiFashionitemsGet(
-        null!,               // itemCode
-        null!,               // memberId
-        null!,               // gender
-        null!,               // color
-        null!,               // size
-        null!,               // condition
-        null!,               // minPrice
-        null!,               // maxPrice
-        null!,               // status
-        null!,               // type
-        null!,               // sortBy
-        false,              // sortDescending
-        currentPage,        // pageNumber
-        pageSize,           // pageSize
+        null!, // itemCode
+        null!, // memberId
+        null!, // gender
+        null!, // color
+        null!, // size
+        null!, // condition
+        null!, // minPrice
+        null!, // maxPrice
+        null!, // status
+        null!, // type
+        null!, // sortBy
+        false, // sortDescending
+        currentPage, // pageNumber
+        pageSize, // pageSize
         debouncedSearchTerm, // name
-        null!,               // categoryId
-        null!,               // shopId
-        masterItemId,      // masterItemId
-        null!,               // masterItemCode
+        null!, // categoryId
+        null!, // shopId
+        masterItemId, // masterItemId
+        null! // masterItemCode
       );
       return response.data;
-      console.log('hihi', response)
-
+      console.log("hihi", response);
     },
-    
+
     { refetchOnWindowFocus: false, keepPreviousData: true }
   );
 
@@ -131,10 +129,7 @@ console.log(masterItemId)
                   <td>
                     <div className="d-flex align-items-center">
                       <div className="symbol symbol-50px me-5">
-                        <img
-                          src={product.image!}
-                          alt={product.name || "N/A"}
-                        />
+                        <img src={product.image!} alt={product.name || "N/A"} />
                       </div>
                       <div className="d-flex justify-content-start flex-column">
                         <a
@@ -156,7 +151,10 @@ console.log(masterItemId)
                   </td>
                   <td>
                     <span className="text-muted fw-semibold text-muted d-block fs-7">
-                      {product.sellingPrice ? product.sellingPrice.toLocaleString() : "N/A"} VND
+                      {product.sellingPrice
+                        ? product.sellingPrice.toLocaleString()
+                        : "N/A"}{" "}
+                      VND
                     </span>
                   </td>
                   <td>
@@ -170,12 +168,9 @@ console.log(masterItemId)
                     </span>
                   </td>
                   <td className="text-end">
-                    <Button
-                      
-                      className="btn btn-success hover-rotate-end"
-                    >
+                    <Button className="btn btn-success hover-rotate-end">
                       <KTIcon iconName="pencil" className="fs-3" />
-                    Details
+                      Details
                     </Button>
                   </td>
                 </tr>

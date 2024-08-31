@@ -8,7 +8,7 @@ import {
 } from "../../../../api";
 import { useQuery } from "react-query";
 import AddMasterItem from "./AddMasterFashionItem";
-
+import { Link } from "react-router-dom";
 type Props = {
   className: string;
 };
@@ -91,7 +91,7 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
             onClick={handleShowAddModal}
           >
             <KTIcon iconName="plus" className="fs-2" />
-            New Master Product
+            Add new master item
           </button>
         </div>
       </div>
@@ -132,7 +132,11 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                       <div className="symbol symbol-50px me-5">
                         <img
                           src={
-                            product.images![0] ||
+                            (product.images && product.images.length > 0
+                              ? product.images[0]
+                              : toAbsoluteUrl(
+                                  "media/stock/600x400/img-placeholder.jpg"
+                                )) ??
                             toAbsoluteUrl(
                               "media/stock/600x400/img-placeholder.jpg"
                             )
@@ -174,24 +178,12 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                     </span>
                   </td>
                   <td className="text-end">
-                    <a
-                      href="#"
-                      className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
+                    <Link
+                      to={`/product-admin/product-list/list-fashion/${product.masterItemId}`}
+                      className="btn btn-success hover-rotate-end"
                     >
-                      <KTIcon iconName="switch" className="fs-3" />
-                    </a>
-                    <a
-                      href="#"
-                      className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
-                    >
-                      <KTIcon iconName="pencil" className="fs-3" />
-                    </a>
-                    <a
-                      href="#"
-                      className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm"
-                    >
-                      <KTIcon iconName="trash" className="fs-3" />
-                    </a>
+                      Go to fashion item list
+                    </Link>
                   </td>
                 </tr>
               ))}
