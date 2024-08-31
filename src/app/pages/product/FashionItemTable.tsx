@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { KTIcon, toAbsoluteUrl } from "../../../_metronic/helpers";
-import { FashionItemApi, MasterItemListResponse } from "../../../api";
+import {FashionItemApi, MasterItemApi, MasterItemListResponse} from "../../../api";
 import { useQuery } from "react-query";
 
 type Props = {
@@ -21,8 +21,8 @@ const FashionItemsTable: React.FC<Props> = ({ className }) => {
   const result = useQuery(
     ["FashionItems", debouncedSearchTerm, currentPage, pageSize],
     async () => {
-      const fashionItemApi = new FashionItemApi();
-      const response = await fashionItemApi.apiFashionitemsMasterItemsGet(
+      const fashionItemApi = new MasterItemApi();
+      const response = await fashionItemApi.apiMasterItemsGet(
         debouncedSearchTerm,
         null!,
         currentPage,
