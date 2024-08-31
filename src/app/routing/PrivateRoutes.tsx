@@ -15,7 +15,7 @@ import OrderDetail from "../pages/order/OrderDetail.tsx";
 import { ConsignDetail } from "../pages/consign/ConsignDetail.tsx";
 import ConsignLineItemReview from "../pages/consign/ConsignLineItemReview.tsx";
 import ProductCreationFromConsignmentForm from "../pages/consign/ProductCreationFromConsignmentForm.tsx";
-
+import FashionItemsAdminPage from "../admin/product/FashionItemsAdmin.tsx";
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
   const WizardsPage = lazy(() => import("../modules/wizards/WizardsPage"));

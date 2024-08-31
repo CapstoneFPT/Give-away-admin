@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { KTCard, KTCardBody, KTIcon } from "../../../_metronic/helpers";

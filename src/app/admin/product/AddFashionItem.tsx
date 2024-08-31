@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../firebaseconfig"; // Adjust the import path as necessary
+import { KTIcon } from "../../../_metronic/helpers"; // Adjust the import path as necessary
 
 interface AddFashionItemProps {
   show: boolean;
@@ -51,31 +52,28 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
     }));
   };
 
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const files = Array.from(e.target.files);
-      const newImages: string[] = [];
-      const newPreviews: string[] = [];
+  const handleImageChange = async (files: File[]) => {
+    const newImages: string[] = [];
+    const newPreviews: string[] = [];
 
-      for (const file of files) {
-        // Create a preview URL
-        const previewUrl = URL.createObjectURL(file);
-        newPreviews.push(previewUrl);
+    for (const file of files) {
+      // Create a preview URL
+      const previewUrl = URL.createObjectURL(file);
+      newPreviews.push(previewUrl);
 
-        // Upload to Firebase Storage
-        const storageRef = ref(storage, `images/${file.name}`);
-        await uploadBytes(storageRef, file);
-        const imageUrl = await getDownloadURL(storageRef);
-        newImages.push(imageUrl);
-      }
-
-      setFormData((prevData) => ({
-        ...prevData,
-        images: [...prevData.images, ...newImages],
-      }));
-      setPreviewImages((prevPreviews) => [...prevPreviews, ...newPreviews]);
-      setImageFiles((prevFiles) => [...prevFiles, ...files]);
+      // Upload to Firebase Storage
+      const storageRef = ref(storage, `images/${file.name}`);
+      await uploadBytes(storageRef, file);
+      const imageUrl = await getDownloadURL(storageRef);
+      newImages.push(imageUrl);
     }
+
+    setFormData((prevData) => ({
+      ...prevData,
+      images: [...prevData.images, ...newImages],
+    }));
+    setPreviewImages((prevPreviews) => [...prevPreviews, ...newPreviews]);
+    setImageFiles((prevFiles) => [...prevFiles, ...files]);
   };
 
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -100,6 +98,21 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
       ...prevData,
       images: prevData.images.filter((_, i) => i !== index),
     }));
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (e.dataTransfer.files.length > 0) {
+      handleImageChange(Array.from(e.dataTransfer.files));
+    }
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      handleImageChange(Array.from(e.target.files));
+    }
   };
 
   const handleSubmit = () => {
@@ -242,46 +255,71 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
                   }
                 />
               </div>
-              <div className="form-group">
-                <label
-                  htmlFor="images"
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                >
-                  Images
-                </label>
-                <div className="flex items-center space-x-4 mb-4">
-                  <button
-                    type="button"
-                    className="bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700"
-                    onClick={() => document.getElementById("images")?.click()}
-                  >
-                    Add Image
-                  </button>
-                  <input
-                    type="file"
-                    className="hidden"
-                    id="images"
-                    multiple
-                    onChange={handleImageChange}
-                  />
+
+              {/* Media Dropzone Section */}
+              <div className="card card-flush py-4">
+                <div className="card-header">
+                  <div className="card-title">
+                    <h2>Media</h2>
+                  </div>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {previewImages.map((url, index) => (
-                    <div key={index} className="relative w-24 h-24">
-                      <img
-                        src={url}
-                        alt={`preview-${index}`}
-                        className="w-full h-full object-cover border border-gray-300 rounded"
+                <div className="card-body pt-0">
+                  <div className="fv-row mb-2">
+                    <div
+                      className="dropzone dz-clickable"
+                      id="id_ecommerce_add_product_product_media"
+                      onDrop={handleDrop}
+                      onDragOver={(e) => e.preventDefault()}
+                    >
+                      <div className="dz-message needsclick">
+                        <KTIcon
+                          iconName="file-up"
+                          className="text-primary fs-3x"
+                        />
+                        <div className="ms-4">
+                          <h3 className="fs-5 fw-bold text-gray-900 mb-1">
+                            Drop files here or click to upload.
+                          </h3>
+                          <span className="fs-7 fw-semibold text-gray-500">
+                            Upload up to 10 files
+                          </span>
+                        </div>
+                      </div>
+                      <input
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        style={{ display: "none" }}
+                        id="fileInput"
+                        onChange={handleFileInputChange}
                       />
-                      <button
-                        type="button"
-                        className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full hover:bg-red-700"
-                        onClick={() => handleRemoveImage(index)}
-                      >
-                        &times;
-                      </button>
                     </div>
-                  ))}
+                  </div>
+                  <div className="text-muted fs-7">
+                    Set the product media gallery.
+                  </div>
+                  <div className="mt-3">
+                    {previewImages.map((preview, index) => (
+                      <div
+                        key={index}
+                        className="d-inline-block position-relative"
+                      >
+                        <img
+                          src={preview}
+                          alt={`Preview ${index}`}
+                          className="img-thumbnail"
+                        />
+                        <button
+                          type="button"
+                          className="btn btn-danger btn-sm position-absolute top-0 end-0"
+                          style={{ borderRadius: "50%", padding: "0.5rem" }}
+                          onClick={() => handleRemoveImage(index)}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
