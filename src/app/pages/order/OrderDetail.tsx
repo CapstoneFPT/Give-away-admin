@@ -5,7 +5,7 @@ import {
   OrderDetailedResponse,
   OrderLineItemListResponse
 } from '../../../api';
-import { KTCard, KTCardBody } from '../../../_metronic/helpers';
+import { KTCard, KTCardBody, KTIcon } from '../../../_metronic/helpers';
 import { Card, Col, Row } from 'react-bootstrap';
 import {  formatBalance } from '../utils/utils';
 import {useAuth} from "../../modules/auth";
@@ -45,22 +45,120 @@ const OrderDetail: React.FC = () => {
   return (
     <KTCard>
       <h1>Order Detail</h1>
-        <Card className="mb-5 table-row-bordered table-row-gray-100 gs-0 gy-3">
-          <Card.Body>
-            <Row>
-              <Col><strong>Order Code:</strong> {orderDetail ? orderDetail.orderCode : 'N/A'}</Col>
-              <Col><strong>Customer Name:</strong> </Col>
-            </Row>
-            <Row>
-              {/*<Col><strong>Created Date:</strong> {new Date(orderDetail!.c).toLocaleString(VNLocale,dateTimeOptions)}</Col>*/}
-              <Col><strong>Payment Method:</strong> {orderDetail!.paymentDate}</Col>
-            </Row>
-            <Row>
-              <Col><strong>Total:</strong> {formatBalance(orderDetail?.totalPrice || 0)} VND</Col>
-              <Col><strong>Status:</strong>{orderDetail?.status} </Col>
-            </Row>
-          </Card.Body>
-        </Card>
+        <KTCard className="mb-5 mb-xl-8">
+                <KTCardBody>
+                    <div className='row g-5 g-xl-8'>
+                        <div className='col-xl-6'>
+                          
+                            <div className='d-flex flex-wrap'>
+                                
+                                <div
+                                    className='border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3'>
+                                    <div className='d-flex align-items-center'>
+                                        <KTIcon iconName='tag' className='fs-3 text-primary me-2'/>
+                                        <div className='fs-6 text-gray-800 fw-bold'>Order Code</div>
+                                    </div>
+                                    <div className='fs-7 text-gray-600 mt-2'><strong>{orderDetail ? orderDetail.orderCode : 'N/A'}</strong></div>
+                                </div>
+                                <div
+                                    className='border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3'>
+                                    <div className='d-flex align-items-center'>
+                                        <KTIcon iconName='tag' className='fs-3 text-primary me-2'/>
+                                        <div className='fs-6 text-gray-800 fw-bold'>Total Price</div>
+                                    </div>
+                                    <div className='fs-7 text-gray-600 mt-2'><strong>{formatBalance(orderDetail?.totalPrice!)} VND</strong></div>
+                                </div>
+                                <div
+                                    className='border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3'>
+                                    <div className='d-flex align-items-center'>
+                                        <KTIcon iconName='information' className='fs-3 text-primary me-2'/>
+                                        <div className='fs-6 text-gray-800 fw-bold'>Customer name: </div>
+                                    </div>
+                                    <div className='fs-7 text-gray-600 mt-2'><strong>{orderDetail?.customerName}</strong></div>
+                                </div>
+                                <div
+                                    className='border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3'>
+                                    <div className='d-flex align-items-center'>
+                                        <KTIcon iconName='status' className='fs-3 text-primary me-2'/>
+                                        <div className='fs-6 text-gray-800 fw-bold'>Status</div>
+                                    </div>
+                                    <div className='fs-7 mt-2'>
+                                        <span
+                                            className={`badge badge-light-${getStatusColor(orderDetail?.status)}`}>
+                                            {orderDetail?.status}
+                                        </span>
+                                    </div>
+
+                                    <div className='fs-7 mt-2'>
+                                        <span
+                                            className={`badge badge-light-${getStatusColor(orderDetail?.status)}`}>
+                                            {orderDetail?.shippingFee}
+                                        </span>
+                                    </div>
+                                    <div className='fs-7 mt-2'>
+                                        <span
+                                            className={`badge badge-light-${getStatusColor(orderDetail?.status)}`}>
+                                            {orderDetail?.purchaseType}
+                                        </span>
+                                    </div>
+                                    <div className='fs-7 mt-2'>
+                                        <span
+                                            className={`badge badge-light-${getStatusColor(orderDetail?.status)}`}>
+                                            {orderDetail?.paymentMethod}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div
+                                    className='border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3'>
+                                    <div className='d-flex align-items-center'>
+                                        <KTIcon iconName='calendar-add' className='fs-3 text-primary me-2'/>
+                                        <div className='fs-6 text-gray-800 fw-bold'>Payment Date</div>
+                                    </div>
+                                    <div className='fs-7 text-gray-600 mt-2'>
+                                       <strong> {orderDetail?.paymentDate
+                                            ? new Date(orderDetail?.paymentDate!).toLocaleString()
+                                            : 'N/A'}</strong>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div className='col-xl-6'>
+                            <h3 className='fs-2 fw-bold mb-5'>Reciepient Information</h3>
+                            <div className='d-flex flex-column'>
+                                <div className='d-flex align-items-center mb-5'>
+                                    <KTIcon iconName='profile-circle' className='fs-3 text-primary me-2'/>
+                                    <div className='d-flex flex-column'>
+                                        <div className='fw-bold'>Name</div>
+                                        <div className='fs-7 text-gray-600'>{orderDetail?.customerName}</div>
+                                    </div>
+                                </div>
+                                <div className='d-flex align-items-center mb-5'>
+                                    <KTIcon iconName='phone' className='fs-3 text-primary me-2'/>
+                                    <div className='d-flex flex-column'>
+                                        <div className='fw-bold'>Phone</div>
+                                        <div className='fs-7 text-gray-600'>{orderDetail?.phone}</div>
+                                    </div>
+                                </div>
+                                <div className='d-flex align-items-center mb-5'>
+                                    <KTIcon iconName='geolocation' className='fs-3 text-primary me-2'/>
+                                    <div className='d-flex flex-column'>
+                                        <div className='fw-bold'>Address</div>
+                                        <div className='fs-7 text-gray-600'>{orderDetail?.address}</div>
+                                    </div>
+                                </div>
+                                <div className='d-flex align-items-center'>
+                                    <KTIcon iconName='sms' className='fs-3 text-primary me-2'/>
+                                    <div className='d-flex flex-column'>
+                                        <div className='fw-bold'>Email</div>
+                                        <div className='fs-7 text-gray-600'>{orderDetail?.email}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </KTCardBody>
+            </KTCard>
 
       <KTCardBody className="card-body py-3">
         <div className="table-responsive">
@@ -126,6 +224,18 @@ const OrderDetail: React.FC = () => {
       </KTCardBody>
     </KTCard>
   );
+};
+const getStatusColor = (status?: string) => {
+  switch (status) {
+      case 'Active':
+          return 'success';
+      case 'Pending':
+          return 'warning';
+      case 'Completed':
+          return 'info';
+      default:
+          return 'primary';
+  }
 };
 
 export default OrderDetail;

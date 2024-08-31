@@ -28,6 +28,7 @@ const FashionItemsTable: React.FC<Props> = ({ className }) => {
         currentPage,
         pageSize
       );
+      console.log(response)
       return response.data;
     },
     { refetchOnWindowFocus: false, keepPreviousData: true }
