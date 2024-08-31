@@ -5,22 +5,57 @@ import { formatBalance } from "../utils/utils";
 import { useConsignSale, useConsignSaleLineItems } from './consignSaleHooks';
 import { Content } from "../../../_metronic/layout/components/content";
 import {getMockConsignLineItems} from "./consignLineItemGenerator.ts";
+import ConsignmentApproval from "./ConsignmentApproval.tsx";
+import {ConsignSaleLineItemStatus, ConsignSaleStatus} from "../../../api";
+
+const getConsignSaleStatusColor = (status?: ConsignSaleStatus) => {
+    switch (status) {
+        case ConsignSaleStatus.Pending:
+            return 'warning';
+        case ConsignSaleStatus.AwaitDelivery:
+            return 'info';
+        case ConsignSaleStatus.Processing:
+            return 'primary';
+        case ConsignSaleStatus.OnSale:
+            return 'success';
+        case ConsignSaleStatus.Completed:
+            return 'success';
+        case ConsignSaleStatus.Rejected:
+            return 'danger';
+        case ConsignSaleStatus.Cancelled:
+            return 'dark';
+        default:
+            return 'light';
+    }
+};
+
+const getConsignSaleLineItemStatusColor = (status?: ConsignSaleLineItemStatus) => {
+    switch (status) {
+        case ConsignSaleLineItemStatus.Pending:
+            return 'warning';
+        case ConsignSaleLineItemStatus.AwaitDelivery:
+            return 'info';
+        case ConsignSaleLineItemStatus.Negotiating:
+            return 'primary';
+        case ConsignSaleLineItemStatus.Received:
+            return 'success';
+        case ConsignSaleLineItemStatus.Returned:
+            return 'danger';
+        case ConsignSaleLineItemStatus.ReadyForConsignSale:
+            return 'light';
+        case ConsignSaleLineItemStatus.OnSale:
+            return 'success';
+        default:
+            return 'dark';
+    }
+};
 
 export const ConsignDetail: React.FC = () => {
     const { consignSaleId } = useParams<{ consignSaleId: string }>();
     const { data: consignSaleResponse, isLoading: isLoadingSale, error: saleError } = useConsignSale(consignSaleId!);
-    // const { data: lineItemsResponse, isLoading: isLoadingItems, error: itemsError } = useConsignSaleLineItems(consignSaleId!);
+    const { data: lineItemsResponse, isLoading: isLoadingItems, error: itemsError } = useConsignSaleLineItems(consignSaleId!);
     const [comment, setComment] = useState<string>('');
 
-    const lineItemsResponse = getMockConsignLineItems();
-
-    // if (isLoadingSale || isLoadingItems) {
-    //     return <div>Loading...</div>;
-    // }
-    //
-    // if (saleError || itemsError) {
-    //     return <div>Error: {(saleError as Error)?.message || (itemsError as Error)?.message}</div>;
-    // }
 
     if (!consignSaleResponse) {
         return <div>No consignment data found.</div>;
@@ -77,8 +112,8 @@ export const ConsignDetail: React.FC = () => {
                                         <div className='fs-6 text-gray-800 fw-bold'>Status</div>
                                     </div>
                                     <div className='fs-7 mt-2'>
-                                        <span
-                                            className={`badge badge-light-${getStatusColor(consignSaleResponse.status)}`}>
+                                       <span
+                                           className={`badge badge-light-${getConsignSaleStatusColor(consignSaleResponse.status)}`}>
                                             {consignSaleResponse.status}
                                         </span>
                                     </div>
@@ -145,43 +180,9 @@ export const ConsignDetail: React.FC = () => {
                     </div>
                 </KTCardBody>
             </KTCard>
-
-            <KTCard className="mb-5 mb-xl-8">
-                <KTCardBody>
-                    <h3 className='fs-2 fw-bold mb-5'>Consignment Approval</h3>
-                    <div className='row mb-5'>
-                        <div className='col-12'>
-                            <label htmlFor="approvalComment" className="form-label">Comment</label>
-                            <textarea
-                                id="approvalComment"
-                                className="form-control"
-                                rows={3}
-                                value={comment}
-                                onChange={(e) => setComment(e.target.value)}
-                                placeholder="Enter your comment here..."
-                            ></textarea>
-                        </div>
-                    </div>
-                    <div className='row'>
-                        <div className='col-12'>
-                            <button
-                                className='btn btn-success me-3'
-                                onClick={handleApprove}
-                            >
-                                <KTIcon iconName='check' className='fs-2 me-2'/>
-                                Approve
-                            </button>
-                            <button
-                                className='btn btn-danger'
-                                onClick={handleReject}
-                            >
-                                <KTIcon iconName='cross' className='fs-2 me-2'/>
-                                Reject
-                            </button>
-                        </div>
-                    </div>
-                </KTCardBody>
-            </KTCard>
+            <ConsignmentApproval
+                consignSaleId={consignSaleResponse.consignSaleId!}
+                initialStatus={consignSaleResponse.status || 'Pending'}/>
 
             <KTCard className="mb-5 mb-xl-8">
                 <KTCardBody>
@@ -219,6 +220,7 @@ export const ConsignDetail: React.FC = () => {
                         <table className='table align-middle table-row-dashed fs-6 gy-5 mb-0'>
                             <thead>
                             <tr className='text-start text-gray-400 fw-bold fs-7 text-uppercase gs-0'>
+                                <th>Status</th>
                                 <th>Product</th>
                                 <th>Brand</th>
                                 <th>Color</th>
@@ -226,35 +228,44 @@ export const ConsignDetail: React.FC = () => {
                                 <th>Gender</th>
                                 <th>Condition</th>
                                 <th>Deal Price</th>
+                                <th>Expected Price</th>
                                 <th>Confirmed Price</th>
                                 <th>Note</th>
+                                <th>Created Date</th>
                                 <th>Actions</th>
                             </tr>
                             </thead>
                             <tbody className='fw-semibold text-gray-600'>
                             {lineItemsResponse && lineItemsResponse.map((item) => (
                                 <tr key={item.consignSaleLineItemId}>
+                                    <td>
+                                            <span className={`badge badge-light-${getConsignSaleLineItemStatusColor(item.status)}`}>
+                                                {item.status || 'N/A'}
+                                            </span>
+                                    </td>
                                     <td>{item.productName || 'N/A'}</td>
                                     <td>{item.brand || 'N/A'}</td>
                                     <td>{item.color || 'N/A'}</td>
                                     <td>{item.size || 'N/A'}</td>
                                     <td>{item.gender || 'N/A'}</td>
                                     <td>{item.condition || 'N/A'}</td>
-                                    <td>{formatBalance(item.dealPrice || 0)}</td>
+                                    <td>{item.dealPrice ? formatBalance(item.dealPrice) : 'N/A'}</td>
+                                    <td>{formatBalance(item.expectedPrice || 0)}</td>
                                     <td>{item.confirmedPrice ? formatBalance(item.confirmedPrice) : 'N/A'}</td>
                                     <td>{item.note || 'N/A'}</td>
+                                    <td>{new Date(item.createdDate!).toLocaleString()}</td>
                                     <td className='text-end'>
                                         <Link
-                                            to={`/consignment/${consignSaleResponse.consignSaleId}/line-item/${item.consignSaleLineItemId}`}
+                                            to={`/consignment/${consignSaleId}/line-item/${item.consignSaleLineItemId}`}
                                             className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                                         >
-                                            <KTIcon iconName='eye' className='fs-3'/>
+                                            <KTIcon iconName='eye' className='fs-3' />
                                         </Link>
                                         <Link
-                                            to={`/create-item/${consignSaleResponse.consignSaleId}/line-item/${item.consignSaleLineItemId}`}
+                                            to={`/create-item/${consignSaleId}/line-item/${item.consignSaleLineItemId}`}
                                             className='btn btn-icon btn-bg-light btn-active-color-success btn-sm'
                                         >
-                                            <KTIcon iconName='plus' className='fs-3'/>
+                                            <KTIcon iconName='plus' className='fs-3' />
                                         </Link>
                                     </td>
                                 </tr>
@@ -268,17 +279,5 @@ export const ConsignDetail: React.FC = () => {
     );
 };
 
-const getStatusColor = (status?: string) => {
-    switch (status) {
-        case 'Active':
-            return 'success';
-        case 'Pending':
-            return 'warning';
-        case 'Completed':
-            return 'info';
-        default:
-            return 'primary';
-    }
-};
 
 export default ConsignDetail;

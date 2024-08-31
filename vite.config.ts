@@ -8,10 +8,10 @@ export default defineConfig({
     host: "0.0.0.0",
     port: 2052,
   },
-  // build: {
-  //   chunkSizeWarningLimit: 3000,
-  //   rollupOptions: {
-  //     input: "./src/main.tsx",
-  //   },
-  // },
+  build: {
+    chunkSizeWarningLimit: 3000,
+    rollupOptions: {
+      input: "./src/main.tsx",
+    },
+  },
 });
