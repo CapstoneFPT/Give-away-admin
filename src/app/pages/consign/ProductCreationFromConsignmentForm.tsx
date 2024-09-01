@@ -52,8 +52,8 @@ export const ProductCreationFromConsignmentForm: React.FC = () => {
             return api.apiConsignlineitemsConsignLineItemIdCreateIndividualPost(lineItemId!, data);
         },
         {
-            onSuccess: () => {
-                queryClient.invalidateQueries('lineItemDetails');
+            onSuccess: async () => {
+                await queryClient.invalidateQueries('lineItemDetails');
                 navigate('/consignment');
             },
         }
@@ -77,11 +77,11 @@ export const ProductCreationFromConsignmentForm: React.FC = () => {
 
     const initialValues: CreateIndividualItemRequestForConsign = {
         masterItemId: '',
-        condition: 'Good',
-        color: '',
-        size: SizeType.M,
-        retailPrice: 0,
-        note: '',
+        // condition: 'Good',
+        // color: '',
+        // size: SizeType.M,
+        // retailPrice: 0,
+        // note: '',
     };
 
     if (!lineItemDetails || !masterItems) {
@@ -156,7 +156,7 @@ export const ProductCreationFromConsignmentForm: React.FC = () => {
                                                 options={sizeOptions}
                                                 name="size"
                                                 onChange={(option) => setFieldValue('size', option?.value)}
-                                                value={sizeOptions.find(option => option.value === values.size)}
+                                                value={sizeOptions.find(option => option.value === "M")}
                                                 className="react-select-container"
                                                 classNamePrefix="react-select"
                                             />

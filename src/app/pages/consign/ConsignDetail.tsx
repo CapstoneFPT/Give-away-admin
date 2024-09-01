@@ -4,7 +4,6 @@ import { KTCard, KTCardBody, KTIcon } from "../../../_metronic/helpers";
 import { formatBalance } from "../utils/utils";
 import { useConsignSale, useConsignSaleLineItems } from './consignSaleHooks';
 import { Content } from "../../../_metronic/layout/components/content";
-import {getMockConsignLineItems} from "./consignLineItemGenerator.ts";
 import ConsignmentApproval from "./ConsignmentApproval.tsx";
 import {ConsignSaleLineItemStatus, ConsignSaleStatus} from "../../../api";
 
@@ -61,15 +60,6 @@ export const ConsignDetail: React.FC = () => {
         return <div>No consignment data found.</div>;
     }
 
-    const handleApprove = () => {
-        // Implement approval logic here
-        console.log('Approved with comment:', comment);
-    };
-
-    const handleReject = () => {
-        // Implement rejection logic here
-        console.log('Rejected with comment:', comment);
-    };
 
 
     return (

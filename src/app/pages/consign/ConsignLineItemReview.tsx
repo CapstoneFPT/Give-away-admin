@@ -10,24 +10,15 @@ import {useAuth} from "../../modules/auth";
 export const ConsignLineItemReview: React.FC = () => {
     const {consignSaleId, lineItemId} = useParams<{ consignSaleId: string, lineItemId: string }>();
     const navigate = useNavigate();
-    const [confirmedPrice, setConfirmedPrice] = useState<string>('');
+    const [dealPrice, setDealPrice] = useState<string>('');
     const [isPriceChanged, setIsPriceChanged] = useState<boolean>(false);
     const [showModal, setShowModal] = useState<boolean>(false);
-    const [selectedOption, setSelectedOption] = useState<string>('');
     const [selectedMasterItem, setSelectedMasterItem] = useState<string>('');
-
+    const [showPriceDifferenceModal, setShowPriceDifferenceModal] = useState<boolean>(false);
+    const [priceChangeExplanation, setPriceChangeExplanation] = useState<string>('');
 
     const {currentUser} = useAuth();
-    const consignLineItemApi = new ConsignLineItemApi();
-    // const differentExpectValue = consignLineItemApi.apiConsignlineitemsConsignLineItemIdAprroveNegotiationPut(lineItemId!)
-    // const equalExpectedValue = consignLineItemApi.apiConsignlineitemsConsignLineItemIdCreateIndividualPost(lineItemId!,
-    //     {
-    //         masterItemId: data?.masterItemId,
-    //         dealPrice: confirmedPrice
-    //     })
 
-    const masterItemApi = new MasterItemApi();
-    const response = masterItemApi.apiMasterItemsGet(null!, null!, null!, null!, null!, currentUser?.shopId);
     const createIndividualMutation = useMutation(
         (data: { masterItemId: string, dealPrice: number }) => {
             const consignLineItemApi = new ConsignLineItemApi();
@@ -49,6 +40,25 @@ export const ConsignLineItemReview: React.FC = () => {
     const handleMasterItemChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedMasterItem(e.target.value);
     };
+
+    const negotiatePriceMutation = useMutation(
+        (data: { dealPrice: number, responseFromShop: string }) => {
+            const consignSaleLineItem = new ConsignLineItemApi();
+            return consignSaleLineItem.apiConsignlineitemsConsignLineItemIdNegotiateItemPut(lineItemId!, data);
+        },
+        {
+            onSuccess: () => {
+                // Handle successful negotiation
+                setShowPriceDifferenceModal(false);
+                navigate(`/consignment/${consignSaleId}`);
+            },
+            onError: (error) => {
+                // Handle error
+                console.error('Error negotiating item price:', error);
+                // You might want to show an error message to the user here
+            }
+        }
+    );
     const {data, isLoading, error} = useQuery({
         queryKey: ['consignSaleLineItem', consignSaleId, lineItemId],
         queryFn: async () => {
@@ -57,7 +67,7 @@ export const ConsignLineItemReview: React.FC = () => {
             return response.data;
         },
         onSuccess: (data) => {
-            setConfirmedPrice(data.expectedPrice?.toString() || '');
+            setDealPrice(!data.dealPrice ? data.expectedPrice!.toString() : data.dealPrice!.toString());
         }
     });
     const {data: masterItemsData, isLoading: masterItemsLoading, error: masterItemsError} = useQuery({
@@ -70,24 +80,24 @@ export const ConsignLineItemReview: React.FC = () => {
     });
     const handleConfirmedPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newPrice = e.target.value;
-        setConfirmedPrice(newPrice);
+        setDealPrice(newPrice);
         setIsPriceChanged(newPrice !== data?.expectedPrice?.toString());
     };
 
     const handleModalSubmit = () => {
-        if (!selectedMasterItem || !confirmedPrice) {
+        if (!selectedMasterItem || !dealPrice) {
             console.error('Please select a master item and confirm the price');
             return;
         }
 
         console.log("Submit data:", {
             masterItemId: selectedMasterItem,
-            dealPrice: parseFloat(confirmedPrice)
+            dealPrice: parseFloat(dealPrice)
         })
 
         createIndividualMutation.mutate({
             masterItemId: selectedMasterItem,
-            dealPrice: parseFloat(confirmedPrice)
+            dealPrice: parseFloat(dealPrice)
         });
     };
 
@@ -101,20 +111,32 @@ export const ConsignLineItemReview: React.FC = () => {
 
     const handleModalClose = () => {
         setShowModal(false);
+        setShowPriceDifferenceModal(false);
+        setPriceChangeExplanation(''); // Reset the explanation when closing the modal
     };
 
-    const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedOption(e.target.value);
-    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (confirmedPrice === data?.expectedPrice?.toString()) {
+        if (dealPrice === data?.expectedPrice?.toString()) {
             setShowModal(true);
         } else {
-            console.log('Updating confirmed price to:', confirmedPrice);
-            navigate(`/consignment/${consignSaleId}`);
+            setShowPriceDifferenceModal(true);
         }
+    };
+
+
+
+    const handlePriceDifferenceSubmit = () => {
+        if (!dealPrice || !priceChangeExplanation.trim()) {
+            console.error('Please provide both a price and an explanation');
+            return;
+        }
+
+        negotiatePriceMutation.mutate({
+            dealPrice: parseFloat(dealPrice),
+            responseFromShop: priceChangeExplanation
+        });
     };
 
 
@@ -208,8 +230,8 @@ export const ConsignLineItemReview: React.FC = () => {
                                             type="number"
                                             className={`form-control ${isPriceChanged ? 'border-warning' : ''}`}
                                             id="confirmedPrice"
-                                            value={confirmedPrice}
-                                            readOnly={data.dealPrice != undefined}
+                                            value={dealPrice}
+                                            readOnly={data.dealPrice ? true : false}
                                             onChange={handleConfirmedPriceChange}
                                             placeholder="Enter deal price"
                                         />
@@ -222,9 +244,10 @@ export const ConsignLineItemReview: React.FC = () => {
                                 </div>
                                 <div className='row'>
                                     <div className='col-12'>
-                                        <button type="submit" disabled={data.dealPrice != undefined} className='btn btn-primary me-3'>
+                                        <button type="submit" disabled={data.dealPrice ? true : false}
+                                                className='btn btn-primary me-3'>
                                             <KTIcon iconName='check' className='fs-2 me-2'/>
-                                            {data.dealPrice != undefined ? 'Deal Price Decided' : 'Submit Deal Price'}
+                                            {data.dealPrice ? 'Deal Price Decided' : 'Submit Deal Price'}
                                         </button>
                                         <button
                                             type="button"
@@ -371,8 +394,63 @@ export const ConsignLineItemReview: React.FC = () => {
                     </div>
                 </div>
             </div>
-            {showModal && <div className="modal-backdrop fade show"></div>}
-            {createIndividualMutation.isError && (
+            <div className={`modal fade ${showPriceDifferenceModal ? 'show' : ''}`}
+                 style={{display: showPriceDifferenceModal ? 'block' : 'none'}} tabIndex={-1} role="dialog">
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title">Price Difference Explanation</h5>
+                            <div
+                                className="btn btn-icon btn-sm btn-active-light-primary ms-2"
+                                onClick={handleModalClose}
+                                aria-label="Close"
+                            >
+                                <KTSVG path="media/icons/duotune/arrows/arr061.svg" className="svg-icon svg-icon-2x"/>
+                            </div>
+                        </div>
+                        <div className="modal-body">
+                            <div className="mb-3">
+                                <p><strong>Expected Price:</strong> {formatBalance(data?.expectedPrice || 0)}</p>
+                                <p><strong>Submitted Deal Price:</strong> {formatBalance(parseFloat(dealPrice))}
+                                </p>
+                            </div>
+                            <div className="mb-3">
+                                <label htmlFor="priceChangeExplanation" className="form-label">Explanation for Price
+                                    Difference:</label>
+                                <textarea
+                                    className="form-control"
+                                    id="priceChangeExplanation"
+                                    rows={3}
+                                    value={priceChangeExplanation}
+                                    onChange={(e) => setPriceChangeExplanation(e.target.value)}
+                                    placeholder="Please explain the reason for the price difference..."
+                                ></textarea>
+                            </div>
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-light" onClick={handleModalClose}>
+                                Close
+                            </button>
+                            <button
+                                type="button"
+                                className="btn btn-primary"
+                                onClick={handlePriceDifferenceSubmit}
+                                disabled={!priceChangeExplanation.trim()}
+                            >
+                                {negotiatePriceMutation.isLoading ? (
+                                    <span className="indicator-progress" style={{display: "block"}}>
+            Please wait...
+            <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
+        </span>
+                                ) : 'Submit'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {(showModal || showPriceDifferenceModal) && <div className="modal-backdrop fade show"></div>}
+            {(createIndividualMutation.isError || negotiatePriceMutation.isError) && (
                 <div className="alert alert-danger" role="alert">
                     An error occurred while saving the changes. Please try again.
                 </div>
