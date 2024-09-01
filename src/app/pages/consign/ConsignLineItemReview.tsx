@@ -209,6 +209,7 @@ export const ConsignLineItemReview: React.FC = () => {
                                             className={`form-control ${isPriceChanged ? 'border-warning' : ''}`}
                                             id="confirmedPrice"
                                             value={confirmedPrice}
+                                            readOnly={data.dealPrice != undefined}
                                             onChange={handleConfirmedPriceChange}
                                             placeholder="Enter deal price"
                                         />
@@ -221,9 +222,9 @@ export const ConsignLineItemReview: React.FC = () => {
                                 </div>
                                 <div className='row'>
                                     <div className='col-12'>
-                                        <button type="submit" className='btn btn-primary me-3'>
+                                        <button type="submit" disabled={data.dealPrice != undefined} className='btn btn-primary me-3'>
                                             <KTIcon iconName='check' className='fs-2 me-2'/>
-                                            Add Deal Price
+                                            {data.dealPrice != undefined ? 'Deal Price Decided' : 'Submit Deal Price'}
                                         </button>
                                         <button
                                             type="button"
