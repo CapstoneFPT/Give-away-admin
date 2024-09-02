@@ -2,7 +2,12 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../../firebaseconfig"; // Adjust the import path as necessary
-import { CategoryApi, MasterItemApi, ShopApi } from "../../../../api";
+import {
+  CategoryApi,
+  MasterItemApi,
+  ShopApi,
+  ShopDetailResponse,
+} from "../../../../api";
 import { useDropzone } from "react-dropzone";
 import { KTCard, KTCardBody, KTIcon } from "../../../../_metronic/helpers";
 
@@ -10,18 +15,6 @@ interface AddMasterItemProps {
   show: boolean;
   handleClose: () => void;
   handleSave: (itemData: MasterItem) => void;
-}
-
-interface Shop {
-  shopId: string;
-  address: string;
-  staffId: string;
-  phone: string;
-}
-
-interface Category {
-  categoryId: string;
-  name: string;
 }
 
 interface MasterItem {
@@ -56,11 +49,11 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
 
   const [formData, setFormData] = useState<MasterItem>(initialFormData);
   const [files, setFiles] = useState<File[]>([]);
-  const [shops, setShops] = useState<Shop[]>([]);
+  const [shops, setShops] = useState<ShopDetailResponse[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedShop, setSelectedShop] = useState<string>("");
   const [isCategoryDisabled, setIsCategoryDisabled] = useState(true);
-
+  console.log(formData);
   const createMasterItem = async (itemData: MasterItem) => {
     try {
       const createApi = new MasterItemApi();
@@ -77,7 +70,8 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
       try {
         const shopApi = new ShopApi();
         const response = await shopApi.apiShopsGet();
-        setShops(response.data.data);
+        console.log(response);
+        setShops(response.data.data || []);
       } catch (error) {
         console.error("Error fetching shops:", error);
       }
@@ -100,7 +94,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
             "Available"
           );
           console.log(response);
-          setCategories(response.data.data);
+          setCategories(response.data.data || []);
           setIsCategoryDisabled(false);
         } catch (error) {
           console.error("Error fetching categories:", error);
@@ -277,7 +271,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
               }}
               className="modal-title"
             >
-              Add Fashion Item
+              Add master item
             </h3>
             <button
               type="button"
@@ -361,6 +355,29 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
                   ))}
                 </select>
               </div>
+              <div {...getRootProps()} className="dropzone">
+                <input {...getInputProps()} />
+                {isDragActive ? (
+                  <p>Drop the files here ...</p>
+                ) : (
+                  <p>Drag 'n' drop some files here, or click to select files</p>
+                )}
+              </div>
+              <div className="form-group">
+                {files.map((file, index) => (
+                  <div key={index} className="file-preview">
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt="Preview"
+                      width="100"
+                      height="100"
+                    />
+                    <button type="button" onClick={() => removeFile(index)}>
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
               <div className="form-group">
                 <label htmlFor="shopId">Select Shop</label>
                 <select
@@ -408,29 +425,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
                   </button>
                 </div>
               ))}
-              <div {...getRootProps()} className="dropzone">
-                <input {...getInputProps()} />
-                {isDragActive ? (
-                  <p>Drop the files here ...</p>
-                ) : (
-                  <p>Drag 'n' drop some files here, or click to select files</p>
-                )}
-              </div>
-              <div className="form-group">
-                {files.map((file, index) => (
-                  <div key={index} className="file-preview">
-                    <img
-                      src={URL.createObjectURL(file)}
-                      alt="Preview"
-                      width="100"
-                      height="100"
-                    />
-                    <button type="button" onClick={() => removeFile(index)}>
-                      Remove
-                    </button>
-                  </div>
-                ))}
-              </div>
+
               <button
                 type="button"
                 className="btn btn-primary"

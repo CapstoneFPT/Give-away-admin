@@ -2515,6 +2515,12 @@ export interface ConsignSaleLineItemsListResponse {
      * @memberof ConsignSaleLineItemsListResponse
      */
     'images'?: Array<string> | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConsignSaleLineItemsListResponse
+     */
+    'shopResponse'?: string | null;
 }
 
 
@@ -6083,33 +6089,6 @@ export interface IndividualItemListResponse {
 /**
  * 
  * @export
- * @interface IndividualItemListResponseListResult
- */
-export interface IndividualItemListResponseListResult {
-    /**
-     * 
-     * @type {Array<IndividualItemListResponse>}
-     * @memberof IndividualItemListResponseListResult
-     */
-    'data'?: Array<IndividualItemListResponse> | null;
-    /**
-     * 
-     * @type {ResultStatus}
-     * @memberof IndividualItemListResponseListResult
-     */
-    'resultStatus'?: ResultStatus;
-    /**
-     * 
-     * @type {Array<string>}
-     * @memberof IndividualItemListResponseListResult
-     */
-    'messages'?: Array<string> | null;
-}
-
-
-/**
- * 
- * @export
  * @interface IndividualItemListResponsePaginationResponse
  */
 export interface IndividualItemListResponsePaginationResponse {
@@ -6174,6 +6153,33 @@ export interface IndividualItemListResponsePaginationResponse {
      */
     'items'?: Array<IndividualItemListResponse> | null;
 }
+/**
+ * 
+ * @export
+ * @interface IndividualItemListResponseResult
+ */
+export interface IndividualItemListResponseResult {
+    /**
+     * 
+     * @type {IndividualItemListResponse}
+     * @memberof IndividualItemListResponseResult
+     */
+    'data'?: IndividualItemListResponse;
+    /**
+     * 
+     * @type {ResultStatus}
+     * @memberof IndividualItemListResponseResult
+     */
+    'resultStatus'?: ResultStatus;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof IndividualItemListResponseResult
+     */
+    'messages'?: Array<string> | null;
+}
+
+
 /**
  * 
  * @export
@@ -18019,11 +18025,11 @@ export const MasterItemApiAxiosParamCreator = function (configuration?: Configur
         /**
          * 
          * @param {string} masterItemId 
-         * @param {Array<CreateIndividualItemRequest>} [createIndividualItemRequest] 
+         * @param {CreateIndividualItemRequest} [createIndividualItemRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiMasterItemsMasterItemIdIndividualItemsPost: async (masterItemId: string, createIndividualItemRequest?: Array<CreateIndividualItemRequest>, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        apiMasterItemsMasterItemIdIndividualItemsPost: async (masterItemId: string, createIndividualItemRequest?: CreateIndividualItemRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'masterItemId' is not null or undefined
             assertParamExists('apiMasterItemsMasterItemIdIndividualItemsPost', 'masterItemId', masterItemId)
             const localVarPath = `/api/master-items/{masterItemId}/individual-items`
@@ -18228,11 +18234,11 @@ export const MasterItemApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @param {string} masterItemId 
-         * @param {Array<CreateIndividualItemRequest>} [createIndividualItemRequest] 
+         * @param {CreateIndividualItemRequest} [createIndividualItemRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiMasterItemsMasterItemIdIndividualItemsPost(masterItemId: string, createIndividualItemRequest?: Array<CreateIndividualItemRequest>, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IndividualItemListResponseListResult>> {
+        async apiMasterItemsMasterItemIdIndividualItemsPost(masterItemId: string, createIndividualItemRequest?: CreateIndividualItemRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IndividualItemListResponseResult>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiMasterItemsMasterItemIdIndividualItemsPost(masterItemId, createIndividualItemRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['MasterItemApi.apiMasterItemsMasterItemIdIndividualItemsPost']?.[localVarOperationServerIndex]?.url;
@@ -18341,11 +18347,11 @@ export const MasterItemApiFactory = function (configuration?: Configuration, bas
         /**
          * 
          * @param {string} masterItemId 
-         * @param {Array<CreateIndividualItemRequest>} [createIndividualItemRequest] 
+         * @param {CreateIndividualItemRequest} [createIndividualItemRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiMasterItemsMasterItemIdIndividualItemsPost(masterItemId: string, createIndividualItemRequest?: Array<CreateIndividualItemRequest>, options?: RawAxiosRequestConfig): AxiosPromise<IndividualItemListResponseListResult> {
+        apiMasterItemsMasterItemIdIndividualItemsPost(masterItemId: string, createIndividualItemRequest?: CreateIndividualItemRequest, options?: RawAxiosRequestConfig): AxiosPromise<IndividualItemListResponseResult> {
             return localVarFp.apiMasterItemsMasterItemIdIndividualItemsPost(masterItemId, createIndividualItemRequest, options).then((request) => request(axios, basePath));
         },
         /**
@@ -18455,12 +18461,12 @@ export class MasterItemApi extends BaseAPI {
     /**
      * 
      * @param {string} masterItemId 
-     * @param {Array<CreateIndividualItemRequest>} [createIndividualItemRequest] 
+     * @param {CreateIndividualItemRequest} [createIndividualItemRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof MasterItemApi
      */
-    public apiMasterItemsMasterItemIdIndividualItemsPost(masterItemId: string, createIndividualItemRequest?: Array<CreateIndividualItemRequest>, options?: RawAxiosRequestConfig) {
+    public apiMasterItemsMasterItemIdIndividualItemsPost(masterItemId: string, createIndividualItemRequest?: CreateIndividualItemRequest, options?: RawAxiosRequestConfig) {
         return MasterItemApiFp(this.configuration).apiMasterItemsMasterItemIdIndividualItemsPost(masterItemId, createIndividualItemRequest, options).then((request) => request(this.axios, this.basePath));
     }
 

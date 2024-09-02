@@ -23,7 +23,7 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
   const handleItemCreated = () => {
     handleCloseModal();
   };
-  console.log(masterItemId);
+
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearchTerm(searchTerm), 200);
     return () => clearTimeout(timer);
@@ -59,7 +59,7 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
 
     { refetchOnWindowFocus: false, keepPreviousData: true }
   );
-
+  console.log(result);
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setCurrentPage(1); // Reset to first page when searching
