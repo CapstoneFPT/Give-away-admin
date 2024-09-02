@@ -1,104 +1,84 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useMutation, useQueryClient } from 'react-query';
 import { KTCard, KTCardBody, KTIcon } from "../../../_metronic/helpers";
-
-// Mock API functions
-const mockRejectConsignment = async (id: string, comment: string) => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log(`Rejected consignment ${id} with comment: ${comment}`);
-    return { success: true };
-};
-
-const mockNotifyDelivery = async (id: string, comment: string) => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log(`Notified delivery for consignment ${id} with comment: ${comment}`);
-    return { success: true };
-};
-
-const mockConfirmReceived = async (id: string, comment: string) => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log(`Confirmed received for consignment ${id} with comment: ${comment}`);
-    return { success: true };
-};
-
-const mockNegotiateConsignment = async (id: string, comment: string) => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log(`Negotiating consignment ${id} with comment: ${comment}`);
-    return { success: true };
-};
-
-const mockApproveConsignment = async (id: string, comment: string) => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log(`Approved consignment ${id} with comment: ${comment}`);
-    return { success: true };
-};
+import { ConsignSaleApi, ConsignSaleDetailedResponse, ConsignSaleStatus, ConsignSaleLineItemsListResponse } from "../../../api";
 
 interface ConsignmentApprovalProps {
-    consignSaleId: string;
-    initialStatus: string;
+    consignSale: ConsignSaleDetailedResponse;
+    initialStatus: ConsignSaleStatus;
+    lineItems: ConsignSaleLineItemsListResponse[];
 }
 
-export const ConsignmentApproval: React.FC<ConsignmentApprovalProps> = ({ consignSaleId, initialStatus }) => {
+const consignSaleApi = new ConsignSaleApi();
+
+export const ConsignmentApproval: React.FC<ConsignmentApprovalProps> = ({ consignSale, initialStatus, lineItems }) => {
     const [comment, setComment] = useState<string>('');
-    const [status, setStatus] = useState<string>(initialStatus);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [status, setStatus] = useState<ConsignSaleStatus>(initialStatus);
+    const queryClient = useQueryClient();
 
     useEffect(() => {
         setStatus(initialStatus);
     }, [initialStatus]);
 
-    const handleReject = async () => {
-        setIsLoading(true);
-        try {
-            await mockRejectConsignment(consignSaleId, comment);
-            setStatus('Rejected');
-        } catch (error) {
-            console.error('Error rejecting consignment:', error);
+    const canListItems = () => {
+        return lineItems.some(item => item.isApproved === true) &&
+            !lineItems.some(item => item.isApproved === null || item.isApproved === undefined);
+    }
+
+    const updateConsignSale = useMutation(
+        async ({ id, status, comment }: { id: string; status: ConsignSaleStatus; comment?: string }) => {
+            return await consignSaleApi.apiConsignsalesConsignSaleIdApprovalPut(id, {
+                status,
+                responseFromShop: comment
+            });
+        },
+        {
+            onSuccess: async () => {
+                await queryClient.invalidateQueries(['consignSale', consignSale.consignSaleId]);
+            }
         }
-        setIsLoading(false);
+    );
+
+    const confirmReceived = useMutation(
+        async (id: string) => {
+            return await consignSaleApi.apiConsignsalesConsignSaleIdConfirmReceivedPut(id);
+        },
+        {
+            onSuccess: async () => {
+                await queryClient.invalidateQueries(['consignSale', consignSale.consignSaleId]);
+            }
+        }
+    );
+
+    const listItems = useMutation(
+        async (id: string) => {
+            return await consignSaleApi.apiConsignsalesConsignSaleIdPostItemsToSellPut(id);
+        },
+        {
+            onSuccess: async () => {
+                await queryClient.invalidateQueries(['consignSale', consignSale.consignSaleId]);
+            }
+        }
+    );
+
+    const handleReject = async () => {
+        await updateConsignSale.mutateAsync({ id: consignSale.consignSaleId!, status: ConsignSaleStatus.Rejected, comment });
+        setStatus(ConsignSaleStatus.Rejected);
     };
 
     const handleNotifyDelivery = async () => {
-        setIsLoading(true);
-        try {
-            await mockNotifyDelivery(consignSaleId, comment);
-            setStatus('Delivery Notified');
-        } catch (error) {
-            console.error('Error notifying delivery:', error);
-        }
-        setIsLoading(false);
+        await updateConsignSale.mutateAsync({ id: consignSale.consignSaleId!, status: ConsignSaleStatus.AwaitDelivery });
+        setStatus(ConsignSaleStatus.AwaitDelivery);
     };
 
     const handleConfirmReceived = async () => {
-        setIsLoading(true);
-        try {
-            await mockConfirmReceived(consignSaleId, comment);
-            setStatus('Received');
-        } catch (error) {
-            console.error('Error confirming received:', error);
-        }
-        setIsLoading(false);
-    };
-
-    const handleNegotiate = async () => {
-        setIsLoading(true);
-        try {
-            await mockNegotiateConsignment(consignSaleId, comment);
-            setStatus('In Negotiation');
-        } catch (error) {
-            console.error('Error starting negotiation:', error);
-        }
-        setIsLoading(false);
+        await confirmReceived.mutateAsync(consignSale.consignSaleId!);
+        setStatus(ConsignSaleStatus.Processing);
     };
 
     const handleApprove = async () => {
-        setIsLoading(true);
-        try {
-            await mockApproveConsignment(consignSaleId, comment);
-            setStatus('Approved');
-        } catch (error) {
-            console.error('Error approving consignment:', error);
-        }
-        setIsLoading(false);
+        await listItems.mutateAsync(consignSale.consignSaleId!);
+        setStatus(ConsignSaleStatus.OnSale);
     };
 
     return (
@@ -123,42 +103,50 @@ export const ConsignmentApproval: React.FC<ConsignmentApprovalProps> = ({ consig
                         <button
                             className='btn btn-danger me-3 mb-3'
                             onClick={handleReject}
-                            disabled={isLoading || !['Pending', 'Delivery Notified', 'Received', 'In Negotiation'].includes(status)}
+                            disabled={updateConsignSale.isLoading || !(status in [ConsignSaleStatus.Pending, ConsignSaleStatus.AwaitDelivery, ConsignSaleStatus.Processing])}
                         >
-                            <KTIcon iconName='cross' className='fs-2 me-2'/>
+                            {updateConsignSale.isLoading && status === ConsignSaleStatus.Rejected ? (
+                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            ) : (
+                                <KTIcon iconName='cross' className='fs-2 me-2'/>
+                            )}
                             Reject
                         </button>
                         <button
                             className='btn btn-warning me-3 mb-3'
                             onClick={handleNotifyDelivery}
-                            disabled={isLoading || status !== 'Pending'}
+                            disabled={updateConsignSale.isLoading || status !== ConsignSaleStatus.Pending}
                         >
-                            <KTIcon iconName='notification' className='fs-2 me-2'/>
+                            {updateConsignSale.isLoading && status === ConsignSaleStatus.AwaitDelivery ? (
+                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            ) : (
+                                <KTIcon iconName='notification' className='fs-2 me-2'/>
+                            )}
                             Notify Delivery
                         </button>
                         <button
                             className='btn btn-info me-3 mb-3'
                             onClick={handleConfirmReceived}
-                            disabled={isLoading || status !== 'Delivery Notified'}
+                            disabled={confirmReceived.isLoading || status !== ConsignSaleStatus.AwaitDelivery}
                         >
-                            <KTIcon iconName='check-circle' className='fs-2 me-2'/>
+                            {confirmReceived.isLoading ? (
+                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            ) : (
+                                <KTIcon iconName='check-circle' className='fs-2 me-2'/>
+                            )}
                             Confirm Received
-                        </button>
-                        <button
-                            className='btn btn-primary me-3 mb-3'
-                            onClick={handleNegotiate}
-                            disabled={isLoading || !['Received', 'In Negotiation'].includes(status)}
-                        >
-                            <KTIcon iconName='message-text-2' className='fs-2 me-2'/>
-                            Negotiate
                         </button>
                         <button
                             className='btn btn-success mb-3'
                             onClick={handleApprove}
-                            disabled={isLoading || !['Received', 'In Negotiation'].includes(status)}
+                            disabled={listItems.isLoading || status !== ConsignSaleStatus.Processing || !canListItems}
                         >
-                            <KTIcon iconName='check' className='fs-2 me-2'/>
-                            Approve
+                            {listItems.isLoading ? (
+                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            ) : (
+                                <KTIcon iconName='check' className='fs-2 me-2'/>
+                            )}
+                            List Items
                         </button>
                     </div>
                 </div>
@@ -174,20 +162,22 @@ export const ConsignmentApproval: React.FC<ConsignmentApprovalProps> = ({ consig
     );
 };
 
-const getStatusColor = (status: string) => {
+const getStatusColor = (status: ConsignSaleStatus) => {
     switch (status) {
-        case 'Pending':
+        case ConsignSaleStatus.Pending:
             return 'warning';
-        case 'Rejected':
+        case ConsignSaleStatus.Rejected:
             return 'danger';
-        case 'Delivery Notified':
+        case ConsignSaleStatus.AwaitDelivery:
             return 'primary';
-        case 'Received':
+        case ConsignSaleStatus.Processing:
             return 'info';
-        case 'In Negotiation':
-            return 'light';
-        case 'Approved':
+        case ConsignSaleStatus.OnSale:
             return 'success';
+        case ConsignSaleStatus.Completed:
+            return 'success';
+        case ConsignSaleStatus.Cancelled:
+            return 'dark';
         default:
             return 'primary';
     }

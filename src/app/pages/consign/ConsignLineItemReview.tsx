@@ -282,11 +282,11 @@ export const ConsignLineItemReview: React.FC = () => {
                                         <button
                                             type="button"
                                             className='btn btn-success me-3'
-                                            disabled={(data.isApproved !== true) && (!!data.shopResponse)}
+                                            disabled={!!data.individualItemId || !data.dealPrice}
                                             onClick={handleCreateNewItem}
                                         >
                                             <KTIcon iconName='plus' className='fs-2 me-2'/>
-                                            Create New Item
+                                            Add To Inventory
                                         </button>
                                         <button
                                             type="button"
@@ -309,7 +309,7 @@ export const ConsignLineItemReview: React.FC = () => {
                 <div className="modal-dialog modal-lg">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title">Create New Item</h5>
+                            <h5 className="modal-title">Add To Inventory</h5>
                             <div
                                 className="btn btn-icon btn-sm btn-active-light-primary ms-2"
                                 onClick={handleModalClose}

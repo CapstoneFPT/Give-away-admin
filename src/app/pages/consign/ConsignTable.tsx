@@ -29,7 +29,7 @@ const ConsignTable: React.FC = () => {
           name: consignorName,
           phone: consignorPhone,
         }),
-      300
+        100
     );
     return () => clearTimeout(timer);
   }, [searchTerm, consignorName, consignorPhone]);
