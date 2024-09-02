@@ -4,7 +4,7 @@ import { FashionItemApi, FashionItemList } from "../../../../api";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import { Button } from "react-bootstrap";
-
+import AddFashionItem from "./AddFashionItem";
 type Props = {
   className: string;
 };
@@ -15,6 +15,14 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const pageSize = 10; // Items per page
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+
+  const handleOpenModal = () => setIsModalVisible(true);
+  const handleCloseModal = () => setIsModalVisible(false);
+
+  const handleItemCreated = () => {
+    handleCloseModal();
+  };
   console.log(masterItemId);
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearchTerm(searchTerm), 200);
@@ -94,7 +102,14 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
               onChange={handleSearchInputChange}
             />
           </form>
-          <a href="#" className="btn btn-sm btn-light-primary">
+          <a
+            href="#"
+            className="btn btn-sm btn-light-primary"
+            onClick={(e) => {
+              e.preventDefault(); // Prevent the default anchor behavior
+              handleOpenModal();
+            }}
+          >
             <KTIcon iconName="plus" className="fs-2" />
             Add new item
           </a>
@@ -211,6 +226,12 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
           </button>
         </div>
       </div>
+      <AddFashionItem
+        show={isModalVisible}
+        handleClose={handleCloseModal}
+        handleSave={handleItemCreated}
+        masterItemId="some-master-item-id" // Replace with actual masterItemId if available
+      />
     </div>
   );
 };

@@ -35,11 +35,12 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
         currentPage,
         pageSize
       );
+
       return response.data;
     },
     { refetchOnWindowFocus: false, keepPreviousData: true }
   );
-
+  console.log(result);
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setCurrentPage(1); // Reset to first page when searching
@@ -109,6 +110,7 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                 <th className="min-w-200px">Product</th>
                 <th className="min-w-200px">Description</th>
                 <th className="min-w-125px">Stock Count</th>
+                <th className="min-w-125px">Item In Stock</th>
                 <th className="min-w-150px">Created Date</th>
                 <th className="min-w-150px">Brand</th>
                 <th className="min-w-200px text-end rounded-end"></th>
@@ -165,6 +167,11 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                   <td>
                     <span className="text-muted fw-semibold text-muted d-block fs-7">
                       <strong>{product.stockCount}</strong>
+                    </span>
+                  </td>
+                  <td>
+                    <span className="text-muted fw-semibold text-muted d-block fs-7">
+                      <strong>{product.itemInStock}</strong>
                     </span>
                   </td>
                   <td>

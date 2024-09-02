@@ -5,86 +5,79 @@ import { storage } from "../../../../firebaseconfig"; // Adjust the import path 
 import { CategoryApi, MasterItemApi, ShopApi } from "../../../../api";
 import { useDropzone } from "react-dropzone";
 import { KTCard, KTCardBody, KTIcon } from "../../../../_metronic/helpers";
-interface AddFashionItemProps {
+
+interface AddMasterItemProps {
   show: boolean;
   handleClose: () => void;
-  handleSave: (itemData: FashionItem) => void;
+  handleSave: (itemData: MasterItem) => void;
 }
+
 interface Shop {
   shopId: string;
   address: string;
   staffId: string;
   phone: string;
 }
+
 interface Category {
   categoryId: string;
   name: string;
 }
-interface FashionItem {
+
+interface MasterItem {
   masterItemCode: string;
   name: string;
   brand: string;
   description: string;
   categoryId: string;
-  genderId: string;
-  gender: GenderType;
-  stockCount: number;
+  gender: "Male" | "Female";
   images: string[];
-  shopId: string[];
+  itemForEachShops: {
+    shopId: string;
+    stockCount: number;
+  }[];
 }
-type GenderType = "Male" | "Female";
 
-const AddMasterItem: React.FC<AddFashionItemProps> = ({
+const AddMasterItem: React.FC<AddMasterItemProps> = ({
   show,
   handleClose,
   handleSave,
 }) => {
-  const initialFormData: FashionItem = {
+  const initialFormData: MasterItem = {
     masterItemCode: "",
     name: "",
     brand: "",
     description: "",
     categoryId: "",
-    genderId: "535d3b90-dc58-41e3-ad32-055e261bd6a7",
     gender: "Male",
-    stockCount: 0,
     images: [],
-    shopId: [""],
+    itemForEachShops: [],
   };
-  const [formData, setFormData] = useState<FashionItem>(initialFormData);
 
+  const [formData, setFormData] = useState<MasterItem>(initialFormData);
   const [files, setFiles] = useState<File[]>([]);
   const [shops, setShops] = useState<Shop[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedShop, setSelectedShop] = useState<string>("");
   const [isCategoryDisabled, setIsCategoryDisabled] = useState(true);
 
-  const createMasterItem = async (itemData: FashionItem) => {
+  const createMasterItem = async (itemData: MasterItem) => {
     try {
       const createApi = new MasterItemApi();
-      const createMasterItem = await createApi.apiMasterItemsPost({
-        masterItemCode: formData.masterItemCode,
-        name: formData.name,
-        brand: formData.brand,
-        description: formData.description,
-        categoryId: formData.categoryId,
-        gender: formData.gender,
-        stockCount: formData.stockCount,
-        images: formData.images,
-        shopId: formData.shopId,
-      });
-      console.log(createMasterItem);
+      const response = await createApi.apiMasterItemsPost(itemData);
+      console.log(response);
     } catch (error) {
       console.error("Error creating master item:", error);
       throw error;
     }
   };
+
   useEffect(() => {
     const fetchShops = async () => {
       try {
         const shopApi = new ShopApi();
-        const respondShop = await shopApi.apiShopsGet();
-        //@ts-expect-error 123
-        setShops(respondShop.data.data);
+        const response = await shopApi.apiShopsGet();
+        setShops(response.data.data);
       } catch (error) {
         console.error("Error fetching shops:", error);
       }
@@ -94,18 +87,20 @@ const AddMasterItem: React.FC<AddFashionItemProps> = ({
 
   useEffect(() => {
     const fetchCategories = async () => {
-      if (formData.genderId) {
+      if (formData.gender) {
         try {
           const categoryApi = new CategoryApi();
-          const respondCategory = await categoryApi.apiCategoriesConditionGet(
+          const response = await categoryApi.apiCategoriesConditionGet(
             null!,
             null!,
-            formData.genderId,
+            formData.gender === "Male"
+              ? "535d3b90-dc58-41e3-ad32-055e261bd6a7"
+              : "3e4c6370-a72b-44e3-a5eb-8f459764158f",
             4,
             "Available"
           );
-          //@ts-expect-error 123
-          setCategories(respondCategory.data.data);
+          console.log(response);
+          setCategories(response.data.data);
           setIsCategoryDisabled(false);
         } catch (error) {
           console.error("Error fetching categories:", error);
@@ -116,23 +111,15 @@ const AddMasterItem: React.FC<AddFashionItemProps> = ({
       }
     };
     fetchCategories();
-  }, [formData.genderId]);
+  }, [formData.gender]);
 
   const handleGenderChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const gender = e.target.value as GenderType;
-
-    const genderId =
-      gender === "Male"
-        ? "535d3b90-dc58-41e3-ad32-055e261bd6a7"
-        : gender === "Female"
-        ? "3e4c6370-a72b-44e3-a5eb-8f459764158f"
-        : ""; // Handle empty value
-
+    const gender = e.target.value as "Male" | "Female";
     setFormData((prevData) => ({
       ...prevData,
-      gender: gender || "Male", // Default to "Male" if empty
-      genderId,
+      gender,
       categoryId: "",
+      itemForEachShops: [],
     }));
   };
 
@@ -145,10 +132,53 @@ const AddMasterItem: React.FC<AddFashionItemProps> = ({
       [id]: value,
     }));
   };
+
+  const handleShopChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedShopId = e.target.value;
+    setSelectedShop(selectedShopId);
+  };
+
+  const addShopToList = () => {
+    if (
+      selectedShop &&
+      !formData.itemForEachShops.some((shop) => shop.shopId === selectedShop)
+    ) {
+      setFormData((prevData) => ({
+        ...prevData,
+        itemForEachShops: [
+          ...prevData.itemForEachShops,
+          { shopId: selectedShop, stockCount: 0 },
+        ],
+      }));
+      setSelectedShop(""); // Reset selected shop after adding
+    }
+  };
+
+  const handleStockCountChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    shopId: string
+  ) => {
+    const stockCount = parseInt(e.target.value, 10);
+    setFormData((prevData) => ({
+      ...prevData,
+      itemForEachShops: prevData.itemForEachShops.map((item) =>
+        item.shopId === shopId ? { ...item, stockCount } : item
+      ),
+    }));
+  };
+
+  const removeShop = (shopId: string) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      itemForEachShops: prevData.itemForEachShops.filter(
+        (shop) => shop.shopId !== shopId
+      ),
+    }));
+  };
+
   const removeFile = (index: number) => {
     setFiles((prevFiles) => {
       const updatedFiles = prevFiles.filter((_, i) => i !== index);
-      // Remove the corresponding image URL from formData
       setFormData((prevData) => ({
         ...prevData,
         images: prevData.images.filter((_, i) => i !== index),
@@ -159,7 +189,6 @@ const AddMasterItem: React.FC<AddFashionItemProps> = ({
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     try {
-      // Create a reference to the Firebase storage
       const uploadedImageUrls: string[] = [];
       for (const file of acceptedFiles) {
         const storageRef = ref(storage, `images/${file.name}`);
@@ -171,8 +200,6 @@ const AddMasterItem: React.FC<AddFashionItemProps> = ({
         ...prevData,
         images: [...prevData.images, ...uploadedImageUrls],
       }));
-
-      // Update files state to display previews
       setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
     } catch (error) {
       console.error("Error uploading files:", error);
@@ -186,6 +213,7 @@ const AddMasterItem: React.FC<AddFashionItemProps> = ({
     },
     maxFiles: 10,
   });
+
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -193,20 +221,16 @@ const AddMasterItem: React.FC<AddFashionItemProps> = ({
     }));
   };
 
-  const handleShopChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      shopId: [e.target.value],
-    }));
-  };
   const resetForm = () => {
     setFormData(initialFormData);
     setFiles([]);
   };
+
   const handleCloseWithReset = () => {
     resetForm();
     handleClose();
   };
+
   const handleSubmit = async () => {
     if (validateForm()) {
       try {
@@ -225,8 +249,7 @@ const AddMasterItem: React.FC<AddFashionItemProps> = ({
       !formData.name ||
       !formData.brand ||
       !formData.categoryId ||
-      formData.stockCount <= 0 ||
-      formData.shopId.length === 0
+      formData.itemForEachShops.length === 0
     ) {
       alert("Please fill all required fields.");
       return false;
@@ -318,9 +341,8 @@ const AddMasterItem: React.FC<AddFashionItemProps> = ({
                   <option value="Female">Female</option>
                 </select>
               </div>
-
               <div className="form-group">
-                <label htmlFor="category">Category</label>
+                <label htmlFor="categoryId">Category</label>
                 <select
                   className="form-control"
                   id="categoryId"
@@ -340,11 +362,11 @@ const AddMasterItem: React.FC<AddFashionItemProps> = ({
                 </select>
               </div>
               <div className="form-group">
-                <label htmlFor="shop">Shop</label>
+                <label htmlFor="shopId">Select Shop</label>
                 <select
                   className="form-control"
                   id="shopId"
-                  value={formData.shopId[0]}
+                  value={selectedShop}
                   onChange={handleShopChange}
                 >
                   <option value="">Select Shop</option>
@@ -354,87 +376,69 @@ const AddMasterItem: React.FC<AddFashionItemProps> = ({
                     </option>
                   ))}
                 </select>
+                <button
+                  type="button"
+                  className="btn btn-secondary mt-2"
+                  onClick={addShopToList}
+                >
+                  Add Shop
+                </button>
               </div>
-              <div className="form-group">
-                <label htmlFor="stockCount">Stock Count</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  id="stockCount"
-                  value={formData.stockCount}
-                  onChange={(e) =>
-                    setFormData((prevData) => ({
-                      ...prevData,
-                      stockCount: parseInt(e.target.value, 10),
-                    }))
-                  }
-                />
-              </div>
-              <div className="form-group">
-                <label className="form-label">Images</label>
-                <div {...getRootProps()} className="dropzone">
-                  <input {...getInputProps()} />
-                  <div className="dz-message needsclick">
-                    <KTIcon iconName="file-up" className="text-primary fs-3x" />
-                    <h3 className="fs-5 fw-bold text-gray-900 mb-1">
-                      Drop files here or click to upload.
-                    </h3>
-                    <span className="fs-7 text-gray-400">
-                      Upload up to 10 files
-                    </span>
-                  </div>
+              {formData.itemForEachShops.map((shopItem) => (
+                <div key={shopItem.shopId} className="form-group">
+                  <label>
+                    {
+                      shops.find((shop) => shop.shopId === shopItem.shopId)
+                        ?.address
+                    }
+                    :
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    value={shopItem.stockCount}
+                    onChange={(e) => handleStockCountChange(e, shopItem.shopId)}
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-danger mt-2"
+                    onClick={() => removeShop(shopItem.shopId)}
+                  >
+                    Remove Shop
+                  </button>
                 </div>
-                {files.length > 0 && (
-                  <div className="mt-5">
-                    <h3 className="fs-5 fw-bold text-gray-900 mb-3">
-                      Uploaded Files:
-                    </h3>
-                    <div className="d-flex flex-wrap gap-5">
-                      {files.map((file, index) => (
-                        <div
-                          key={index}
-                          className="d-flex flex-column align-items-center"
-                        >
-                          <img
-                            src={URL.createObjectURL(file)}
-                            alt={`preview ${index}`}
-                            style={{
-                              width: "100px",
-                              height: "100px",
-                              objectFit: "cover",
-                            }}
-                            className="rounded"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => removeFile(index)}
-                            className="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                          >
-                            <KTIcon iconName="cross" className="fs-2" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+              ))}
+              <div {...getRootProps()} className="dropzone">
+                <input {...getInputProps()} />
+                {isDragActive ? (
+                  <p>Drop the files here ...</p>
+                ) : (
+                  <p>Drag 'n' drop some files here, or click to select files</p>
                 )}
               </div>
+              <div className="form-group">
+                {files.map((file, index) => (
+                  <div key={index} className="file-preview">
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt="Preview"
+                      width="100"
+                      height="100"
+                    />
+                    <button type="button" onClick={() => removeFile(index)}>
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleSubmit}
+              >
+                Save
+              </button>
             </form>
-          </div>
-          <div className="modal-footer">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={handleCloseWithReset}
-            >
-              Close
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handleSubmit}
-            >
-              Submit
-            </button>
           </div>
         </div>
       </div>
