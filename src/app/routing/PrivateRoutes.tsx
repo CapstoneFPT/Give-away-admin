@@ -17,9 +17,11 @@ import ConsignLineItemReview from "../pages/consign/ConsignLineItemReview.tsx";
 import ProductCreationFromConsignmentForm from "../pages/consign/ProductCreationFromConsignmentForm.tsx";
 import FashionItemsAdminPage from "../admin/product/master/MasterFashionItemsAdmin.tsx";
 import ListMasterFashionItems from "../pages/product/ListMasterFashionItems.tsx";
-import FashionItemsAdminTable from "../admin/product/item/FashionItemsAdminTable.tsx";
+import AddOrderPage from "../pages/order/AddOrderPage.tsx";
+import { useAuth } from "../modules/auth";
 
 const PrivateRoutes = () => {
+  const { currentUser } = useAuth();
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
   const WizardsPage = lazy(() => import("../modules/wizards/WizardsPage"));
   const AccountPage = lazy(() => import("../modules/accounts/AccountPage"));
@@ -35,11 +37,24 @@ const PrivateRoutes = () => {
     () => import("../pages/product/FashionItemPage")
   );
 
+  const getDefaultRoute = () => {
+    switch (currentUser?.role) {
+      case "Admin":
+        return "/consignment";
+      case "Staff":
+        return "/order";
+      default:
+        return "/auth"; // Fallback to dashboard if role is unknown
+    }
+  };
+
   return (
     <Routes>
       <Route element={<MasterLayout />}>
         {/*Redirect to Dashboard after success login/registartion */}
-        <Route path="auth/*" element={<Navigate to="/dashboard" />} />
+        <Route index element={<Navigate to={getDefaultRoute()} />} />
+
+        <Route path="auth/*" element={<Navigate to={getDefaultRoute()} />} />
         {/* Pages */}
         <Route path="dashboard" element={<DashboardWrapper />} />
         <Route path="builder" element={<BuilderPageWrapper />} />
@@ -47,32 +62,6 @@ const PrivateRoutes = () => {
         <Route path="auction" element={<Auction />} />
         <Route path="order/*" element={<OrderPage />} />
         <Route path="refund" element={<RefundPage />} />
-        <Route
-          path="product-admin/*"
-          element={
-            <ProtectedRoute
-              roles={["Admin"]}
-              children={
-                <SuspensedView>
-                  <FashionItemsAdminPage />
-                </SuspensedView>
-              }
-            />
-          }
-        />
-        <Route
-          path="/product-admin/product-list/list-fashion/:masterItemId"
-          element={
-            <ProtectedRoute
-              roles={["Admin"]}
-              children={
-                <SuspensedView>
-                  <FashionItemsAdminTable className="mb-5 mb-xl-8" />
-                </SuspensedView>
-              }
-            />
-          }
-        />
         <Route
           path="product/*"
           element={
@@ -87,23 +76,10 @@ const PrivateRoutes = () => {
           }
         />
         <Route
-          path="consignment/:consignSaleId"
-          element={
-            <ProtectedRoute
-              roles={["Staff"]}
-              children={
-                <SuspensedView>
-                  <ConsignDetail />
-                </SuspensedView>
-              }
-            />
-          }
-        />
-        <Route
           path="consignment/*"
           element={
             <ProtectedRoute
-              roles={["Staff"]}
+              roles={["Staff", "Admin"]}
               children={
                 <SuspensedView>
                   <ConsignmentPage />
@@ -112,7 +88,14 @@ const PrivateRoutes = () => {
             />
           }
         />
-
+        <Route
+          path="order/add-order"
+          element={
+            <SuspensedView>
+              <AddOrderPage />
+            </SuspensedView>
+          }
+        />
         <Route
           path="order-detail/:orderId"
           element={
@@ -151,7 +134,7 @@ const PrivateRoutes = () => {
           path="consignment/:consignSaleId"
           element={
             <ProtectedRoute
-              roles={["Staff"]}
+              roles={["Staff", "Admin"]}
               children={
                 <SuspensedView>
                   <ConsignDetail />
