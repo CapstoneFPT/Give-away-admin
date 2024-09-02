@@ -6,8 +6,8 @@ import { useFormik } from "formik";
 
 import { toAbsoluteUrl } from "../../../../_metronic/helpers";
 import { useAuth } from "../core/Auth";
-import {AccountApi, AuthApi} from "../../../../api";
-import {CurrentUserModel} from "../core/_models.ts";
+import { AccountApi, AuthApi } from "../../../../api";
+import { CurrentUserModel } from "../core/_models.ts";
 
 const loginSchema = Yup.object().shape({
   email: Yup.string()
@@ -23,7 +23,7 @@ const loginSchema = Yup.object().shape({
 
 const initialValues = {
   email: "admin@gmail.com",
-  password: "admin",
+  password: "123456",
 };
 
 /*
@@ -51,30 +51,30 @@ export function Login() {
         });
 
         const tokenReponse = await accountApi.apiAccountsGetCurrentAccountPost({
-          headers : {
+          headers: {
             Authorization: `Bearer ${data.data!.accessToken!}`,
-          }
-        })
+          },
+        });
 
-        if (tokenReponse.data?.data?.role !== 'Admin' && tokenReponse.data?.data!.role !== 'Staff') {
+        if (
+          tokenReponse.data?.data?.role !== "Admin" &&
+          tokenReponse.data?.data!.role !== "Staff"
+        ) {
           setStatus("Unauthorized");
           setSubmitting(false);
           setLoading(false);
-           return;
+          return;
         }
 
         saveAuth({ api_token: data.data!.accessToken! });
         console.log(data.data!.role);
 
-
-
-        const currentUser : CurrentUserModel = {
+        const currentUser: CurrentUserModel = {
           role: data.data!.role!,
           email: data.data!.email!,
           shopId: tokenReponse.data.data!.shopId!,
           id: tokenReponse.data.data!.accountId!,
-        }
-
+        };
 
         setCurrentUser(currentUser);
       } catch (error) {

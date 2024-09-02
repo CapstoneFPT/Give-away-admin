@@ -1,21 +1,25 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { KTIcon } from "../../../_metronic/helpers";
-import { FashionItemApi, FashionItemList } from "../../../api";
+import { KTIcon, toAbsoluteUrl } from "../../../../_metronic/helpers";
+import {
+  FashionItemApi,
+  MasterItemApi,
+  MasterItemListResponse,
+} from "../../../../api";
 import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
-import { Button } from "react-bootstrap";
-
+import AddMasterItem from "./AddMasterFashionItem";
+import { Link } from "react-router-dom";
 type Props = {
   className: string;
 };
 
-const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
-  const { masterItemId } = useParams<{ masterItemId: string }>();
+const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-  const pageSize = 10; // Items per page
-  console.log(masterItemId);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const pageSize = 10;
+
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearchTerm(searchTerm), 200);
     return () => clearTimeout(timer);
@@ -24,35 +28,19 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
   const result = useQuery(
     ["FashionItems", debouncedSearchTerm, currentPage, pageSize],
     async () => {
-      const fashionItemApi = new FashionItemApi();
-      const response = await fashionItemApi.apiFashionitemsGet(
-        null!, // itemCode
-        null!, // memberId
-        null!, // gender
-        null!, // color
-        null!, // size
-        null!, // condition
-        null!, // minPrice
-        null!, // maxPrice
-        null!, // status
-        null!, // type
-        null!, // sortBy
-        false, // sortDescending
-        currentPage, // pageNumber
-        pageSize, // pageSize
-        debouncedSearchTerm, // name
-        null!, // categoryId
-        null!, // shopId
-        masterItemId, // masterItemId
-        null! // masterItemCode
+      const fashionItemApi = new MasterItemApi();
+      const response = await fashionItemApi.apiMasterItemsGet(
+        searchTerm,
+        null!,
+        currentPage,
+        pageSize
       );
-      return response.data;
-      console.log("hihi", response);
-    },
 
+      return response.data;
+    },
     { refetchOnWindowFocus: false, keepPreviousData: true }
   );
-
+  console.log(result);
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setCurrentPage(1); // Reset to first page when searching
@@ -67,22 +55,26 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
     setCurrentPage(newPage);
   };
 
+  const handleShowAddModal = () => setShowAddModal(true);
+  const handleCloseAddModal = () => setShowAddModal(false);
+  const handleItemCreated = () => {
+    handleCloseAddModal();
+  };
+
   if (result.isLoading) return <div>Loading...</div>;
   if (result.error)
     return <div>An error occurred: {(result.error as Error).message}</div>;
 
-  const totalItems = result.data?.totalCount || 0;
-  const totalPages = result.data?.totalPages || 1;
-
   return (
     <div className={`card ${className}`}>
+      {/* begin::Header */}
       <div className="card-header border-0 pt-5">
         <h3 className="card-title align-items-start flex-column">
           <span className="card-label fw-bold fs-3 mb-1">
             Master Fashion Items List
           </span>
           <span className="text-muted mt-1 fw-semibold fs-7">
-            Over {totalItems} products
+            Over {result.data?.totalCount} products
           </span>
         </h3>
         <div className="card-toolbar">
@@ -95,29 +87,40 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
               onChange={handleSearchInputChange}
             />
           </form>
-          <a href="#" className="btn btn-sm btn-light-primary">
+          <button
+            className="btn btn-sm btn-light-primary"
+            onClick={handleShowAddModal}
+          >
             <KTIcon iconName="plus" className="fs-2" />
-            New Product
-          </a>
+            Add new master item
+          </button>
         </div>
       </div>
+      {/* end::Header */}
+      {/* begin::Body */}
       <div className="card-body py-3">
+        {/* begin::Table container */}
         <div className="table-responsive">
+          {/* begin::Table */}
           <table className="table align-middle gs-0 gy-4">
+            {/* begin::Table head */}
             <thead>
               <tr className="fw-bold text-muted bg-light">
                 <th className="ps-4 min-w-125px rounded-start">Item Code</th>
                 <th className="min-w-200px">Product</th>
                 <th className="min-w-200px">Description</th>
-                <th className="min-w-125px">Selling Price</th>
-                <th className="min-w-125px">Condition</th>
+                <th className="min-w-125px">Stock Count</th>
+                <th className="min-w-125px">Item In Stock</th>
+                <th className="min-w-150px">Created Date</th>
                 <th className="min-w-150px">Brand</th>
                 <th className="min-w-200px text-end rounded-end"></th>
               </tr>
             </thead>
+            {/* end::Table head */}
+            {/* begin::Table body */}
             <tbody>
-              {result.data?.items?.map((product: FashionItemList) => (
-                <tr key={product.itemId}>
+              {result.data?.items!.map((product: MasterItemListResponse) => (
+                <tr key={product.masterItemId}>
                   <td>
                     <a
                       href="#"
@@ -129,7 +132,19 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
                   <td>
                     <div className="d-flex align-items-center">
                       <div className="symbol symbol-50px me-5">
-                        <img src={product.image!} alt={product.name || "N/A"} />
+                        <img
+                          src={
+                            (product.images && product.images.length > 0
+                              ? product.images[0]
+                              : toAbsoluteUrl(
+                                  "media/stock/600x400/img-placeholder.jpg"
+                                )) ??
+                            toAbsoluteUrl(
+                              "media/stock/600x400/img-placeholder.jpg"
+                            )
+                          }
+                          alt={product.name || "N/A"}
+                        />
                       </div>
                       <div className="d-flex justify-content-start flex-column">
                         <a
@@ -146,20 +161,22 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
                   </td>
                   <td>
                     <span className="text-muted fw-semibold text-muted d-block fs-7">
-                      {product.note || "N/A"}
+                      {product.description}
                     </span>
                   </td>
                   <td>
                     <span className="text-muted fw-semibold text-muted d-block fs-7">
-                      {product.sellingPrice
-                        ? product.sellingPrice.toLocaleString()
-                        : "N/A"}{" "}
-                      VND
+                      <strong>{product.stockCount}</strong>
                     </span>
                   </td>
                   <td>
                     <span className="text-muted fw-semibold text-muted d-block fs-7">
-                      {product.condition}
+                      <strong>{product.itemInStock}</strong>
+                    </span>
+                  </td>
+                  <td>
+                    <span className="text-muted fw-semibold text-muted d-block fs-7">
+                      {new Date(product.createdDate!).toLocaleDateString()}
                     </span>
                   </td>
                   <td>
@@ -168,21 +185,29 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
                     </span>
                   </td>
                   <td className="text-end">
-                    <Button className="btn btn-success hover-rotate-end">
-                      <KTIcon iconName="pencil" className="fs-3" />
-                      Details
-                    </Button>
+                    <Link
+                      to={`/product-admin/product-list/list-fashion/${product.masterItemId}`}
+                      className="btn btn-success hover-rotate-end"
+                    >
+                      Go to fashion item list
+                    </Link>
                   </td>
                 </tr>
               ))}
             </tbody>
+            {/* end::Table body */}
           </table>
+          {/* end::Table */}
         </div>
+        {/* end::Table container */}
       </div>
+      {/* end::Body */}
+      {/* begin::Footer */}
       <div className="card-footer d-flex justify-content-between align-items-center">
         <div>
           Showing {(currentPage - 1) * pageSize + 1} to{" "}
-          {Math.min(currentPage * pageSize, totalItems)} of {totalItems} entries
+          {Math.min(currentPage * pageSize, result!.data!.totalCount!)} of{" "}
+          {result.data?.totalCount} entries
         </div>
         <div>
           <button
@@ -192,7 +217,10 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
           >
             Previous
           </button>
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          {Array.from(
+            { length: result!.data!.totalPages! },
+            (_, i) => i + 1
+          ).map((page) => (
             <button
               key={page}
               className={`btn btn-sm ${
@@ -206,14 +234,20 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
           <button
             className="btn btn-sm btn-light-primary"
             onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
+            disabled={currentPage === result!.data!.totalPages!}
           >
             Next
           </button>
         </div>
       </div>
+      <AddMasterItem
+        show={showAddModal}
+        handleClose={handleCloseAddModal}
+        handleSave={handleItemCreated}
+      />
+      {/* end::Footer */}
     </div>
   );
 };
 
-export default ListMasterFashionItems;
+export default MasterFashionItemsAdminTable;
