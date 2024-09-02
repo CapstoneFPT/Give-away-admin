@@ -76,6 +76,32 @@ const PrivateRoutes = () => {
           }
         />
         <Route
+          path="product-admin/*"
+          element={
+            <ProtectedRoute
+              roles={["Admin"]}
+              children={
+                <SuspensedView>
+                  <FashionItemsAdminPage />
+                </SuspensedView>
+              }
+            />
+          }
+        />
+        <Route
+          path="/product-admin/product-list/list-fashion/:masterItemId"
+          element={
+            <ProtectedRoute
+              roles={["Admin"]}
+              children={
+                <SuspensedView>
+                  <FashionItemsAdminPage />
+                </SuspensedView>
+              }
+            />
+          }
+        />
+        <Route
           path="consignment/*"
           element={
             <ProtectedRoute
