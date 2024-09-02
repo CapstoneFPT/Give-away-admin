@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { KTIcon } from "../../../../_metronic/helpers";
 import { FashionItemApi, FashionItemList } from "../../../../api";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
-import { Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import AddFashionItem from "./AddFashionItem";
 type Props = {
   className: string;
@@ -16,12 +16,14 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const pageSize = 10; // Items per page
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-
+  const queryClient = useQueryClient();
   const handleOpenModal = () => setIsModalVisible(true);
   const handleCloseModal = () => setIsModalVisible(false);
 
   const handleItemCreated = () => {
     handleCloseModal();
+    setCurrentPage(1);
+    queryClient.invalidateQueries(["FashionItems"]); // Invalidate query to refetch data
   };
 
   useEffect(() => {
@@ -59,7 +61,7 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
 
     { refetchOnWindowFocus: false, keepPreviousData: true }
   );
-  console.log(result);
+
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setCurrentPage(1); // Reset to first page when searching
@@ -182,10 +184,12 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                     </span>
                   </td>
                   <td className="text-end">
-                    <Button className="btn btn-success hover-rotate-end">
-                      <KTIcon iconName="pencil" className="fs-3" />
-                      Details
-                    </Button>
+                    <Link
+                      to={`/product-admin/item-details/${product.itemId}`}
+                      className="btn btn-success hover-rotate-end"
+                    >
+                      Detail
+                    </Link>
                   </td>
                 </tr>
               ))}
@@ -230,7 +234,7 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
         show={isModalVisible}
         handleClose={handleCloseModal}
         handleSave={handleItemCreated}
-        masterItemId="some-master-item-id" // Replace with actual masterItemId if available
+        handleItemCreated={handleItemCreated}
       />
     </div>
   );

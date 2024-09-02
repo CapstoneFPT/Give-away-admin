@@ -26,7 +26,7 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
   }, [searchTerm]);
 
   const result = useQuery(
-    ["FashionItems", debouncedSearchTerm, currentPage, pageSize],
+    ["MasterFashionItems", debouncedSearchTerm, currentPage, pageSize],
     async () => {
       const fashionItemApi = new MasterItemApi();
       const response = await fashionItemApi.apiMasterItemsGet(
@@ -186,7 +186,7 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                   </td>
                   <td className="text-end">
                     <Link
-                      to={`/product-admin/product-list/list-fashion/${product.masterItemId}`}
+                      to={`/product-admin/${product.masterItemId}`}
                       className="btn btn-success hover-rotate-end"
                     >
                       Go to fashion item list
