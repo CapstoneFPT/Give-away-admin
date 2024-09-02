@@ -214,7 +214,7 @@ export const ConsignDetail: React.FC = () => {
         </KTCardBody>
       </KTCard>
       <ConsignmentApproval
-        consignSaleId={consignSaleResponse.consignSaleId!}
+        consignSale={consignSaleResponse}
         initialStatus={consignSaleResponse.status || "Pending"}
       />
 
@@ -313,12 +313,6 @@ export const ConsignDetail: React.FC = () => {
                           className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
                         >
                           <KTIcon iconName="eye" className="fs-3" />
-                        </Link>
-                        <Link
-                          to={`/create-item/${consignSaleId}/line-item/${item.consignSaleLineItemId}`}
-                          className="btn btn-icon btn-bg-light btn-active-color-success btn-sm"
-                        >
-                          <KTIcon iconName="plus" className="fs-3" />
                         </Link>
                       </td>
                     </tr>
