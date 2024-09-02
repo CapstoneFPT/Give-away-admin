@@ -2539,6 +2539,12 @@ export interface ConsignSaleLineItemsListResponse {
      * @memberof ConsignSaleLineItemsListResponse
      */
     'shopResponse'?: string | null;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ConsignSaleLineItemsListResponse
+     */
+    'isApproved'?: boolean | null;
 }
 
 

@@ -6,7 +6,7 @@ import { formatBalance } from "../utils/utils";
 import { useConsignSale, useConsignSaleLineItems } from "./consignSaleHooks";
 import { Content } from "../../../_metronic/layout/components/content";
 import ConsignmentApproval from "./ConsignmentApproval.tsx";
-import { ConsignSaleLineItemStatus, ConsignSaleStatus } from "../../../api";
+import {ConsignSaleLineItemsListResponse, ConsignSaleLineItemStatus, ConsignSaleStatus} from "../../../api";
 
 const getConsignSaleStatusColor = (status?: ConsignSaleStatus) => {
   switch (status) {
@@ -216,6 +216,7 @@ export const ConsignDetail: React.FC = () => {
       <ConsignmentApproval
         consignSale={consignSaleResponse}
         initialStatus={consignSaleResponse.status || "Pending"}
+        lineItems={lineItemsResponse || []}
       />
 
       <KTCard className="mb-5 mb-xl-8">
@@ -279,7 +280,7 @@ export const ConsignDetail: React.FC = () => {
               </thead>
               <tbody className="fw-semibold text-gray-600">
                 {lineItemsResponse &&
-                  lineItemsResponse.map((item) => (
+                  lineItemsResponse.map((item : ConsignSaleLineItemsListResponse) => (
                     <tr key={item.consignSaleLineItemId}>
                       <td>
                         <span

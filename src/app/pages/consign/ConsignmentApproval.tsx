@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { KTCard, KTCardBody, KTIcon } from "../../../_metronic/helpers";
-import { ConsignSaleApi, ConsignSaleDetailedResponse, ConsignSaleStatus } from "../../../api";
+import { ConsignSaleApi, ConsignSaleDetailedResponse, ConsignSaleStatus, ConsignSaleLineItemsListResponse } from "../../../api";
 
 interface ConsignmentApprovalProps {
     consignSale: ConsignSaleDetailedResponse;
     initialStatus: ConsignSaleStatus;
+    lineItems: ConsignSaleLineItemsListResponse[];
 }
 
 const consignSaleApi = new ConsignSaleApi();
 
-export const ConsignmentApproval: React.FC<ConsignmentApprovalProps> = ({ consignSale, initialStatus }) => {
+export const ConsignmentApproval: React.FC<ConsignmentApprovalProps> = ({ consignSale, initialStatus, lineItems }) => {
     const [comment, setComment] = useState<string>('');
     const [status, setStatus] = useState<ConsignSaleStatus>(initialStatus);
     const queryClient = useQueryClient();
@@ -18,6 +19,11 @@ export const ConsignmentApproval: React.FC<ConsignmentApprovalProps> = ({ consig
     useEffect(() => {
         setStatus(initialStatus);
     }, [initialStatus]);
+
+    const canListItems = () => {
+        return lineItems.some(item => item.isApproved === true) &&
+            !lineItems.some(item => item.isApproved === null || item.isApproved === undefined);
+    }
 
     const updateConsignSale = useMutation(
         async ({ id, status, comment }: { id: string; status: ConsignSaleStatus; comment?: string }) => {
@@ -38,7 +44,7 @@ export const ConsignmentApproval: React.FC<ConsignmentApprovalProps> = ({ consig
             return await consignSaleApi.apiConsignsalesConsignSaleIdConfirmReceivedPut(id);
         },
         {
-            onSuccess:async () => {
+            onSuccess: async () => {
                 await queryClient.invalidateQueries(['consignSale', consignSale.consignSaleId]);
             }
         }
@@ -49,7 +55,7 @@ export const ConsignmentApproval: React.FC<ConsignmentApprovalProps> = ({ consig
             return await consignSaleApi.apiConsignsalesConsignSaleIdPostItemsToSellPut(id);
         },
         {
-            onSuccess:async () => {
+            onSuccess: async () => {
                 await queryClient.invalidateQueries(['consignSale', consignSale.consignSaleId]);
             }
         }
@@ -75,8 +81,6 @@ export const ConsignmentApproval: React.FC<ConsignmentApprovalProps> = ({ consig
         setStatus(ConsignSaleStatus.OnSale);
     };
 
-    const isLoading = updateConsignSale.isLoading || confirmReceived.isLoading || listItems.isLoading;
-
     return (
         <KTCard className="mb-5 mb-xl-8">
             <KTCardBody>
@@ -99,7 +103,7 @@ export const ConsignmentApproval: React.FC<ConsignmentApprovalProps> = ({ consig
                         <button
                             className='btn btn-danger me-3 mb-3'
                             onClick={handleReject}
-                            disabled={isLoading || !(status in [ConsignSaleStatus.Pending, ConsignSaleStatus.AwaitDelivery, ConsignSaleStatus.Processing])}
+                            disabled={updateConsignSale.isLoading || !(status in [ConsignSaleStatus.Pending, ConsignSaleStatus.AwaitDelivery, ConsignSaleStatus.Processing])}
                         >
                             {updateConsignSale.isLoading && status === ConsignSaleStatus.Rejected ? (
                                 <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
@@ -135,11 +139,10 @@ export const ConsignmentApproval: React.FC<ConsignmentApprovalProps> = ({ consig
                         <button
                             className='btn btn-success mb-3'
                             onClick={handleApprove}
-                            disabled={listItems.isLoading || status !== ConsignSaleStatus.Processing}
+                            disabled={listItems.isLoading || status !== ConsignSaleStatus.Processing || !canListItems}
                         >
                             {listItems.isLoading ? (
-                                <span className="spinner-border spinner-border-sm me-2" role="status"
-                                      aria-hidden="true"></span>
+                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                             ) : (
                                 <KTIcon iconName='check' className='fs-2 me-2'/>
                             )}
