@@ -7419,6 +7419,12 @@ export interface OrderDetailedResponse {
      * @memberof OrderDetailedResponse
      */
     'status'?: OrderStatus;
+    /**
+     * 
+     * @type {string}
+     * @memberof OrderDetailedResponse
+     */
+    'createdDate'?: string;
 }
 
 
