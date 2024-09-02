@@ -19,6 +19,8 @@ import './_metronic/assets/keenicons/solid/style.css'
 import './_metronic/assets/sass/style.scss'
 import {AppRoutes} from './app/routing/AppRoutes'
 import {AuthProvider, setupAxios} from './app/modules/auth'
+import {DevSupport} from "@react-buddy/ide-toolbox";
+import {ComponentPreviews, useInitial} from "./dev";
 /**
  * Creates `axios-mock-adapter` instance for provided `axios` instance, add
  * basic Metronic mocks and returns it.
@@ -36,14 +38,18 @@ Chart.register(...registerables)
 const queryClient = new QueryClient()
 const container = document.getElementById('root')
 if (container) {
-  createRoot(container).render(
-    <QueryClientProvider client={queryClient}>
-      <MetronicI18nProvider>
-        <AuthProvider>
-          <AppRoutes />
-        </AuthProvider>
-      </MetronicI18nProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
-  )
+    createRoot(container).render(
+        <QueryClientProvider client={queryClient}>
+            <MetronicI18nProvider>
+                <AuthProvider>
+                    <AppRoutes/>
+                </AuthProvider>
+            </MetronicI18nProvider>
+            <DevSupport ComponentPreviews={ComponentPreviews}
+                        useInitialHook={useInitial}
+            >
+                <ReactQueryDevtools initialIsOpen={false}/>
+            </DevSupport>
+        </QueryClientProvider>
+    )
 }
