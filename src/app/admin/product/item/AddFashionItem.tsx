@@ -4,6 +4,7 @@ import { storage } from "../../../../firebaseconfig";
 import { CreateIndividualItemRequest, MasterItemApi } from "../../../../api";
 import { useDropzone } from "react-dropzone";
 import { KTCard, KTCardBody, KTIcon } from "../../../../_metronic/helpers";
+import { useParams } from "react-router-dom";
 
 export type SizeType = "XS" | "S" | "M" | "L" | "XL";
 
@@ -11,15 +12,16 @@ interface AddFashionItemProps {
   show: boolean;
   handleClose: () => void;
   handleSave: (itemData: CreateIndividualItemRequest) => void;
-  masterItemId: string;
+  handleItemCreated: () => void;
 }
 
 const AddFashionItem: React.FC<AddFashionItemProps> = ({
   show,
   handleClose,
   handleSave,
-  masterItemId,
+  handleItemCreated,
 }) => {
+  const { masterItemId } = useParams<{ masterItemId: string }>();
   const initialFormData: CreateIndividualItemRequest = {
     condition: "Never worn, with tag",
     color: "",
@@ -32,19 +34,24 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
   const [fashionItem, setFashionItem] =
     useState<CreateIndividualItemRequest>(initialFormData);
   const [files, setFiles] = useState<File[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const createFashionItem = async (itemData: CreateIndividualItemRequest) => {
+    setIsLoading(true);
+    const id = masterItemId ?? "";
     try {
       const createApi = new MasterItemApi();
-      const response =
-        await createApi.apiMasterItemsMasterItemIdIndividualItemsPost(
-          masterItemId,
-          itemData
-        );
-      console.log(response);
+      await createApi.apiMasterItemsMasterItemIdIndividualItemsPost(
+        id,
+        itemData
+      );
     } catch (error) {
       console.error("Error creating fashion item:", error);
+
       throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -98,6 +105,7 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
   const resetForm = () => {
     setFashionItem(initialFormData);
     setFiles([]);
+    setErrorMessage("");
   };
 
   const handleCloseWithReset = () => {
@@ -110,9 +118,10 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
       try {
         await createFashionItem(fashionItem);
         handleSave(fashionItem);
+        handleItemCreated();
         handleCloseWithReset();
       } catch (error) {
-        alert("Failed to submit. Please try again.");
+        setErrorMessage("Failed to submit. Please try again.");
       }
     }
   };
@@ -125,7 +134,7 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
       fashionItem.sellingPrice === undefined ||
       fashionItem.sellingPrice <= 0
     ) {
-      alert("Please fill all required fields.");
+      setErrorMessage("Please fill all required fields.");
       return false;
     }
     return true;
@@ -148,12 +157,12 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
         <div className="modal-content">
           <div className="modal-header">
             <h3
+              className="modal-title"
               style={{
                 fontSize: 40,
                 display: "flex",
                 justifyContent: "center",
               }}
-              className="modal-title"
             >
               Add Fashion Item
             </h3>
@@ -162,6 +171,7 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
               className="close"
               aria-label="Close"
               onClick={handleCloseWithReset}
+              disabled={isLoading}
             >
               <span aria-hidden="true">&times;</span>
             </button>
@@ -169,6 +179,7 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
           <div className="modal-body">
             <div className="fashion-item-form">
               <form>
+                {/* Condition */}
                 <div className="form-group">
                   <label htmlFor="condition">Condition</label>
                   <select
@@ -176,6 +187,7 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
                     id="condition"
                     value={fashionItem.condition || ""}
                     onChange={handleChange}
+                    disabled={isLoading}
                   >
                     <option value="Never worn, with tag">
                       Never worn, with tag
@@ -186,16 +198,22 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
                     <option value="Fair">Fair</option>
                   </select>
                 </div>
+
+                {/* Color */}
                 <div className="form-group">
                   <label htmlFor="color">Color</label>
                   <input
                     type="text"
                     className="form-control"
                     id="color"
+                    placeholder="Enter item color"
                     value={fashionItem.color || ""}
                     onChange={handleChange}
+                    disabled={isLoading}
                   />
                 </div>
+
+                {/* Size */}
                 <div className="form-group">
                   <label htmlFor="size">Size</label>
                   <select
@@ -203,6 +221,7 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
                     id="size"
                     value={fashionItem.size || "XS"}
                     onChange={handleChange}
+                    disabled={isLoading}
                   >
                     <option value="XS">XS</option>
                     <option value="S">S</option>
@@ -211,25 +230,35 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
                     <option value="XL">XL</option>
                   </select>
                 </div>
+
+                {/* Note */}
                 <div className="form-group">
                   <label htmlFor="note">Note</label>
                   <textarea
                     className="form-control"
                     id="note"
+                    placeholder="Additional notes about the item"
                     value={fashionItem.note || ""}
                     onChange={handleChange}
+                    disabled={isLoading}
                   />
                 </div>
+
+                {/* Selling Price */}
                 <div className="form-group">
                   <label htmlFor="sellingPrice">Selling Price</label>
                   <input
                     type="number"
                     className="form-control"
                     id="sellingPrice"
+                    placeholder="Enter the selling price"
                     value={fashionItem.sellingPrice || ""}
                     onChange={handleChange}
+                    disabled={isLoading}
                   />
                 </div>
+
+                {/* Image Upload */}
                 <div className="form-group">
                   <label>Images</label>
                   <KTCard>
@@ -244,7 +273,7 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
                           <div className="fw-bold fs-3 text-primary">
                             {isDragActive
                               ? "Drop the files here ..."
-                              : "Drag 'n' drop some files here, or click to select files"}
+                              : "Drag 'n' drop files or click to select"}
                           </div>
                         </div>
                       </div>
@@ -254,13 +283,15 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
                             <div className="text-center">
                               <img
                                 src={URL.createObjectURL(file)}
-                                alt={`fashion-item-${fileIndex}`}
-                                className="img-fluid rounded"
+                                alt={`preview-${fileIndex}`}
+                                className="img-thumbnail"
+                                style={{ width: "100%", height: "auto" }}
                               />
                               <button
                                 type="button"
                                 className="btn btn-danger mt-2"
                                 onClick={() => removeFile(fileIndex)}
+                                disabled={isLoading}
                               >
                                 Remove
                               </button>
@@ -271,23 +302,33 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
                     </KTCardBody>
                   </KTCard>
                 </div>
+
+                {/* Error Message */}
+                {errorMessage && (
+                  <div className="alert alert-danger" role="alert">
+                    {errorMessage}
+                  </div>
+                )}
               </form>
             </div>
           </div>
           <div className="modal-footer">
             <button
               type="button"
-              className="btn btn-primary"
-              onClick={handleSubmit}
-            >
-              Save
-            </button>
-            <button
-              type="button"
               className="btn btn-secondary"
               onClick={handleCloseWithReset}
+              disabled={isLoading}
             >
-              Cancel
+              Close
+            </button>
+            {/* Submit Button */}
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={handleSubmit}
+              disabled={isLoading}
+            >
+              {isLoading ? "Saving..." : "Save"}
             </button>
           </div>
         </div>

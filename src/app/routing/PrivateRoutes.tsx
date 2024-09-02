@@ -18,8 +18,9 @@ import ProductCreationFromConsignmentForm from "../pages/consign/ProductCreation
 import ListMasterFashionItems from "../pages/product/ListMasterFashionItems.tsx";
 import AddOrderPage from "../pages/order/AddOrderPage.tsx";
 import { useAuth } from "../modules/auth";
+import ItemDetail from "../admin/product/item/ItemDetail.tsx";
+import MasterFashionItemsAdminTable from "../admin/product/master/MasterFashionItemsAdminTable.tsx";
 import FashionItemsAdminTable from "../admin/product/item/FashionItemsAdminTable.tsx";
-import MasterFashionItemsAdminPage from "../admin/product/master/MasterFashionItemsAdmin.tsx";
 const PrivateRoutes = () => {
   const { currentUser } = useAuth();
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
@@ -62,30 +63,35 @@ const PrivateRoutes = () => {
         <Route path="auction" element={<Auction />} />
         <Route path="order/*" element={<OrderPage />} />
         <Route path="refund" element={<RefundPage />} />
+        {/* Product Admin Routes */}
         <Route
-          path="product-admin/*"
+          path="product-admin"
           element={
-            <ProtectedRoute
-              roles={["Admin"]}
-              children={
-                <SuspensedView>
-                  <MasterFashionItemsAdminPage />
-                </SuspensedView>
-              }
-            />
+            <ProtectedRoute roles={["Admin"]}>
+              <SuspensedView>
+                <MasterFashionItemsAdminTable className="mb-5 mb-xl-8" />
+              </SuspensedView>
+            </ProtectedRoute>
           }
         />
         <Route
-          path="/product-admin/product-list/list-fashion/:masterItemId"
+          path="product-admin/:masterItemId"
           element={
-            <ProtectedRoute
-              roles={["Admin"]}
-              children={
-                <SuspensedView>
-                  <FashionItemsAdminTable className="mb-5 mb-xl-8" />
-                </SuspensedView>
-              }
-            />
+            <ProtectedRoute roles={["Admin"]}>
+              <SuspensedView>
+                <FashionItemsAdminTable className="mb-5 mb-xl-8" />
+              </SuspensedView>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="product-admin/item-details/:itemId"
+          element={
+            <ProtectedRoute roles={["Admin"]}>
+              <SuspensedView>
+                <ItemDetail />
+              </SuspensedView>
+            </ProtectedRoute>
           }
         />
         <Route

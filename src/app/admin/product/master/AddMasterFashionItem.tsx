@@ -10,6 +10,7 @@ import {
 } from "../../../../api";
 import { useDropzone } from "react-dropzone";
 import { KTCard, KTCardBody, KTIcon } from "../../../../_metronic/helpers";
+import { showAlert } from "../../../../utils/Alert";
 
 interface AddMasterItemProps {
   show: boolean;
@@ -53,15 +54,19 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedShop, setSelectedShop] = useState<string>("");
   const [isCategoryDisabled, setIsCategoryDisabled] = useState(true);
+  const [loading, setLoading] = useState<boolean>(false);
   console.log(formData);
   const createMasterItem = async (itemData: MasterItem) => {
     try {
+      setLoading(true); // Start loading
       const createApi = new MasterItemApi();
       const response = await createApi.apiMasterItemsPost(itemData);
       console.log(response);
     } catch (error) {
       console.error("Error creating master item:", error);
       throw error;
+    } finally {
+      setLoading(false); // End loading
     }
   };
 
@@ -232,7 +237,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
         handleSave(formData);
         handleClose();
       } catch (error) {
-        alert("Failed to submit. Please try again.");
+        showAlert("error", `${error}`);
       }
     }
   };
@@ -245,7 +250,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
       !formData.categoryId ||
       formData.itemForEachShops.length === 0
     ) {
-      alert("Please fill all required fields.");
+      showAlert("info", "Please fill all required fields.");
       return false;
     }
     return true;
@@ -428,10 +433,11 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
 
               <button
                 type="button"
-                className="btn btn-primary"
                 onClick={handleSubmit}
+                disabled={loading}
+                className="btn btn-primary"
               >
-                Save
+                {loading ? "Saving..." : "Save"}
               </button>
             </form>
           </div>
