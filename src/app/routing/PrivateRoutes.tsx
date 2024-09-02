@@ -16,6 +16,7 @@ import {ConsignDetail} from "../pages/consign/ConsignDetail.tsx";
 import ConsignLineItemReview from "../pages/consign/ConsignLineItemReview.tsx";
 import ProductCreationFromConsignmentForm from "../pages/consign/ProductCreationFromConsignmentForm.tsx";
 import ListMasterFashionItems from "../pages/product/ListMasterFashionItems.tsx";
+import AddOrderPage from "../pages/order/AddOrderPage.tsx";
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
@@ -71,7 +72,13 @@ const PrivateRoutes = () => {
             />
           }
         />
-
+<Route
+path="order/add-order"
+element={
+    <SuspensedView>
+        <AddOrderPage/>
+    </SuspensedView>
+}/>
         <Route
           path="order-detail/:orderId"
           element={

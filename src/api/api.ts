@@ -2319,6 +2319,18 @@ export interface ConsignSaleLineItemDetailedResponse {
      * @memberof ConsignSaleLineItemDetailedResponse
      */
     'images'?: Array<string> | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConsignSaleLineItemDetailedResponse
+     */
+    'shopResponse'?: string | null;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ConsignSaleLineItemDetailedResponse
+     */
+    'isApproved'?: boolean | null;
 }
 
 

@@ -18,6 +18,25 @@ export const ConsignLineItemReview: React.FC = () => {
     const [priceChangeExplanation, setPriceChangeExplanation] = useState<string>('');
 
     const {currentUser} = useAuth();
+    const {data, isLoading, error} = useQuery({
+        queryKey: ['consignSaleLineItem', consignSaleId, lineItemId],
+        queryFn: async () => {
+            const consignLineItemApi = new ConsignLineItemApi();
+            const response = await consignLineItemApi.apiConsignlineitemsConsignLineItemIdGet(lineItemId!);
+            return response.data;
+        },
+        onSuccess: (data) => {
+            setDealPrice(!data.dealPrice ? data.expectedPrice!.toString() : data.dealPrice!.toString());
+        }
+    });
+    const {data: masterItemsData, isLoading: masterItemsLoading, error: masterItemsError} = useQuery({
+        queryKey: ['masterItems'],
+        queryFn: async () => {
+            const masterItemApi = new MasterItemApi();
+            const response = await masterItemApi.apiMasterItemsGet(null!, null!, null!, null!, null!, currentUser?.shopId);
+            return response.data;
+        }
+    });
 
     const createIndividualMutation = useMutation(
         (data: { masterItemId: string, dealPrice: number }) => {
@@ -37,6 +56,25 @@ export const ConsignLineItemReview: React.FC = () => {
             }
         }
     );
+
+    const createIndividualAfterNegotiationMutation = useMutation(
+        (data: { masterItemId: string }) => {
+            const consignLineItemApi = new ConsignLineItemApi();
+            return consignLineItemApi.apiConsignlineitemsConsignLineItemIdCreateIndividualAfterNegotiationPost(lineItemId!, data);
+        },
+        {
+            onSuccess: () => {
+                setShowModal(false);
+                navigate(`/consignment/${consignSaleId}`);
+            },
+            onError: (error) => {
+                console.log(lineItemId)
+                console.error('Error creating individual item after negotiation:', error);
+            }
+        }
+    );
+
+
     const handleMasterItemChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedMasterItem(e.target.value);
     };
@@ -59,46 +97,33 @@ export const ConsignLineItemReview: React.FC = () => {
             }
         }
     );
-    const {data, isLoading, error} = useQuery({
-        queryKey: ['consignSaleLineItem', consignSaleId, lineItemId],
-        queryFn: async () => {
-            const consignLineItemApi = new ConsignLineItemApi();
-            const response = await consignLineItemApi.apiConsignlineitemsConsignLineItemIdGet(lineItemId!);
-            return response.data;
-        },
-        onSuccess: (data) => {
-            setDealPrice(!data.dealPrice ? data.expectedPrice!.toString() : data.dealPrice!.toString());
-        }
-    });
-    const {data: masterItemsData, isLoading: masterItemsLoading, error: masterItemsError} = useQuery({
-        queryKey: ['masterItems'],
-        queryFn: async () => {
-            const masterItemApi = new MasterItemApi();
-            const response = await masterItemApi.apiMasterItemsGet(null!, null!, null!, null!, null!, currentUser?.shopId);
-            return response.data;
-        }
-    });
+
     const handleConfirmedPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newPrice = e.target.value;
         setDealPrice(newPrice);
         setIsPriceChanged(newPrice !== data?.expectedPrice?.toString());
     };
 
-    const handleModalSubmit = () => {
-        if (!selectedMasterItem || !dealPrice) {
-            console.error('Please select a master item and confirm the price');
+    const handleCreateItemModalSubmit = () => {
+        if (!selectedMasterItem) {
+            console.error('Please select a master item');
             return;
         }
 
-        console.log("Submit data:", {
-            masterItemId: selectedMasterItem,
-            dealPrice: parseFloat(dealPrice)
-        })
+        if (dealPrice === data?.expectedPrice?.toString()) {
+            createIndividualMutation.mutate({
+                masterItemId: selectedMasterItem,
+                dealPrice: parseFloat(dealPrice)
+            });
+        } else {
+            createIndividualAfterNegotiationMutation.mutate({
+                masterItemId: selectedMasterItem
+            });
+        }
+    };
 
-        createIndividualMutation.mutate({
-            masterItemId: selectedMasterItem,
-            dealPrice: parseFloat(dealPrice)
-        });
+    const handleCreateNewItem = () => {
+        setShowModal(true);
     };
 
     if (isLoading) {
@@ -124,7 +149,6 @@ export const ConsignLineItemReview: React.FC = () => {
             setShowPriceDifferenceModal(true);
         }
     };
-
 
 
     const handlePriceDifferenceSubmit = () => {
@@ -177,9 +201,15 @@ export const ConsignLineItemReview: React.FC = () => {
                                     <p><strong>Created Date:</strong> {new Date(data.createdDate!).toLocaleString()}</p>
                                 </div>
                                 <div className='col-6'>
-                                    <p><strong>Deal Price:</strong> {formatBalance(data.dealPrice || 0)}</p>
+                                    <p>
+                                        <strong>
+                                            Expected Price:
+                                        </strong>
+                                        {formatBalance(data.expectedPrice || 0)} VND
+                                    </p>
+                                    <p><strong>Deal Price:</strong> {formatBalance(data.dealPrice || 0)} VND</p>
                                     <p><strong>Confirmed
-                                        Price:</strong> {data.confirmedPrice ? formatBalance(data.confirmedPrice) : 'Not set'}
+                                        Price:</strong> {data.confirmedPrice ? formatBalance(data.confirmedPrice) + ' VND' : 'Not set'}
                                     </p>
                                 </div>
                             </div>
@@ -231,7 +261,7 @@ export const ConsignLineItemReview: React.FC = () => {
                                             className={`form-control ${isPriceChanged ? 'border-warning' : ''}`}
                                             id="confirmedPrice"
                                             value={dealPrice}
-                                            readOnly={data.dealPrice ? true : false}
+                                            readOnly={!!data.dealPrice}
                                             onChange={handleConfirmedPriceChange}
                                             placeholder="Enter deal price"
                                         />
@@ -244,10 +274,19 @@ export const ConsignLineItemReview: React.FC = () => {
                                 </div>
                                 <div className='row'>
                                     <div className='col-12'>
-                                        <button type="submit" disabled={data.dealPrice ? true : false}
+                                        <button type="submit" disabled={!!data.dealPrice}
                                                 className='btn btn-primary me-3'>
                                             <KTIcon iconName='check' className='fs-2 me-2'/>
                                             {data.dealPrice ? 'Deal Price Decided' : 'Submit Deal Price'}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className='btn btn-success me-3'
+                                            disabled={(data.isApproved !== true) && (!!data.shopResponse)}
+                                            onClick={handleCreateNewItem}
+                                        >
+                                            <KTIcon iconName='plus' className='fs-2 me-2'/>
+                                            Create New Item
                                         </button>
                                         <button
                                             type="button"
@@ -381,10 +420,10 @@ export const ConsignLineItemReview: React.FC = () => {
                             <button
                                 type="button"
                                 className="btn btn-primary"
-                                onClick={handleModalSubmit}
-                                disabled={createIndividualMutation.isLoading}
+                                onClick={handleCreateItemModalSubmit}
+                                disabled={createIndividualMutation.isLoading || createIndividualAfterNegotiationMutation.isLoading}
                             >
-                                {createIndividualMutation.isLoading ? (
+                                {(createIndividualMutation.isLoading || createIndividualAfterNegotiationMutation.isLoading) ? (
                                     <span className="indicator-progress" style={{display: "block"}}>
               Please wait...
               <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
