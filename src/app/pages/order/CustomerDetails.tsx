@@ -49,6 +49,15 @@ const CustomerDetails: React.FC<{ orderDetail: OrderDetailedResponse | undefined
                         </td>
                         <td className="fw-bold text-end">{orderDetail?.phone}</td>
                     </tr>
+                    <tr>
+                        <td className="text-muted">
+                            <div className="d-flex align-items-center">
+                                <KTIcon iconName='phone' className='fs-2 me-2' />
+                                Recipient Name
+                            </div>
+                        </td>
+                        <td className="fw-bold text-end">{orderDetail?.reciepientName}</td>
+                    </tr>
                     </tbody>
                 </table>
             </div>

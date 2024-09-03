@@ -20,6 +20,7 @@ const OrderDetailPage: React.FC = () => {
             const response = await orderApi
                 .apiOrdersOrderIdGet(orderId!)
             return response.data;
+            console.log(response.data)
         }
     );
 
