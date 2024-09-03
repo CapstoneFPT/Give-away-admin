@@ -25,6 +25,7 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
   const queryClient = useQueryClient();
   const handleOpenModal = () => setIsModalVisible(true);
   const handleCloseModal = () => setIsModalVisible(false);
+  const [action, setAction] = useState<boolean>(false);
 
   const handleItemCreated = () => {
     handleCloseModal();
@@ -95,7 +96,21 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
 
     { refetchOnWindowFocus: false, keepPreviousData: true }
   );
+  console.log(MasterResult);
+  useEffect(() => {
+    // Check if all products have a status other than "Available" or "Unavailable"
+    const hasNoActionableProducts = result.data?.items?.every(
+      (product) =>
+        product.status !== "Available" && product.status !== "Unavailable"
+    );
 
+    // If no products are actionable, set action to false
+    if (hasNoActionableProducts) {
+      setAction(false);
+    } else {
+      setAction(true);
+    }
+  }, [result.data?.items]);
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setCurrentPage(1); // Reset to first page when searching
@@ -143,17 +158,19 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
               onChange={handleSearchInputChange}
             />
           </form>
-          <a
-            href="#"
-            className="btn btn-sm btn-light-primary"
-            onClick={(e) => {
-              e.preventDefault(); // Prevent the default anchor behavior
-              handleOpenModal();
-            }}
-          >
-            <KTIcon iconName="plus" className="fs-2" />
-            Add new item
-          </a>
+          {!MasterResult.data?.isConsignment && (
+            <a
+              href="#"
+              className="btn btn-sm btn-light-primary"
+              onClick={(e) => {
+                e.preventDefault(); // Prevent the default anchor behavior
+                handleOpenModal();
+              }}
+            >
+              <KTIcon iconName="plus" className="fs-2" />
+              Add new item
+            </a>
+          )}
         </div>
       </div>
       <KTCard className="mb-5 mb-xl-8">
@@ -238,16 +255,33 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                     {MasterResult.data?.gender}
                   </div>
                 </div>
-                {/* name": "string",
-  "brand": "string",
-  "description": "string",
-  "categoryId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "gender": "Male",
-  "stockCount": 0,
-  "imageRequests": [
-    "string"
-  ]
-} */}
+                {MasterResult.data?.isConsignment ? (
+                  // Render ConsignedItem when isConsignment is true
+                  <div className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
+                    <div className="d-flex align-items-center">
+                      <KTIcon
+                        iconName="information"
+                        className="fs-3 text-primary me-2"
+                      />
+                      <div className="fs-6 text-gray-800 fw-bold">Type</div>
+                    </div>
+                    <div className="fs-7 text-gray-600 mt-2">
+                      Consigned Item
+                    </div>
+                  </div>
+                ) : (
+                  // Render ShopItem when isConsignment is false
+                  <div className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
+                    <div className="d-flex align-items-center">
+                      <KTIcon
+                        iconName="information"
+                        className="fs-3 text-primary me-2"
+                      />
+                      <div className="fs-6 text-gray-800 fw-bold">Type</div>
+                    </div>
+                    <div className="fs-7 text-gray-600 mt-2">Shop Item</div>
+                  </div>
+                )}
               </div>
             </div>
             <div className="col-xl-6">
@@ -300,8 +334,8 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                 <th className="min-w-125px">Selling Price</th>
                 <th className="min-w-125px">Condition</th>
                 <th className="min-w-150px text-center">Status</th>
-                <th className="min-w-100px text-center">Action</th>
                 <th className="min-w-100px ">Detail</th>
+                {action && <th className="min-w-100px text-center">Action</th>}
               </tr>
             </thead>
             <tbody>
@@ -360,18 +394,7 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                       {product.status}
                     </span>
                   </td>
-                  <td className="text-end">
-                    <button
-                      onClick={() => handleStatusChange(product.itemId || "")}
-                      className={`btn ${
-                        product.status === "Available"
-                          ? "btn-primary"
-                          : "btn-secondary"
-                      }`}
-                    >
-                      {product.status === "Available" ? "Take Down" : "Post"}
-                    </button>
-                  </td>
+
                   <td className="center">
                     <Link
                       to={`/product-admin/item-details/${product.itemId}`}
@@ -380,6 +403,21 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                       Detail
                     </Link>
                   </td>
+                  {product.status === "Available" ||
+                  product.status === "Unavailable" ? (
+                    <td className="text-end">
+                      <button
+                        onClick={() => handleStatusChange(product.itemId || "")}
+                        className={`btn ${
+                          product.status === "Available"
+                            ? "btn-primary"
+                            : "btn-secondary"
+                        }`}
+                      >
+                        {product.status === "Available" ? "Take Down" : "Post"}
+                      </button>
+                    </td>
+                  ) : null}
                 </tr>
               ))}
             </tbody>

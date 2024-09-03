@@ -12,6 +12,7 @@ import {
 import { useDropzone } from "react-dropzone";
 import { KTCard, KTCardBody, KTIcon } from "../../../../_metronic/helpers";
 import { showAlert } from "../../../../utils/Alert";
+import { auto } from "@popperjs/core";
 
 interface AddMasterItemProps {
   show: boolean;
@@ -261,135 +262,224 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
   return (
     <div
       className="modal fade show"
-      style={{ display: "block" }}
+      style={{ display: "flex", backgroundColor: "rgba(0, 0, 0, 0.5)" }}
       tabIndex={-1}
       role="dialog"
     >
-      <div className="modal-dialog" role="document">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h3
-              style={{
-                fontSize: 40,
-                display: "flex",
-                justifyContent: "center",
-              }}
-              className="modal-title"
-            >
-              Add master item
-            </h3>
-            <button
-              type="button"
-              className="close"
-              aria-label="Close"
-              onClick={handleCloseWithReset}
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div className="modal-body">
-            <form>
-              <div className="form-group">
-                <label htmlFor="masterItemCode">Master Item Code</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="masterItemCode"
-                  value={formData.masterItemCode}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="name">Name</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="brand">Brand</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="brand"
-                  value={formData.brand}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="description">Description</label>
-                <textarea
-                  className="form-control"
-                  id="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="gender">Gender</label>
-                <select
-                  className="form-control"
-                  id="gender"
-                  value={formData.gender}
-                  onChange={handleGenderChange}
-                >
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label htmlFor="categoryId">Category</label>
-                <select
-                  className="form-control"
-                  id="categoryId"
-                  value={formData.categoryId}
-                  onChange={handleCategoryChange}
-                  disabled={isCategoryDisabled}
-                >
-                  <option value="">Select Category</option>
-                  {categories.map((category) => (
-                    <option
-                      key={category.categoryId}
-                      value={category.categoryId}
-                    >
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div {...getRootProps()} className="dropzone">
-                <input {...getInputProps()} />
-                {isDragActive ? (
-                  <p>Drop the files here ...</p>
-                ) : (
-                  <p>Drag 'n' drop some files here, or click to select files</p>
-                )}
-              </div>
-              <div className="form-group">
-                {files.map((file, index) => (
-                  <div key={index} className="file-preview">
-                    <img
-                      src={URL.createObjectURL(file)}
-                      alt="Preview"
-                      width="100"
-                      height="100"
-                    />
-                    <button type="button" onClick={() => removeFile(index)}>
-                      Remove
-                    </button>
-                  </div>
-                ))}
-              </div>
-              <div className="form-group">
+      <div
+        className="modal-content"
+        style={{
+          borderRadius: "8px",
+          width: "50%", // You can adjust or remove this width as needed
+          height: "auto",
+          marginTop: 20,
+          marginLeft: 400,
+        }}
+      >
+        <div
+          className="modal-header"
+          style={{ borderBottom: "1px solid #e5e5e5", padding: "16px" }}
+        >
+          <h3
+            style={{
+              fontSize: "40px",
+              margin: "0",
+              textAlign: "center",
+              flex: 1,
+            }}
+            className="modal-title"
+          >
+            Add Master Item
+          </h3>
+          <button
+            type="button"
+            className="close"
+            aria-label="Close"
+            onClick={handleCloseWithReset}
+            style={{ background: "none", border: "none", fontSize: "24px" }}
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div className="modal-body">
+          <div style={{ display: "flex", gap: "16px" }}>
+            {/* Input Form */}
+            <div style={{ flex: 1 }}>
+              <form>
+                <div>
+                  <label htmlFor="masterItemCode">Master Item Code</label>
+                  <input
+                    type="text"
+                    id="masterItemCode"
+                    value={formData.masterItemCode}
+                    onChange={handleChange}
+                    style={{
+                      width: "100%",
+                      padding: "8px",
+                      boxSizing: "border-box",
+                    }}
+                  />
+                </div>
+                <div style={{ marginBottom: "16px" }}>
+                  <label htmlFor="name">Name</label>
+                  <input
+                    type="text"
+                    id="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    style={{
+                      width: "100%",
+                      padding: "8px",
+                      boxSizing: "border-box",
+                    }}
+                  />
+                </div>
+                <div style={{ marginBottom: "16px" }}>
+                  <label htmlFor="brand">Brand</label>
+                  <input
+                    type="text"
+                    id="brand"
+                    value={formData.brand}
+                    onChange={handleChange}
+                    style={{
+                      width: "100%",
+                      padding: "8px",
+                      boxSizing: "border-box",
+                    }}
+                  />
+                </div>
+                <div style={{ marginBottom: "16px" }}>
+                  <label htmlFor="description">Description</label>
+                  <textarea
+                    id="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    style={{
+                      width: "100%",
+                      padding: "8px",
+                      boxSizing: "border-box",
+                    }}
+                  />
+                </div>
+                <div style={{ marginBottom: "16px" }}>
+                  <label htmlFor="gender">Gender</label>
+                  <select
+                    id="gender"
+                    value={formData.gender}
+                    onChange={handleGenderChange}
+                    style={{
+                      width: "100%",
+                      padding: "8px",
+                      boxSizing: "border-box",
+                    }}
+                  >
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                  </select>
+                </div>
+                <div style={{ marginBottom: "16px" }}>
+                  <label htmlFor="categoryId">Category</label>
+                  <select
+                    id="categoryId"
+                    value={formData.categoryId}
+                    onChange={handleCategoryChange}
+                    disabled={isCategoryDisabled}
+                    style={{
+                      width: "100%",
+                      padding: "8px",
+                      boxSizing: "border-box",
+                    }}
+                  >
+                    <option value="">Select Category</option>
+                    {categories.map((category) => (
+                      <option
+                        key={category.categoryId}
+                        value={category.categoryId}
+                      >
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Images</label>
+                  <KTCard>
+                    <KTCardBody>
+                      <div
+                        {...getRootProps()}
+                        className="dropzone"
+                        style={{
+                          border: "2px dashed #007bff",
+                          padding: "2rem",
+                          borderRadius: "0.25rem",
+                        }}
+                      >
+                        <input {...getInputProps()} />
+                        <div className="d-flex flex-column align-items-center justify-content-center">
+                          <KTIcon
+                            iconName="image"
+                            className="svg-icon-primary svg-icon-5x"
+                          />
+                          <div className="fw-bold fs-3 text-primary">
+                            {isDragActive
+                              ? "Drop the files here ..."
+                              : "Drag 'n' drop files or click to select"}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="row mt-5">
+                        {files.map((file, fileIndex) => (
+                          <div
+                            key={fileIndex}
+                            className="col-3"
+                            style={{ marginBottom: "1rem" }}
+                          >
+                            <div className="text-center">
+                              <img
+                                src={URL.createObjectURL(file)}
+                                alt={`preview-${fileIndex}`}
+                                className="img-thumbnail"
+                                style={{ width: "auto", height: "auto" }}
+                              />
+                              <button
+                                type="button"
+                                className="btn btn-danger mt-2"
+                                onClick={() => removeFile(fileIndex)}
+                                disabled={loading}
+                                style={{
+                                  display: "flex",
+                                  padding: 10,
+                                  height: 30,
+                                  width: "auto",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <span style={{ fontSize: 12 }}>Remove</span>
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </KTCardBody>
+                  </KTCard>
+                </div>
+              </form>
+            </div>
+
+            {/* Image Upload and Shop Selection */}
+            <div style={{ flex: 1 }}>
+              {/* Shop Selection */}
+              <div style={{ marginTop: "16px" }}>
                 <label htmlFor="shopId">Select Shop</label>
                 <select
-                  className="form-control"
                   id="shopId"
                   value={selectedShop}
                   onChange={handleShopChange}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    boxSizing: "border-box",
+                  }}
                 >
                   <option value="">Select Shop</option>
                   {shops.map((shop) => (
@@ -400,51 +490,82 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
                 </select>
                 <button
                   type="button"
-                  className="btn btn-secondary mt-2"
                   onClick={addShopToList}
+                  style={{
+                    marginTop: "10px",
+                    padding: "8px 16px",
+                    cursor: "pointer",
+                    backgroundColor: "#6c757d",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "4px",
+                  }}
                 >
                   Add Shop
                 </button>
-              </div>
-              {formData.itemForEachShops.map((shopItem) => (
-                <div key={shopItem.shopId} className="form-group">
-                  <label>
-                    {
-                      shops.find((shop) => shop.shopId === shopItem.shopId)
-                        ?.address
-                    }
-                    :
-                  </label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    value={shopItem.stockCount}
-                    onChange={(e) => handleStockCountChange(e, shopItem.shopId)}
-                  />
-                  <button
-                    type="button"
-                    className="btn btn-danger mt-2"
-                    onClick={() => removeShop(shopItem.shopId)}
+                {formData.itemForEachShops.map((shopItem) => (
+                  <div
+                    key={shopItem.shopId}
+                    style={{
+                      marginTop: "16px",
+                      border: "1px solid #e5e5e5",
+                      borderRadius: "8px",
+                      padding: "16px",
+                      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                    }}
                   >
-                    Remove Shop
-                  </button>
-                </div>
-              ))}
-
+                    <strong>Shop adress:</strong>
+                    <label>
+                      {
+                        shops.find((shop) => shop.shopId === shopItem.shopId)
+                          ?.address
+                      }
+                    </label>
+                    <hr />
+                    <strong>Stock count:</strong>
+                    <input
+                      type="number"
+                      placeholder="Stock count"
+                      value={shopItem.stockCount}
+                      onChange={(e) =>
+                        handleStockCountChange(e, shopItem.shopId)
+                      }
+                      style={{
+                        width: "100%",
+                        padding: "8px",
+                        boxSizing: "border-box",
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeShop(shopItem.shopId)}
+                      style={{
+                        marginTop: "10px",
+                        padding: "8px 16px",
+                        cursor: "pointer",
+                        backgroundColor: "#dc3545",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "4px",
+                      }}
+                    >
+                      Remove Shop
+                    </button>
+                  </div>
+                ))}
+              </div>
               <button
-                type="button"
+                className="btn btn-success hover-rotate-end w-100 mt-10 "
                 onClick={handleSubmit}
                 disabled={loading}
-                className="btn btn-primary"
               >
                 {loading ? "Saving..." : "Save"}
               </button>
-            </form>
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
 };
-
 export default AddMasterItem;
