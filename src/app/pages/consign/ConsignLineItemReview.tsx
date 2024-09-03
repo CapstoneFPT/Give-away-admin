@@ -3,11 +3,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import { KTCard, KTCardBody, KTIcon } from "../../../_metronic/helpers";
 import { formatBalance } from "../utils/utils";
 import { Content } from "../../../_metronic/layout/components/content";
-import { ConsignLineItemApi, MasterItemApi } from '../../../api';
+import {ConsignLineItemApi, ConsignSaleLineItemStatus, MasterItemApi} from '../../../api';
 import { useMutation, useQuery } from "react-query";
 import { useAuth } from "../../modules/auth";
 import { AddToInventoryModal } from './AddToInventoryModal';
 import { PriceDifferenceModal } from './PriceDifferenceModal';
+import KTModal from "../../../_metronic/helpers/components/KTModal.tsx";
 
 export const ConsignLineItemReview: React.FC = () => {
     const { consignSaleId, lineItemId } = useParams<{ consignSaleId: string, lineItemId: string }>();
@@ -15,6 +16,7 @@ export const ConsignLineItemReview: React.FC = () => {
     const [dealPrice, setDealPrice] = useState<string>('');
     const [isPriceChanged, setIsPriceChanged] = useState<boolean>(false);
     const [showModal, setShowModal] = useState<boolean>(false);
+    const [showConfirmationModal, setShowConfirmationModal] = useState<boolean>(false);
     const [selectedMasterItem, setSelectedMasterItem] = useState<string>('');
     const [showPriceDifferenceModal, setShowPriceDifferenceModal] = useState<boolean>(false);
     const [priceChangeExplanation, setPriceChangeExplanation] = useState<string>('');
@@ -35,10 +37,26 @@ export const ConsignLineItemReview: React.FC = () => {
         queryKey: ['masterItems'],
         queryFn: async () => {
             const masterItemApi = new MasterItemApi();
-            const response = await masterItemApi.apiMasterItemsGet(null!, null!, null!, null!, null!, currentUser?.shopId);
+            const response = await masterItemApi.apiMasterItemsGet(null!, null!, null!, null!, null!, currentUser?.shopId, data!.gender!,true);
             return response.data;
         }
     });
+
+    const readyForConsignMutation = useMutation(
+        (data: { dealPrice: number }) => {
+            const consignSaleLineItemApi = new ConsignLineItemApi();
+            return consignSaleLineItemApi.apiConsignlineitemsConsignLineItemIdReadyForConsignPut(lineItemId!, data);
+        },
+        {
+            onSuccess: () => {
+                navigate(`/consignment/${consignSaleId}`);
+            },
+            onError: (error) => {
+                console.error('Error setting item ready for consign:', error);
+            }
+        }
+    );
+
 
     const createIndividualMutation = useMutation(
         (data: { masterItemId: string, dealPrice: number }) => {
@@ -127,14 +145,22 @@ export const ConsignLineItemReview: React.FC = () => {
         setPriceChangeExplanation('');
     };
 
+    const handleConfirmation = () => {
+        readyForConsignMutation.mutate({
+            dealPrice: parseFloat(dealPrice)
+        });
+        setShowConfirmationModal(false);
+    };
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (dealPrice === data?.expectedPrice?.toString()) {
-            setShowModal(true);
+            setShowConfirmationModal(true);
         } else {
             setShowPriceDifferenceModal(true);
         }
     };
+
 
     const handlePriceDifferenceSubmit = () => {
         if (!dealPrice || !priceChangeExplanation.trim()) {
@@ -261,7 +287,7 @@ export const ConsignLineItemReview: React.FC = () => {
                                         <button
                                             type="button"
                                             className='btn btn-success me-3'
-                                            disabled={!!data.individualItemId || !data.dealPrice}
+                                            disabled={!!data.individualItemId || !data.dealPrice || data.status != ConsignSaleLineItemStatus.ReadyForConsignSale}
                                             onClick={handleCreateNewItem}
                                         >
                                             <KTIcon iconName='plus' className='fs-2 me-2'/>
@@ -306,7 +332,36 @@ export const ConsignLineItemReview: React.FC = () => {
                 negotiatePriceMutation={negotiatePriceMutation}
             />
 
-            {(createIndividualMutation.isError || negotiatePriceMutation.isError) && (
+            <KTModal
+                isOpen={showConfirmationModal}
+                onClose={() => setShowConfirmationModal(false)}
+                title="Confirm Deal Price"
+                footer={
+                    <>
+                        <button type="button" className="btn btn-light" onClick={() => setShowConfirmationModal(false)}>
+                            Cancel
+                        </button>
+                        <button
+                            type="button"
+                            className="btn btn-primary"
+                            onClick={handleConfirmation}
+                            disabled={readyForConsignMutation.isLoading}
+                        >
+                            {readyForConsignMutation.isLoading ? (
+                                <span className="indicator-progress" style={{display: "block"}}>
+                                    Please wait...
+                                    <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                </span>
+                            ) : 'Confirm'}
+                        </button>
+                    </>
+                }
+            >
+                <p>Are you sure you want to set the deal price to {formatBalance(parseFloat(dealPrice))} VND?</p>
+                <p>This action will mark the item as ready for consignment.</p>
+            </KTModal>
+
+            {(createIndividualMutation.isError || negotiatePriceMutation.isError || readyForConsignMutation.isError) && (
                 <div className="alert alert-danger" role="alert">
                     An error occurred while saving the changes. Please try again.
                 </div>

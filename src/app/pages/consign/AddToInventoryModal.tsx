@@ -83,7 +83,15 @@ export const AddToInventoryModal: React.FC<AddToInventoryModalProps> = ({
                         </tr>
                         <tr>
                             <th scope="row">Expected Price:</th>
-                            <td>{formatBalance(data.expectedPrice || 0)}</td>
+                            <td>{formatBalance(data.expectedPrice || 0)} VND</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Deal Price:</th>
+                            <td>{formatBalance(data.dealPrice || 0)} VND</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Confirmed Price:</th>
+                            <td>{formatBalance(data.confirmedPrice || 0)} VND</td>
                         </tr>
                         </tbody>
                     </table>

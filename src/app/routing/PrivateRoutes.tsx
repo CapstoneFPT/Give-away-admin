@@ -14,7 +14,6 @@ import RefundPage from "../pages/refund/RefundPage.tsx";
 import OrderDetailPage from "../pages/order/OrderDetailPage.tsx";
 import { ConsignDetail } from "../pages/consign/ConsignDetail.tsx";
 import ConsignLineItemReview from "../pages/consign/ConsignLineItemReview.tsx";
-import ProductCreationFromConsignmentForm from "../pages/consign/ProductCreationFromConsignmentForm.tsx";
 import ListMasterFashionItems from "../pages/product/ListMasterFashionItems.tsx";
 import AddOrderPage from "../pages/order/AddOrderPage.tsx";
 import { useAuth } from "../modules/auth";
@@ -158,10 +157,6 @@ const PrivateRoutes = () => {
         <Route
           path="/consignment/:consignSaleId/line-item/:lineItemId"
           element={<ConsignLineItemReview />}
-        />
-        <Route
-          path="/create-item/:consignSaleId/line-item/:lineItemId"
-          element={<ProductCreationFromConsignmentForm />}
         />
         <Route
           path="consignment/:consignSaleId"
