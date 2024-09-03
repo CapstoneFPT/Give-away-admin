@@ -1661,6 +1661,19 @@ export interface CompleteWithdrawResponse {
 /**
  * 
  * @export
+ * @interface ConfirmConsignSaleLineReadyToSaleRequest
+ */
+export interface ConfirmConsignSaleLineReadyToSaleRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof ConfirmConsignSaleLineReadyToSaleRequest
+     */
+    'dealPrice'?: number;
+}
+/**
+ * 
+ * @export
  * @interface ConfirmPendingOrderRequest
  */
 export interface ConfirmPendingOrderRequest {
@@ -1931,6 +1944,12 @@ export interface ConsignSaleDetailedResponse {
      * @memberof ConsignSaleDetailedResponse
      */
     'consignSaleMethod'?: ConsignSaleMethod;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConsignSaleDetailedResponse
+     */
+    'responseFromShop'?: string | null;
     /**
      * 
      * @type {number}
@@ -2387,6 +2406,12 @@ export interface ConsignSaleLineItemResponse {
     'dealPrice'?: number;
     /**
      * 
+     * @type {number}
+     * @memberof ConsignSaleLineItemResponse
+     */
+    'confirmedPrice'?: number;
+    /**
+     * 
      * @type {boolean}
      * @memberof ConsignSaleLineItemResponse
      */
@@ -2445,6 +2470,7 @@ export const ConsignSaleLineItemStatus = {
     Negotiating: 'Negotiating',
     Received: 'Received',
     Returned: 'Returned',
+    Rejected: 'Rejected',
     ReadyForConsignSale: 'ReadyForConsignSale',
     OnSale: 'OnSale'
 } as const;
@@ -2560,6 +2586,12 @@ export interface ConsignSaleLineItemsListResponse {
      * @memberof ConsignSaleLineItemsListResponse
      */
     'isApproved'?: boolean | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConsignSaleLineItemsListResponse
+     */
+    'individualItemId'?: string | null;
 }
 
 
@@ -2765,6 +2797,8 @@ export const ConsignSaleStatus = {
     Pending: 'Pending',
     AwaitDelivery: 'AwaitDelivery',
     Processing: 'Processing',
+    Negotiating: 'Negotiating',
+    ReadyToSale: 'ReadyToSale',
     OnSale: 'OnSale',
     Completed: 'Completed',
     Rejected: 'Rejected',
@@ -3314,25 +3348,6 @@ export interface CreateIndividualItemRequest {
 }
 
 
-/**
- * 
- * @export
- * @interface CreateIndividualItemRequestForConsign
- */
-export interface CreateIndividualItemRequestForConsign {
-    /**
-     * 
-     * @type {string}
-     * @memberof CreateIndividualItemRequestForConsign
-     */
-    'masterItemId'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof CreateIndividualItemRequestForConsign
-     */
-    'dealPrice'?: number;
-}
 /**
  * 
  * @export
@@ -7380,6 +7395,18 @@ export interface OrderDetailedResponse {
      * @memberof OrderDetailedResponse
      */
     'memberId'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof OrderDetailedResponse
+     */
+    'auctionTitle'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof OrderDetailedResponse
+     */
+    'quantity'?: number;
     /**
      * 
      * @type {string}
@@ -15690,47 +15717,6 @@ export const ConsignLineItemApiAxiosParamCreator = function (configuration?: Con
         /**
          * 
          * @param {string} consignLineItemId 
-         * @param {CreateIndividualItemRequestForConsign} [createIndividualItemRequestForConsign] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        apiConsignlineitemsConsignLineItemIdCreateIndividualPost: async (consignLineItemId: string, createIndividualItemRequestForConsign?: CreateIndividualItemRequestForConsign, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'consignLineItemId' is not null or undefined
-            assertParamExists('apiConsignlineitemsConsignLineItemIdCreateIndividualPost', 'consignLineItemId', consignLineItemId)
-            const localVarPath = `/api/consignlineitems/{consignLineItemId}/create-individual`
-                .replace(`{${"consignLineItemId"}}`, encodeURIComponent(String(consignLineItemId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication Bearer required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(createIndividualItemRequestForConsign, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string} consignLineItemId 
          * @param {CreateMasterItemForConsignRequest} [createMasterItemForConsignRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -15850,6 +15836,47 @@ export const ConsignLineItemApiAxiosParamCreator = function (configuration?: Con
         /**
          * 
          * @param {string} consignLineItemId 
+         * @param {ConfirmConsignSaleLineReadyToSaleRequest} [confirmConsignSaleLineReadyToSaleRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiConsignlineitemsConsignLineItemIdReadyForConsignPut: async (consignLineItemId: string, confirmConsignSaleLineReadyToSaleRequest?: ConfirmConsignSaleLineReadyToSaleRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'consignLineItemId' is not null or undefined
+            assertParamExists('apiConsignlineitemsConsignLineItemIdReadyForConsignPut', 'consignLineItemId', consignLineItemId)
+            const localVarPath = `/api/consignlineitems/{consignLineItemId}/ready-for-consign`
+                .replace(`{${"consignLineItemId"}}`, encodeURIComponent(String(consignLineItemId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(confirmConsignSaleLineReadyToSaleRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} consignLineItemId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -15922,19 +15949,6 @@ export const ConsignLineItemApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @param {string} consignLineItemId 
-         * @param {CreateIndividualItemRequestForConsign} [createIndividualItemRequestForConsign] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async apiConsignlineitemsConsignLineItemIdCreateIndividualPost(consignLineItemId: string, createIndividualItemRequestForConsign?: CreateIndividualItemRequestForConsign, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConsignSaleLineItemResponseResult>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiConsignlineitemsConsignLineItemIdCreateIndividualPost(consignLineItemId, createIndividualItemRequestForConsign, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['ConsignLineItemApi.apiConsignlineitemsConsignLineItemIdCreateIndividualPost']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @param {string} consignLineItemId 
          * @param {CreateMasterItemForConsignRequest} [createMasterItemForConsignRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -15968,6 +15982,19 @@ export const ConsignLineItemApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiConsignlineitemsConsignLineItemIdNegotiateItemPut(consignLineItemId, negotiateConsignSaleLineRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['ConsignLineItemApi.apiConsignlineitemsConsignLineItemIdNegotiateItemPut']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} consignLineItemId 
+         * @param {ConfirmConsignSaleLineReadyToSaleRequest} [confirmConsignSaleLineReadyToSaleRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiConsignlineitemsConsignLineItemIdReadyForConsignPut(consignLineItemId: string, confirmConsignSaleLineReadyToSaleRequest?: ConfirmConsignSaleLineReadyToSaleRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConsignSaleLineItemResponseResult>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiConsignlineitemsConsignLineItemIdReadyForConsignPut(consignLineItemId, confirmConsignSaleLineReadyToSaleRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ConsignLineItemApi.apiConsignlineitemsConsignLineItemIdReadyForConsignPut']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -16014,16 +16041,6 @@ export const ConsignLineItemApiFactory = function (configuration?: Configuration
         /**
          * 
          * @param {string} consignLineItemId 
-         * @param {CreateIndividualItemRequestForConsign} [createIndividualItemRequestForConsign] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        apiConsignlineitemsConsignLineItemIdCreateIndividualPost(consignLineItemId: string, createIndividualItemRequestForConsign?: CreateIndividualItemRequestForConsign, options?: RawAxiosRequestConfig): AxiosPromise<ConsignSaleLineItemResponseResult> {
-            return localVarFp.apiConsignlineitemsConsignLineItemIdCreateIndividualPost(consignLineItemId, createIndividualItemRequestForConsign, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {string} consignLineItemId 
          * @param {CreateMasterItemForConsignRequest} [createMasterItemForConsignRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -16049,6 +16066,16 @@ export const ConsignLineItemApiFactory = function (configuration?: Configuration
          */
         apiConsignlineitemsConsignLineItemIdNegotiateItemPut(consignLineItemId: string, negotiateConsignSaleLineRequest?: NegotiateConsignSaleLineRequest, options?: RawAxiosRequestConfig): AxiosPromise<ConsignSaleLineItemResponseResult> {
             return localVarFp.apiConsignlineitemsConsignLineItemIdNegotiateItemPut(consignLineItemId, negotiateConsignSaleLineRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} consignLineItemId 
+         * @param {ConfirmConsignSaleLineReadyToSaleRequest} [confirmConsignSaleLineReadyToSaleRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiConsignlineitemsConsignLineItemIdReadyForConsignPut(consignLineItemId: string, confirmConsignSaleLineReadyToSaleRequest?: ConfirmConsignSaleLineReadyToSaleRequest, options?: RawAxiosRequestConfig): AxiosPromise<ConsignSaleLineItemResponseResult> {
+            return localVarFp.apiConsignlineitemsConsignLineItemIdReadyForConsignPut(consignLineItemId, confirmConsignSaleLineReadyToSaleRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -16095,18 +16122,6 @@ export class ConsignLineItemApi extends BaseAPI {
     /**
      * 
      * @param {string} consignLineItemId 
-     * @param {CreateIndividualItemRequestForConsign} [createIndividualItemRequestForConsign] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof ConsignLineItemApi
-     */
-    public apiConsignlineitemsConsignLineItemIdCreateIndividualPost(consignLineItemId: string, createIndividualItemRequestForConsign?: CreateIndividualItemRequestForConsign, options?: RawAxiosRequestConfig) {
-        return ConsignLineItemApiFp(this.configuration).apiConsignlineitemsConsignLineItemIdCreateIndividualPost(consignLineItemId, createIndividualItemRequestForConsign, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {string} consignLineItemId 
      * @param {CreateMasterItemForConsignRequest} [createMasterItemForConsignRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -16137,6 +16152,18 @@ export class ConsignLineItemApi extends BaseAPI {
      */
     public apiConsignlineitemsConsignLineItemIdNegotiateItemPut(consignLineItemId: string, negotiateConsignSaleLineRequest?: NegotiateConsignSaleLineRequest, options?: RawAxiosRequestConfig) {
         return ConsignLineItemApiFp(this.configuration).apiConsignlineitemsConsignLineItemIdNegotiateItemPut(consignLineItemId, negotiateConsignSaleLineRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} consignLineItemId 
+     * @param {ConfirmConsignSaleLineReadyToSaleRequest} [confirmConsignSaleLineReadyToSaleRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ConsignLineItemApi
+     */
+    public apiConsignlineitemsConsignLineItemIdReadyForConsignPut(consignLineItemId: string, confirmConsignSaleLineReadyToSaleRequest?: ConfirmConsignSaleLineReadyToSaleRequest, options?: RawAxiosRequestConfig) {
+        return ConsignLineItemApiFp(this.configuration).apiConsignlineitemsConsignLineItemIdReadyForConsignPut(consignLineItemId, confirmConsignSaleLineReadyToSaleRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -16280,10 +16307,84 @@ export const ConsignSaleApiAxiosParamCreator = function (configuration?: Configu
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
+        apiConsignsalesConsignSaleIdNegotiatingPut: async (consignSaleId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'consignSaleId' is not null or undefined
+            assertParamExists('apiConsignsalesConsignSaleIdNegotiatingPut', 'consignSaleId', consignSaleId)
+            const localVarPath = `/api/consignsales/{consignSaleId}/negotiating`
+                .replace(`{${"consignSaleId"}}`, encodeURIComponent(String(consignSaleId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} consignSaleId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
         apiConsignsalesConsignSaleIdPostItemsToSellPut: async (consignSaleId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'consignSaleId' is not null or undefined
             assertParamExists('apiConsignsalesConsignSaleIdPostItemsToSellPut', 'consignSaleId', consignSaleId)
             const localVarPath = `/api/consignsales/{consignSaleId}/post-items-to-sell`
+                .replace(`{${"consignSaleId"}}`, encodeURIComponent(String(consignSaleId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} consignSaleId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiConsignsalesConsignSaleIdReadyToSalePut: async (consignSaleId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'consignSaleId' is not null or undefined
+            assertParamExists('apiConsignsalesConsignSaleIdReadyToSalePut', 'consignSaleId', consignSaleId)
+            const localVarPath = `/api/consignsales/{consignSaleId}/ready-to-sale`
                 .replace(`{${"consignSaleId"}}`, encodeURIComponent(String(consignSaleId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -16367,6 +16468,43 @@ export const ConsignSaleApiAxiosParamCreator = function (configuration?: Configu
             }
 
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} consignsaleId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiConsignsalesConsignsaleIdContinueConsignsalePut: async (consignsaleId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'consignsaleId' is not null or undefined
+            assertParamExists('apiConsignsalesConsignsaleIdContinueConsignsalePut', 'consignsaleId', consignsaleId)
+            const localVarPath = `/api/consignsales/{consignsaleId}/continue-consignsale`
+                .replace(`{${"consignsaleId"}}`, encodeURIComponent(String(consignsaleId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -16567,10 +16705,34 @@ export const ConsignSaleApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
+        async apiConsignsalesConsignSaleIdNegotiatingPut(consignSaleId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConsignSaleDetailedResponseResult>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiConsignsalesConsignSaleIdNegotiatingPut(consignSaleId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ConsignSaleApi.apiConsignsalesConsignSaleIdNegotiatingPut']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} consignSaleId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
         async apiConsignsalesConsignSaleIdPostItemsToSellPut(consignSaleId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConsignSaleDetailedResponseResult>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiConsignsalesConsignSaleIdPostItemsToSellPut(consignSaleId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['ConsignSaleApi.apiConsignsalesConsignSaleIdPostItemsToSellPut']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} consignSaleId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiConsignsalesConsignSaleIdReadyToSalePut(consignSaleId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConsignSaleDetailedResponseResult>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiConsignsalesConsignSaleIdReadyToSalePut(consignSaleId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ConsignSaleApi.apiConsignsalesConsignSaleIdReadyToSalePut']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -16595,6 +16757,18 @@ export const ConsignSaleApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiConsignsalesConsignsaleIdConsignlineitemsGet(consignsaleId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['ConsignSaleApi.apiConsignsalesConsignsaleIdConsignlineitemsGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} consignsaleId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiConsignsalesConsignsaleIdContinueConsignsalePut(consignsaleId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConsignSaleDetailedResponseResult>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiConsignsalesConsignsaleIdContinueConsignsalePut(consignsaleId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ConsignSaleApi.apiConsignsalesConsignsaleIdContinueConsignsalePut']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -16675,8 +16849,26 @@ export const ConsignSaleApiFactory = function (configuration?: Configuration, ba
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
+        apiConsignsalesConsignSaleIdNegotiatingPut(consignSaleId: string, options?: RawAxiosRequestConfig): AxiosPromise<ConsignSaleDetailedResponseResult> {
+            return localVarFp.apiConsignsalesConsignSaleIdNegotiatingPut(consignSaleId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} consignSaleId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
         apiConsignsalesConsignSaleIdPostItemsToSellPut(consignSaleId: string, options?: RawAxiosRequestConfig): AxiosPromise<ConsignSaleDetailedResponseResult> {
             return localVarFp.apiConsignsalesConsignSaleIdPostItemsToSellPut(consignSaleId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} consignSaleId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiConsignsalesConsignSaleIdReadyToSalePut(consignSaleId: string, options?: RawAxiosRequestConfig): AxiosPromise<ConsignSaleDetailedResponseResult> {
+            return localVarFp.apiConsignsalesConsignSaleIdReadyToSalePut(consignSaleId, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -16695,6 +16887,15 @@ export const ConsignSaleApiFactory = function (configuration?: Configuration, ba
          */
         apiConsignsalesConsignsaleIdConsignlineitemsGet(consignsaleId: string, options?: RawAxiosRequestConfig): AxiosPromise<Array<ConsignSaleLineItemsListResponse>> {
             return localVarFp.apiConsignsalesConsignsaleIdConsignlineitemsGet(consignsaleId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} consignsaleId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiConsignsalesConsignsaleIdContinueConsignsalePut(consignsaleId: string, options?: RawAxiosRequestConfig): AxiosPromise<ConsignSaleDetailedResponseResult> {
+            return localVarFp.apiConsignsalesConsignsaleIdContinueConsignsalePut(consignsaleId, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -16775,8 +16976,30 @@ export class ConsignSaleApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ConsignSaleApi
      */
+    public apiConsignsalesConsignSaleIdNegotiatingPut(consignSaleId: string, options?: RawAxiosRequestConfig) {
+        return ConsignSaleApiFp(this.configuration).apiConsignsalesConsignSaleIdNegotiatingPut(consignSaleId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} consignSaleId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ConsignSaleApi
+     */
     public apiConsignsalesConsignSaleIdPostItemsToSellPut(consignSaleId: string, options?: RawAxiosRequestConfig) {
         return ConsignSaleApiFp(this.configuration).apiConsignsalesConsignSaleIdPostItemsToSellPut(consignSaleId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} consignSaleId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ConsignSaleApi
+     */
+    public apiConsignsalesConsignSaleIdReadyToSalePut(consignSaleId: string, options?: RawAxiosRequestConfig) {
+        return ConsignSaleApiFp(this.configuration).apiConsignsalesConsignSaleIdReadyToSalePut(consignSaleId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -16799,6 +17022,17 @@ export class ConsignSaleApi extends BaseAPI {
      */
     public apiConsignsalesConsignsaleIdConsignlineitemsGet(consignsaleId: string, options?: RawAxiosRequestConfig) {
         return ConsignSaleApiFp(this.configuration).apiConsignsalesConsignsaleIdConsignlineitemsGet(consignsaleId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} consignsaleId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ConsignSaleApi
+     */
+    public apiConsignsalesConsignsaleIdContinueConsignsalePut(consignsaleId: string, options?: RawAxiosRequestConfig) {
+        return ConsignSaleApiFp(this.configuration).apiConsignsalesConsignsaleIdContinueConsignsalePut(consignsaleId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -18076,10 +18310,11 @@ export const MasterItemApiAxiosParamCreator = function (configuration?: Configur
          * @param {string} [categoryId] 
          * @param {string} [shopId] 
          * @param {GenderType} [genderType] 
+         * @param {boolean} [isConsignment] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiMasterItemsGet: async (searchTerm?: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, categoryId?: string, shopId?: string, genderType?: GenderType, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        apiMasterItemsGet: async (searchTerm?: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, categoryId?: string, shopId?: string, genderType?: GenderType, isConsignment?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/master-items`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -18122,6 +18357,10 @@ export const MasterItemApiAxiosParamCreator = function (configuration?: Configur
 
             if (genderType !== undefined) {
                 localVarQueryParameter['GenderType'] = genderType;
+            }
+
+            if (isConsignment !== undefined) {
+                localVarQueryParameter['IsConsignment'] = isConsignment;
             }
 
 
@@ -18417,11 +18656,12 @@ export const MasterItemApiFp = function(configuration?: Configuration) {
          * @param {string} [categoryId] 
          * @param {string} [shopId] 
          * @param {GenderType} [genderType] 
+         * @param {boolean} [isConsignment] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiMasterItemsGet(searchTerm?: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, categoryId?: string, shopId?: string, genderType?: GenderType, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterItemListResponsePaginationResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiMasterItemsGet(searchTerm, searchItemCode, pageNumber, pageSize, categoryId, shopId, genderType, options);
+        async apiMasterItemsGet(searchTerm?: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, categoryId?: string, shopId?: string, genderType?: GenderType, isConsignment?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterItemListResponsePaginationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiMasterItemsGet(searchTerm, searchItemCode, pageNumber, pageSize, categoryId, shopId, genderType, isConsignment, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['MasterItemApi.apiMasterItemsGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -18539,11 +18779,12 @@ export const MasterItemApiFactory = function (configuration?: Configuration, bas
          * @param {string} [categoryId] 
          * @param {string} [shopId] 
          * @param {GenderType} [genderType] 
+         * @param {boolean} [isConsignment] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiMasterItemsGet(searchTerm?: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, categoryId?: string, shopId?: string, genderType?: GenderType, options?: RawAxiosRequestConfig): AxiosPromise<MasterItemListResponsePaginationResponse> {
-            return localVarFp.apiMasterItemsGet(searchTerm, searchItemCode, pageNumber, pageSize, categoryId, shopId, genderType, options).then((request) => request(axios, basePath));
+        apiMasterItemsGet(searchTerm?: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, categoryId?: string, shopId?: string, genderType?: GenderType, isConsignment?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<MasterItemListResponsePaginationResponse> {
+            return localVarFp.apiMasterItemsGet(searchTerm, searchItemCode, pageNumber, pageSize, categoryId, shopId, genderType, isConsignment, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -18647,12 +18888,13 @@ export class MasterItemApi extends BaseAPI {
      * @param {string} [categoryId] 
      * @param {string} [shopId] 
      * @param {GenderType} [genderType] 
+     * @param {boolean} [isConsignment] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof MasterItemApi
      */
-    public apiMasterItemsGet(searchTerm?: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, categoryId?: string, shopId?: string, genderType?: GenderType, options?: RawAxiosRequestConfig) {
-        return MasterItemApiFp(this.configuration).apiMasterItemsGet(searchTerm, searchItemCode, pageNumber, pageSize, categoryId, shopId, genderType, options).then((request) => request(this.axios, this.basePath));
+    public apiMasterItemsGet(searchTerm?: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, categoryId?: string, shopId?: string, genderType?: GenderType, isConsignment?: boolean, options?: RawAxiosRequestConfig) {
+        return MasterItemApiFp(this.configuration).apiMasterItemsGet(searchTerm, searchItemCode, pageNumber, pageSize, categoryId, shopId, genderType, isConsignment, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
