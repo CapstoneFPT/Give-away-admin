@@ -4,14 +4,6 @@ import {KTCard, KTCardBody} from "../../../_metronic/helpers";
 
 const OrderLineItems = ({items, orderDetail}: { items: OrderLineItemListResponse[], orderDetail: OrderDetailedResponse }) =>
 {
-    const calculateSubtotal = () => {
-        return items?.reduce((total, item) => total + (item.unitPrice || 0) * (item.quantity || 0), 0) || 0;
-    };
-
-    const subtotal = calculateSubtotal();
-    const shippingRate = orderDetail.shippingFee || 0; // You might want to get this from the order details
-    const grandTotal = subtotal + shippingRate;
-
     return (
         <KTCard className="card-flush py-4 flex-row-fluid overflow-hidden">
             <div className="card-header">
@@ -34,39 +26,46 @@ const OrderLineItems = ({items, orderDetail}: { items: OrderLineItemListResponse
                         <tbody className="fw-semibold text-gray-600">
                         {
                             items?.map((item, index) => (
-                            <tr key={index}>
-                                <td>
-                                    <div className="d-flex align-items-center">
-                                        {item.itemImage && item.itemImage[0] && (
-                                            <a href="#" className="symbol symbol-50px">
-                                                <span className="symbol-label" style={{backgroundImage: `url(${item.itemImage[0]})`}}></span>
-                                            </a>
-                                        )}
-                                        <div className="ms-5">
-                                            <a href="#" className="fw-bold text-gray-600 text-hover-primary">{item.itemName}</a>
-                                            <div className="fs-7 text-muted">
-                                                Brand: {item.itemBrand}, Color: {item.itemColor}, Size: {item.itemSize}
+                                <tr key={index}>
+                                    <td>
+                                        <div className="d-flex align-items-center">
+                                            {item.itemImage && item.itemImage[0] && (
+                                                <a href="#" className="symbol symbol-50px">
+                                                    <span className="symbol-label"
+                                                          style={{backgroundImage: `url(${item.itemImage[0]})`}}></span>
+                                                </a>
+                                            )}
+                                            <div className="ms-5">
+                                                <a href="#"
+                                                   className="fw-bold text-gray-600 text-hover-primary">{item.itemName}</a>
+                                                <div className="fs-7 text-muted">
+                                                    Brand: {item.itemBrand}, Color: {item.itemColor},
+                                                    Size: {item.itemSize}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td className="text-end">{item.itemCode}</td>
-                                <td className="text-end">{item.quantity}</td>
-                                <td className="text-end">{formatBalance(item.unitPrice || 0)}</td>
-                                <td className="text-end">{formatBalance((item.unitPrice || 0) * (item.quantity || 0))}</td>
-                            </tr>
-                        ))}
+                                    </td>
+                                    <td className="text-end">{item.itemCode}</td>
+                                    <td className="text-end">{item.quantity}</td>
+                                    <td className="text-end">{formatBalance(item.unitPrice || 0)} VND</td>
+                                    <td className="text-end">{formatBalance((item.unitPrice || 0) * (item.quantity || 0))} VND</td>
+                                </tr>
+                            ))}
                         <tr>
                             <td colSpan={4} className="text-end">Subtotal</td>
-                            <td className="text-end">{formatBalance(subtotal)}</td>
+                            <td className="text-end">{formatBalance(orderDetail.subtotal ||0 )} VND</td>
                         </tr>
                         <tr>
                             <td colSpan={4} className="text-end">Shipping Rate</td>
-                            <td className="text-end">{formatBalance(shippingRate)}</td>
+                            <td className="text-end">{formatBalance(orderDetail.shippingFee || 0)} VND</td>
+                        </tr>
+                        <tr>
+                            <td colSpan={4} className="text-end">Discount</td>
+                            <td className="text-end">{"-" + formatBalance(orderDetail.discount || 0)} VND</td>
                         </tr>
                         <tr>
                             <td colSpan={4} className="fs-3 text-dark fw-bolder text-end">Grand Total</td>
-                            <td className="text-dark fs-3 fw-boldest text-end">{formatBalance(grandTotal)}</td>
+                            <td className="text-dark fs-3 fw-boldest text-end">{formatBalance(orderDetail.totalPrice || 0)} VND</td>
                         </tr>
                         </tbody>
                     </table>
