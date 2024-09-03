@@ -2,7 +2,7 @@ import React, { FC, lazy, Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { MasterLayout } from "../../_metronic/layout/MasterLayout";
 import TopBarProgress from "react-topbar-progress-indicator";
-import { DashboardWrapper } from "../pages/dashboard/DashboardWrapper";
+
 import { MenuTestPage } from "../pages/MenuTestPage";
 import { getCSSVariableValue } from "../../_metronic/assets/ts/_utils";
 import { WithChildren } from "../../_metronic/helpers";
@@ -21,6 +21,7 @@ import { useAuth } from "../modules/auth";
 import ItemDetail from "../admin/product/item/ItemDetail.tsx";
 import MasterFashionItemsAdminTable from "../admin/product/master/MasterFashionItemsAdminTable.tsx";
 import FashionItemsAdminTable from "../admin/product/item/FashionItemsAdminTable.tsx";
+import DashBoard from "../admin/dashboard/DashBoard.tsx";
 const PrivateRoutes = () => {
   const { currentUser } = useAuth();
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
@@ -57,7 +58,7 @@ const PrivateRoutes = () => {
 
         <Route path="auth/*" element={<Navigate to={getDefaultRoute()} />} />
         {/* Pages */}
-        <Route path="dashboard" element={<DashboardWrapper />} />
+        <Route path="dashboard" element={<DashBoard />} />
         <Route path="builder" element={<BuilderPageWrapper />} />
         <Route path="menu-test" element={<MenuTestPage />} />
         <Route path="auction" element={<Auction />} />

@@ -13,3 +13,28 @@ export const dateTimeOptions : Intl.DateTimeFormatOptions = {
 
 export const VNLocale = 'vi-VN';
 
+
+
+export const paymentMethod  = (method: string ) => {
+    switch (method) {
+        case 'Point':
+            return 'warning';
+        case 'QRCode':
+            return 'info';
+        case 'COD':
+            return 'primary';
+        default:
+            return 'secondary';
+    }
+};
+export const purchaseType  = (type: string ) => {
+    switch (type) {
+        case 'Online':
+            return 'primary';
+        default:
+            return 'warning';
+    }
+};
+
+
+

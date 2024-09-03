@@ -1,6 +1,8 @@
 import React from "react";
 import {KTCard, KTCardBody, KTIcon} from "../../../_metronic/helpers";
-import {OrderDetailedResponse} from "../../../api";
+import {OrderDetailedResponse, OrderStatus} from "../../../api";
+import { Button } from "react-bootstrap";
+import { formatBalance, paymentMethod, purchaseType } from "../utils/utils";
 
 const OrderDetails: React.FC<{ orderDetail: OrderDetailedResponse | undefined }> = ({ orderDetail }) => (
     <KTCard className="card-flush py-4 flex-row-fluid">
@@ -16,12 +18,48 @@ const OrderDetails: React.FC<{ orderDetail: OrderDetailedResponse | undefined }>
                     <tr>
                         <td className="text-muted">
                             <div className="d-flex align-items-center">
+                                <KTIcon iconName='wallet' className='fs-2 me-2' />
+                                Order Status
+                            </div>
+                        </td>
+                        <td className="fw-bold text-end">
+                        <span className={`badge badge-light-${getStatusBadge(orderDetail?.status!)}`}>
+                      {orderDetail?.status}
+                    </span>
+                          
+                        </td>
+                    </tr>
+                    <tr>
+                        
+                        <td className="text-muted">
+                            <div className="d-flex align-items-center">
                                 <KTIcon iconName='calendar' className='fs-2 me-2' />
                                 Date Added
                             </div>
                         </td>
                         <td className="fw-bold text-end">{orderDetail?.createdDate ? new Date(orderDetail.createdDate).toLocaleString() : 'N/A'}</td>
                     </tr>
+                    <tr>
+                        
+                        <td className="text-muted">
+                            <div className="d-flex align-items-center">
+                                <KTIcon iconName='calendar' className='fs-2 me-2' />
+                                Payment Date
+                            </div>
+                        </td>
+                        <td className="fw-bold text-end">{orderDetail?.paymentDate ? new Date(orderDetail.paymentDate!).toLocaleString() : 'N/A'}</td>
+                    </tr>
+                    <tr>
+                        
+                        <td className="text-muted">
+                            <div className="d-flex align-items-center">
+                                <KTIcon iconName='calendar' className='fs-2 me-2' />
+                                Completed Date
+                            </div>
+                        </td>
+                        <td className="fw-bold text-end">{orderDetail?.completedDate ? new Date(orderDetail.completedDate!).toLocaleString() : 'N/A'}</td>
+                    </tr>
+                    
                     <tr>
                         <td className="text-muted">
                             <div className="d-flex align-items-center">
@@ -30,24 +68,134 @@ const OrderDetails: React.FC<{ orderDetail: OrderDetailedResponse | undefined }>
                             </div>
                         </td>
                         <td className="fw-bold text-end">
-                            {orderDetail?.paymentMethod}
-                            {/* Add payment method icon if available */}
+                        <span className={`badge badge-light-${paymentMethod(orderDetail?.paymentMethod!)}`}>
+                                    {orderDetail?.paymentMethod}
+                                            </span>
+                           
                         </td>
+                    </tr>
+                  
+                    <tr>
+                        <td className="text-muted">
+                            <div className="d-flex align-items-center">
+                                <KTIcon iconName='truck' className='fs-2 me-2' />
+                                Purchase Type
+                            </div>
+                        </td>
+                        <td className="fw-bold text-end">
+                        <span className={`badge badge-light-${purchaseType(orderDetail?.purchaseType!)}`}>
+                                    {orderDetail?.purchaseType}
+                                            </span></td>
+
+                                         
+                                           
                     </tr>
                     <tr>
                         <td className="text-muted">
                             <div className="d-flex align-items-center">
                                 <KTIcon iconName='truck' className='fs-2 me-2' />
-                                Shipping Method
+                                Sub Total
                             </div>
                         </td>
-                        <td className="fw-bold text-end">{orderDetail?.purchaseType}</td>
+                        <td className="fw-bold text-end">
+                        <strong>{formatBalance(orderDetail?.subtotal!)} VND</strong>
+                        </td>
+
+                                         
+                                           
                     </tr>
+                    <tr>
+                        <td className="text-muted">
+                            <div className="d-flex align-items-center">
+                                <KTIcon iconName='truck' className='fs-2 me-2' />
+                                Shipping Fee
+                            </div>
+                        </td>
+                        <td className="fw-bold text-end">
+                        <strong>{formatBalance(orderDetail?.shippingFee!)} VND</strong>
+                        </td>
+
+                                         
+                                           
+                    </tr>
+                    <tr>
+                        <td className="text-muted">
+                            <div className="d-flex align-items-center">
+                                <KTIcon iconName='truck' className='fs-2 me-2' />
+                                Discount
+                            </div>
+                        </td>
+                        <td className="fw-bold text-end">
+                        <strong style={{color: 'red'}}>-{formatBalance(orderDetail?.discount!)} VND</strong>
+                        </td>
+
+                                         
+                                           
+                    </tr>
+                    
+                    <tr>
+                        <td className="text-muted">
+                            <div className="d-flex align-items-center">
+                                <KTIcon iconName='truck' className='fs-2 me-2' />
+                                Total
+                            </div>
+                        </td>
+                        <td className="fw-bold text-end">
+                        <strong>{formatBalance(orderDetail?.totalPrice!)} VND</strong>
+                        </td>
+
+                                         
+                                           
+                    </tr>
+                    {/* <tr>
+                        <td className="text-muted">
+                            <div className="d-flex align-items-center">
+                                <KTIcon iconName='truck' className='fs-2 me-2' />
+                                Auction Title
+                            </div>
+                        </td>
+                        <td className="fw-bold text-end">
+                        <strong>{orderDetail?.auctionTitle|| 'N/A'}</strong>
+                        </td>
+
+                                         
+                                           
+                    </tr> */}
+                    {/* <tr>
+                        <td className="text-muted">
+                            <div className="d-flex align-items-center">
+                                <KTIcon iconName='truck' className='fs-2 me-2' />
+                                Quanity
+                            </div>
+                        </td>
+                        <td className="fw-bold text-end">
+                        <span>{orderDetail?.quantity!} VND</span>
+                        </td>
+
+                                         
+                                           
+                    </tr> */}
+                    
                     </tbody>
                 </table>
             </div>
         </KTCardBody>
     </KTCard>
 );
+const getStatusBadge = (status: OrderStatus) => {
+
+    switch (status) {
+        case 'AwaitingPayment':
+            return 'warning';
+        case 'Completed':
+            return 'success';
+        case 'Cancelled':
+            return 'danger';
+        case 'Pending':
+            return 'info';
+        default:
+            return 'secondary';
+    }
+};
 
 export default OrderDetails;

@@ -5,6 +5,7 @@ import { CreateIndividualItemRequest, MasterItemApi } from "../../../../api";
 import { useDropzone } from "react-dropzone";
 import { KTCard, KTCardBody, KTIcon } from "../../../../_metronic/helpers";
 import { useParams } from "react-router-dom";
+import { showAlert } from "../../../../utils/Alert";
 
 export type SizeType = "XS" | "S" | "M" | "L" | "XL";
 
@@ -34,7 +35,7 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
   const [fashionItem, setFashionItem] =
     useState<CreateIndividualItemRequest>(initialFormData);
   const [files, setFiles] = useState<File[]>([]);
-  const [errorMessage, setErrorMessage] = useState<string>("");
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const createFashionItem = async (itemData: CreateIndividualItemRequest) => {
@@ -105,7 +106,6 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
   const resetForm = () => {
     setFashionItem(initialFormData);
     setFiles([]);
-    setErrorMessage("");
   };
 
   const handleCloseWithReset = () => {
@@ -121,7 +121,7 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
         handleItemCreated();
         handleCloseWithReset();
       } catch (error) {
-        setErrorMessage("Failed to submit. Please try again.");
+        showAlert("error", "Failed to submit. Please try again.");
       }
     }
   };
@@ -134,7 +134,7 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
       fashionItem.sellingPrice === undefined ||
       fashionItem.sellingPrice <= 0
     ) {
-      setErrorMessage("Please fill all required fields.");
+      showAlert("info", "Please fill all required fields.");
       return false;
     }
     return true;
@@ -304,11 +304,6 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
                 </div>
 
                 {/* Error Message */}
-                {errorMessage && (
-                  <div className="alert alert-danger" role="alert">
-                    {errorMessage}
-                  </div>
-                )}
               </form>
             </div>
           </div>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { KTCardBody, KTIcon } from '../../../_metronic/helpers';
 import { OrderApi, OrderListResponse, OrderStatus} from '../../../api';
-import { dateTimeOptions, formatBalance, VNLocale } from '../utils/utils';
+import { dateTimeOptions, formatBalance, paymentMethod, purchaseType, VNLocale } from '../utils/utils';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../modules/auth';
 import { Content } from "../../../_metronic/layout/components/content";
@@ -106,19 +106,19 @@ const OrderList: React.FC<Props> = ({ className }) => {
                             <tr className="fw-bold text-muted">
                                 <th className="min-w-150px">Order Code</th>
                                 <th className="min-w-120px">Quantity</th>
-                                <th className="min-w-120px">Total Price</th>
                                 <th className="min-w-120px">Created Date</th>
                                 <th className="min-w-120px">Payment Method</th>
                                 <th className="min-w-120px">Payment Date</th>
                                 <th className="min-w-120px">Completed Date</th>
                                 <th className="min-w-140px">Customer Name</th>
-                                <th className="min-w-140px">Recipient Name</th>
+                                {/* <th className="min-w-140px">Recipient Name</th> */}
                                 <th className="min-w-140px">Contact Number</th>
-                                <th className="min-w-200px">Address</th>
-                                <th className="min-w-140px">Email</th>
-                                <th className="min-w-120px">Shipping Fee</th>
-                                <th className="min-w-120px">Discount</th>
+                                {/* <th className="min-w-200px">Address</th> */}
+                                {/* <th className="min-w-140px">Email</th> */}
+                                {/* <th className="min-w-120px">Shipping Fee</th> */}
+                                {/* <th className="min-w-120px">Discount</th> */}
                                 <th className="min-w-120px">Purchase Type</th>
+                                <th className="min-w-120px">Total Price</th>
                                 <th className="min-w-120px">Status</th>
                                 <th className="min-w-200px">Auction Title</th>
                                 <th className="min-w-100px text-end">Actions</th>
@@ -129,19 +129,23 @@ const OrderList: React.FC<Props> = ({ className }) => {
                                 <tr key={order.orderId}>
                                     <td>{order.orderCode}</td>
                                     <td>{order.quantity}</td>
-                                    <td>{formatBalance(order.totalPrice!)} VND</td>
+                                    
                                     <td>{new Date(order.createdDate!).toLocaleString(VNLocale, dateTimeOptions)}</td>
-                                    <td>{order.paymentMethod}</td>
+                                    <td><span className={`badge badge-light-${paymentMethod(order.paymentMethod!)}`}>
+                                    {order.paymentMethod}
+                                            </span>
+                                            </td>
                                     <td>{order.paymentDate ? new Date(order.paymentDate).toLocaleString(VNLocale, dateTimeOptions) : 'N/A'}</td>
                                     <td>{order.completedDate ? new Date(order.completedDate).toLocaleString(VNLocale, dateTimeOptions) : 'N/A'}</td>
                                     <td>{order.customerName || 'N/A'}</td>
-                                    <td>{order.recipientName || 'N/A'}</td>
+                                    {/* <td>{order.recipientName || 'N/A'}</td> */}
                                     <td>{order.contactNumber || 'N/A'}</td>
-                                    <td>{order.address || 'N/A'}</td>
-                                    <td>{order.email || 'N/A'}</td>
-                                    <td>{formatBalance(order.shippingFee!)} VND</td>
-                                    <td>{formatBalance(order.discount!)} VND</td>
-                                    <td>{order.purchaseType}</td>
+                                    {/* <td>{order.address || 'N/A'}</td> */}
+                                    {/* <td>{order.email || 'N/A'}</td> */}
+                                    {/* <td>{formatBalance(order.shippingFee!)} VND</td> */}
+                                    {/* <td>{formatBalance(order.discount!)} VND</td> */}
+                                    <td><span className={`badge badge-light-${purchaseType(order.purchaseType!)}`}>{order.purchaseType}</span></td>
+                                    <td><strong>{formatBalance(order.totalPrice!)} VND</strong> </td>
                                     <td>
                                             <span className={`badge badge-light-${getStatusBadge(order.status!)}`}>
                                                 {order.status}

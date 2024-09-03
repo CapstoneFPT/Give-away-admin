@@ -21,7 +21,7 @@ const HeaderUserMenu: FC = () => {
           <div className='d-flex flex-column'>
             <div className='fw-bolder d-flex align-items-center fs-5'>
               {currentUser?.email}
-              <span className='badge badge-light-success fw-bolder fs-8 px-2 py-1 ms-2'>Pro</span>
+              {/* <span className='badge badge-light-success fw-bolder fs-8 px-2 py-1 ms-2'>Pro</span> */}
             </div>
             <a href='#' className='fw-bold text-muted text-hover-primary fs-7'>
               {currentUser?.email}
@@ -32,20 +32,20 @@ const HeaderUserMenu: FC = () => {
 
       <div className='separator my-2'></div>
 
-      <div className='menu-item px-5'>
+      {/* <div className='menu-item px-5'>
         <Link to={'/crafted/pages/profile'} className='menu-link px-5'>
           My Profile
         </Link>
-      </div>
+      </div> */}
 
-      <div className='menu-item px-5'>
+      {/* <div className='menu-item px-5'>
         <a href='#' className='menu-link px-5'>
           <span className='menu-text'>My Projects</span>
           <span className='menu-badge'>
             <span className='badge badge-light-danger badge-circle fw-bolder fs-7'>3</span>
           </span>
         </a>
-      </div>
+      </div> */}
 
       <div
         className='menu-item px-5'
@@ -53,31 +53,31 @@ const HeaderUserMenu: FC = () => {
         data-kt-menu-placement='left-start'
         data-kt-menu-flip='bottom'
       >
-        <a href='#' className='menu-link px-5'>
+        {/* <a href='#' className='menu-link px-5'>
           <span className='menu-title'>My Subscription</span>
           <span className='menu-arrow'></span>
-        </a>
+        </a> */}
 
         <div className='menu-sub menu-sub-dropdown w-175px py-4'>
-          <div className='menu-item px-3'>
+          {/* <div className='menu-item px-3'>
             <a href='#' className='menu-link px-5'>
               Referrals
             </a>
-          </div>
+          </div> */}
 
-          <div className='menu-item px-3'>
+          {/* <div className='menu-item px-3'>
             <a href='#' className='menu-link px-5'>
               Billing
             </a>
-          </div>
+          </div> */}
 
-          <div className='menu-item px-3'>
+          {/* <div className='menu-item px-3'>
             <a href='#' className='menu-link px-5'>
               Payments
             </a>
-          </div>
+          </div> */}
 
-          <div className='menu-item px-3'>
+          {/* <div className='menu-item px-3'>
             <a href='#' className='menu-link d-flex flex-stack px-5'>
               Statements
               <i
@@ -88,9 +88,9 @@ const HeaderUserMenu: FC = () => {
             </a>
           </div>
 
-          <div className='separator my-2'></div>
+          <div className='separator my-2'></div> */}
 
-          <div className='menu-item px-3'>
+          {/* <div className='menu-item px-3'>
             <div className='menu-content px-3'>
               <label className='form-check form-switch form-check-custom form-check-solid'>
                 <input
@@ -103,25 +103,25 @@ const HeaderUserMenu: FC = () => {
                 <span className='form-check-label text-muted fs-7'>Notifications</span>
               </label>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 
-      <div className='menu-item px-5'>
+      {/* <div className='menu-item px-5'>
         <a href='#' className='menu-link px-5'>
           My Statements
         </a>
-      </div>
+      </div> */}
 
       <div className='separator my-2'></div>
 
-      <Languages />
+      {/* <Languages /> */}
 
-      <div className='menu-item px-5 my-1'>
+      {/* <div className='menu-item px-5 my-1'>
         <Link to='/crafted/account/settings' className='menu-link px-5'>
           Account Settings
         </Link>
-      </div>
+      </div> */}
 
       <div className='menu-item px-5'>
         <a onClick={logout} className='menu-link px-5'>
