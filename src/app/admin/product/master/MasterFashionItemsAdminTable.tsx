@@ -33,14 +33,17 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
         searchTerm,
         null!,
         currentPage,
-        pageSize
+        pageSize,
+        null!,
+        null!, // filter theo shop
+        null! // filter theo gender
       );
 
       return response.data;
     },
     { refetchOnWindowFocus: false, keepPreviousData: true }
   );
-
+  console.log(result);
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setCurrentPage(1); // Reset to first page when searching
@@ -108,10 +111,13 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
               <tr className="fw-bold text-muted bg-light">
                 <th className="ps-4 min-w-125px rounded-start">Item Code</th>
                 <th className="min-w-200px">Shop address</th>
-                <th className="min-w-200px">Product</th>
-                <th className="min-w-200px">Description</th>
+                <th className="min-w-50px">Image</th>
+                <th className="min-w-100px">Name</th>
+                <th className="min-w-50px">Gender</th>
+                <th className="min-w-50px">Type</th>
+                {/* <th className="min-w-200px">Description</th> */}
                 <th className="min-w-25px">Stock Count</th>
-                <th className="min-w-55px"> In Stock</th>
+                <th className="min-w-55px">In Stock</th>
                 <th className="min-w-200px">Created Date</th>
                 <th className="min-w-10px">Brand</th>
                 <th className="min-w-100px">Action</th>
@@ -131,6 +137,7 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                     </a>
                   </td>
                   <td>{product.shopAddress}</td>
+
                   <td>
                     <div className="d-flex align-items-center">
                       <div className="symbol symbol-50px me-5">
@@ -148,24 +155,39 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                           alt={product.name || "N/A"}
                         />
                       </div>
-                      <div className="d-flex justify-content-start flex-column">
-                        <a
-                          href="#"
-                          className="text-gray-900 fw-bold text-hover-primary mb-1 fs-6"
-                        >
-                          {product.name}
-                        </a>
-                        <span className="text-muted fw-semibold text-muted d-block fs-7">
-                          {product.gender}
-                        </span>
-                      </div>
                     </div>
                   </td>
                   <td>
+                    {" "}
+                    <a
+                      href="#"
+                      className="text-gray-900 fw-bold text-hover-primary mb-1 fs-6"
+                    >
+                      {product.name}
+                    </a>
+                  </td>
+                  <td>
+                    {" "}
+                    <span className="text-muted fw-semibold text-muted d-block fs-7">
+                      {product.gender}
+                    </span>
+                  </td>
+                  <td>
+                    {product.isConsignment ? (
+                      <span className="text-muted fw-semibold text-muted d-block fs-7">
+                        ConsignedItem
+                      </span>
+                    ) : (
+                      <span className="text-muted fw-semibold text-muted d-block fs-7">
+                        ShopItem
+                      </span>
+                    )}
+                  </td>
+                  {/* <td>
                     <span className="text-muted fw-semibold text-muted d-block fs-7">
                       {product.description}
                     </span>
-                  </td>
+                  </td> */}
                   <td>
                     <span className="text-muted fw-semibold text-muted d-block fs-7">
                       <strong>{product.stockCount}</strong>
