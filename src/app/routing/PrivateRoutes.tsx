@@ -41,7 +41,7 @@ const PrivateRoutes = () => {
   const getDefaultRoute = () => {
     switch (currentUser?.role) {
       case "Admin":
-        return "/consignment";
+        return "/dashboard";
       case "Staff":
         return "/order";
       default:
