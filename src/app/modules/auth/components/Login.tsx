@@ -106,7 +106,7 @@ export function Login() {
       {/* begin::Login options */}
       <div className="row g-3 mb-9">
         {/* begin::Col */}
-        <div className="col-md-6">
+        <div className="col-md-12">
           {/* begin::Google link */}
           <a
             href="#"
@@ -122,29 +122,6 @@ export function Login() {
           {/* end::Google link */}
         </div>
         {/* end::Col */}
-
-        {/* begin::Col */}
-        <div className="col-md-6">
-          {/* begin::Google link */}
-          <a
-            href="#"
-            className="btn btn-flex btn-outline btn-text-gray-700 btn-active-color-primary bg-state-light flex-center text-nowrap w-100"
-          >
-            <img
-              alt="Logo"
-              src={toAbsoluteUrl("media/svg/brand-logos/apple-black.svg")}
-              className="theme-light-show h-15px me-3"
-            />
-            <img
-              alt="Logo"
-              src={toAbsoluteUrl("media/svg/brand-logos/apple-black-dark.svg")}
-              className="theme-dark-show h-15px me-3"
-            />
-            Sign in with Apple
-          </a>
-          {/* end::Google link */}
-        </div>
-        {/* end::Col */}
       </div>
       {/* end::Login options */}
 
@@ -156,18 +133,18 @@ export function Login() {
       </div>
       {/* end::Separator */}
 
-      {formik.status ? (
+      {/* {formik.status ? (
         <div className="mb-lg-15 alert alert-danger">
           <div className="alert-text font-weight-bold">{formik.status}</div>
         </div>
       ) : (
         <div className="mb-10 bg-light-info p-8 rounded">
           <div className="text-info">
-            Use account <strong>admin@demo.com</strong> and password{" "}
-            <strong>demo</strong> to continue.
+            Use account <strong>admin@gmail.com</strong> and password{" "}
+            <strong>123456</strong> to continue.
           </div>
         </div>
-      )}
+      )} */}
 
       {/* begin::Form group */}
       <div className="fv-row mb-8">
@@ -253,13 +230,6 @@ export function Login() {
         </button>
       </div>
       {/* end::Action */}
-
-      <div className="text-gray-500 text-center fw-semibold fs-6">
-        Not a Member yet?{" "}
-        <Link to="/auth/registration" className="link-primary">
-          Sign up
-        </Link>
-      </div>
     </form>
   );
 }
