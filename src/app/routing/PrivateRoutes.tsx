@@ -231,7 +231,7 @@ const PrivateRoutes = () => {
       </Route>
     </Routes>
   );
-};
+}
 
 const SuspensedView: FC<WithChildren> = ({ children }) => {
   const baseColor = getCSSVariableValue("--bs-primary");

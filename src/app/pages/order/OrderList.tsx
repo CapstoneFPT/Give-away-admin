@@ -104,7 +104,6 @@ const OrderList: React.FC<Props> = ({ className }) => {
                         <table className="table table-row-bordered table-row-gray-100 align-middle gs-0 gy-3">
                             <thead>
                             <tr className="fw-bold text-muted">
-                                <th className="min-w-150px">Order ID</th>
                                 <th className="min-w-150px">Order Code</th>
                                 <th className="min-w-120px">Quantity</th>
                                 <th className="min-w-120px">Total Price</th>
@@ -112,7 +111,6 @@ const OrderList: React.FC<Props> = ({ className }) => {
                                 <th className="min-w-120px">Payment Method</th>
                                 <th className="min-w-120px">Payment Date</th>
                                 <th className="min-w-120px">Completed Date</th>
-                                <th className="min-w-140px">Member ID</th>
                                 <th className="min-w-140px">Customer Name</th>
                                 <th className="min-w-140px">Recipient Name</th>
                                 <th className="min-w-140px">Contact Number</th>
@@ -129,7 +127,6 @@ const OrderList: React.FC<Props> = ({ className }) => {
                             <tbody>
                             {orders.map((order: OrderListResponse) => (
                                 <tr key={order.orderId}>
-                                    <td>{order.orderId}</td>
                                     <td>{order.orderCode}</td>
                                     <td>{order.quantity}</td>
                                     <td>{formatBalance(order.totalPrice!)} VND</td>
@@ -137,7 +134,6 @@ const OrderList: React.FC<Props> = ({ className }) => {
                                     <td>{order.paymentMethod}</td>
                                     <td>{order.paymentDate ? new Date(order.paymentDate).toLocaleString(VNLocale, dateTimeOptions) : 'N/A'}</td>
                                     <td>{order.completedDate ? new Date(order.completedDate).toLocaleString(VNLocale, dateTimeOptions) : 'N/A'}</td>
-                                    <td>{order.memberId || 'N/A'}</td>
                                     <td>{order.customerName || 'N/A'}</td>
                                     <td>{order.recipientName || 'N/A'}</td>
                                     <td>{order.contactNumber || 'N/A'}</td>
