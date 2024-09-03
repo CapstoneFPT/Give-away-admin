@@ -10,7 +10,6 @@ import { KTCard, KTCardBody, KTIcon } from "../../../_metronic/helpers";
 import { Content } from "../../../_metronic/layout/components/content";
 import {
   ConsignLineItemApi,
-  CreateIndividualItemRequestForConsign,
   SizeType,
 } from "../../../api";
 import { useThemeMode } from "../../../_metronic/partials";
@@ -64,7 +63,7 @@ export const ProductCreationFromConsignmentForm: React.FC = () => {
   const createProductMutation = useMutation(
     (data: CreateIndividualItemRequestForConsign) => {
       const api = new ConsignLineItemApi();
-      return api.apiConsignlineitemsConsignLineItemIdCreateIndividualPost(
+      return api.apiConsignlineitemsConsignLineItemIdCreateIndividualAfterNegotiationPost(
         lineItemId!,
         data
       );
