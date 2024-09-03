@@ -11,9 +11,7 @@ const OrderLineItems = ({ items, orderDetail }: { items: OrderLineItemListRespon
         return items?.reduce((total, item) => total + (item.unitPrice || 0) * (item.quantity || 0), 0) || 0;
     };
 
-    const subtotal = calculateSubtotal();
-    const shippingRate = orderDetail.shippingFee || 0;
-    const grandTotal = subtotal + shippingRate;
+ 
 
     const deliveryApi = new OrderLineItemApi();
 
@@ -52,6 +50,7 @@ const OrderLineItems = ({ items, orderDetail }: { items: OrderLineItemListRespon
             console.error("Error during delivery confirmation:", error);
         }
     };
+
 
     return (
         <>
@@ -113,18 +112,7 @@ const OrderLineItems = ({ items, orderDetail }: { items: OrderLineItemListRespon
                                             </td>
                                         </tr>
                                     ))}
-                                <tr>
-                                    <td colSpan={4} className="text-end">Subtotal</td>
-                                    <td className="text-end">{formatBalance(subtotal)}</td>
-                                </tr>
-                                <tr>
-                                    <td colSpan={4} className="text-end">Shipping Rate</td>
-                                    <td className="text-end">{formatBalance(shippingRate)}</td>
-                                </tr>
-                                <tr>
-                                    <td colSpan={4} className="fs-3 text-dark fw-bolder text-end">Grand Total</td>
-                                    <td className="text-dark fs-3 fw-boldest text-end">{formatBalance(grandTotal)}</td>
-                                </tr>
+                              
                             </tbody>
                         </table>
                     </div>

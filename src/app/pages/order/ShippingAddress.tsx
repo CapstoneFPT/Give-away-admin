@@ -10,8 +10,8 @@ const ShippingAddress: React.FC<{ orderDetail: OrderDetailedResponse | undefined
     const deliveryApi = new ShopApi();
 
     const deliveryMutation = useMutation(
-        async ({ orderId, shopId }: { shopId: string; orderId: string }) => {
-            return await deliveryApi.apiShopsShopIdOrdersOrderIdConfirmDeliveriedPut(orderId, shopId);
+        async ({ shopId, orderId,  }: { shopId: string; orderId: string }) => {
+            return await deliveryApi.apiShopsShopIdOrdersOrderIdConfirmDeliveriedPut(shopId,orderId );
         },
         {
             onSuccess: async () => {
@@ -31,8 +31,9 @@ const ShippingAddress: React.FC<{ orderDetail: OrderDetailedResponse | undefined
 
         try {
             await deliveryMutation.mutateAsync({
+                shopId: currentUser.shopId!,
                 orderId: orderDetail.orderId!,
-                shopId: currentUser.shopId!
+                
             });
         } catch (error) {
             console.error("Error during delivery confirmation:", error);
@@ -58,7 +59,7 @@ const ShippingAddress: React.FC<{ orderDetail: OrderDetailedResponse | undefined
                         onClick={handleConfirmDelivery}
                     >
                         <KTIcon iconName="pencil" className="fs-3" />
-                        Confirm Delivery
+                        Confirm Deliveried
                     </Button>
                 </div>
             </KTCardBody>

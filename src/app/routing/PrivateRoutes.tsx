@@ -41,7 +41,7 @@ const PrivateRoutes = () => {
   const getDefaultRoute = () => {
     switch (currentUser?.role) {
       case "Admin":
-        return "/consignment";
+        return "/dashboard";
       case "Staff":
         return "/order";
       default:
@@ -231,7 +231,7 @@ const PrivateRoutes = () => {
       </Route>
     </Routes>
   );
-};
+}
 
 const SuspensedView: FC<WithChildren> = ({ children }) => {
   const baseColor = getCSSVariableValue("--bs-primary");
