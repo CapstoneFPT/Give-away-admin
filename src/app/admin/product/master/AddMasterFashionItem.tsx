@@ -56,18 +56,17 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
   const [selectedShop, setSelectedShop] = useState<string>("");
   const [isCategoryDisabled, setIsCategoryDisabled] = useState(true);
   const [loading, setLoading] = useState<boolean>(false);
-  console.log(formData);
+
   const createMasterItem = async (itemData: MasterItem) => {
     try {
       setLoading(true); // Start loading
       const createApi = new MasterItemApi();
       const response = await createApi.apiMasterItemsPost(itemData);
-      console.log(response);
     } catch (error) {
       console.error("Error creating master item:", error);
       throw error;
     } finally {
-      setLoading(false); // End loading
+      setLoading(false);
     }
   };
 
@@ -76,7 +75,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
       try {
         const shopApi = new ShopApi();
         const response = await shopApi.apiShopsGet();
-        console.log(response);
+
         setShops(response.data.data || []);
       } catch (error) {
         console.error("Error fetching shops:", error);
@@ -99,11 +98,11 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
             4,
             "Available"
           );
-          console.log(response);
+
           setCategories(response.data.data || []);
           setIsCategoryDisabled(false);
         } catch (error) {
-          console.error("Error fetching categories:", error);
+          showAlert("error", `Error fetching categories: ${error}`);
         }
       } else {
         setCategories([]);
