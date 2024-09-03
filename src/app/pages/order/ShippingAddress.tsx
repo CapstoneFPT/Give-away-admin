@@ -1,20 +1,69 @@
-import {KTCard, KTCardBody, KTIcon} from "../../../_metronic/helpers";
-import {OrderDetailedResponse} from "../../../api";
+import React from "react";
+import { Button } from "react-bootstrap";
+import { KTCard, KTCardBody, KTIcon } from "../../../_metronic/helpers";
+import { OrderDetailedResponse, ShopApi } from "../../../api";
+import { useAuth } from "../../modules/auth";
+import { useMutation } from "react-query";
 
-const ShippingAddress: React.FC<{ orderDetail: OrderDetailedResponse | undefined }> = ({ orderDetail }) => (
-    <KTCard className="card-flush py-4 flex-row-fluid position-relative">
-        <div className="position-absolute top-0 end-0 bottom-0 opacity-10 d-flex align-items-center me-5">
-            <KTIcon iconName='delivery' className='fs-2' />
-        </div>
-        <div className="card-header">
-            <div className="card-title">
-                <h2>Shipping Address</h2>
+const ShippingAddress: React.FC<{ orderDetail: OrderDetailedResponse | undefined }> = ({ orderDetail }) => {
+    const { currentUser } = useAuth();
+    const deliveryApi = new ShopApi();
+
+    const deliveryMutation = useMutation(
+        async ({ orderId, shopId }: { shopId: string; orderId: string }) => {
+            return await deliveryApi.apiShopsShopIdOrdersOrderIdConfirmDeliveriedPut(orderId, shopId);
+        },
+        {
+            onSuccess: async () => {
+                // Invalidate and refetch any necessary queries here if needed
+                // await queryClient.invalidateQueries(['consignSale', consignSale.consignSaleId]);
+                window.location.reload();  // Refresh the page upon success
+            },
+            onError: (error) => {
+                // Handle error here if needed
+                console.error("Failed to confirm delivery", error);
+            }
+        }
+    );
+
+    const handleConfirmDelivery = async () => {
+        if (!orderDetail || !currentUser) return;
+
+        try {
+            await deliveryMutation.mutateAsync({
+                orderId: orderDetail.orderId!,
+                shopId: currentUser.shopId!
+            });
+        } catch (error) {
+            console.error("Error during delivery confirmation:", error);
+        }
+    };
+
+    return (
+        <KTCard className="card-flush py-4 flex-row-fluid position-relative">
+            <div className="position-absolute top-0 end-0 bottom-0 opacity-10 d-flex align-items-center me-5">
+                <KTIcon iconName='delivery' className='fs-2' />
             </div>
-        </div>
-        <KTCardBody className="pt-0">
-            {orderDetail?.address}
-        </KTCardBody>
-    </KTCard>
-);
+            <div className="card-header">
+                <div className="card-title">
+                    <h2>Shipping Address</h2>
+                </div>
+            </div>
+            <KTCardBody className="pt-0">
+                {orderDetail?.address}
+                <div>
+                    <Button 
+                        style={{ marginTop: "10px" }} 
+                        className="btn btn-success hover-rotate-end"
+                        onClick={handleConfirmDelivery}
+                    >
+                        <KTIcon iconName="pencil" className="fs-3" />
+                        Confirm Delivery
+                    </Button>
+                </div>
+            </KTCardBody>
+        </KTCard>
+    );
+};
 
 export default ShippingAddress;

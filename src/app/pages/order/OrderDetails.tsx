@@ -1,6 +1,7 @@
 import React from "react";
 import {KTCard, KTCardBody, KTIcon} from "../../../_metronic/helpers";
-import {OrderDetailedResponse} from "../../../api";
+import {OrderDetailedResponse, OrderStatus} from "../../../api";
+import { Button } from "react-bootstrap";
 
 const OrderDetails: React.FC<{ orderDetail: OrderDetailedResponse | undefined }> = ({ orderDetail }) => (
     <KTCard className="card-flush py-4 flex-row-fluid">
@@ -37,11 +38,35 @@ const OrderDetails: React.FC<{ orderDetail: OrderDetailedResponse | undefined }>
                     <tr>
                         <td className="text-muted">
                             <div className="d-flex align-items-center">
+                                <KTIcon iconName='wallet' className='fs-2 me-2' />
+                                Payment Method
+                            </div>
+                        </td>
+                        <td className="fw-bold text-end">
+                        <span className={`badge badge-light-${getStatusBadge(orderDetail?.status!)}`}>
+                      {orderDetail?.status}
+                    </span>
+                            {/* Add payment method icon if available */}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td className="text-muted">
+                            <div className="d-flex align-items-center">
                                 <KTIcon iconName='truck' className='fs-2 me-2' />
                                 Shipping Method
                             </div>
                         </td>
                         <td className="fw-bold text-end">{orderDetail?.purchaseType}</td>
+                    </tr>
+                    <tr>
+                        <td className="text-muted">
+                           <div>
+                            <Button className="btn btn-warning hover-rotate-end">
+                                Refund
+                            </Button>
+                           </div>
+                        </td>
+                       
                     </tr>
                     </tbody>
                 </table>
@@ -49,5 +74,20 @@ const OrderDetails: React.FC<{ orderDetail: OrderDetailedResponse | undefined }>
         </KTCardBody>
     </KTCard>
 );
+const getStatusBadge = (status: OrderStatus) => {
+
+    switch (status) {
+        case 'AwaitingPayment':
+            return 'warning';
+        case 'Completed':
+            return 'success';
+        case 'Cancelled':
+            return 'danger';
+        case 'Pending':
+            return 'info';
+        default:
+            return 'secondary';
+    }
+};
 
 export default OrderDetails;
