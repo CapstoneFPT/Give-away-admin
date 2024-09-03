@@ -11,7 +11,7 @@ import Auction from "../pages/auction/Auction";
 import ProtectedRoute from "./ProtectedRoutes.tsx";
 import OrderPage from "../pages/order/OrderPage.tsx";
 import RefundPage from "../pages/refund/RefundPage.tsx";
-import OrderDetail from "../pages/order/OrderDetail.tsx";
+import OrderDetailPage from "../pages/order/OrderDetailPage.tsx";
 import { ConsignDetail } from "../pages/consign/ConsignDetail.tsx";
 import ConsignLineItemReview from "../pages/consign/ConsignLineItemReview.tsx";
 import ProductCreationFromConsignmentForm from "../pages/consign/ProductCreationFromConsignmentForm.tsx";
@@ -136,7 +136,7 @@ const PrivateRoutes = () => {
               roles={["Staff"]}
               children={
                 <SuspensedView>
-                  <OrderDetail />
+                  <OrderDetailPage />
                 </SuspensedView>
               }
             />
@@ -232,7 +232,7 @@ const PrivateRoutes = () => {
       </Route>
     </Routes>
   );
-};
+}
 
 const SuspensedView: FC<WithChildren> = ({ children }) => {
   const baseColor = getCSSVariableValue("--bs-primary");

@@ -9,9 +9,6 @@ export default defineConfig({
     port: 2052,
   },
   build: {
-    chunkSizeWarningLimit: 3000,
-    rollupOptions: {
-      input: "./src/main.tsx",
-    },
+    chunkSizeWarningLimit: 3000
   },
 });
