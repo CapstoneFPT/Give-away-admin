@@ -40,7 +40,7 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
     },
     { refetchOnWindowFocus: false, keepPreviousData: true }
   );
-  console.log(result);
+
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setCurrentPage(1); // Reset to first page when searching
@@ -107,13 +107,14 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
             <thead>
               <tr className="fw-bold text-muted bg-light">
                 <th className="ps-4 min-w-125px rounded-start">Item Code</th>
+                <th className="min-w-200px">Shop address</th>
                 <th className="min-w-200px">Product</th>
                 <th className="min-w-200px">Description</th>
-                <th className="min-w-125px">Stock Count</th>
-                <th className="min-w-125px">Item In Stock</th>
-                <th className="min-w-150px">Created Date</th>
-                <th className="min-w-150px">Brand</th>
-                <th className="min-w-200px text-end rounded-end"></th>
+                <th className="min-w-25px">Stock Count</th>
+                <th className="min-w-55px"> In Stock</th>
+                <th className="min-w-200px">Created Date</th>
+                <th className="min-w-10px">Brand</th>
+                <th className="min-w-100px">Action</th>
               </tr>
             </thead>
             {/* end::Table head */}
@@ -129,6 +130,7 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                       {product.itemCode}
                     </a>
                   </td>
+                  <td>{product.shopAddress}</td>
                   <td>
                     <div className="d-flex align-items-center">
                       <div className="symbol symbol-50px me-5">
@@ -176,7 +178,15 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                   </td>
                   <td>
                     <span className="text-muted fw-semibold text-muted d-block fs-7">
-                      {new Date(product.createdDate!).toLocaleDateString()}
+                      {new Date(product.createdDate!).toLocaleString("en-US", {
+                        weekday: "long", // e.g., "Monday"
+                        year: "numeric", // e.g., "2024"
+                        month: "long", // e.g., "September"
+                        day: "numeric", // e.g., "2"
+                        hour: "2-digit", // e.g., "03"
+                        minute: "2-digit", // e.g., "37"
+                        second: "2-digit", // e.g., "40"
+                      })}
                     </span>
                   </td>
                   <td>
@@ -189,7 +199,7 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                       to={`/product-admin/${product.masterItemId}`}
                       className="btn btn-success hover-rotate-end"
                     >
-                      Go to fashion item list
+                      Fashion item list
                     </Link>
                   </td>
                 </tr>
