@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { KTIcon, toAbsoluteUrl } from "../../../_metronic/helpers";
-import {FashionItemApi, MasterItemApi, MasterItemListResponse} from "../../../api";
+import { MasterItemApi, MasterItemListResponse } from "../../../api";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 
@@ -29,13 +29,11 @@ const FashionItemsTable: React.FC<Props> = ({ className }) => {
         currentPage,
         pageSize
       );
-      console.log('hihi',response)
+      console.log("hihi", response);
       return response.data;
     },
     { refetchOnWindowFocus: false, keepPreviousData: true }
   );
-  
-
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -112,10 +110,11 @@ const FashionItemsTable: React.FC<Props> = ({ className }) => {
                       <div className="symbol symbol-50px me-5">
                         <img
                           src={
-                            product.images !== undefined ? product.images! [0]:
-                            toAbsoluteUrl(
-                              "media/stock/600x400/img-placeholder.jpg"
-                            )
+                            product.images !== undefined
+                              ? product.images![0]
+                              : toAbsoluteUrl(
+                                  "media/stock/600x400/img-placeholder.jpg"
+                                )
                           }
                           alt={product.name || "N/A"}
                         />
@@ -154,12 +153,13 @@ const FashionItemsTable: React.FC<Props> = ({ className }) => {
                     </span>
                   </td>
                   <td className="text-end">
-                  
-                    <Link to={`/product/product-list/list-fashion/${product.masterItemId}`}
-                                          className="btn btn-success hover-rotate-end">
-                                        <KTIcon iconName="pencil" className="fs-3"/>
-                                        Go to list fashion
-                                    </Link>
+                    <Link
+                      to={`/product/product-list/list-fashion/${product.masterItemId}`}
+                      className="btn btn-success hover-rotate-end"
+                    >
+                      <KTIcon iconName="pencil" className="fs-3" />
+                      Go to list fashion
+                    </Link>
                   </td>
                 </tr>
               ))}

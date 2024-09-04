@@ -149,19 +149,24 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
   return (
     <div
       className="modal fade show"
-      style={{ display: "block" }}
+      style={{ display: "block", padding: "1rem" }}
       tabIndex={-1}
       role="dialog"
     >
-      <div className="modal-dialog" role="document">
+      <div
+        className="modal-dialog"
+        role="document"
+        style={{ maxWidth: "800px" }}
+      >
         <div className="modal-content">
-          <div className="modal-header">
+          <div className="modal-header" style={{ borderBottom: "none" }}>
             <h3
               className="modal-title"
               style={{
-                fontSize: 40,
+                fontSize: "40px",
                 display: "flex",
                 justifyContent: "center",
+                width: "100%",
               }}
             >
               Add Fashion Item
@@ -172,22 +177,34 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
               aria-label="Close"
               onClick={handleCloseWithReset}
               disabled={isLoading}
+              style={{
+                background: "transparent",
+                border: "none",
+                fontSize: "24px",
+                cursor: "pointer",
+              }}
             >
-              <span aria-hidden="true">&times;</span>
+              X
             </button>
           </div>
-          <div className="modal-body">
+          <div className="modal-body" style={{ padding: "2rem" }}>
             <div className="fashion-item-form">
               <form>
                 {/* Condition */}
-                <div className="form-group">
-                  <label htmlFor="condition">Condition</label>
+                <div className="form-group" style={{ marginBottom: "1rem" }}>
+                  <label
+                    htmlFor="condition"
+                    style={{ marginBottom: "0.5rem", display: "block" }}
+                  >
+                    Condition
+                  </label>
                   <select
                     className="form-control"
                     id="condition"
                     value={fashionItem.condition || ""}
                     onChange={handleChange}
                     disabled={isLoading}
+                    style={{ padding: "0.5rem" }}
                   >
                     <option value="Never worn, with tag">
                       Never worn, with tag
@@ -200,8 +217,13 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
                 </div>
 
                 {/* Color */}
-                <div className="form-group">
-                  <label htmlFor="color">Color</label>
+                <div className="form-group" style={{ marginBottom: "1rem" }}>
+                  <label
+                    htmlFor="color"
+                    style={{ marginBottom: "0.5rem", display: "block" }}
+                  >
+                    Color
+                  </label>
                   <input
                     type="text"
                     className="form-control"
@@ -210,18 +232,25 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
                     value={fashionItem.color || ""}
                     onChange={handleChange}
                     disabled={isLoading}
+                    style={{ padding: "0.5rem" }}
                   />
                 </div>
 
                 {/* Size */}
-                <div className="form-group">
-                  <label htmlFor="size">Size</label>
+                <div className="form-group" style={{ marginBottom: "1rem" }}>
+                  <label
+                    htmlFor="size"
+                    style={{ marginBottom: "0.5rem", display: "block" }}
+                  >
+                    Size
+                  </label>
                   <select
                     className="form-control"
                     id="size"
                     value={fashionItem.size || "XS"}
                     onChange={handleChange}
                     disabled={isLoading}
+                    style={{ padding: "0.5rem" }}
                   >
                     <option value="XS">XS</option>
                     <option value="S">S</option>
@@ -232,8 +261,13 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
                 </div>
 
                 {/* Note */}
-                <div className="form-group">
-                  <label htmlFor="note">Note</label>
+                <div className="form-group" style={{ marginBottom: "1rem" }}>
+                  <label
+                    htmlFor="note"
+                    style={{ marginBottom: "0.5rem", display: "block" }}
+                  >
+                    Note
+                  </label>
                   <textarea
                     className="form-control"
                     id="note"
@@ -241,12 +275,18 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
                     value={fashionItem.note || ""}
                     onChange={handleChange}
                     disabled={isLoading}
+                    style={{ padding: "0.5rem", minHeight: "100px" }}
                   />
                 </div>
 
                 {/* Selling Price */}
-                <div className="form-group">
-                  <label htmlFor="sellingPrice">Selling Price</label>
+                <div className="form-group" style={{ marginBottom: "1rem" }}>
+                  <label
+                    htmlFor="sellingPrice"
+                    style={{ marginBottom: "0.5rem", display: "block" }}
+                  >
+                    Selling Price
+                  </label>
                   <input
                     type="number"
                     className="form-control"
@@ -255,6 +295,7 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
                     value={fashionItem.sellingPrice || ""}
                     onChange={handleChange}
                     disabled={isLoading}
+                    style={{ padding: "0.5rem" }}
                   />
                 </div>
 
@@ -263,9 +304,17 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
                   <label>Images</label>
                   <KTCard>
                     <KTCardBody>
-                      <div {...getRootProps()} className="dropzone">
+                      <div
+                        {...getRootProps()}
+                        className="dropzone"
+                        style={{
+                          border: "2px dashed #007bff",
+                          padding: "2rem",
+                          borderRadius: "0.25rem",
+                        }}
+                      >
                         <input {...getInputProps()} />
-                        <div className="d-flex flex-column align-items-center justify-content-center border border-2 border-primary rounded p-5">
+                        <div className="d-flex flex-column align-items-center justify-content-center">
                           <KTIcon
                             iconName="image"
                             className="svg-icon-primary svg-icon-5x"
@@ -279,7 +328,11 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
                       </div>
                       <div className="row mt-5">
                         {files.map((file, fileIndex) => (
-                          <div key={fileIndex} className="col-3">
+                          <div
+                            key={fileIndex}
+                            className="col-3"
+                            style={{ marginBottom: "1rem" }}
+                          >
                             <div className="text-center">
                               <img
                                 src={URL.createObjectURL(file)}
@@ -302,12 +355,10 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
                     </KTCardBody>
                   </KTCard>
                 </div>
-
-                {/* Error Message */}
               </form>
             </div>
           </div>
-          <div className="modal-footer">
+          <div className="modal-footer" style={{ borderTop: "none" }}>
             <button
               type="button"
               className="btn btn-secondary"
@@ -316,7 +367,6 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
             >
               Close
             </button>
-            {/* Submit Button */}
             <button
               type="button"
               className="btn btn-primary"
