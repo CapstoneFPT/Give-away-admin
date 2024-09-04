@@ -1,6 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "react-query";
+import { KTCard, KTCardBody, KTIcon } from "../../../../_metronic/helpers";
 import { FashionItemApi } from "../../../../api";
 
 const fetchItemDetail = async (itemId: string) => {
@@ -29,7 +30,7 @@ const ItemDetail: React.FC = () => {
       retry: false, // Optionally disable retries for this query
     }
   );
-
+  console.log(item);
   if (isLoading)
     return <div className="text-blue-500 text-center py-4">Loading...</div>;
   if (error)
@@ -40,77 +41,176 @@ const ItemDetail: React.FC = () => {
     );
 
   return (
-    <div className="container mx-auto p-4">
-      {item && (
-        <div className="bg-white shadow-lg rounded-lg p-6">
-          <div className="text-center mb-6">
-            <h1 className="text-3xl font-bold text-gray-800">{item.name}</h1>
-            <div className="flex justify-center space-x-4 mt-4">
-              {item.images?.map((image, index) => (
-                <img
-                  style={{ maxWidth: 500 }}
-                  key={index}
-                  src={image}
-                  className="w-48 h-48 object-cover rounded-lg shadow-md"
-                />
-              ))}
-            </div>
+    <KTCard className="card-flush py-4 flex-row-fluid ">
+      <div className="card-header">
+        <div className="d-flex justify-content-between align-items-center w-100">
+          <div className="card-title">
+            <h2>Item Details ({item?.itemCode})</h2>
           </div>
-          <div className="space-y-4 border-t pt-4">
-            <div className="flex justify-between">
-              <span className="font-semibold text-gray-700">Item Code:</span>
-              <span>{item.itemCode}</span>
+          {!item?.isConsignment && (
+            <div className="text-center">
+              <button className="btn btn-success hover-rotate-end">
+                Update
+              </button>
             </div>
-            <div className="flex justify-between">
-              <span className="font-semibold text-gray-700">
-                Selling Price:
-              </span>
-              <span>{item.sellingPrice!.toLocaleString()} VND</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="font-semibold text-gray-700">Description:</span>
-              <span>{item.description}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="font-semibold text-gray-700">Condition:</span>
-              <span>{item.condition}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="font-semibold text-gray-700">Status:</span>
-              <span>{item.status}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="font-semibold text-gray-700">Shop Address:</span>
-              <span>{item.shopAddress}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="font-semibold text-gray-700">Category:</span>
-              <span>{item.categoryName}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="font-semibold text-gray-700">Size:</span>
-              <span>{item.size}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="font-semibold text-gray-700">Color:</span>
-              <span>{item.color}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="font-semibold text-gray-700">Brand:</span>
-              <span>{item.brand}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="font-semibold text-gray-700">Gender:</span>
-              <span>{item.gender}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="font-semibold text-gray-700">Note:</span>
-              <span>{item.note}</span>
-            </div>
-          </div>
+          )}
         </div>
-      )}
-    </div>
+      </div>
+      <KTCardBody className="pt-0 ">
+        {item && (
+          <div className="table-responsive">
+            <div className="row g-5 g-xl-8 mt-5">
+              <div className="col-xl-12">
+                <KTCard>
+                  <KTCardBody>
+                    <h3 className="fs-2 fw-bold mb-5">Product Images</h3>
+                    <div className="d-flex flex-wrap gap-3">
+                      {item.images?.map((image, index) => (
+                        <img
+                          key={index}
+                          src={image}
+                          alt={`Product ${index + 1}`}
+                          style={{
+                            width: "150px",
+                            height: "150px",
+                            objectFit: "cover",
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </KTCardBody>
+                </KTCard>
+              </div>
+            </div>
+            <table className="table align-middle table-row-bordered mb-0 fs-6 gy-5 min-w-300px  ">
+              <tbody className="fw-semibold text-gray-600 ">
+                <tr>
+                  <td className="text-muted">
+                    <div className="d-flex align-items-center">
+                      <KTIcon iconName="tag" className="fs-2 me-2" />
+                      Item Code
+                    </div>
+                  </td>
+                  <td className="fw-bold text-end">{item.itemCode}</td>
+                </tr>
+                <tr>
+                  <td className="text-muted">
+                    <div className="d-flex align-items-center">
+                      <KTIcon iconName="tag" className="fs-2 me-2" />
+                      Type
+                    </div>
+                  </td>
+                  <td className="fw-bold text-end">
+                    {item?.isConsignment ? "Consigned Item" : "Shop Item"}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="text-muted">
+                    <div className="d-flex align-items-center">
+                      <KTIcon iconName="cash" className="fs-2 me-2" />
+                      Selling Price
+                    </div>
+                  </td>
+                  <td className="fw-bold text-end">
+                    {item.sellingPrice!.toLocaleString()} VND
+                  </td>
+                </tr>
+                <tr>
+                  <td className="text-muted">
+                    <div className="d-flex align-items-center">
+                      <KTIcon iconName="file-text" className="fs-2 me-2" />
+                      Description
+                    </div>
+                  </td>
+                  <td className="fw-bold text-end">{item.description}</td>
+                </tr>
+                <tr>
+                  <td className="text-muted">
+                    <div className="d-flex align-items-center">
+                      <KTIcon iconName="heart" className="fs-2 me-2" />
+                      Condition
+                    </div>
+                  </td>
+                  <td className="fw-bold text-end">{item.condition}</td>
+                </tr>
+                <tr>
+                  <td className="text-muted">
+                    <div className="d-flex align-items-center">
+                      <KTIcon iconName="info" className="fs-2 me-2" />
+                      Status
+                    </div>
+                  </td>
+                  <td className="fw-bold text-end">{item.status}</td>
+                </tr>
+                <tr>
+                  <td className="text-muted">
+                    <div className="d-flex align-items-center">
+                      <KTIcon iconName="location-pin" className="fs-2 me-2" />
+                      Shop Address
+                    </div>
+                  </td>
+                  <td className="fw-bold text-end">{item.shopAddress}</td>
+                </tr>
+                <tr>
+                  <td className="text-muted">
+                    <div className="d-flex align-items-center">
+                      <KTIcon iconName="list" className="fs-2 me-2" />
+                      Category
+                    </div>
+                  </td>
+                  <td className="fw-bold text-end">{item.categoryName}</td>
+                </tr>
+                <tr>
+                  <td className="text-muted">
+                    <div className="d-flex align-items-center">
+                      <KTIcon iconName="expand" className="fs-2 me-2" />
+                      Size
+                    </div>
+                  </td>
+                  <td className="fw-bold text-end">{item.size}</td>
+                </tr>
+                <tr>
+                  <td className="text-muted">
+                    <div className="d-flex align-items-center">
+                      <KTIcon iconName="color-lens" className="fs-2 me-2" />
+                      Color
+                    </div>
+                  </td>
+                  <td className="fw-bold text-end">{item.color}</td>
+                </tr>
+                <tr>
+                  <td className="text-muted">
+                    <div className="d-flex align-items-center">
+                      <KTIcon iconName="shop" className="fs-2 me-2" />
+                      Brand
+                    </div>
+                  </td>
+                  <td className="fw-bold text-end">{item.brand}</td>
+                </tr>
+                <tr>
+                  <td className="text-muted">
+                    <div className="d-flex align-items-center">
+                      <KTIcon iconName="user" className="fs-2 me-2" />
+                      Gender
+                    </div>
+                  </td>
+                  <td className="fw-bold text-end">{item.gender}</td>
+                </tr>
+                <tr>
+                  <td className="text-muted">
+                    <div className="d-flex align-items-center">
+                      <KTIcon iconName="info-circle" className="fs-2 me-2" />
+                      Note
+                    </div>
+                  </td>
+                  <td className="fw-bold text-end">{item.note}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        )}
+      </KTCardBody>
+    </KTCard>
   );
 };
 

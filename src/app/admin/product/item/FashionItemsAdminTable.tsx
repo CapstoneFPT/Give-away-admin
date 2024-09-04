@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import AddFashionItem from "./AddFashionItem";
 import { KTCard, KTCardBody } from "../../../../_metronic/helpers";
 import { showAlert } from "../../../../utils/Alert";
+import { useNavigate } from "react-router-dom";
 type Props = {
   className: string;
 };
@@ -26,7 +27,11 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
   const handleOpenModal = () => setIsModalVisible(true);
   const handleCloseModal = () => setIsModalVisible(false);
   const [action, setAction] = useState<boolean>(false);
+  const navigate = useNavigate();
 
+  const handleRedirect = () => {
+    navigate("/product-admin");
+  };
   const handleItemCreated = () => {
     handleCloseModal();
     setCurrentPage(1);
@@ -147,27 +152,42 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
   return (
     <div className={`card ${className}`}>
       <div className="card-header border-0 pt-5">
-        <h3 className="card-title align-items-start flex-column"></h3>
-        <div className="card-toolbar">
-          <form onSubmit={handleSearch} className="d-flex align-items-center">
+        <div className="card-toolbar d-flex align-items-center">
+          <div className="d-flex align-items-center">
+            {/* Back Button */}
+            <button
+              className="btn btn-sm btn-light-primary d-flex align-items-center me-2"
+              onClick={handleRedirect}
+            >
+              Back
+            </button>
+          </div>
+
+          {/* Search Input */}
+          <form
+            onSubmit={handleSearch}
+            className="d-flex flex-grow-1 align-items-center mx-2"
+          >
             <input
               type="text"
-              className="form-control form-control-solid w-250px me-2"
+              className="form-control form-control-solid w-250px"
               placeholder="Search by item code"
               value={searchTerm}
               onChange={handleSearchInputChange}
             />
           </form>
+
+          {/* Add New Item Link */}
           {!MasterResult.data?.isConsignment && (
             <a
               href="#"
-              className="btn btn-sm btn-light-primary"
+              className="btn btn-sm btn-light-primary d-flex align-items-center"
               onClick={(e) => {
                 e.preventDefault(); // Prevent the default anchor behavior
                 handleOpenModal();
               }}
             >
-              <KTIcon iconName="plus" className="fs-2" />
+              <KTIcon iconName="plus" className="fs-2 me-2" />
               Add new item
             </a>
           )}
