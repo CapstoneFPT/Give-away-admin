@@ -29,6 +29,36 @@ const OrderDetails: React.FC<{ orderDetail: OrderDetailedResponse | undefined }>
                           
                         </td>
                     </tr>
+
+                    <tr>
+                        <td className="text-muted">
+                            <div className="d-flex align-items-center">
+                                <KTIcon iconName='truck' className='fs-2 me-2' />
+                                Auction Title
+                            </div>
+                        </td>
+                        <td className="fw-bold text-end">
+                        <strong>{orderDetail?.auctionTitle|| 'N/A'}</strong>
+                        </td>
+
+                                         
+                                           
+                    </tr>
+                    <tr>
+                        <td className="text-muted">
+                            <div className="d-flex align-items-center">
+                                <KTIcon iconName='truck' className='fs-2 me-2' />
+                                Quanity
+                            </div>
+                        </td>
+                        <td className="fw-bold text-end">
+                        <span>{orderDetail?.quantity!} </span>
+                        </td>
+
+                                         
+                                           
+                    </tr>
+
                     <tr>
                         
                         <td className="text-muted">
@@ -147,34 +177,7 @@ const OrderDetails: React.FC<{ orderDetail: OrderDetailedResponse | undefined }>
                                          
                                            
                     </tr>
-                    {/* <tr>
-                        <td className="text-muted">
-                            <div className="d-flex align-items-center">
-                                <KTIcon iconName='truck' className='fs-2 me-2' />
-                                Auction Title
-                            </div>
-                        </td>
-                        <td className="fw-bold text-end">
-                        <strong>{orderDetail?.auctionTitle|| 'N/A'}</strong>
-                        </td>
 
-                                         
-                                           
-                    </tr> */}
-                    {/* <tr>
-                        <td className="text-muted">
-                            <div className="d-flex align-items-center">
-                                <KTIcon iconName='truck' className='fs-2 me-2' />
-                                Quanity
-                            </div>
-                        </td>
-                        <td className="fw-bold text-end">
-                        <span>{orderDetail?.quantity!} VND</span>
-                        </td>
-
-                                         
-                                           
-                    </tr> */}
                     
                     </tbody>
                 </table>

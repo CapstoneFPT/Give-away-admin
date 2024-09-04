@@ -1,6 +1,7 @@
 import React from "react";
 import {KTCard, KTCardBody, KTIcon} from "../../../_metronic/helpers";
 import {OrderDetailedResponse} from "../../../api";
+import ShippingAddress from "./ShippingAddress";
 
 const CustomerDetails: React.FC<{ orderDetail: OrderDetailedResponse | undefined }> = ({ orderDetail }) => (
     <KTCard className="card-flush py-4 flex-row-fluid">
@@ -58,6 +59,11 @@ const CustomerDetails: React.FC<{ orderDetail: OrderDetailedResponse | undefined
                         </td>
                         <td className="fw-bold text-end">{orderDetail?.reciepientName}</td>
                     </tr>
+                   <tr>
+                   <div className="d-flex flex-column flex-xl-row gap-7 gap-lg-10 mt-10">
+                                <ShippingAddress orderDetail={orderDetail} />
+                            </div>
+                   </tr>
                     </tbody>
                 </table>
             </div>

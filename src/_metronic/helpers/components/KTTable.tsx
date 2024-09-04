@@ -58,7 +58,7 @@ export const KTTable: React.FC<KTTableProps> = ({
     <>
       <div className="card-header border-0 pt-5">
         <h3 className="card-title align-items-start flex-column">
-          <span className="card-label fw-bold fs-3 mb-1">Data Table</span>
+          <span className="card-label fw-bold fs-3 mb-1">Items</span>
           <span className="text-muted mt-1 fw-semibold fs-7">
             Total Items: {totalCount}
           </span>

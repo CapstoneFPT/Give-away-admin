@@ -6,7 +6,8 @@ import { formatBalance } from "../utils/utils";
 import { useConsignSale, useConsignSaleLineItems } from "./consignSaleHooks";
 import { Content } from "../../../_metronic/layout/components/content";
 import ConsignmentApproval from "./ConsignmentApproval.tsx";
-import {ConsignSaleLineItemsListResponse, ConsignSaleLineItemStatus, ConsignSaleStatus} from "../../../api";
+import {ConsignSaleLineItemsListResponse, ConsignSaleLineItemStatus, ConsignSaleStatus, ConsignSaleDetailedResponse} from "../../../api";
+import KTInfoItem from "../../../_metronic/helpers/components/KTInfoItem.tsx";
 
 const getConsignSaleStatusColor = (status?: ConsignSaleStatus) => {
   switch (status) {
@@ -78,52 +79,25 @@ export const ConsignDetail: React.FC = () => {
             <div className="col-xl-6">
               <h3 className="fs-2 fw-bold mb-5">Consignment Details</h3>
               <div className="d-flex flex-wrap">
-                <div className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
-                  <div className="d-flex align-items-center">
-                    <KTIcon
-                      iconName="calendar"
-                      className="fs-3 text-primary me-2"
-                    />
-                    <div className="fs-6 text-gray-800 fw-bold">Date Added</div>
-                  </div>
-                  <div className="fs-7 text-gray-600 mt-2">
-                    {new Date(
-                      consignSaleResponse.createdDate!
-                    ).toLocaleString()}
-                  </div>
-                </div>
-                <div className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
-                  <div className="d-flex align-items-center">
-                    <KTIcon iconName="tag" className="fs-3 text-primary me-2" />
-                    <div className="fs-6 text-gray-800 fw-bold">
-                      Consignment Code
-                    </div>
-                  </div>
-                  <div className="fs-7 text-gray-600 mt-2">
-                    {consignSaleResponse.consignSaleCode}
-                  </div>
-                </div>
-                <div className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
-                  <div className="d-flex align-items-center">
-                    <KTIcon
-                      iconName="information"
-                      className="fs-3 text-primary me-2"
-                    />
-                    <div className="fs-6 text-gray-800 fw-bold">Type</div>
-                  </div>
-                  <div className="fs-7 text-gray-600 mt-2">
-                    {consignSaleResponse.type}
-                  </div>
-                </div>
-                <div className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
-                  <div className="d-flex align-items-center">
-                    <KTIcon
-                      iconName="status"
-                      className="fs-3 text-primary me-2"
-                    />
-                    <div className="fs-6 text-gray-800 fw-bold">Status</div>
-                  </div>
-                  <div className="fs-7 mt-2">
+                <KTInfoItem
+                  iconName="calendar"
+                  title="Date Added"
+                  value={new Date(consignSaleResponse.createdDate!).toLocaleString()}
+                />
+                <KTInfoItem
+                  iconName="tag"
+                  title="Consignment Code"
+                  value={consignSaleResponse.consignSaleCode}
+                />
+                <KTInfoItem
+                  iconName="information"
+                  title="Type"
+                  value={consignSaleResponse.type}
+                />
+                <KTInfoItem
+                  iconName="status"
+                  title="Status"
+                  value={
                     <span
                       className={`badge badge-light-${getConsignSaleStatusColor(
                         consignSaleResponse.status
@@ -131,36 +105,27 @@ export const ConsignDetail: React.FC = () => {
                     >
                       {consignSaleResponse.status}
                     </span>
-                  </div>
-                </div>
-                <div className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
-                  <div className="d-flex align-items-center">
-                    <KTIcon
-                      iconName="calendar-add"
-                      className="fs-3 text-primary me-2"
-                    />
-                    <div className="fs-6 text-gray-800 fw-bold">Start Date</div>
-                  </div>
-                  <div className="fs-7 text-gray-600 mt-2">
-                    {consignSaleResponse.startDate
-                      ? new Date(consignSaleResponse.startDate).toLocaleString()
-                      : "N/A"}
-                  </div>
-                </div>
-                <div className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
-                  <div className="d-flex align-items-center">
-                    <KTIcon
-                      iconName="calendar-tick"
-                      className="fs-3 text-primary me-2"
-                    />
-                    <div className="fs-6 text-gray-800 fw-bold">End Date</div>
-                  </div>
-                  <div className="fs-7 text-gray-600 mt-2">
-                    {consignSaleResponse.endDate
-                      ? new Date(consignSaleResponse.endDate).toLocaleString()
-                      : "N/A"}
-                  </div>
-                </div>
+                  }
+                />
+                <KTInfoItem
+                  iconName="basket-ok"
+                  title="Consign Sale Method"
+                  value={consignSaleResponse.consignSaleMethod}
+                />
+                <KTInfoItem
+                  iconName="calendar-add"
+                  title="Start Date"
+                  value={consignSaleResponse.startDate
+                    ? new Date(consignSaleResponse.startDate).toLocaleString()
+                    : "N/A"}
+                />
+                <KTInfoItem
+                  iconName="calendar-tick"
+                  title="End Date"
+                  value={consignSaleResponse.endDate
+                    ? new Date(consignSaleResponse.endDate).toLocaleString()
+                    : "N/A"}
+                />
               </div>
             </div>
             <div className="col-xl-6">

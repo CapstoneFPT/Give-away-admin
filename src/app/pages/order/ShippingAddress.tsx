@@ -57,6 +57,7 @@ const ShippingAddress: React.FC<{ orderDetail: OrderDetailedResponse | undefined
                         style={{ marginTop: "10px" }} 
                         className="btn btn-success hover-rotate-end"
                         onClick={handleConfirmDelivery}
+                        disabled={orderDetail?.status == "Completed"}
                     >
                         <KTIcon iconName="pencil" className="fs-3" />
                         Confirm Deliveried
