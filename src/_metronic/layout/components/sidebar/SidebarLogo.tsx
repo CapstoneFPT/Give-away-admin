@@ -52,11 +52,12 @@ const SidebarLogo = (props: PropsType) => {
   return (
     <div className="app-sidebar-logo px-6" id="kt_app_sidebar_logo">
       <Link to="/dashboard" className="app-sidebar-logo-title">
-        {config.layoutType === "dark-sidebar" ? (
-          <span className="text-light">Admin Dashboard</span>
-        ) : (
-          <span className="text-dark">Admin Dashboard</span>
-        )}
+      <img
+        alt="Logo"
+        src="https://firebasestorage.googleapis.com/v0/b/give-away-a58b2.appspot.com/o/images%2Flogo%2Fh%C3%ACnh_%E1%BA%A3nh_2024-07-31_145254730-removebg-preview.png?alt=media&token=316b2366-64d5-4b6d-aff5-5bb95469ef60"
+        className="h-50px w-auto"
+      />
+      <span className="text-light">Give Away</span>
       </Link>
 
       {(appSidebarDefaultMinimizeDesktopEnabled ||

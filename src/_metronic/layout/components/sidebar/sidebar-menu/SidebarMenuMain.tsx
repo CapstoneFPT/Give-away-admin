@@ -52,13 +52,18 @@ const SidebarMenuMain = () => {
             title={"Consignment"}
             icon={"element-11"}
           />
-          <SidebarMenuItem title="Product" to="/product" icon={"element-11"} />
+          <SidebarMenuItem title="Product" to="/product" icon={"element-10"} />
           <SidebarMenuItem title="Auction" to="auction" icon={"element-11"} />
-          <SidebarMenuItem title="Order List" to="order" icon={"element-11"} />
+          <SidebarMenuItem title="Order List" to="order" icon={"element-12"} />
           <SidebarMenuItem
             title="Refund List"
             to="refund"
-            icon={"element-11"}
+            icon={"element-9"}
+          />
+          <SidebarMenuItem
+            title="Order Offline"
+            to="order/add-order"
+            icon={"element-8"}
           />
         </>
       )}

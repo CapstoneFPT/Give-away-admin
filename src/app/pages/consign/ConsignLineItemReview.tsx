@@ -3,12 +3,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import { KTCard, KTCardBody, KTIcon } from "../../../_metronic/helpers";
 import { formatBalance } from "../utils/utils";
 import { Content } from "../../../_metronic/layout/components/content";
-import {ConsignLineItemApi, ConsignSaleLineItemStatus, MasterItemApi} from '../../../api';
+import { ConsignLineItemApi, ConsignSaleLineItemStatus, MasterItemApi } from '../../../api';
 import { useMutation, useQuery } from "react-query";
 import { useAuth } from "../../modules/auth";
 import { AddToInventoryModal } from './AddToInventoryModal';
 import { PriceDifferenceModal } from './PriceDifferenceModal';
-import KTModal from "../../../_metronic/helpers/components/KTModal.tsx";
+import { ConfirmationModal } from "./ConfirmationModal.tsx";
 
 export const ConsignLineItemReview: React.FC = () => {
     const { consignSaleId, lineItemId } = useParams<{ consignSaleId: string, lineItemId: string }>();
@@ -37,7 +37,7 @@ export const ConsignLineItemReview: React.FC = () => {
         queryKey: ['masterItems'],
         queryFn: async () => {
             const masterItemApi = new MasterItemApi();
-            const response = await masterItemApi.apiMasterItemsGet(null!, null!, null!, null!, null!, currentUser?.shopId, data!.gender!,true);
+            const response = await masterItemApi.apiMasterItemsGet(null!, null!, null!, null!, null!, currentUser?.shopId, data!.gender!, true);
             return response.data;
         }
     });
@@ -245,7 +245,7 @@ export const ConsignLineItemReview: React.FC = () => {
                             <h3 className='fs-2 fw-bold mb-5'>Product Images</h3>
                             <div className='d-flex flex-wrap gap-3'>
                                 {data.images?.map((image, index) => (
-                                    <img key={index} src={image} alt={`Product ${index + 1}`} style={{width: '150px', height: '150px', objectFit: 'cover'}}/>
+                                    <img key={index} src={image} alt={`Product ${index + 1}`} style={{ width: '150px', height: '150px', objectFit: 'cover' }} />
                                 ))}
                             </div>
                         </KTCardBody>
@@ -281,7 +281,7 @@ export const ConsignLineItemReview: React.FC = () => {
                                 <div className='row'>
                                     <div className='col-12'>
                                         <button type="submit" disabled={!!data.dealPrice} className='btn btn-primary me-3'>
-                                            <KTIcon iconName='check' className='fs-2 me-2'/>
+                                            <KTIcon iconName='check' className='fs-2 me-2' />
                                             {data.dealPrice ? 'Deal Price Decided' : 'Submit Deal Price'}
                                         </button>
                                         <button
@@ -290,7 +290,7 @@ export const ConsignLineItemReview: React.FC = () => {
                                             disabled={!!data.individualItemId || !data.dealPrice || data.status != ConsignSaleLineItemStatus.ReadyForConsignSale}
                                             onClick={handleCreateNewItem}
                                         >
-                                            <KTIcon iconName='plus' className='fs-2 me-2'/>
+                                            <KTIcon iconName='plus' className='fs-2 me-2' />
                                             Add To Inventory
                                         </button>
                                         <button
@@ -298,7 +298,7 @@ export const ConsignLineItemReview: React.FC = () => {
                                             className='btn btn-secondary'
                                             onClick={() => navigate(`/consignment/${consignSaleId}`)}
                                         >
-                                            <KTIcon iconName='arrow-left' className='fs-2 me-2'/>
+                                            <KTIcon iconName='arrow-left' className='fs-2 me-2' />
                                             Back to Consignment
                                         </button>
                                     </div>
@@ -332,34 +332,13 @@ export const ConsignLineItemReview: React.FC = () => {
                 negotiatePriceMutation={negotiatePriceMutation}
             />
 
-            <KTModal
+            <ConfirmationModal
                 isOpen={showConfirmationModal}
                 onClose={() => setShowConfirmationModal(false)}
-                title="Confirm Deal Price"
-                footer={
-                    <>
-                        <button type="button" className="btn btn-light" onClick={() => setShowConfirmationModal(false)}>
-                            Cancel
-                        </button>
-                        <button
-                            type="button"
-                            className="btn btn-primary"
-                            onClick={handleConfirmation}
-                            disabled={readyForConsignMutation.isLoading}
-                        >
-                            {readyForConsignMutation.isLoading ? (
-                                <span className="indicator-progress" style={{display: "block"}}>
-                                    Please wait...
-                                    <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
-                                </span>
-                            ) : 'Confirm'}
-                        </button>
-                    </>
-                }
-            >
-                <p>Are you sure you want to set the deal price to {formatBalance(parseFloat(dealPrice))} VND?</p>
-                <p>This action will mark the item as ready for consignment.</p>
-            </KTModal>
+                onConfirm={handleConfirmation}
+                dealPrice={dealPrice}
+                isLoading={readyForConsignMutation.isLoading}
+            />
 
             {(createIndividualMutation.isError || negotiatePriceMutation.isError || readyForConsignMutation.isError) && (
                 <div className="alert alert-danger" role="alert">

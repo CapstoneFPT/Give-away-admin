@@ -1,139 +1,156 @@
-import React from 'react';
+import React, { useState } from "react";
 import { Content } from "../../../_metronic/layout/components/content";
-import ProductTable from "./ProductTable.tsx";
-import AddressForm from "./AddressForm.tsx";
+import ProductTable from "./ProductTable";
+import { formatBalance } from "../utils/utils";
+import { ShopApi } from "../../../api/api";
+import { useAuth } from "../../modules/auth";
 
 const AddOrderPage = () => {
-    return (
-        <Content>
-            <div id="kt_app_content_container" className="app-container container-xxl">
-                <form
-                    id="kt_ecommerce_edit_order_form"
-                    className="form d-flex flex-column flex-lg-row"
-                    data-kt-redirect="apps/ecommerce/sales/listing.html"
-                >
-                    <div className="w-100 flex-lg-row-auto w-lg-300px mb-7 me-7 me-lg-10">
-                        <div className="card card-flush py-4">
-                            <div className="card-header">
-                                <div className="card-title">
-                                    <h2>Order Details</h2>
-                                </div>
-                            </div>
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [totalCost, setTotalCost] = useState<number>(0);
+  const [buyerName, setBuyerName] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false); // Manage form submission state
 
-                            <div className="card-body pt-0">
-                                <div className="d-flex flex-column gap-10">
-                                    <div className="fv-row">
-                                        <label className="form-label">Order ID</label>
-                                        <div className="fw-bold fs-3">#13409</div>
-                                    </div>
+  const subtotal = totalCost;
+  const discount = subtotal > 1000000 ? subtotal * 0.1 : 0;
+  const total = subtotal - discount;
+  const orderApi = new ShopApi();
+  const currentUser = useAuth().currentUser?.shopId; // Get shopId from useAuth
 
-                                    <div className="fv-row">
-                                        <label className="required form-label">Payment Method</label>
-                                        <select
-                                            className="form-select mb-2"
-                                            data-control="select2"
-                                            data-hide-search="true"
-                                            data-placeholder="Select an option"
-                                            name="payment_method"
-                                            id="kt_ecommerce_edit_order_payment"
-                                        >
-                                            <option></option>
-                                            <option value="cod">Cash on Delivery</option>
-                                            <option value="visa">Credit Card (Visa)</option>
-                                            <option value="mastercard">Credit Card (Mastercard)</option>
-                                            <option value="paypal">Paypal</option>
-                                        </select>
-                                        <div className="text-muted fs-7">Set the date of the order to process.</div>
-                                    </div>
+  // Function to handle form submission
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // Prevent default form submission behavior
+    setIsSubmitting(true); // Set submitting state to true
 
-                                    <div className="fv-row">
-                                        <label className="required form-label">Shipping Method</label>
-                                        <select
-                                            className="form-select mb-2"
-                                            data-control="select2"
-                                            data-hide-search="true"
-                                            data-placeholder="Select an option"
-                                            name="shipping_method"
-                                            id="kt_ecommerce_edit_order_shipping"
-                                        >
-                                            <option></option>
-                                            <option value="none">N/A - Virtual Product</option>
-                                            <option value="standard">Standard Rate</option>
-                                            <option value="express">Express Rate</option>
-                                            <option value="speed">Speed Overnight Rate</option>
-                                        </select>
-                                        <div className="text-muted fs-7">Set the date of the order to process.</div>
-                                    </div>
+    try {
+      // Prepare order data
+      const orderData = {
+        buyerName,
+        phoneNumber,
+        itemIds: selectedItems
+      };
 
-                                    <div className="fv-row">
-                                        <label className="required form-label">Order Date</label>
-                                        <input
-                                            id="kt_ecommerce_edit_order_date"
-                                            name="order_date"
-                                            placeholder="Select a date"
-                                            className="form-control mb-2"
-                                            value=""
-                                        />
-                                        <div className="text-muted fs-7">Set the date of the order to process.</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+      // Send API request to create order
+      await orderApi.apiShopsShopIdOrdersPost(currentUser!, orderData);
+
+      // Handle success (e.g., show a success message, redirect, etc.)
+      alert("Order created successfully!");
+    } catch (error) {
+      // Handle error (e.g., show an error message)
+      console.error("Error creating order:", error);
+      alert("Failed to create order.");
+    } finally {
+      setIsSubmitting(false); // Set submitting state to false
+    }
+  };
+
+
+  return (
+    <Content>
+      <h1>Create Order</h1>
+      <div id="kt_app_content_container" className="app-container container-xxl">
+        <form
+          id="kt_ecommerce_edit_order_form"
+          className="form d-flex flex-column flex-lg-row"
+          data-kt-redirect="apps/ecommerce/sales/listing.html"
+          onSubmit={handleSubmit} // Attach the submit handler
+        >
+          <div className="w-100 flex-lg-row-auto w-lg-300px mb-7 me-7 me-lg-10">
+            <div className="card card-flush py-4">
+              <div className="card-header">
+                <div className="card-title">
+                  <h2>Order Details</h2>
+                </div>
+              </div>
+              <div className="card-body pt-0">
+                <div className="d-flex flex-column gap-10">
+                  {/* Buyer’s Details */}
+                  <div className="fv-row">
+                    <label className="required form-label">Buyer's Name</label>
+                    <input
+                      type="text"
+                      className="form-control mb-2"
+                      placeholder="Enter buyer's name"
+                      name="buyer_name"
+                      id="kt_ecommerce_edit_order_buyer_name"
+                      value={buyerName} // Bind the input to the buyerName state
+                      onChange={(e) => setBuyerName(e.target.value)} // Update state on input change
+                      required // Make the field required
+                    />
+                    <div className="text-muted fs-7">
+                      Enter the name of the buyer.
                     </div>
+                  </div>
 
-                    <div className="d-flex flex-column flex-lg-row-fluid gap-7 gap-lg-10">
-                        <div className="card card-flush py-4">
-                            <div className="card-header">
-                                <div className="card-title">
-                                    <h2>Select Products</h2>
-                                </div>
-                            </div>
-
-                            <div className="card-body pt-0">
-                                <div className="d-flex flex-column gap-10">
-                                    <ProductTable/>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="card card-flush py-4">
-                            <div className="card-header">
-                                <div className="card-title">
-                                    <h2>Delivery Details</h2>
-                                </div>
-                            </div>
-
-                            <div className="card-body pt-0">
-                               <AddressForm/>
-                            </div>
-                        </div>
-
-                        <div className="d-flex justify-content-end">
-                            <a
-                                href="apps/ecommerce/catalog/products.html"
-                                id="kt_ecommerce_edit_order_cancel"
-                                className="btn btn-light me-5"
-                            >
-                                Cancel
-                            </a>
-
-                            <button
-                                type="submit"
-                                id="kt_ecommerce_edit_order_submit"
-                                className="btn btn-primary"
-                            >
-                                <span className="indicator-label">Save Changes</span>
-                                <span className="indicator-progress">
-                  Please wait...
-                  <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
-                </span>
-                            </button>
-                        </div>
+                  <div className="fv-row">
+                    <label className="required form-label">Phone Number</label>
+                    <input
+                      type="text"
+                      className="form-control mb-2"
+                      placeholder="Enter phone number"
+                      name="phone_number"
+                      id="kt_ecommerce_edit_order_phone_number"
+                      value={phoneNumber} // Bind the input to the phoneNumber state
+                      onChange={(e) => setPhoneNumber(e.target.value)} // Update state on input change
+                      required // Make the field required
+                    />
+                    <div className="text-muted fs-7">
+                      Enter the phone number of the buyer.
                     </div>
-                </form>
+                  </div>
+
+                  {/* Display Calculated Values */}
+                  <div className="fw-bold fs-4">
+                    Subtotal: {formatBalance(subtotal)} VND
+                  </div>
+                  <div className="fw-bold fs-4">
+                    Discount:{" "}
+                    <strong style={{ color: "red" }}>
+                      -{formatBalance(discount)} VND
+                    </strong>
+                  </div>
+                  <div className="fw-bold fs-4">
+                    Total: {formatBalance(total)} VND
+                  </div>
+
+                  {/* Submit Button */}
+                  <div className="mt-5">
+                    <button
+                      type="submit"
+                      className="btn btn-primary"
+                      disabled={isSubmitting} // Disable button while submitting
+                    >
+                      {isSubmitting ? "Creating Order..." : "Create Order"}
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
-        </Content>
-    );
+          </div>
+
+          <div className="d-flex flex-column flex-lg-row-fluid gap-7 gap-lg-10">
+            <div className="card card-flush py-4">
+              <div className="card-header">
+                <div className="card-title">
+                  <h2>Select Products</h2>
+                </div>
+              </div>
+              <div className="card-body pt-0">
+                <div className="d-flex flex-column gap-10">
+                  <ProductTable
+                    selectedItems={selectedItems}
+                    setSelectedItems={setSelectedItems}
+                    setTotalCost={setTotalCost}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </Content>
+  );
 };
 
 export default AddOrderPage;
