@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "react-bootstrap";
 import { KTCard, KTCardBody, KTIcon } from "../../../_metronic/helpers";
-import { OrderDetailedResponse, ShopApi } from "../../../api";
+import { OrderDetailedResponse, OrderStatus, PurchaseType, ShopApi } from "../../../api";
 import { useAuth } from "../../modules/auth";
 import { useMutation } from "react-query";
 
@@ -53,15 +53,18 @@ const ShippingAddress: React.FC<{ orderDetail: OrderDetailedResponse | undefined
             <KTCardBody className="pt-0">
                 {orderDetail?.address}
                 <div>
+                    {
+                        orderDetail?.purchaseType === PurchaseType.Online &&
+                        orderDetail?.status === OrderStatus.OnDelivery &&
                     <Button 
                         style={{ marginTop: "10px" }} 
                         className="btn btn-success hover-rotate-end"
                         onClick={handleConfirmDelivery}
-                        disabled={orderDetail?.status == "Completed"}
                     >
                         <KTIcon iconName="pencil" className="fs-3" />
                         Confirm Deliveried
                     </Button>
+}
                 </div>
             </KTCardBody>
         </KTCard>
