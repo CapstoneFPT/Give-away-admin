@@ -13,6 +13,7 @@ import { useDropzone } from "react-dropzone";
 import { KTCard, KTCardBody, KTIcon } from "../../../../_metronic/helpers";
 import { showAlert } from "../../../../utils/Alert";
 import { auto } from "@popperjs/core";
+import { reduceHooks } from "react-table";
 
 interface AddMasterItemProps {
   show: boolean;
@@ -57,7 +58,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
   const [selectedShop, setSelectedShop] = useState<string>("");
   const [isCategoryDisabled, setIsCategoryDisabled] = useState(true);
   const [loading, setLoading] = useState<boolean>(false);
-
+  console.log(formData);
   const createMasterItem = async (itemData: MasterItem) => {
     try {
       setLoading(true); // Start loading
@@ -262,7 +263,16 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
   return (
     <div
       className="modal fade show"
-      style={{ display: "flex", backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        overflowY: "auto",
+        padding: "10px",
+        width: "100%",
+        height: "100%",
+      }}
       tabIndex={-1}
       role="dialog"
     >
@@ -270,24 +280,27 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
         className="modal-content"
         style={{
           borderRadius: "8px",
-          width: "50%", // You can adjust or remove this width as needed
-          height: "auto",
-          marginTop: 20,
-          marginLeft: 400,
+          width: "80%",
+          margin: "20px auto",
+          padding: "20px",
+          maxHeight: "80vh",
+          overflowY: "auto",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         <div
           className="modal-header"
-          style={{ borderBottom: "1px solid #e5e5e5", padding: "16px" }}
+          style={{ paddingBottom: "16px", position: "sticky" }}
         >
           <h3
+            className="modal-title"
             style={{
-              fontSize: "40px",
-              margin: "0",
+              fontSize: "24px",
+              margin: "0 auto",
               textAlign: "center",
               flex: 1,
             }}
-            className="modal-title"
           >
             Add Master Item
           </h3>
@@ -296,274 +309,263 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
             className="close"
             aria-label="Close"
             onClick={handleCloseWithReset}
-            style={{ background: "none", border: "none", fontSize: "24px" }}
+            style={{
+              background: "none",
+              border: "none",
+              fontSize: "24px",
+              padding: "0",
+              cursor: "pointer",
+            }}
           >
-            <span aria-hidden="true">&times;</span>
+            &times;
           </button>
         </div>
-        <div className="modal-body">
-          <div style={{ display: "flex", gap: "16px" }}>
-            {/* Input Form */}
-            <div style={{ flex: 1 }}>
-              <form>
-                <div>
-                  <label htmlFor="masterItemCode">Master Item Code</label>
-                  <input
-                    type="text"
-                    id="masterItemCode"
-                    value={formData.masterItemCode}
-                    onChange={handleChange}
-                    style={{
-                      width: "100%",
-                      padding: "8px",
-                      boxSizing: "border-box",
-                    }}
-                  />
-                </div>
-                <div style={{ marginBottom: "16px" }}>
-                  <label htmlFor="name">Name</label>
-                  <input
-                    type="text"
-                    id="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    style={{
-                      width: "100%",
-                      padding: "8px",
-                      boxSizing: "border-box",
-                    }}
-                  />
-                </div>
-                <div style={{ marginBottom: "16px" }}>
-                  <label htmlFor="brand">Brand</label>
-                  <input
-                    type="text"
-                    id="brand"
-                    value={formData.brand}
-                    onChange={handleChange}
-                    style={{
-                      width: "100%",
-                      padding: "8px",
-                      boxSizing: "border-box",
-                    }}
-                  />
-                </div>
-                <div style={{ marginBottom: "16px" }}>
-                  <label htmlFor="description">Description</label>
-                  <textarea
-                    id="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    style={{
-                      width: "100%",
-                      padding: "8px",
-                      boxSizing: "border-box",
-                    }}
-                  />
-                </div>
-                <div style={{ marginBottom: "16px" }}>
-                  <label htmlFor="gender">Gender</label>
-                  <select
-                    id="gender"
-                    value={formData.gender}
-                    onChange={handleGenderChange}
-                    style={{
-                      width: "100%",
-                      padding: "8px",
-                      boxSizing: "border-box",
-                    }}
-                  >
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                  </select>
-                </div>
-                <div style={{ marginBottom: "16px" }}>
-                  <label htmlFor="categoryId">Category</label>
-                  <select
-                    id="categoryId"
-                    value={formData.categoryId}
-                    onChange={handleCategoryChange}
-                    disabled={isCategoryDisabled}
-                    style={{
-                      width: "100%",
-                      padding: "8px",
-                      boxSizing: "border-box",
-                    }}
-                  >
-                    <option value="">Select Category</option>
-                    {categories.map((category) => (
-                      <option
-                        key={category.categoryId}
-                        value={category.categoryId}
-                      >
-                        {category.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="form-group">
-                  <label>Images</label>
-                  <KTCard>
-                    <KTCardBody>
-                      <div
-                        {...getRootProps()}
-                        className="dropzone"
-                        style={{
-                          border: "2px dashed #007bff",
-                          padding: "2rem",
-                          borderRadius: "0.25rem",
-                        }}
-                      >
-                        <input {...getInputProps()} />
-                        <div className="d-flex flex-column align-items-center justify-content-center">
-                          <KTIcon
-                            iconName="image"
-                            className="svg-icon-primary svg-icon-5x"
-                          />
-                          <div className="fw-bold fs-3 text-primary">
-                            {isDragActive
-                              ? "Drop the files here ..."
-                              : "Drag 'n' drop files or click to select"}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="row mt-5">
-                        {files.map((file, fileIndex) => (
-                          <div
-                            key={fileIndex}
-                            className="col-3"
-                            style={{ marginBottom: "1rem" }}
-                          >
-                            <div className="text-center">
-                              <img
-                                src={URL.createObjectURL(file)}
-                                alt={`preview-${fileIndex}`}
-                                className="img-thumbnail"
-                                style={{ width: "auto", height: "auto" }}
-                              />
-                              <button
-                                type="button"
-                                className="btn btn-danger mt-2"
-                                onClick={() => removeFile(fileIndex)}
-                                disabled={loading}
-                                style={{
-                                  display: "flex",
-                                  padding: 10,
-                                  height: 30,
-                                  width: "auto",
-                                  alignItems: "center",
-                                }}
-                              >
-                                <span style={{ fontSize: 12 }}>Remove</span>
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </KTCardBody>
-                  </KTCard>
-                </div>
-              </form>
-            </div>
+        <div className="modal-body" style={{ display: "flex", gap: "20px" }}>
+          {/* Input Form */}
+          <div style={{ flex: 1 }}>
+            <form>
+              <div className="fv-row">
+                <label className="required form-label">Master Item Code</label>
+                <input
+                  type="text"
+                  className="form-control mb-2"
+                  id="masterItemCode"
+                  placeholder="Enter Master Item Code"
+                  value={formData.masterItemCode}
+                  onChange={handleChange}
+                  style={{ width: "100%" }}
+                />
+              </div>
 
-            {/* Image Upload and Shop Selection */}
-            <div style={{ flex: 1 }}>
-              {/* Shop Selection */}
-              <div style={{ marginTop: "16px" }}>
-                <label htmlFor="shopId">Select Shop</label>
+              <div className="fv-row">
+                <label className="required form-label">Name</label>
+                <input
+                  type="text"
+                  className="form-control mb-2"
+                  id="name"
+                  placeholder="Enter Item Name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  style={{ width: "100%" }}
+                />
+              </div>
+              <div className="fv-row">
+                <label className="required form-label">Brand</label>
+                <input
+                  type="text"
+                  className="form-control mb-2"
+                  id="brand"
+                  placeholder="Enter Brand"
+                  value={formData.brand}
+                  onChange={handleChange}
+                  style={{ width: "100%" }}
+                />
+              </div>
+              <div className="fv-row">
+                <label className="required form-label">Description</label>
+                <input
+                  type="text"
+                  className="form-control mb-2"
+                  id="description"
+                  placeholder="Enter Description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  style={{ width: "100%" }}
+                />
+              </div>
+
+              <div className="fv-row">
+                <label className="required form-label">Gender</label>
                 <select
-                  id="shopId"
-                  value={selectedShop}
-                  onChange={handleShopChange}
-                  style={{
-                    width: "100%",
-                    padding: "8px",
-                    boxSizing: "border-box",
-                  }}
+                  id="gender"
+                  className="form-control mb-2"
+                  value={formData.gender}
+                  onChange={handleGenderChange}
+                  style={{ width: "100%" }}
                 >
-                  <option value="">Select Shop</option>
-                  {shops.map((shop) => (
-                    <option key={shop.shopId} value={shop.shopId}>
-                      {shop.address}
+                  <option className="form-control mb-2" value="Male">
+                    Male
+                  </option>
+                  <option className="form-control mb-2" value="Female">
+                    Female
+                  </option>
+                </select>
+              </div>
+              <div className="fv-row">
+                <label className="required form-label" htmlFor="categoryId">
+                  Category
+                </label>
+                <select
+                  className="form-select mb-2"
+                  data-control="select2"
+                  data-hide-search="true"
+                  data-placeholder="Select an option"
+                  id="categoryId"
+                  value={formData.categoryId}
+                  onChange={handleCategoryChange}
+                  disabled={isCategoryDisabled}
+                  style={{ width: "100%" }}
+                >
+                  {categories.map((category) => (
+                    <option
+                      className="form-control mb-2"
+                      key={category.categoryId}
+                      value={category.categoryId}
+                    >
+                      {category.name}
                     </option>
                   ))}
                 </select>
-                <button
-                  type="button"
-                  onClick={addShopToList}
-                  style={{
-                    marginTop: "10px",
-                    padding: "8px 16px",
-                    cursor: "pointer",
-                    backgroundColor: "#6c757d",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "4px",
-                  }}
-                >
-                  Add Shop
-                </button>
-                {formData.itemForEachShops.map((shopItem) => (
+              </div>
+            </form>
+          </div>
+
+          {/* Image Upload and Shop Selection */}
+          <div style={{ flex: 1 }}>
+            <div style={{ marginBottom: "16px" }}>
+              <label className="required form-label">Image</label>
+              <KTCard>
+                <KTCardBody>
                   <div
-                    key={shopItem.shopId}
+                    {...getRootProps()}
+                    className="dropzone"
                     style={{
-                      marginTop: "16px",
-                      border: "1px solid #e5e5e5",
-                      borderRadius: "8px",
-                      padding: "16px",
-                      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                      border: "2px dashed #007bff",
+                      padding: "2rem",
+                      borderRadius: "0.25rem",
+                      marginBottom: "16px",
                     }}
                   >
-                    <strong>Shop adress:</strong>
-                    <label>
-                      {
-                        shops.find((shop) => shop.shopId === shopItem.shopId)
-                          ?.address
-                      }
-                    </label>
-                    <hr />
-                    <strong>Stock count:</strong>
-                    <input
-                      type="number"
-                      placeholder="Stock count"
-                      value={shopItem.stockCount}
-                      onChange={(e) =>
-                        handleStockCountChange(e, shopItem.shopId)
-                      }
-                      style={{
-                        width: "100%",
-                        padding: "8px",
-                        boxSizing: "border-box",
-                      }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeShop(shopItem.shopId)}
-                      style={{
-                        marginTop: "10px",
-                        padding: "8px 16px",
-                        cursor: "pointer",
-                        backgroundColor: "#dc3545",
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: "4px",
-                      }}
-                    >
-                      Remove Shop
-                    </button>
+                    <input {...getInputProps()} />
+                    <div className="d-flex flex-column align-items-center justify-content-center">
+                      <KTIcon
+                        iconName="image"
+                        className="svg-icon-primary svg-icon-5x"
+                      />
+                      <div className="fw-bold fs-3 text-primary">
+                        {isDragActive
+                          ? "Drop the files here ..."
+                          : "Drag 'n' drop files or click to select"}
+                      </div>
+                    </div>
                   </div>
-                ))}
-              </div>
-              <button
-                className="btn btn-success hover-rotate-end w-100 mt-10 "
-                onClick={handleSubmit}
-                disabled={loading}
+                  <div className="row mt-5">
+                    {files.map((file, fileIndex) => (
+                      <div
+                        key={fileIndex}
+                        className="col-3"
+                        style={{ marginBottom: "1rem" }}
+                      >
+                        <div className="text-center">
+                          <img
+                            src={URL.createObjectURL(file)}
+                            alt={`preview-${fileIndex}`}
+                            className="img-thumbnail"
+                            style={{ width: "100%", height: "auto" }}
+                          />
+                          <button
+                            type="button"
+                            className="btn btn-danger mt-2"
+                            onClick={() => removeFile(fileIndex)}
+                            disabled={loading}
+                            style={{
+                              fontSize: "12px",
+                            }}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </KTCardBody>
+              </KTCard>
+            </div>
+
+            {/* Shop Selection */}
+            <div style={{ marginBottom: "16px" }}>
+              <label htmlFor="shopId">Select Shop</label>
+              <select
+                id="shopId"
+                value={selectedShop}
+                onChange={handleShopChange}
+                style={{ width: "100%" }}
               >
-                {loading ? "Saving..." : "Save"}
+                <option value="">Select Shop</option>
+                {shops.map((shop) => (
+                  <option key={shop.shopId} value={shop.shopId}>
+                    {shop.address}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                className="btn btn-success hover-rotate-end"
+                onClick={addShopToList}
+              >
+                Add Shop
               </button>
+              {formData.itemForEachShops.map((shopItem) => (
+                <div
+                  key={shopItem.shopId}
+                  style={{
+                    marginTop: "16px",
+                    border: "1px solid #e5e5e5",
+                    borderRadius: "8px",
+                    padding: "16px",
+                    position: "relative",
+                  }}
+                >
+                  <strong>Shop Address:</strong>
+                  <label>
+                    {
+                      shops.find((shop) => shop.shopId === shopItem.shopId)
+                        ?.address
+                    }
+                  </label>
+                  <hr />
+                  <strong>Stock Count:</strong>
+                  <input
+                    type="number"
+                    placeholder="Stock count"
+                    value={shopItem.stockCount}
+                    onChange={(e) => handleStockCountChange(e, shopItem.shopId)}
+                    style={{
+                      width: "100%",
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-danger"
+                    onClick={() => removeShop(shopItem.shopId)}
+                    style={{
+                      position: "absolute",
+                      top: "10px",
+                      right: "10px",
+                      backgroundColor: "#dc3545",
+                      color: "#fff",
+                    }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
         </div>
+        {/* Save Button */}
+        <button
+          type="button"
+          onClick={handleSubmit}
+          style={{
+            width: "100%",
+            backgroundColor: "#007bff",
+            color: "#fff",
+            marginTop: "20px",
+          }}
+        >
+          Save
+        </button>
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import clsx from "clsx";
 import { KTIcon } from "../../../helpers";
 import {
