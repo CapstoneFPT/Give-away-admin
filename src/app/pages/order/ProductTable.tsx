@@ -142,7 +142,7 @@ const ProductTable = ({
             )}
           </div>
           <div className="fw-bold fs-4">
-            Total Cost: <span id="kt_ecommerce_edit_order_total_price">
+            Subtotal: <span id="kt_ecommerce_edit_order_total_price">
               {formatBalance(selectedItems.reduce((acc, itemId) => {
                 const item = fashionItems.find((i) => i.itemId === itemId);
                 return acc + (item?.sellingPrice || 0);
