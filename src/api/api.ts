@@ -16377,43 +16377,6 @@ export const ConsignSaleApiAxiosParamCreator = function (configuration?: Configu
         },
         /**
          * 
-         * @param {string} consignSaleId 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        apiConsignsalesConsignSaleIdReadyToSalePut: async (consignSaleId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'consignSaleId' is not null or undefined
-            assertParamExists('apiConsignsalesConsignSaleIdReadyToSalePut', 'consignSaleId', consignSaleId)
-            const localVarPath = `/api/consignsales/{consignSaleId}/ready-to-sale`
-                .replace(`{${"consignSaleId"}}`, encodeURIComponent(String(consignSaleId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication Bearer required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
          * @param {string} consignsaleId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -16725,18 +16688,6 @@ export const ConsignSaleApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {string} consignSaleId 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async apiConsignsalesConsignSaleIdReadyToSalePut(consignSaleId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConsignSaleDetailedResponseResult>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiConsignsalesConsignSaleIdReadyToSalePut(consignSaleId, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['ConsignSaleApi.apiConsignsalesConsignSaleIdReadyToSalePut']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
          * @param {string} consignsaleId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -16863,15 +16814,6 @@ export const ConsignSaleApiFactory = function (configuration?: Configuration, ba
         },
         /**
          * 
-         * @param {string} consignSaleId 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        apiConsignsalesConsignSaleIdReadyToSalePut(consignSaleId: string, options?: RawAxiosRequestConfig): AxiosPromise<ConsignSaleDetailedResponseResult> {
-            return localVarFp.apiConsignsalesConsignSaleIdReadyToSalePut(consignSaleId, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
          * @param {string} consignsaleId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -16989,17 +16931,6 @@ export class ConsignSaleApi extends BaseAPI {
      */
     public apiConsignsalesConsignSaleIdPostItemsToSellPut(consignSaleId: string, options?: RawAxiosRequestConfig) {
         return ConsignSaleApiFp(this.configuration).apiConsignsalesConsignSaleIdPostItemsToSellPut(consignSaleId, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {string} consignSaleId 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof ConsignSaleApi
-     */
-    public apiConsignsalesConsignSaleIdReadyToSalePut(consignSaleId: string, options?: RawAxiosRequestConfig) {
-        return ConsignSaleApiFp(this.configuration).apiConsignsalesConsignSaleIdReadyToSalePut(consignSaleId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
