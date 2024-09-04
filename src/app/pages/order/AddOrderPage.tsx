@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Content } from "../../../_metronic/layout/components/content";
 import ProductTable from "./ProductTable";
 import { formatBalance } from "../utils/utils";
-import { CreateOrderRequest, ShopApi } from "../../../api/api";
+import { CreateOrderRequest, OrderApi, ShopApi } from "../../../api/api";
 import { useAuth } from "../../modules/auth";
 import { toast } from "react-toastify";
 
@@ -15,7 +15,8 @@ const AddOrderPage = () => {
 
   const subtotal = totalCost;
   const total = subtotal;
-  const orderApi = new ShopApi();
+  const shopApi = new ShopApi();
+  const orderApi = new OrderApi();
   const currentUser = useAuth().currentUser?.shopId; // Get shopId from useAuth
 
   // Function to handle form submission
@@ -25,14 +26,15 @@ const AddOrderPage = () => {
 
     try {
       // Prepare order data
-      const orderData : CreateOrderRequest = {
+      const orderData: CreateOrderRequest = {
         recipientName: buyerName,
         phone: phoneNumber,
         itemIds: selectedItems,
       };
 
       // Send API request to create order
-      await orderApi.apiShopsShopIdOrdersPost(currentUser!, orderData);
+      const createOrderResponse = await shopApi.apiShopsShopIdOrdersPost(currentUser!, orderData);
+      await shopApi.apiShopsShopIdOrdersOrderIdPayOfflinePost(currentUser!, createOrderResponse.data.data?.orderId!);
 
       // Handle success (e.g., show a success message, redirect, etc.)
       alert("Order created successfully!");
@@ -115,7 +117,7 @@ const AddOrderPage = () => {
                       className="btn btn-primary"
                       disabled={isSubmitting} // Disable button while submitting
                     >
-                      {isSubmitting ? "Creating Order..." : "Create Order"}
+                      {isSubmitting ? "Checking out..." : "Checkout"}
                     </button>
                   </div>
                 </div>

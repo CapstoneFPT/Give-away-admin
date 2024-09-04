@@ -8446,47 +8446,126 @@ export type Ordinates = typeof Ordinates[keyof typeof Ordinates];
 /**
  * 
  * @export
- * @interface PayOrderWithCashRequest
+ * @interface PayOrderOfflineResponse
  */
-export interface PayOrderWithCashRequest {
-    /**
-     * 
-     * @type {number}
-     * @memberof PayOrderWithCashRequest
-     */
-    'amountGiven': number;
-}
-/**
- * 
- * @export
- * @interface PayOrderWithCashResponse
- */
-export interface PayOrderWithCashResponse {
+export interface PayOrderOfflineResponse {
     /**
      * 
      * @type {string}
-     * @memberof PayOrderWithCashResponse
+     * @memberof PayOrderOfflineResponse
      */
     'orderId'?: string;
     /**
      * 
-     * @type {number}
-     * @memberof PayOrderWithCashResponse
+     * @type {string}
+     * @memberof PayOrderOfflineResponse
      */
-    'amountGiven'?: number;
-    /**
-     * 
-     * @type {OrderResponse}
-     * @memberof PayOrderWithCashResponse
-     */
-    'order'?: OrderResponse;
+    'orderCode'?: string | null;
     /**
      * 
      * @type {number}
-     * @memberof PayOrderWithCashResponse
+     * @memberof PayOrderOfflineResponse
      */
-    'change'?: number;
+    'subtotal'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof PayOrderOfflineResponse
+     */
+    'shippingFee'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof PayOrderOfflineResponse
+     */
+    'discount'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof PayOrderOfflineResponse
+     */
+    'totalPrice'?: number;
+    /**
+     * 
+     * @type {PaymentMethod}
+     * @memberof PayOrderOfflineResponse
+     */
+    'paymentMethod'?: PaymentMethod;
+    /**
+     * 
+     * @type {string}
+     * @memberof PayOrderOfflineResponse
+     */
+    'paymentDate'?: string | null;
+    /**
+     * 
+     * @type {PurchaseType}
+     * @memberof PayOrderOfflineResponse
+     */
+    'purchaseType'?: PurchaseType;
+    /**
+     * 
+     * @type {string}
+     * @memberof PayOrderOfflineResponse
+     */
+    'completedDate'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PayOrderOfflineResponse
+     */
+    'memberId'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PayOrderOfflineResponse
+     */
+    'auctionTitle'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof PayOrderOfflineResponse
+     */
+    'quantity'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PayOrderOfflineResponse
+     */
+    'reciepientName'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PayOrderOfflineResponse
+     */
+    'phone'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PayOrderOfflineResponse
+     */
+    'address'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PayOrderOfflineResponse
+     */
+    'email'?: string | null;
+    /**
+     * 
+     * @type {OrderStatus}
+     * @memberof PayOrderOfflineResponse
+     */
+    'status'?: OrderStatus;
+    /**
+     * 
+     * @type {string}
+     * @memberof PayOrderOfflineResponse
+     */
+    'createdDate'?: string;
 }
+
+
 /**
  * 
  * @export
@@ -9551,6 +9630,12 @@ export interface Shop {
      * @memberof Shop
      */
     'masterFashionItems'?: Array<MasterFashionItem> | null;
+    /**
+     * 
+     * @type {Array<Transaction>}
+     * @memberof Shop
+     */
+    'transactions'?: Array<Transaction> | null;
 }
 /**
  * 
@@ -9942,6 +10027,18 @@ export interface Transaction {
      * @type {string}
      * @memberof Transaction
      */
+    'shopId'?: string | null;
+    /**
+     * 
+     * @type {Shop}
+     * @memberof Transaction
+     */
+    'shop'?: Shop;
+    /**
+     * 
+     * @type {string}
+     * @memberof Transaction
+     */
     'refundId'?: string | null;
     /**
      * 
@@ -10257,7 +10354,8 @@ export const TransactionType = {
     Purchase: 'Purchase',
     Refund: 'Refund',
     Recharge: 'Recharge',
-    Payout: 'Payout'
+    Payout: 'Payout',
+    Sale: 'Sale'
 } as const;
 
 export type TransactionType = typeof TransactionType[keyof typeof TransactionType];
@@ -21042,16 +21140,15 @@ export const ShopApiAxiosParamCreator = function (configuration?: Configuration)
          * 
          * @param {string} shopId 
          * @param {string} orderId 
-         * @param {PayOrderWithCashRequest} [payOrderWithCashRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiShopsShopIdOrdersOrderIdPayWithCashPost: async (shopId: string, orderId: string, payOrderWithCashRequest?: PayOrderWithCashRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        apiShopsShopIdOrdersOrderIdPayOfflinePost: async (shopId: string, orderId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'shopId' is not null or undefined
-            assertParamExists('apiShopsShopIdOrdersOrderIdPayWithCashPost', 'shopId', shopId)
+            assertParamExists('apiShopsShopIdOrdersOrderIdPayOfflinePost', 'shopId', shopId)
             // verify required parameter 'orderId' is not null or undefined
-            assertParamExists('apiShopsShopIdOrdersOrderIdPayWithCashPost', 'orderId', orderId)
-            const localVarPath = `/api/shops/{shopId}/orders/{orderId}/pay-with-cash`
+            assertParamExists('apiShopsShopIdOrdersOrderIdPayOfflinePost', 'orderId', orderId)
+            const localVarPath = `/api/shops/{shopId}/orders/{orderId}/pay-offline`
                 .replace(`{${"shopId"}}`, encodeURIComponent(String(shopId)))
                 .replace(`{${"orderId"}}`, encodeURIComponent(String(orderId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -21071,12 +21168,9 @@ export const ShopApiAxiosParamCreator = function (configuration?: Configuration)
 
 
     
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(payOrderWithCashRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -21303,14 +21397,13 @@ export const ShopApiFp = function(configuration?: Configuration) {
          * 
          * @param {string} shopId 
          * @param {string} orderId 
-         * @param {PayOrderWithCashRequest} [payOrderWithCashRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiShopsShopIdOrdersOrderIdPayWithCashPost(shopId: string, orderId: string, payOrderWithCashRequest?: PayOrderWithCashRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PayOrderWithCashResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiShopsShopIdOrdersOrderIdPayWithCashPost(shopId, orderId, payOrderWithCashRequest, options);
+        async apiShopsShopIdOrdersOrderIdPayOfflinePost(shopId: string, orderId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PayOrderOfflineResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiShopsShopIdOrdersOrderIdPayOfflinePost(shopId, orderId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['ShopApi.apiShopsShopIdOrdersOrderIdPayWithCashPost']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['ShopApi.apiShopsShopIdOrdersOrderIdPayOfflinePost']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -21447,12 +21540,11 @@ export const ShopApiFactory = function (configuration?: Configuration, basePath?
          * 
          * @param {string} shopId 
          * @param {string} orderId 
-         * @param {PayOrderWithCashRequest} [payOrderWithCashRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiShopsShopIdOrdersOrderIdPayWithCashPost(shopId: string, orderId: string, payOrderWithCashRequest?: PayOrderWithCashRequest, options?: RawAxiosRequestConfig): AxiosPromise<PayOrderWithCashResponse> {
-            return localVarFp.apiShopsShopIdOrdersOrderIdPayWithCashPost(shopId, orderId, payOrderWithCashRequest, options).then((request) => request(axios, basePath));
+        apiShopsShopIdOrdersOrderIdPayOfflinePost(shopId: string, orderId: string, options?: RawAxiosRequestConfig): AxiosPromise<PayOrderOfflineResponse> {
+            return localVarFp.apiShopsShopIdOrdersOrderIdPayOfflinePost(shopId, orderId, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -21602,13 +21694,12 @@ export class ShopApi extends BaseAPI {
      * 
      * @param {string} shopId 
      * @param {string} orderId 
-     * @param {PayOrderWithCashRequest} [payOrderWithCashRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ShopApi
      */
-    public apiShopsShopIdOrdersOrderIdPayWithCashPost(shopId: string, orderId: string, payOrderWithCashRequest?: PayOrderWithCashRequest, options?: RawAxiosRequestConfig) {
-        return ShopApiFp(this.configuration).apiShopsShopIdOrdersOrderIdPayWithCashPost(shopId, orderId, payOrderWithCashRequest, options).then((request) => request(this.axios, this.basePath));
+    public apiShopsShopIdOrdersOrderIdPayOfflinePost(shopId: string, orderId: string, options?: RawAxiosRequestConfig) {
+        return ShopApiFp(this.configuration).apiShopsShopIdOrdersOrderIdPayOfflinePost(shopId, orderId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
