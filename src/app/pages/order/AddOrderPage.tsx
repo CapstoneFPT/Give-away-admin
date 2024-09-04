@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { Content } from "../../../_metronic/layout/components/content";
 import ProductTable from "./ProductTable";
 import { formatBalance } from "../utils/utils";
-import { ShopApi } from "../../../api/api";
+import { CreateOrderRequest, ShopApi } from "../../../api/api";
 import { useAuth } from "../../modules/auth";
+import { toast } from "react-toastify";
 
 const AddOrderPage = () => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
@@ -13,8 +14,7 @@ const AddOrderPage = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false); // Manage form submission state
 
   const subtotal = totalCost;
-  const discount = subtotal > 1000000 ? subtotal * 0.1 : 0;
-  const total = subtotal - discount;
+  const total = subtotal;
   const orderApi = new ShopApi();
   const currentUser = useAuth().currentUser?.shopId; // Get shopId from useAuth
 
@@ -25,10 +25,10 @@ const AddOrderPage = () => {
 
     try {
       // Prepare order data
-      const orderData = {
-        buyerName,
-        phoneNumber,
-        itemIds: selectedItems
+      const orderData : CreateOrderRequest = {
+        recipientName: buyerName,
+        phone: phoneNumber,
+        itemIds: selectedItems,
       };
 
       // Send API request to create order
@@ -39,7 +39,7 @@ const AddOrderPage = () => {
     } catch (error) {
       // Handle error (e.g., show an error message)
       console.error("Error creating order:", error);
-      alert("Failed to create order.");
+      toast("Failed to create order.");
     } finally {
       setIsSubmitting(false); // Set submitting state to false
     }
@@ -103,12 +103,6 @@ const AddOrderPage = () => {
                   {/* Display Calculated Values */}
                   <div className="fw-bold fs-4">
                     Subtotal: {formatBalance(subtotal)} VND
-                  </div>
-                  <div className="fw-bold fs-4">
-                    Discount:{" "}
-                    <strong style={{ color: "red" }}>
-                      -{formatBalance(discount)} VND
-                    </strong>
                   </div>
                   <div className="fw-bold fs-4">
                     Total: {formatBalance(total)} VND
