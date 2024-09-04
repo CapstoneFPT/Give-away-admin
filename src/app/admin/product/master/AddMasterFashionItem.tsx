@@ -5,6 +5,7 @@ import { storage } from "../../../../firebaseconfig"; // Adjust the import path 
 import {
   Category,
   CategoryApi,
+  CreateMasterItemRequest,
   MasterItemApi,
   ShopApi,
   ShopDetailResponse,
@@ -12,27 +13,12 @@ import {
 import { useDropzone } from "react-dropzone";
 import { KTCard, KTCardBody, KTIcon } from "../../../../_metronic/helpers";
 import { showAlert } from "../../../../utils/Alert";
-import { auto } from "@popperjs/core";
-import { reduceHooks } from "react-table";
+import Select from "react-select";
 
 interface AddMasterItemProps {
   show: boolean;
   handleClose: () => void;
-  handleSave: (itemData: MasterItem) => void;
-}
-
-interface MasterItem {
-  masterItemCode: string;
-  name: string;
-  brand: string;
-  description: string;
-  categoryId: string;
-  gender: "Male" | "Female";
-  images: string[];
-  itemForEachShops: {
-    shopId: string;
-    stockCount: number;
-  }[];
+  handleSave: (itemData: CreateMasterItemRequest) => void;
 }
 
 const AddMasterItem: React.FC<AddMasterItemProps> = ({
@@ -40,7 +26,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
   handleClose,
   handleSave,
 }) => {
-  const initialFormData: MasterItem = {
+  const initialFormData: CreateMasterItemRequest = {
     masterItemCode: "",
     name: "",
     brand: "",
@@ -51,7 +37,8 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
     itemForEachShops: [],
   };
 
-  const [formData, setFormData] = useState<MasterItem>(initialFormData);
+  const [formData, setFormData] =
+    useState<CreateMasterItemRequest>(initialFormData);
   const [files, setFiles] = useState<File[]>([]);
   const [shops, setShops] = useState<ShopDetailResponse[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -59,7 +46,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
   const [isCategoryDisabled, setIsCategoryDisabled] = useState(true);
   const [loading, setLoading] = useState<boolean>(false);
   console.log(formData);
-  const createMasterItem = async (itemData: MasterItem) => {
+  const createMasterItem = async (itemData: CreateMasterItemRequest) => {
     try {
       setLoading(true); // Start loading
       const createApi = new MasterItemApi();
@@ -138,19 +125,30 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
     const selectedShopId = e.target.value;
     setSelectedShop(selectedShopId);
   };
-
+  const [shopCount, setShopCount] = useState(0);
   const addShopToList = () => {
     if (
       selectedShop &&
-      !formData.itemForEachShops.some((shop) => shop.shopId === selectedShop)
+      formData.itemForEachShops?.some((shop) => shop.shopId === selectedShop)
     ) {
+      showAlert("error", "Shop already added");
+    } else if (selectedShop) {
       setFormData((prevData) => ({
         ...prevData,
         itemForEachShops: [
-          ...prevData.itemForEachShops,
+          ...prevData.itemForEachShops!,
           { shopId: selectedShop, stockCount: 0 },
         ],
       }));
+
+      // Increment the shop count
+      setShopCount((prevCount) => prevCount + 1);
+
+      showAlert(
+        "success",
+        "Shop added successfully. Total shops added: " + (shopCount + 1)
+      );
+
       setSelectedShop(""); // Reset selected shop after adding
     }
   };
@@ -162,7 +160,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
     const stockCount = parseInt(e.target.value, 10);
     setFormData((prevData) => ({
       ...prevData,
-      itemForEachShops: prevData.itemForEachShops.map((item) =>
+      itemForEachShops: prevData.itemForEachShops?.map((item) =>
         item.shopId === shopId ? { ...item, stockCount } : item
       ),
     }));
@@ -171,7 +169,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
   const removeShop = (shopId: string) => {
     setFormData((prevData) => ({
       ...prevData,
-      itemForEachShops: prevData.itemForEachShops.filter(
+      itemForEachShops: prevData.itemForEachShops?.filter(
         (shop) => shop.shopId !== shopId
       ),
     }));
@@ -182,7 +180,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
       const updatedFiles = prevFiles.filter((_, i) => i !== index);
       setFormData((prevData) => ({
         ...prevData,
-        images: prevData.images.filter((_, i) => i !== index),
+        images: prevData.images?.filter((_, i) => i !== index),
       }));
       return updatedFiles;
     });
@@ -199,7 +197,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
       }
       setFormData((prevData) => ({
         ...prevData,
-        images: [...prevData.images, ...uploadedImageUrls],
+        images: [...prevData.images!, ...uploadedImageUrls],
       }));
       setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
     } catch (error) {
@@ -250,11 +248,23 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
       !formData.name ||
       !formData.brand ||
       !formData.categoryId ||
-      formData.itemForEachShops.length === 0
+      formData.itemForEachShops?.length === 0
     ) {
       showAlert("info", "Please fill all required fields.");
       return false;
     }
+
+    // Check that all shops have a positive stockCount
+    for (const shop of formData.itemForEachShops!) {
+      if (shop.stockCount! <= 0) {
+        showAlert(
+          "info",
+          "Please provide a positive stock count for all shops."
+        );
+        return false;
+      }
+    }
+
     return true;
   };
 
@@ -282,16 +292,20 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
           borderRadius: "8px",
           width: "80%",
           margin: "20px auto",
-          padding: "20px",
-          maxHeight: "80vh",
-          overflowY: "auto",
           display: "flex",
           flexDirection: "column",
+          maxHeight: "80vh",
         }}
       >
         <div
           className="modal-header"
-          style={{ paddingBottom: "16px", position: "sticky" }}
+          style={{
+            paddingBottom: "16px",
+            position: "sticky",
+            top: 0,
+            backgroundColor: "#fff",
+            zIndex: 1,
+          }}
         >
           <h3
             className="modal-title"
@@ -299,7 +313,6 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
               fontSize: "24px",
               margin: "0 auto",
               textAlign: "center",
-              flex: 1,
             }}
           >
             Add Master Item
@@ -320,9 +333,13 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
             &times;
           </button>
         </div>
-        <div className="modal-body" style={{ display: "flex", gap: "20px" }}>
+
+        <div
+          className="modal-body"
+          style={{ display: "flex", gap: "20px", flex: 1, overflow: "hidden" }}
+        >
           {/* Input Form */}
-          <div style={{ flex: 1 }}>
+          <div style={{ flex: 1, overflowY: "auto", paddingRight: "10px" }}>
             <form>
               <div className="fv-row">
                 <label className="required form-label">Master Item Code</label>
@@ -331,7 +348,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
                   className="form-control mb-2"
                   id="masterItemCode"
                   placeholder="Enter Master Item Code"
-                  value={formData.masterItemCode}
+                  value={formData.masterItemCode || ""}
                   onChange={handleChange}
                   style={{ width: "100%" }}
                 />
@@ -344,7 +361,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
                   className="form-control mb-2"
                   id="name"
                   placeholder="Enter Item Name"
-                  value={formData.name}
+                  value={formData.name || ""}
                   onChange={handleChange}
                   style={{ width: "100%" }}
                 />
@@ -356,7 +373,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
                   className="form-control mb-2"
                   id="brand"
                   placeholder="Enter Brand"
-                  value={formData.brand}
+                  value={formData.brand || ""}
                   onChange={handleChange}
                   style={{ width: "100%" }}
                 />
@@ -368,7 +385,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
                   className="form-control mb-2"
                   id="description"
                   placeholder="Enter Description"
-                  value={formData.description}
+                  value={formData.description || ""}
                   onChange={handleChange}
                   style={{ width: "100%" }}
                 />
@@ -421,7 +438,8 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
           </div>
 
           {/* Image Upload and Shop Selection */}
-          <div style={{ flex: 1 }}>
+
+          <div style={{ flex: 1, overflowY: "auto" }}>
             <div style={{ marginBottom: "16px" }}>
               <label className="required form-label">Image</label>
               <KTCard>
@@ -468,9 +486,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
                             className="btn btn-danger mt-2"
                             onClick={() => removeFile(fileIndex)}
                             disabled={loading}
-                            style={{
-                              fontSize: "12px",
-                            }}
+                            style={{ fontSize: "12px" }}
                           >
                             Remove
                           </button>
@@ -482,11 +498,11 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
               </KTCard>
             </div>
 
-            {/* Shop Selection */}
             <div style={{ marginBottom: "16px" }}>
               <label htmlFor="shopId">Select Shop</label>
               <select
                 id="shopId"
+                className="form-select mb-2"
                 value={selectedShop}
                 onChange={handleShopChange}
                 style={{ width: "100%" }}
@@ -498,74 +514,83 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
                   </option>
                 ))}
               </select>
-              <button
-                type="button"
-                className="btn btn-success hover-rotate-end"
-                onClick={addShopToList}
-              >
-                Add Shop
-              </button>
-              {formData.itemForEachShops.map((shopItem) => (
+              <div style={{ display: "flex", justifyContent: "center" }}>
+                <button
+                  type="button"
+                  className="btn btn-success hover-rotate-end w-50 mt-10 mb-10"
+                  onClick={addShopToList}
+                >
+                  Choose shop for stock count
+                </button>
+              </div>
+              {formData.itemForEachShops?.map((shopItem) => (
                 <div
                   key={shopItem.shopId}
                   style={{
                     marginTop: "16px",
-                    border: "1px solid #e5e5e5",
                     borderRadius: "8px",
                     padding: "16px",
                     position: "relative",
                   }}
                 >
-                  <strong>Shop Address:</strong>
-                  <label>
-                    {
-                      shops.find((shop) => shop.shopId === shopItem.shopId)
-                        ?.address
-                    }
-                  </label>
-                  <hr />
-                  <strong>Stock Count:</strong>
-                  <input
-                    type="number"
-                    placeholder="Stock count"
-                    value={shopItem.stockCount}
-                    onChange={(e) => handleStockCountChange(e, shopItem.shopId)}
-                    style={{
-                      width: "100%",
-                    }}
-                  />
-                  <button
-                    type="button"
-                    className="btn btn-danger"
-                    onClick={() => removeShop(shopItem.shopId)}
-                    style={{
-                      position: "absolute",
-                      top: "10px",
-                      right: "10px",
-                      backgroundColor: "#dc3545",
-                      color: "#fff",
-                    }}
-                  >
-                    Remove
-                  </button>
+                  <KTCard className="p-10 g-10">
+                    <strong>Shop Address:</strong>
+                    <label>
+                      {
+                        shops.find((shop) => shop.shopId === shopItem.shopId)
+                          ?.address
+                      }
+                    </label>
+                    <hr />
+                    <strong>Stock Count:</strong>
+                    <input
+                      type="number"
+                      className="form-control mb-2"
+                      placeholder="Stock count"
+                      value={shopItem.stockCount}
+                      onChange={(e) =>
+                        handleStockCountChange(e, shopItem.shopId || "")
+                      }
+                      style={{ width: "100%" }}
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-danger"
+                      onClick={() => removeShop(shopItem.shopId || "")}
+                      style={{
+                        position: "relative",
+                        width: "20%",
+                        backgroundColor: "#dc3545",
+                        color: "#fff",
+                      }}
+                    >
+                      Remove
+                    </button>
+                  </KTCard>
                 </div>
               ))}
             </div>
           </div>
         </div>
+
         {/* Save Button */}
-        <button
-          type="button"
-          onClick={handleSubmit}
+        <div
           style={{
-            width: "100%",
-            backgroundColor: "#007bff",
-            color: "#fff",
-            marginTop: "20px",
+            padding: "10px",
+            backgroundColor: "#fff",
+            display: "flex",
+            justifyContent: "flex-end",
+            marginRight: 50,
           }}
         >
-          Save
-        </button>
+          <button
+            type="button"
+            className="btn btn-success hover-rotate-end w-30 mt-10 mb-10"
+            onClick={handleSubmit}
+          >
+            Save
+          </button>
+        </div>
       </div>
     </div>
   );
