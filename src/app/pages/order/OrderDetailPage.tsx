@@ -48,14 +48,13 @@ const OrderDetailPage: React.FC = () => {
                 <div className="d-flex flex-column flex-xl-row gap-7 gap-lg-10">
                     <OrderDetails orderDetail={orderDetail} />
                     <CustomerDetails orderDetail={orderDetail} />
+                    
                 </div>
 
                 <div className="tab-content">
                     <div className="tab-pane fade show active" id="kt_ecommerce_sales_order_summary" role="tab-panel">
                         <div className="d-flex flex-column gap-7 gap-lg-10">
-                            <div className="d-flex flex-column flex-xl-row gap-7 gap-lg-10">
-                                <ShippingAddress orderDetail={orderDetail} />
-                            </div>
+                           
                             <OrderLineItems items={orderLineItems || []} orderDetail={orderDetail || {}} />
                         </div>
                     </div>
