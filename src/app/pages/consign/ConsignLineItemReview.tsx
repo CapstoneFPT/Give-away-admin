@@ -1,24 +1,28 @@
-import React, {useState} from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
-import {KTCard, KTCardBody, KTIcon, KTSVG} from "../../../_metronic/helpers";
-import {formatBalance} from "../utils/utils";
-import {Content} from "../../../_metronic/layout/components/content";
-import {ConsignLineItemApi, MasterItemApi, MasterItemListResponse} from '../../../api';
-import {useMutation, useQuery} from "react-query";
-import {useAuth} from "../../modules/auth";
+import React, { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { KTCard, KTCardBody, KTIcon } from "../../../_metronic/helpers";
+import { formatBalance } from "../utils/utils";
+import { Content } from "../../../_metronic/layout/components/content";
+import {ConsignLineItemApi, ConsignSaleLineItemStatus, MasterItemApi} from '../../../api';
+import { useMutation, useQuery } from "react-query";
+import { useAuth } from "../../modules/auth";
+import { AddToInventoryModal } from './AddToInventoryModal';
+import { PriceDifferenceModal } from './PriceDifferenceModal';
+import KTModal from "../../../_metronic/helpers/components/KTModal.tsx";
 
 export const ConsignLineItemReview: React.FC = () => {
-    const {consignSaleId, lineItemId} = useParams<{ consignSaleId: string, lineItemId: string }>();
+    const { consignSaleId, lineItemId } = useParams<{ consignSaleId: string, lineItemId: string }>();
     const navigate = useNavigate();
     const [dealPrice, setDealPrice] = useState<string>('');
     const [isPriceChanged, setIsPriceChanged] = useState<boolean>(false);
     const [showModal, setShowModal] = useState<boolean>(false);
+    const [showConfirmationModal, setShowConfirmationModal] = useState<boolean>(false);
     const [selectedMasterItem, setSelectedMasterItem] = useState<string>('');
     const [showPriceDifferenceModal, setShowPriceDifferenceModal] = useState<boolean>(false);
     const [priceChangeExplanation, setPriceChangeExplanation] = useState<string>('');
 
-    const {currentUser} = useAuth();
-    const {data, isLoading, error} = useQuery({
+    const { currentUser } = useAuth();
+    const { data, isLoading, error } = useQuery({
         queryKey: ['consignSaleLineItem', consignSaleId, lineItemId],
         queryFn: async () => {
             const consignLineItemApi = new ConsignLineItemApi();
@@ -29,30 +33,43 @@ export const ConsignLineItemReview: React.FC = () => {
             setDealPrice(!data.dealPrice ? data.expectedPrice!.toString() : data.dealPrice!.toString());
         }
     });
-    const {data: masterItemsData, isLoading: masterItemsLoading, error: masterItemsError} = useQuery({
+    const { data: masterItemsData, isLoading: masterItemsLoading, error: masterItemsError } = useQuery({
         queryKey: ['masterItems'],
         queryFn: async () => {
             const masterItemApi = new MasterItemApi();
-            const response = await masterItemApi.apiMasterItemsGet(null!, null!, null!, null!, null!, currentUser?.shopId);
+            const response = await masterItemApi.apiMasterItemsGet(null!, null!, null!, null!, null!, currentUser?.shopId, data!.gender!,true);
             return response.data;
         }
     });
 
-    const createIndividualMutation = useMutation(
-        (data: { masterItemId: string, dealPrice: number }) => {
-            const consignLineItemApi = new ConsignLineItemApi();
-            return consignLineItemApi.apiConsignlineitemsConsignLineItemIdCreateIndividualPost(lineItemId!, data);
+    const readyForConsignMutation = useMutation(
+        (data: { dealPrice: number }) => {
+            const consignSaleLineItemApi = new ConsignLineItemApi();
+            return consignSaleLineItemApi.apiConsignlineitemsConsignLineItemIdReadyForConsignPut(lineItemId!, data);
         },
         {
             onSuccess: () => {
-                // Handle successful creation
+                navigate(`/consignment/${consignSaleId}`);
+            },
+            onError: (error) => {
+                console.error('Error setting item ready for consign:', error);
+            }
+        }
+    );
+
+
+    const createIndividualMutation = useMutation(
+        (data: { masterItemId: string, dealPrice: number }) => {
+            const consignLineItemApi = new ConsignLineItemApi();
+            return consignLineItemApi.apiConsignlineitemsConsignLineItemIdCreateIndividualAfterNegotiationPost(lineItemId!, data);
+        },
+        {
+            onSuccess: () => {
                 setShowModal(false);
                 navigate(`/consignment/${consignSaleId}`);
             },
             onError: (error) => {
-                // Handle error
                 console.error('Error creating individual item:', error);
-                // You might want to show an error message to the user here
             }
         }
     );
@@ -74,11 +91,6 @@ export const ConsignLineItemReview: React.FC = () => {
         }
     );
 
-
-    const handleMasterItemChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedMasterItem(e.target.value);
-    };
-
     const negotiatePriceMutation = useMutation(
         (data: { dealPrice: number, responseFromShop: string }) => {
             const consignSaleLineItem = new ConsignLineItemApi();
@@ -86,17 +98,18 @@ export const ConsignLineItemReview: React.FC = () => {
         },
         {
             onSuccess: () => {
-                // Handle successful negotiation
                 setShowPriceDifferenceModal(false);
                 navigate(`/consignment/${consignSaleId}`);
             },
             onError: (error) => {
-                // Handle error
                 console.error('Error negotiating item price:', error);
-                // You might want to show an error message to the user here
             }
         }
     );
+
+    const handleMasterItemChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedMasterItem(e.target.value);
+    };
 
     const handleConfirmedPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newPrice = e.target.value;
@@ -126,25 +139,23 @@ export const ConsignLineItemReview: React.FC = () => {
         setShowModal(true);
     };
 
-    if (isLoading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error || !data) {
-        return <div>Error loading data</div>;
-    }
-
     const handleModalClose = () => {
         setShowModal(false);
         setShowPriceDifferenceModal(false);
-        setPriceChangeExplanation(''); // Reset the explanation when closing the modal
+        setPriceChangeExplanation('');
     };
 
+    const handleConfirmation = () => {
+        readyForConsignMutation.mutate({
+            dealPrice: parseFloat(dealPrice)
+        });
+        setShowConfirmationModal(false);
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (dealPrice === data?.expectedPrice?.toString()) {
-            setShowModal(true);
+            setShowConfirmationModal(true);
         } else {
             setShowPriceDifferenceModal(true);
         }
@@ -163,9 +174,12 @@ export const ConsignLineItemReview: React.FC = () => {
         });
     };
 
-
-    if (!data) {
+    if (isLoading) {
         return <div>Loading...</div>;
+    }
+
+    if (error || !data) {
+        return <div>Error loading data</div>;
     }
 
     return (
@@ -201,16 +215,9 @@ export const ConsignLineItemReview: React.FC = () => {
                                     <p><strong>Created Date:</strong> {new Date(data.createdDate!).toLocaleString()}</p>
                                 </div>
                                 <div className='col-6'>
-                                    <p>
-                                        <strong>
-                                            Expected Price:
-                                        </strong>
-                                        {formatBalance(data.expectedPrice || 0)} VND
-                                    </p>
+                                    <p><strong>Expected Price:</strong> {formatBalance(data.expectedPrice || 0)} VND</p>
                                     <p><strong>Deal Price:</strong> {formatBalance(data.dealPrice || 0)} VND</p>
-                                    <p><strong>Confirmed
-                                        Price:</strong> {data.confirmedPrice ? formatBalance(data.confirmedPrice) + ' VND' : 'Not set'}
-                                    </p>
+                                    <p><strong>Confirmed Price:</strong> {data.confirmedPrice ? formatBalance(data.confirmedPrice) + ' VND' : 'Not set'}</p>
                                 </div>
                             </div>
                         </KTCardBody>
@@ -238,8 +245,7 @@ export const ConsignLineItemReview: React.FC = () => {
                             <h3 className='fs-2 fw-bold mb-5'>Product Images</h3>
                             <div className='d-flex flex-wrap gap-3'>
                                 {data.images?.map((image, index) => (
-                                    <img key={index} src={image} alt={`Product ${index + 1}`}
-                                         style={{width: '150px', height: '150px', objectFit: 'cover'}}/>
+                                    <img key={index} src={image} alt={`Product ${index + 1}`} style={{width: '150px', height: '150px', objectFit: 'cover'}}/>
                                 ))}
                             </div>
                         </KTCardBody>
@@ -274,15 +280,14 @@ export const ConsignLineItemReview: React.FC = () => {
                                 </div>
                                 <div className='row'>
                                     <div className='col-12'>
-                                        <button type="submit" disabled={!!data.dealPrice}
-                                                className='btn btn-primary me-3'>
+                                        <button type="submit" disabled={!!data.dealPrice} className='btn btn-primary me-3'>
                                             <KTIcon iconName='check' className='fs-2 me-2'/>
                                             {data.dealPrice ? 'Deal Price Decided' : 'Submit Deal Price'}
                                         </button>
                                         <button
                                             type="button"
                                             className='btn btn-success me-3'
-                                            disabled={!!data.individualItemId || !data.dealPrice}
+                                            disabled={!!data.individualItemId || !data.dealPrice || data.status != ConsignSaleLineItemStatus.ReadyForConsignSale}
                                             onClick={handleCreateNewItem}
                                         >
                                             <KTIcon iconName='plus' className='fs-2 me-2'/>
@@ -303,193 +308,60 @@ export const ConsignLineItemReview: React.FC = () => {
                     </KTCard>
                 </div>
             </div>
-            {/* Modal */}
-            <div className={`modal fade ${showModal ? 'show' : ''}`} style={{display: showModal ? 'block' : 'none'}}
-                 tabIndex={-1} role="dialog">
-                <div className="modal-dialog modal-lg">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title">Add To Inventory</h5>
-                            <div
-                                className="btn btn-icon btn-sm btn-active-light-primary ms-2"
-                                onClick={handleModalClose}
-                                aria-label="Close"
-                            >
-                                <KTSVG path="media/icons/duotune/arrows/arr061.svg" className="svg-icon svg-icon-2x"/>
-                            </div>
-                        </div>
-                        <div className="modal-body">
-                            <div className="row">
-                                <div className="col-md-6">
-                                    <h6 className="fw-bold mb-3">Consign Line Item Details:</h6>
-                                    <table className="table table-borderless">
-                                        <tbody>
-                                        <tr>
-                                            <th scope="row">Product Name:</th>
-                                            <td>{data.productName}</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">Brand:</th>
-                                            <td>{data.brand}</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">Color:</th>
-                                            <td>{data.color}</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">Size:</th>
-                                            <td>{data.size}</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">Gender:</th>
-                                            <td>{data.gender}</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">Condition:</th>
-                                            <td>{data.condition}</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">Expected Price:</th>
-                                            <td>{formatBalance(data.expectedPrice || 0)}</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div className="col-md-6">
-                                    <h6 className="fw-bold mb-3">Choose a Master Item:</h6>
-                                    <select
-                                        id="masterItemSelect"
-                                        className="form-select mb-3"
-                                        value={selectedMasterItem}
-                                        onChange={handleMasterItemChange}
-                                    >
-                                        <option value="">Select a master item</option>
-                                        {masterItemsData && masterItemsData.items?.map((item: MasterItemListResponse) => (
-                                            <option key={item.masterItemId} value={item.masterItemId}>
-                                                {`${item.itemCode} - ${item.name} - ${item.brand} - ${item.gender}`}
-                                            </option>
-                                        ))}
-                                    </select>
 
-                                    {selectedMasterItem && (
-                                        <div className="selected-master-item mt-4">
-                                            <h6 className="fw-bold mb-3">Selected Master Item Details:</h6>
-                                            {masterItemsData && masterItemsData.items?.find((item: MasterItemListResponse) => item.masterItemId === selectedMasterItem) && (
-                                                <>
-                                                    <table className="table table-borderless">
-                                                        <tbody>
-                                                        <tr>
-                                                            <th scope="row">Code:</th>
-                                                            <td>{masterItemsData.items.find((item: MasterItemListResponse) => item.masterItemId === selectedMasterItem)?.itemCode}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Name:</th>
-                                                            <td>{masterItemsData.items.find((item: MasterItemListResponse) => item.masterItemId === selectedMasterItem)?.name}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Brand:</th>
-                                                            <td>{masterItemsData.items.find((item: MasterItemListResponse) => item.masterItemId === selectedMasterItem)?.brand}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Gender:</th>
-                                                            <td>{masterItemsData.items.find((item: MasterItemListResponse) => item.masterItemId === selectedMasterItem)?.gender}</td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
-                                                    {masterItemsData.items.find((item: MasterItemListResponse) => item.masterItemId === selectedMasterItem)?.images && masterItemsData!.items!.find((item: MasterItemListResponse) => item!.masterItemId! === selectedMasterItem!)!.images!.length > 0 && (
-                                                        <div className="text-center mt-3">
-                                                            <img
-                                                                src={masterItemsData.items.find((item: MasterItemListResponse) => item.masterItemId === selectedMasterItem)?.images?.[0]}
-                                                                alt="Master Item"
-                                                                className="img-fluid rounded"
-                                                                style={{maxWidth: '200px', maxHeight: '200px'}}
-                                                            />
-                                                        </div>
-                                                    )}
-                                                </>
-                                            )}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-light" onClick={handleModalClose}>
-                                Close
-                            </button>
-                            <button
-                                type="button"
-                                className="btn btn-primary"
-                                onClick={handleCreateItemModalSubmit}
-                                disabled={createIndividualMutation.isLoading || createIndividualAfterNegotiationMutation.isLoading}
-                            >
-                                {(createIndividualMutation.isLoading || createIndividualAfterNegotiationMutation.isLoading) ? (
-                                    <span className="indicator-progress" style={{display: "block"}}>
-              Please wait...
-              <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
-            </span>) : 'Save changes'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className={`modal fade ${showPriceDifferenceModal ? 'show' : ''}`}
-                 style={{display: showPriceDifferenceModal ? 'block' : 'none'}} tabIndex={-1} role="dialog">
-                <div className="modal-dialog">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title">Price Difference Explanation</h5>
-                            <div
-                                className="btn btn-icon btn-sm btn-active-light-primary ms-2"
-                                onClick={handleModalClose}
-                                aria-label="Close"
-                            >
-                                <KTSVG path="media/icons/duotune/arrows/arr061.svg" className="svg-icon svg-icon-2x"/>
-                            </div>
-                        </div>
-                        <div className="modal-body">
-                            <div className="mb-3">
-                                <p><strong>Expected Price:</strong> {formatBalance(data?.expectedPrice || 0)}</p>
-                                <p><strong>Submitted Deal Price:</strong> {formatBalance(parseFloat(dealPrice))}
-                                </p>
-                            </div>
-                            <div className="mb-3">
-                                <label htmlFor="priceChangeExplanation" className="form-label">Explanation for Price
-                                    Difference:</label>
-                                <textarea
-                                    className="form-control"
-                                    id="priceChangeExplanation"
-                                    rows={3}
-                                    value={priceChangeExplanation}
-                                    onChange={(e) => setPriceChangeExplanation(e.target.value)}
-                                    placeholder="Please explain the reason for the price difference..."
-                                ></textarea>
-                            </div>
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-light" onClick={handleModalClose}>
-                                Close
-                            </button>
-                            <button
-                                type="button"
-                                className="btn btn-primary"
-                                onClick={handlePriceDifferenceSubmit}
-                                disabled={!priceChangeExplanation.trim()}
-                            >
-                                {negotiatePriceMutation.isLoading ? (
-                                    <span className="indicator-progress" style={{display: "block"}}>
-            Please wait...
-            <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
-        </span>
-                                ) : 'Submit'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <AddToInventoryModal
+                isOpen={showModal}
+                onClose={handleModalClose}
+                data={data}
+                selectedMasterItem={selectedMasterItem}
+                handleMasterItemChange={handleMasterItemChange}
+                masterItemsData={masterItemsData}
+                handleCreateItemModalSubmit={handleCreateItemModalSubmit}
+                createIndividualMutation={createIndividualMutation}
+                createIndividualAfterNegotiationMutation={createIndividualAfterNegotiationMutation}
+            />
 
-            {(showModal || showPriceDifferenceModal) && <div className="modal-backdrop fade show"></div>}
-            {(createIndividualMutation.isError || negotiatePriceMutation.isError) && (
+            <PriceDifferenceModal
+                isOpen={showPriceDifferenceModal}
+                onClose={handleModalClose}
+                data={data}
+                dealPrice={dealPrice}
+                priceChangeExplanation={priceChangeExplanation}
+                setPriceChangeExplanation={setPriceChangeExplanation}
+                handlePriceDifferenceSubmit={handlePriceDifferenceSubmit}
+                negotiatePriceMutation={negotiatePriceMutation}
+            />
+
+            <KTModal
+                isOpen={showConfirmationModal}
+                onClose={() => setShowConfirmationModal(false)}
+                title="Confirm Deal Price"
+                footer={
+                    <>
+                        <button type="button" className="btn btn-light" onClick={() => setShowConfirmationModal(false)}>
+                            Cancel
+                        </button>
+                        <button
+                            type="button"
+                            className="btn btn-primary"
+                            onClick={handleConfirmation}
+                            disabled={readyForConsignMutation.isLoading}
+                        >
+                            {readyForConsignMutation.isLoading ? (
+                                <span className="indicator-progress" style={{display: "block"}}>
+                                    Please wait...
+                                    <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                </span>
+                            ) : 'Confirm'}
+                        </button>
+                    </>
+                }
+            >
+                <p>Are you sure you want to set the deal price to {formatBalance(parseFloat(dealPrice))} VND?</p>
+                <p>This action will mark the item as ready for consignment.</p>
+            </KTModal>
+
+            {(createIndividualMutation.isError || negotiatePriceMutation.isError || readyForConsignMutation.isError) && (
                 <div className="alert alert-danger" role="alert">
                     An error occurred while saving the changes. Please try again.
                 </div>
