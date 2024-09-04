@@ -34,12 +34,13 @@ const initialValues = {
 export function Login() {
   const [loading, setLoading] = useState(false);
   const { saveAuth, setCurrentUser } = useAuth();
-
+  const [error, setError] = useState<string | undefined>(undefined);
   const formik = useFormik({
     initialValues,
     validationSchema: loginSchema,
     onSubmit: async (values, { setStatus, setSubmitting }) => {
       setLoading(true);
+      setError(undefined); // Clear previous errors
       try {
         const authApi = new AuthApi();
         const accountApi = new AccountApi();
@@ -59,7 +60,7 @@ export function Login() {
           tokenReponse.data?.data?.role !== "Admin" &&
           tokenReponse.data?.data!.role !== "Staff"
         ) {
-          setStatus("Unauthorized");
+          setError("Unauthorized access");
           setSubmitting(false);
           setLoading(false);
           return;
@@ -79,7 +80,7 @@ export function Login() {
       } catch (error) {
         console.error(error);
         saveAuth(undefined);
-        setStatus("The login details are incorrect");
+        setError("The login details are incorrect");
         setSubmitting(false);
         setLoading(false);
       }
@@ -99,7 +100,11 @@ export function Login() {
         <div className="text-gray-500 fw-semibold fs-6">Give Away Shop</div>
       </div>
       {/* begin::Heading */}
-
+      {error && (
+        <div className="mb-lg-15 alert alert-danger">
+          <div className="alert-text font-weight-bold">{error}</div>
+        </div>
+      )}
       {/* begin::Form group */}
       <div className="fv-row mb-8">
         <label className="form-label fs-6 fw-bolder text-gray-900">Email</label>
