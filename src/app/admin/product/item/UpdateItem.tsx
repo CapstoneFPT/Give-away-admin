@@ -11,10 +11,14 @@ import { KTIcon } from "../../../../_metronic/helpers";
 interface UpdateItemProps {
   isOpen: boolean;
   onClose: () => void;
-  initialData: any;
+  initialData: UpdateFashionItemRequest;
 }
 
-const UpdateItem: React.FC<UpdateItemProps> = ({ isOpen, onClose, initialData }) => {
+const UpdateItem: React.FC<UpdateItemProps> = ({
+  isOpen,
+  onClose,
+  initialData,
+}) => {
   const { itemId } = useParams<{ itemId: string }>();
   const [formData, setFormData] = useState<UpdateFashionItemRequest>({});
   const [images, setImages] = useState<string[]>([]);
@@ -31,12 +35,13 @@ const UpdateItem: React.FC<UpdateItemProps> = ({ isOpen, onClose, initialData })
         color: initialData.color,
         size: initialData.size,
       });
-      setImages(initialData.images || []);
+      setImages(initialData.imageUrls || []);
     }
   }, [initialData]);
 
   const updateMutation = useMutation(
-    (data: UpdateFashionItemRequest) => fashionItemApi.apiFashionitemsItemIdPut(itemId!, data),
+    (data: UpdateFashionItemRequest) =>
+      fashionItemApi.apiFashionitemsItemIdPut(itemId!, data),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["itemDetail", itemId]);
@@ -50,32 +55,37 @@ const UpdateItem: React.FC<UpdateItemProps> = ({ isOpen, onClose, initialData })
     }
   );
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    setLoading(true);
-    try {
-      const newImages = [...images];
-      for (const file of acceptedFiles) {
-        if (newImages.length < 3) {
-          const storageRef = ref(storage, `images/${file.name}`);
-          await uploadBytes(storageRef, file);
-          const downloadURL = await getDownloadURL(storageRef);
-          newImages.push(downloadURL);
+  const onDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      setLoading(true);
+      try {
+        const newImages = [...images];
+        for (const file of acceptedFiles) {
+          if (newImages.length < 3) {
+            const storageRef = ref(storage, `images/${file.name}`);
+            await uploadBytes(storageRef, file);
+            const downloadURL = await getDownloadURL(storageRef);
+            newImages.push(downloadURL);
+          }
         }
+        setImages(newImages);
+        setFormData((prev) => ({ ...prev, imageUrls: newImages }));
+      } catch (error) {
+        console.error("Error uploading files:", error);
+        toast.error("Failed to upload images");
+      } finally {
+        setLoading(false);
       }
-      setImages(newImages);
-      setFormData((prev) => ({ ...prev, imageUrls: newImages }));
-    } catch (error) {
-      console.error("Error uploading files:", error);
-      toast.error("Failed to upload images");
-    } finally {
-      setLoading(false);
-    }
-  }, [images]);
+    },
+    [images]
+  );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -141,7 +151,9 @@ const UpdateItem: React.FC<UpdateItemProps> = ({ isOpen, onClose, initialData })
                   value={formData.condition || ""}
                   onChange={handleChange}
                 >
-                  <option value="Never worn, with tag">Never worn, with tag</option>
+                  <option value="Never worn, with tag">
+                    Never worn, with tag
+                  </option>
                   <option value="Never worn">Never worn</option>
                   <option value="Very good">Very good</option>
                   <option value="Good">Good</option>
@@ -183,7 +195,11 @@ const UpdateItem: React.FC<UpdateItemProps> = ({ isOpen, onClose, initialData })
                       <img
                         src={image}
                         alt={`Product ${index + 1}`}
-                        style={{ width: "100px", height: "100px", objectFit: "cover" }}
+                        style={{
+                          width: "100px",
+                          height: "100px",
+                          objectFit: "cover",
+                        }}
                       />
                       <button
                         type="button"
@@ -209,13 +225,23 @@ const UpdateItem: React.FC<UpdateItemProps> = ({ isOpen, onClose, initialData })
                   >
                     <input {...getInputProps()} />
                     {loading ? (
-                      <div className="spinner-border text-primary" role="status">
+                      <div
+                        className="spinner-border text-primary"
+                        role="status"
+                      >
                         <span className="visually-hidden">Loading...</span>
                       </div>
                     ) : (
                       <div>
-                        <KTIcon iconName="image" className="fs-2x text-primary mb-3" />
-                        <p>{isDragActive ? "Drop the files here" : "Drag 'n' drop images, or click to select"}</p>
+                        <KTIcon
+                          iconName="image"
+                          className="fs-2x text-primary mb-3"
+                        />
+                        <p>
+                          {isDragActive
+                            ? "Drop the files here"
+                            : "Drag 'n' drop images, or click to select"}
+                        </p>
                       </div>
                     )}
                   </div>
@@ -223,10 +249,18 @@ const UpdateItem: React.FC<UpdateItemProps> = ({ isOpen, onClose, initialData })
               </div>
             </div>
             <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" onClick={onClose}>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={onClose}
+              >
                 Close
               </button>
-              <button type="submit" className="btn btn-primary" disabled={updateMutation.isLoading}>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={updateMutation.isLoading}
+              >
                 {updateMutation.isLoading ? "Updating..." : "Update"}
               </button>
             </div>
