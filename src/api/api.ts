@@ -3341,10 +3341,10 @@ export interface CreateIndividualItemRequest {
     'sellingPrice'?: number;
     /**
      * 
-     * @type {Array<string>}
+     * @type {number}
      * @memberof CreateIndividualItemRequest
      */
-    'images'?: Array<string> | null;
+    'itemInStock'?: number;
 }
 
 
@@ -4069,12 +4069,6 @@ export interface DistributeItemForEachShop {
      * @memberof DistributeItemForEachShop
      */
     'shopId'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof DistributeItemForEachShop
-     */
-    'stockCount'?: number;
 }
 /**
  * 
@@ -4825,6 +4819,7 @@ export const FashionItemStatus = {
     UnSold: 'UnSold',
     Reserved: 'Reserved',
     Refundable: 'Refundable',
+    Draft: 'Draft',
     PendingForConsignSale: 'PendingForConsignSale',
     PendingAuction: 'PendingAuction',
     PendingForRefund: 'PendingForRefund',
@@ -6149,6 +6144,33 @@ export interface IndividualItemListResponse {
 /**
  * 
  * @export
+ * @interface IndividualItemListResponseListResult
+ */
+export interface IndividualItemListResponseListResult {
+    /**
+     * 
+     * @type {Array<IndividualItemListResponse>}
+     * @memberof IndividualItemListResponseListResult
+     */
+    'data'?: Array<IndividualItemListResponse> | null;
+    /**
+     * 
+     * @type {ResultStatus}
+     * @memberof IndividualItemListResponseListResult
+     */
+    'resultStatus'?: ResultStatus;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof IndividualItemListResponseListResult
+     */
+    'messages'?: Array<string> | null;
+}
+
+
+/**
+ * 
+ * @export
  * @interface IndividualItemListResponsePaginationResponse
  */
 export interface IndividualItemListResponsePaginationResponse {
@@ -6213,33 +6235,6 @@ export interface IndividualItemListResponsePaginationResponse {
      */
     'items'?: Array<IndividualItemListResponse> | null;
 }
-/**
- * 
- * @export
- * @interface IndividualItemListResponseResult
- */
-export interface IndividualItemListResponseResult {
-    /**
-     * 
-     * @type {IndividualItemListResponse}
-     * @memberof IndividualItemListResponseResult
-     */
-    'data'?: IndividualItemListResponse;
-    /**
-     * 
-     * @type {ResultStatus}
-     * @memberof IndividualItemListResponseResult
-     */
-    'resultStatus'?: ResultStatus;
-    /**
-     * 
-     * @type {Array<string>}
-     * @memberof IndividualItemListResponseResult
-     */
-    'messages'?: Array<string> | null;
-}
-
-
 /**
  * 
  * @export
@@ -6684,6 +6679,12 @@ export interface MasterItemListResponse {
      * @memberof MasterItemListResponse
      */
     'categoryId'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof MasterItemListResponse
+     */
+    'categoryName'?: string | null;
     /**
      * 
      * @type {boolean}
@@ -18293,10 +18294,11 @@ export const MasterItemApiAxiosParamCreator = function (configuration?: Configur
          * @param {GenderType} [genderType] 
          * @param {number} [pageNumber] 
          * @param {number} [pageSize] 
+         * @param {boolean} [isLeftInStock] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiMasterItemsFrontpageGet: async (searchTerm?: string, categoryId?: string, genderType?: GenderType, pageNumber?: number, pageSize?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        apiMasterItemsFrontpageGet: async (searchTerm?: string, categoryId?: string, genderType?: GenderType, pageNumber?: number, pageSize?: number, isLeftInStock?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/master-items/frontpage`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -18333,6 +18335,10 @@ export const MasterItemApiAxiosParamCreator = function (configuration?: Configur
                 localVarQueryParameter['PageSize'] = pageSize;
             }
 
+            if (isLeftInStock !== undefined) {
+                localVarQueryParameter['IsLeftInStock'] = isLeftInStock;
+            }
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -18348,16 +18354,18 @@ export const MasterItemApiAxiosParamCreator = function (configuration?: Configur
          * 
          * @param {string} [searchTerm] 
          * @param {string} [searchItemCode] 
+         * @param {string} [brand] 
          * @param {number} [pageNumber] 
          * @param {number} [pageSize] 
          * @param {string} [categoryId] 
          * @param {string} [shopId] 
          * @param {GenderType} [genderType] 
          * @param {boolean} [isConsignment] 
+         * @param {boolean} [isLeftInStock] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiMasterItemsGet: async (searchTerm?: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, categoryId?: string, shopId?: string, genderType?: GenderType, isConsignment?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        apiMasterItemsGet: async (searchTerm?: string, searchItemCode?: string, brand?: string, pageNumber?: number, pageSize?: number, categoryId?: string, shopId?: string, genderType?: GenderType, isConsignment?: boolean, isLeftInStock?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/master-items`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -18382,6 +18390,10 @@ export const MasterItemApiAxiosParamCreator = function (configuration?: Configur
                 localVarQueryParameter['SearchItemCode'] = searchItemCode;
             }
 
+            if (brand !== undefined) {
+                localVarQueryParameter['Brand'] = brand;
+            }
+
             if (pageNumber !== undefined) {
                 localVarQueryParameter['PageNumber'] = pageNumber;
             }
@@ -18404,6 +18416,10 @@ export const MasterItemApiAxiosParamCreator = function (configuration?: Configur
 
             if (isConsignment !== undefined) {
                 localVarQueryParameter['IsConsignment'] = isConsignment;
+            }
+
+            if (isLeftInStock !== undefined) {
+                localVarQueryParameter['IsLeftInStock'] = isLeftInStock;
             }
 
 
@@ -18681,11 +18697,12 @@ export const MasterItemApiFp = function(configuration?: Configuration) {
          * @param {GenderType} [genderType] 
          * @param {number} [pageNumber] 
          * @param {number} [pageSize] 
+         * @param {boolean} [isLeftInStock] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiMasterItemsFrontpageGet(searchTerm?: string, categoryId?: string, genderType?: GenderType, pageNumber?: number, pageSize?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterItemListResponsePaginationResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiMasterItemsFrontpageGet(searchTerm, categoryId, genderType, pageNumber, pageSize, options);
+        async apiMasterItemsFrontpageGet(searchTerm?: string, categoryId?: string, genderType?: GenderType, pageNumber?: number, pageSize?: number, isLeftInStock?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterItemListResponsePaginationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiMasterItemsFrontpageGet(searchTerm, categoryId, genderType, pageNumber, pageSize, isLeftInStock, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['MasterItemApi.apiMasterItemsFrontpageGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -18694,17 +18711,19 @@ export const MasterItemApiFp = function(configuration?: Configuration) {
          * 
          * @param {string} [searchTerm] 
          * @param {string} [searchItemCode] 
+         * @param {string} [brand] 
          * @param {number} [pageNumber] 
          * @param {number} [pageSize] 
          * @param {string} [categoryId] 
          * @param {string} [shopId] 
          * @param {GenderType} [genderType] 
          * @param {boolean} [isConsignment] 
+         * @param {boolean} [isLeftInStock] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiMasterItemsGet(searchTerm?: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, categoryId?: string, shopId?: string, genderType?: GenderType, isConsignment?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterItemListResponsePaginationResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiMasterItemsGet(searchTerm, searchItemCode, pageNumber, pageSize, categoryId, shopId, genderType, isConsignment, options);
+        async apiMasterItemsGet(searchTerm?: string, searchItemCode?: string, brand?: string, pageNumber?: number, pageSize?: number, categoryId?: string, shopId?: string, genderType?: GenderType, isConsignment?: boolean, isLeftInStock?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterItemListResponsePaginationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiMasterItemsGet(searchTerm, searchItemCode, brand, pageNumber, pageSize, categoryId, shopId, genderType, isConsignment, isLeftInStock, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['MasterItemApi.apiMasterItemsGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -18748,7 +18767,7 @@ export const MasterItemApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiMasterItemsMasterItemIdIndividualItemsPost(masterItemId: string, createIndividualItemRequest?: CreateIndividualItemRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IndividualItemListResponseResult>> {
+        async apiMasterItemsMasterItemIdIndividualItemsPost(masterItemId: string, createIndividualItemRequest?: CreateIndividualItemRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IndividualItemListResponseListResult>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiMasterItemsMasterItemIdIndividualItemsPost(masterItemId, createIndividualItemRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['MasterItemApi.apiMasterItemsMasterItemIdIndividualItemsPost']?.[localVarOperationServerIndex]?.url;
@@ -18807,27 +18826,30 @@ export const MasterItemApiFactory = function (configuration?: Configuration, bas
          * @param {GenderType} [genderType] 
          * @param {number} [pageNumber] 
          * @param {number} [pageSize] 
+         * @param {boolean} [isLeftInStock] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiMasterItemsFrontpageGet(searchTerm?: string, categoryId?: string, genderType?: GenderType, pageNumber?: number, pageSize?: number, options?: RawAxiosRequestConfig): AxiosPromise<MasterItemListResponsePaginationResponse> {
-            return localVarFp.apiMasterItemsFrontpageGet(searchTerm, categoryId, genderType, pageNumber, pageSize, options).then((request) => request(axios, basePath));
+        apiMasterItemsFrontpageGet(searchTerm?: string, categoryId?: string, genderType?: GenderType, pageNumber?: number, pageSize?: number, isLeftInStock?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<MasterItemListResponsePaginationResponse> {
+            return localVarFp.apiMasterItemsFrontpageGet(searchTerm, categoryId, genderType, pageNumber, pageSize, isLeftInStock, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @param {string} [searchTerm] 
          * @param {string} [searchItemCode] 
+         * @param {string} [brand] 
          * @param {number} [pageNumber] 
          * @param {number} [pageSize] 
          * @param {string} [categoryId] 
          * @param {string} [shopId] 
          * @param {GenderType} [genderType] 
          * @param {boolean} [isConsignment] 
+         * @param {boolean} [isLeftInStock] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiMasterItemsGet(searchTerm?: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, categoryId?: string, shopId?: string, genderType?: GenderType, isConsignment?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<MasterItemListResponsePaginationResponse> {
-            return localVarFp.apiMasterItemsGet(searchTerm, searchItemCode, pageNumber, pageSize, categoryId, shopId, genderType, isConsignment, options).then((request) => request(axios, basePath));
+        apiMasterItemsGet(searchTerm?: string, searchItemCode?: string, brand?: string, pageNumber?: number, pageSize?: number, categoryId?: string, shopId?: string, genderType?: GenderType, isConsignment?: boolean, isLeftInStock?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<MasterItemListResponsePaginationResponse> {
+            return localVarFp.apiMasterItemsGet(searchTerm, searchItemCode, brand, pageNumber, pageSize, categoryId, shopId, genderType, isConsignment, isLeftInStock, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -18862,7 +18884,7 @@ export const MasterItemApiFactory = function (configuration?: Configuration, bas
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiMasterItemsMasterItemIdIndividualItemsPost(masterItemId: string, createIndividualItemRequest?: CreateIndividualItemRequest, options?: RawAxiosRequestConfig): AxiosPromise<IndividualItemListResponseResult> {
+        apiMasterItemsMasterItemIdIndividualItemsPost(masterItemId: string, createIndividualItemRequest?: CreateIndividualItemRequest, options?: RawAxiosRequestConfig): AxiosPromise<IndividualItemListResponseListResult> {
             return localVarFp.apiMasterItemsMasterItemIdIndividualItemsPost(masterItemId, createIndividualItemRequest, options).then((request) => request(axios, basePath));
         },
         /**
@@ -18914,30 +18936,33 @@ export class MasterItemApi extends BaseAPI {
      * @param {GenderType} [genderType] 
      * @param {number} [pageNumber] 
      * @param {number} [pageSize] 
+     * @param {boolean} [isLeftInStock] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof MasterItemApi
      */
-    public apiMasterItemsFrontpageGet(searchTerm?: string, categoryId?: string, genderType?: GenderType, pageNumber?: number, pageSize?: number, options?: RawAxiosRequestConfig) {
-        return MasterItemApiFp(this.configuration).apiMasterItemsFrontpageGet(searchTerm, categoryId, genderType, pageNumber, pageSize, options).then((request) => request(this.axios, this.basePath));
+    public apiMasterItemsFrontpageGet(searchTerm?: string, categoryId?: string, genderType?: GenderType, pageNumber?: number, pageSize?: number, isLeftInStock?: boolean, options?: RawAxiosRequestConfig) {
+        return MasterItemApiFp(this.configuration).apiMasterItemsFrontpageGet(searchTerm, categoryId, genderType, pageNumber, pageSize, isLeftInStock, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @param {string} [searchTerm] 
      * @param {string} [searchItemCode] 
+     * @param {string} [brand] 
      * @param {number} [pageNumber] 
      * @param {number} [pageSize] 
      * @param {string} [categoryId] 
      * @param {string} [shopId] 
      * @param {GenderType} [genderType] 
      * @param {boolean} [isConsignment] 
+     * @param {boolean} [isLeftInStock] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof MasterItemApi
      */
-    public apiMasterItemsGet(searchTerm?: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, categoryId?: string, shopId?: string, genderType?: GenderType, isConsignment?: boolean, options?: RawAxiosRequestConfig) {
-        return MasterItemApiFp(this.configuration).apiMasterItemsGet(searchTerm, searchItemCode, pageNumber, pageSize, categoryId, shopId, genderType, isConsignment, options).then((request) => request(this.axios, this.basePath));
+    public apiMasterItemsGet(searchTerm?: string, searchItemCode?: string, brand?: string, pageNumber?: number, pageSize?: number, categoryId?: string, shopId?: string, genderType?: GenderType, isConsignment?: boolean, isLeftInStock?: boolean, options?: RawAxiosRequestConfig) {
+        return MasterItemApiFp(this.configuration).apiMasterItemsGet(searchTerm, searchItemCode, brand, pageNumber, pageSize, categoryId, shopId, genderType, isConsignment, isLeftInStock, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
