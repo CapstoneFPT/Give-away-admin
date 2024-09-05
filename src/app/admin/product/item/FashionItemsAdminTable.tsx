@@ -407,7 +407,9 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                     <input
                       className="form-check-input"
                       type="checkbox"
-                      checked={selectedItems.length === result.data?.items?.length}
+                      checked={
+                        selectedItems.length === result.data?.items?.length
+                      }
                       onChange={handleSelectAll}
                     />
                   </div>
@@ -425,16 +427,20 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
             <tbody>
               {result.data?.items?.map((product: FashionItemList) => (
                 <tr key={product.itemId}>
-                  <td className="ps-3 pe-3 text-center">
-                    <div className="form-check form-check-sm form-check-custom form-check-solid">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        checked={selectedItems.includes(product.itemId!)}
-                        onChange={() => handleSelectItem(product.itemId!)}
-                      />
-                    </div>
-                  </td>
+                  {product.status === "Draft" ? (
+                    <td className="ps-3 pe-3 text-center">
+                      <div className="form-check form-check-sm form-check-custom form-check-solid">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          checked={selectedItems.includes(product.itemId!)}
+                          onChange={() => handleSelectItem(product.itemId!)}
+                        />
+                      </div>
+                    </td>
+                  ) : (
+                    <div></div>
+                  )}
 
                   <td>
                     <a
@@ -509,7 +515,7 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                     <td className="text-end">
                       <button
                         onClick={() => handleStatusChange(product.itemId || "")}
-                        className={`btn ${
+                        className={`btn w-100 ${
                           product.status === "Available"
                             ? "btn-primary"
                             : "btn-secondary"
