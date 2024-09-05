@@ -139,6 +139,11 @@ const MasterProductsTable: React.FC<Props> = ({ className }) => {
           </h3>
           <div className="card-toolbar">
             <div className="d-flex align-items-center">
+              <select className="form-select form-select-solid w-250px me-2" onChange={(e) => setGenderType(e.target.value as GenderType)}>
+                <option value="">All Genders</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
               <input
                 type="text"
                 className="form-control form-control-solid w-250px me-2"
@@ -160,12 +165,7 @@ const MasterProductsTable: React.FC<Props> = ({ className }) => {
                 value={brand}
                 onChange={(e) => setBrand(e.target.value)}
               />
-              {/* Add more filters here (categoryId, shopId, genderType, isConsignment, isLeftInStock) */}
             </div>
-            <a href="#" className="btn btn-sm btn-light-primary">
-              <KTIcon iconName="plus" className="fs-2" />
-              New Product
-            </a>
           </div>
         </div>
 

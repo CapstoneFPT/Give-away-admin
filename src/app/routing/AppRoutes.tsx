@@ -7,6 +7,8 @@ import { Logout, AuthPage, useAuth, getAuth } from "../modules/auth";
 import { App } from "../App";
 import ProtectedRoute from "./ProtectedRoutes";
 import UsersPage from "../modules/apps/user-management/UsersPage.tsx"; // Import the ProtectedRoute component
+import ProductDetail from '../pages/product/ProductDetail';
+
 const { BASE_URL } = import.meta.env;
 
 const AppRoutes: FC = () => {
