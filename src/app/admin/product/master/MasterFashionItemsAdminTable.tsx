@@ -18,7 +18,7 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
-  const pageSize = 10;
+  const pageSize = 7;
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearchTerm(searchTerm), 200);
