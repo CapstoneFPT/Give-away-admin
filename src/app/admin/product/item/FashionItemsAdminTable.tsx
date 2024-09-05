@@ -104,15 +104,28 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
   );
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const handleSelectItem = (itemId: string) => {
-    setSelectedItems((prev) =>
-      prev.includes(itemId)
-        ? prev.filter((id) => id !== itemId)
-        : [...prev, itemId]
+    // Find the item with the matching itemId
+    const selectedItem = result.data?.items?.find(
+      (item) => item.itemId === itemId
     );
+
+    // Only proceed if the item exists and its status is "Draft"
+    if (selectedItem && selectedItem.status === "Draft") {
+      setSelectedItems(
+        (prev) =>
+          prev.includes(itemId)
+            ? prev.filter((id) => id !== itemId) // Deselect if already selected
+            : [...prev, itemId] // Select if not selected
+      );
+    }
   };
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      setSelectedItems(result.data?.items?.map((item) => item.itemId!) || []);
+      setSelectedItems(
+        result.data?.items
+          ?.filter((item) => item.status === "Draft")
+          .map((item) => item.itemId!) || []
+      );
     } else {
       setSelectedItems([]);
     }
@@ -420,6 +433,7 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                       onChange={() => handleSelectItem(product.itemId!)}
                     />
                   </td>
+
                   <td>
                     <a
                       href="#"
