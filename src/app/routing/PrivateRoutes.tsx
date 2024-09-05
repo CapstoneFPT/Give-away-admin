@@ -35,7 +35,7 @@ const PrivateRoutes = () => {
     () => import("../pages/consign/ConsignmentPage.tsx")
   );
   const FashionItemsPage = lazy(
-    () => import("../pages/product/FashionItemPage")
+    () => import("../pages/product/MasterProductsPage.tsx")
   );
 
   const getDefaultRoute = () => {

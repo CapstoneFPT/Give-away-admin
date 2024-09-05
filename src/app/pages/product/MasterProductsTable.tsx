@@ -8,7 +8,7 @@ type Props = {
   className: string;
 };
 
-const FashionItemsTable: React.FC<Props> = ({ className }) => {
+const MasterProductsTable: React.FC<Props> = ({ className }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
@@ -209,4 +209,4 @@ const FashionItemsTable: React.FC<Props> = ({ className }) => {
   );
 };
 
-export default FashionItemsTable;
+export default MasterProductsTable;
