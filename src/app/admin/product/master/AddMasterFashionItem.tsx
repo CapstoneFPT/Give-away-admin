@@ -41,7 +41,6 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
   const [files, setFiles] = useState<File[]>([]);
   const [shops, setShops] = useState<ShopDetailResponse[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [selectedShop, setSelectedShop] = useState<string>("");
   const [isCategoryDisabled, setIsCategoryDisabled] = useState(true);
   const [loading, setLoading] = useState<boolean>(false);
   console.log(formData);
@@ -121,41 +120,35 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
     }));
   };
 
-  const handleShopChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedShopId = e.target.value;
-    if (selectedShopId === "all") {
-      setFormData({ itemForEachShops: [] });
-      setSelectedShop("all");
+  const handleSelectAllShops = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      setFormData(prevData => ({
+        ...prevData,
+        itemForEachShops: shops.map(shop => ({ shopId: shop.shopId }))
+      }));
     } else {
-      setSelectedShop(selectedShopId);
+      setFormData(prevData => ({
+        ...prevData,
+        itemForEachShops: []
+      }));
     }
   };
-  const [shopCount, setShopCount] = useState(0);
-  const addShopToList = () => {
-    if (
-      selectedShop &&
-      formData.itemForEachShops?.some((shop) => shop.shopId === selectedShop)
-    ) {
-      showAlert("error", "Shop already added");
-    } else if (selectedShop) {
-      setFormData((prevData) => ({
-        ...prevData,
-        itemForEachShops: [
-          ...prevData.itemForEachShops!,
-          { shopId: selectedShop, stockCount: 0 },
-        ],
-      }));
 
-      // Increment the shop count
-      setShopCount((prevCount) => prevCount + 1);
-
-      showAlert(
-        "success",
-        "Shop added successfully. Total shops added: " + (shopCount + 1)
-      );
-
-      setSelectedShop(""); // Reset selected shop after adding
-    }
+  const handleShopSelection = (shopId: string) => {
+    setFormData(prevData => {
+      const isShopSelected = prevData.itemForEachShops?.some(item => item.shopId === shopId);
+      if (isShopSelected) {
+        return {
+          ...prevData,
+          itemForEachShops: prevData.itemForEachShops?.filter(item => item.shopId !== shopId)
+        };
+      } else {
+        return {
+          ...prevData,
+          itemForEachShops: [...(prevData.itemForEachShops || []), { shopId, stockCount: 0 }]
+        };
+      }
+    });
   };
 
   const removeShop = (shopId: string) => {
@@ -230,6 +223,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
   const handleSubmit = async () => {
     if (validateForm()) {
       try {
+        console.log(formData);
         await createMasterItem(formData);
         handleSave(formData);
         handleClose();
@@ -240,6 +234,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
   };
 
   const validateForm = () => {
+    console.log(formData);
     if (
       !formData.masterItemCode ||
       !formData.name ||
@@ -247,6 +242,10 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
       !formData.categoryId
     ) {
       showAlert("info", "Please fill all required fields.");
+      return false;
+    }
+    if (formData.itemForEachShops?.length === 0) {
+      showAlert("info", "Please select at least one shop.");
       return false;
     }
     return true;
@@ -504,75 +503,43 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
 
           <div style={{ flex: 1, overflowY: "auto" }}>
             <div style={{ marginBottom: "16px" }}>
-              <h1>Choose a shop for master product</h1>
-              <label htmlFor="shopId">Select Shop</label>
-              <select
-                id="shopId"
-                className="form-select mb-2"
-                value={selectedShop}
-                onChange={handleShopChange}
-                style={{ width: "100%" }}
-              >
-                <option value="">Select a shops</option>
-                <option value="all">Select all shops</option>
-                {shops
-                  .filter(
-                    (shop) =>
-                      !formData.itemForEachShops?.some(
-                        (item) => item.shopId === shop.shopId
-                      )
-                  )
-                  .map((shop) => (
-                    <option key={shop.shopId} value={shop.shopId}>
-                      {shop.address}
-                    </option>
-                  ))}
-              </select>
-              <div style={{ display: "flex", justifyContent: "center" }}>
-                <button
-                  type="button"
-                  className="btn btn-success hover-rotate-end w-50 mt-10 mb-10"
-                  onClick={addShopToList}
-                >
-                  Choose shops
-                </button>
+              <h1>Choose shops for master product</h1>
+              <div style={{ maxHeight: "400px", overflowY: "auto" }}>
+                <table className="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
+                  <thead>
+                    <tr className="fw-bold text-muted">
+                      <th className="w-25px">
+                        <div className="form-check form-check-sm form-check-custom form-check-solid">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            checked={formData.itemForEachShops?.length === shops.length}
+                            onChange={handleSelectAllShops}
+                          />
+                        </div>
+                      </th>
+                      <th className="min-w-150px">Shop Address</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {shops.map((shop) => (
+                      <tr key={shop.shopId}>
+                        <td>
+                          <div className="form-check form-check-sm form-check-custom form-check-solid">
+                            <input
+                              className="form-check-input"
+                              type="checkbox"
+                              checked={formData.itemForEachShops?.some(item => item.shopId === shop.shopId)}
+                              onChange={() => handleShopSelection(shop.shopId)}
+                            />
+                          </div>
+                        </td>
+                        <td>{shop.address}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-              {formData.itemForEachShops?.map((shopItem) => (
-                <div
-                  key={shopItem.shopId}
-                  style={{
-                    marginTop: "16px",
-                    borderRadius: "8px",
-                    padding: "16px",
-                    position: "relative",
-                  }}
-                >
-                  <KTCard className="p-10 g-10">
-                    <strong>Shop Address:</strong>
-                    <label>
-                      {
-                        shops.find((shop) => shop.shopId === shopItem.shopId)
-                          ?.address
-                      }
-                    </label>
-                    <hr />
-
-                    <button
-                      type="button"
-                      className="btn btn-danger"
-                      onClick={() => removeShop(shopItem.shopId || "")}
-                      style={{
-                        position: "relative",
-                        width: "20%",
-                        backgroundColor: "#dc3545",
-                        color: "#fff",
-                      }}
-                    >
-                      Remove
-                    </button>
-                  </KTCard>
-                </div>
-              ))}
             </div>
           </div>
         </div>
