@@ -1,33 +1,35 @@
 import { ConsignSaleLineItemStatus } from "../../api";
 
-export const getConsignLineItemStatusColor = (status: ConsignSaleLineItemStatus): string => {
+export const getConsignLineItemStatusColor = (
+  status: ConsignSaleLineItemStatus
+): string => {
   switch (status) {
     case ConsignSaleLineItemStatus.Received:
-      return 'primary';
+      return "primary";
     case ConsignSaleLineItemStatus.ReadyForConsignSale:
-      return 'success';
+      return "success";
     case ConsignSaleLineItemStatus.Negotiating:
-      return 'warning';
+      return "warning";
     case ConsignSaleLineItemStatus.Rejected:
-      return 'danger';
-    case ConsignSaleLineItemStatus.Sold:
-      return 'info';
+      return "danger";
+    case ConsignSaleLineItemStatus.AwaitDelivery:
+      return "info";
     default:
-      return 'secondary';
+      return "secondary";
   }
 };
 
 export const getConsignSaleStatusColor = (status: string): string => {
   switch (status) {
-    case 'Pending':
-      return 'primary';
-    case 'ReadyToSale':
-      return 'success';
-    case 'Completed':
-      return 'info';
-    case 'Cancelled':
-      return 'danger';
+    case "Pending":
+      return "primary";
+    case "ReadyToSale":
+      return "success";
+    case "Completed":
+      return "info";
+    case "Cancelled":
+      return "danger";
     default:
-      return 'secondary';
+      return "secondary";
   }
 };
