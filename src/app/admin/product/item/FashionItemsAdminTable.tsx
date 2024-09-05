@@ -402,36 +402,38 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
           <table className="table align-middle gs-0 gy-4">
             <thead>
               <tr className="fw-bold text-muted bg-light">
-                <th className=" w-30px">
-                  <label htmlFor="">All</label>
-                  <input
-                    type="checkbox"
-                    checked={
-                      selectedItems.length === result.data?.items?.length
-                    }
-                    onChange={handleSelectAll}
-                  />
+                <th className="w-30px ps-3 pe-3 text-center">
+                  <div className="form-check form-check-sm form-check-custom form-check-solid">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      checked={selectedItems.length === result.data?.items?.length}
+                      onChange={handleSelectAll}
+                    />
+                  </div>
                 </th>
-                <th className="ps-4 min-w-125px rounded-start">Item Code</th>
-
+                <th className="min-w-125px">Item Code</th>
                 <th className="min-w-200px">Product</th>
                 <th className="min-w-200px">Description</th>
                 <th className="min-w-125px">Selling Price</th>
                 <th className="min-w-125px">Condition</th>
                 <th className="min-w-150px text-center">Status</th>
-                <th className="min-w-100px ">Detail</th>
+                <th className="min-w-100px">Detail</th>
                 {action && <th className="min-w-100px text-center">Action</th>}
               </tr>
             </thead>
             <tbody>
               {result.data?.items?.map((product: FashionItemList) => (
                 <tr key={product.itemId}>
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={selectedItems.includes(product.itemId!)}
-                      onChange={() => handleSelectItem(product.itemId!)}
-                    />
+                  <td className="ps-3 pe-3 text-center">
+                    <div className="form-check form-check-sm form-check-custom form-check-solid">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        checked={selectedItems.includes(product.itemId!)}
+                        onChange={() => handleSelectItem(product.itemId!)}
+                      />
+                    </div>
                   </td>
 
                   <td>
