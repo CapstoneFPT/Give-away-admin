@@ -13,7 +13,7 @@ import {
   paymentMethod,
   purchaseType,
   VNLocale,
-} from "../utils/utils";
+} from "../../pages/utils/utils";
 
 const getStatusBadge = (status: OrderStatus) => {
   switch (status) {
@@ -29,7 +29,7 @@ const getStatusBadge = (status: OrderStatus) => {
       return "secondary";
   }
 };
-export const orderListColumns: Column<OrderListResponse>[] = [
+export const orderListAdminColumns: Column<OrderListResponse>[] = [
   {
     Header: "Order Code",
     accessor: "orderCode",
@@ -128,4 +128,4 @@ export const orderListColumns: Column<OrderListResponse>[] = [
   },
 ];
 
-export default orderListColumns;
+export default orderListAdminColumns;

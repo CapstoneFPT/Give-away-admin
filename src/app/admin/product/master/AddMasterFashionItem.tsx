@@ -13,7 +13,6 @@ import {
 import { useDropzone } from "react-dropzone";
 import { KTCard, KTCardBody, KTIcon } from "../../../../_metronic/helpers";
 import { showAlert } from "../../../../utils/Alert";
-import Select from "react-select";
 
 interface AddMasterItemProps {
   show: boolean;
@@ -47,12 +46,13 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   console.log(formData);
   const createMasterItem = async (itemData: CreateMasterItemRequest) => {
+    setLoading(true);
     try {
-      setLoading(true); // Start loading
       const createApi = new MasterItemApi();
       const response = await createApi.apiMasterItemsPost(itemData);
+      console.log(response);
     } catch (error) {
-      console.error("Error creating master item:", error);
+      console.error("Error creating master product:", error);
       throw error;
     } finally {
       setLoading(false);
@@ -123,7 +123,12 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
 
   const handleShopChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedShopId = e.target.value;
-    setSelectedShop(selectedShopId);
+    if (selectedShopId === "all") {
+      setFormData({ itemForEachShops: [] });
+      setSelectedShop("all");
+    } else {
+      setSelectedShop(selectedShopId);
+    }
   };
   const [shopCount, setShopCount] = useState(0);
   const addShopToList = () => {
@@ -153,19 +158,6 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
     }
   };
 
-  const handleStockCountChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    shopId: string
-  ) => {
-    const stockCount = parseInt(e.target.value, 10);
-    setFormData((prevData) => ({
-      ...prevData,
-      itemForEachShops: prevData.itemForEachShops?.map((item) =>
-        item.shopId === shopId ? { ...item, stockCount } : item
-      ),
-    }));
-  };
-
   const removeShop = (shopId: string) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -187,6 +179,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
   };
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
+    setLoading(true);
     try {
       const uploadedImageUrls: string[] = [];
       for (const file of acceptedFiles) {
@@ -197,11 +190,15 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
       }
       setFormData((prevData) => ({
         ...prevData,
-        images: [...prevData.images!, ...uploadedImageUrls],
+        images: Array.isArray(prevData.images)
+          ? [...prevData.images, ...uploadedImageUrls]
+          : [...uploadedImageUrls],
       }));
       setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
     } catch (error) {
       console.error("Error uploading files:", error);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -210,7 +207,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
     accept: {
       "image/*": [".jpeg", ".png", ".jpg", ".gif"],
     },
-    maxFiles: 10,
+    maxFiles: 3,
   });
 
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -247,24 +244,11 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
       !formData.masterItemCode ||
       !formData.name ||
       !formData.brand ||
-      !formData.categoryId ||
-      formData.itemForEachShops?.length === 0
+      !formData.categoryId
     ) {
       showAlert("info", "Please fill all required fields.");
       return false;
     }
-
-    // Check that all shops have a positive stockCount
-    for (const shop of formData.itemForEachShops!) {
-      if (shop.stockCount! <= 0) {
-        showAlert(
-          "info",
-          "Please provide a positive stock count for all shops."
-        );
-        return false;
-      }
-    }
-
     return true;
   };
 
@@ -294,7 +278,8 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
           margin: "20px auto",
           display: "flex",
           flexDirection: "column",
-          maxHeight: "80vh",
+          maxHeight: "98vh",
+          overflow: "hidden",
         }}
       >
         <div
@@ -315,7 +300,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
               textAlign: "center",
             }}
           >
-            Add Master Item
+            Add Master Product
           </h3>
           <button
             type="button"
@@ -339,15 +324,24 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
           style={{ display: "flex", gap: "20px", flex: 1, overflow: "hidden" }}
         >
           {/* Input Form */}
-          <div style={{ flex: 1, overflowY: "auto", paddingRight: "10px" }}>
+          <div
+            style={{
+              flex: 1,
+              overflowY: "auto",
+              paddingRight: "10px",
+              overflow: "hidden",
+            }}
+          >
             <form>
               <div className="fv-row">
-                <label className="required form-label">Master Item Code</label>
+                <label className="required form-label">
+                  Master Product Code
+                </label>
                 <input
                   type="text"
                   className="form-control mb-2"
                   id="masterItemCode"
-                  placeholder="Enter Master Item Code"
+                  placeholder="Enter Master Product Code"
                   value={formData.masterItemCode || ""}
                   onChange={handleChange}
                   style={{ width: "100%" }}
@@ -434,71 +428,83 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
                   ))}
                 </select>
               </div>
+              <div className="fv-row">
+                <label className="required form-label">Image</label>
+                <KTCard className="p-3">
+                  {loading ? (
+                    <div
+                      className="d-flex justify-content-center align-items-center"
+                      style={{ height: "200px" }}
+                    >
+                      <div
+                        className="spinner-border text-primary"
+                        role="status"
+                      >
+                        <span className="sr-only">Loading...</span>
+                      </div>
+                    </div>
+                  ) : files.length === 0 ? (
+                    <div
+                      {...getRootProps()}
+                      className="dropzone"
+                      style={{
+                        border: "2px dashed #007bff",
+                        borderRadius: "0.25rem",
+                        textAlign: "center",
+                        padding: "20px",
+                      }}
+                    >
+                      <input {...getInputProps()} />
+                      <div className="d-flex flex-column align-items-center justify-content-center">
+                        <KTIcon
+                          iconName="image"
+                          className="svg-icon-primary svg-icon-5x"
+                        />
+                        <div className="fw-bold fs-3 text-primary">
+                          {isDragActive
+                            ? "Drop the files here ..."
+                            : "Drag 'n' drop files or click to select"}
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="row">
+                      {files.map((file, fileIndex) => (
+                        <div key={fileIndex} className="col-2">
+                          <div className="text-center">
+                            <img
+                              src={URL.createObjectURL(file)}
+                              alt={`preview-${fileIndex}`}
+                              className="img-thumbnail"
+                              style={{ width: "100%", height: "auto" }}
+                            />
+                            <button
+                              type="button"
+                              className="btn btn-danger mt-2"
+                              onClick={() => removeFile(fileIndex)}
+                              disabled={loading}
+                              style={{
+                                fontSize: "12px",
+                                padding: "6px 12px",
+                              }}
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </KTCard>
+              </div>
             </form>
           </div>
 
-          {/* Image Upload and Shop Selection */}
+          {/*  Shop Selection */}
 
           <div style={{ flex: 1, overflowY: "auto" }}>
             <div style={{ marginBottom: "16px" }}>
-              <label className="required form-label">Image</label>
-              <KTCard>
-                <KTCardBody>
-                  <div
-                    {...getRootProps()}
-                    className="dropzone"
-                    style={{
-                      border: "2px dashed #007bff",
-                      padding: "2rem",
-                      borderRadius: "0.25rem",
-                      marginBottom: "16px",
-                    }}
-                  >
-                    <input {...getInputProps()} />
-                    <div className="d-flex flex-column align-items-center justify-content-center">
-                      <KTIcon
-                        iconName="image"
-                        className="svg-icon-primary svg-icon-5x"
-                      />
-                      <div className="fw-bold fs-3 text-primary">
-                        {isDragActive
-                          ? "Drop the files here ..."
-                          : "Drag 'n' drop files or click to select"}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="row mt-5">
-                    {files.map((file, fileIndex) => (
-                      <div
-                        key={fileIndex}
-                        className="col-3"
-                        style={{ marginBottom: "1rem" }}
-                      >
-                        <div className="text-center">
-                          <img
-                            src={URL.createObjectURL(file)}
-                            alt={`preview-${fileIndex}`}
-                            className="img-thumbnail"
-                            style={{ width: "100%", height: "auto" }}
-                          />
-                          <button
-                            type="button"
-                            className="btn btn-danger mt-2"
-                            onClick={() => removeFile(fileIndex)}
-                            disabled={loading}
-                            style={{ fontSize: "12px" }}
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </KTCardBody>
-              </KTCard>
-            </div>
-
-            <div style={{ marginBottom: "16px" }}>
+              <h1>Choose a shop for master product</h1>
               <label htmlFor="shopId">Select Shop</label>
               <select
                 id="shopId"
@@ -507,12 +513,20 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
                 onChange={handleShopChange}
                 style={{ width: "100%" }}
               >
-                <option value="">Select Shop</option>
-                {shops.map((shop) => (
-                  <option key={shop.shopId} value={shop.shopId}>
-                    {shop.address}
-                  </option>
-                ))}
+                <option value="">Select a shops</option>
+                <option value="all">Select all shops</option>
+                {shops
+                  .filter(
+                    (shop) =>
+                      !formData.itemForEachShops?.some(
+                        (item) => item.shopId === shop.shopId
+                      )
+                  )
+                  .map((shop) => (
+                    <option key={shop.shopId} value={shop.shopId}>
+                      {shop.address}
+                    </option>
+                  ))}
               </select>
               <div style={{ display: "flex", justifyContent: "center" }}>
                 <button
@@ -520,7 +534,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
                   className="btn btn-success hover-rotate-end w-50 mt-10 mb-10"
                   onClick={addShopToList}
                 >
-                  Choose shop for stock count
+                  Choose shops
                 </button>
               </div>
               {formData.itemForEachShops?.map((shopItem) => (
@@ -542,17 +556,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
                       }
                     </label>
                     <hr />
-                    <strong>Stock Count:</strong>
-                    <input
-                      type="number"
-                      className="form-control mb-2"
-                      placeholder="Stock count"
-                      value={shopItem.stockCount}
-                      onChange={(e) =>
-                        handleStockCountChange(e, shopItem.shopId || "")
-                      }
-                      style={{ width: "100%" }}
-                    />
+
                     <button
                       type="button"
                       className="btn btn-danger"
@@ -576,7 +580,6 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
         {/* Save Button */}
         <div
           style={{
-            padding: "10px",
             backgroundColor: "#fff",
             display: "flex",
             justifyContent: "flex-end",
@@ -585,10 +588,11 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
         >
           <button
             type="button"
-            className="btn btn-success hover-rotate-end w-30 mt-10 mb-10"
+            className="btn btn-success hover-rotate-end w-30 mt-2 mb-10"
             onClick={handleSubmit}
+            disabled={loading}
           >
-            Save
+            Submit
           </button>
         </div>
       </div>

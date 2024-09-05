@@ -1,9 +1,7 @@
-import React, { useState, useCallback } from "react";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "../../../../firebaseconfig";
+import React, { useState } from "react";
+
 import { CreateIndividualItemRequest, MasterItemApi } from "../../../../api";
-import { useDropzone } from "react-dropzone";
-import { KTCard, KTCardBody, KTIcon } from "../../../../_metronic/helpers";
+
 import { useParams } from "react-router-dom";
 import { showAlert } from "../../../../utils/Alert";
 
@@ -29,12 +27,11 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
     size: "XS",
     note: "",
     sellingPrice: 0,
-    images: [],
+    itemInStock: 0,
   };
 
   const [fashionItem, setFashionItem] =
     useState<CreateIndividualItemRequest>(initialFormData);
-  const [files, setFiles] = useState<File[]>([]);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -56,28 +53,6 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
     }
   };
 
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    try {
-      const uploadedImageUrls: string[] = [];
-
-      for (const file of acceptedFiles) {
-        const storageRef = ref(storage, `fashion-items/${file.name}`);
-        await uploadBytes(storageRef, file);
-        const downloadURL = await getDownloadURL(storageRef);
-        uploadedImageUrls.push(downloadURL);
-      }
-
-      setFashionItem((prevItem) => ({
-        ...prevItem,
-        images: [...(prevItem.images || []), ...uploadedImageUrls],
-      }));
-
-      setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
-    } catch (error) {
-      console.error("Error uploading files:", error);
-    }
-  }, []);
-
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -92,20 +67,8 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
     }));
   };
 
-  const removeFile = (fileIndex: number) => {
-    setFiles((prevFiles) =>
-      prevFiles.filter((_, index) => index !== fileIndex)
-    );
-
-    setFashionItem((prevItem) => ({
-      ...prevItem,
-      images: prevItem.images?.filter((_, index) => index !== fileIndex) || [],
-    }));
-  };
-
   const resetForm = () => {
     setFashionItem(initialFormData);
-    setFiles([]);
   };
 
   const handleCloseWithReset = () => {
@@ -140,10 +103,6 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
     return true;
   };
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-  });
-
   if (!show) return null;
 
   return (
@@ -169,7 +128,7 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
                 width: "100%",
               }}
             >
-              Add Fashion Item
+              Add Fashion Product
             </h3>
             <button
               type="button"
@@ -298,62 +257,24 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
                     style={{ padding: "0.5rem" }}
                   />
                 </div>
-
-                {/* Image Upload */}
-                <div className="form-group">
-                  <label>Images</label>
-                  <KTCard>
-                    <KTCardBody>
-                      <div
-                        {...getRootProps()}
-                        className="dropzone"
-                        style={{
-                          border: "2px dashed #007bff",
-                          padding: "2rem",
-                          borderRadius: "0.25rem",
-                        }}
-                      >
-                        <input {...getInputProps()} />
-                        <div className="d-flex flex-column align-items-center justify-content-center">
-                          <KTIcon
-                            iconName="image"
-                            className="svg-icon-primary svg-icon-5x"
-                          />
-                          <div className="fw-bold fs-3 text-primary">
-                            {isDragActive
-                              ? "Drop the files here ..."
-                              : "Drag 'n' drop files or click to select"}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="row mt-5">
-                        {files.map((file, fileIndex) => (
-                          <div
-                            key={fileIndex}
-                            className="col-3"
-                            style={{ marginBottom: "1rem" }}
-                          >
-                            <div className="text-center">
-                              <img
-                                src={URL.createObjectURL(file)}
-                                alt={`preview-${fileIndex}`}
-                                className="img-thumbnail"
-                                style={{ width: "100%", height: "auto" }}
-                              />
-                              <button
-                                type="button"
-                                className="btn btn-danger mt-2"
-                                onClick={() => removeFile(fileIndex)}
-                                disabled={isLoading}
-                              >
-                                Remove
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </KTCardBody>
-                  </KTCard>
+                {/* Stock amount */}
+                <div className="form-group" style={{ marginBottom: "1rem" }}>
+                  <label
+                    htmlFor="itemInStock"
+                    style={{ marginBottom: "0.5rem", display: "block" }}
+                  >
+                    Number of products created
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="itemInStock"
+                    placeholder="Number of products"
+                    value={fashionItem.itemInStock || ""}
+                    onChange={handleChange}
+                    disabled={isLoading}
+                    style={{ padding: "0.5rem" }}
+                  />
                 </div>
               </form>
             </div>

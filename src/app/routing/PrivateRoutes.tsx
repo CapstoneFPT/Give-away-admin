@@ -21,6 +21,7 @@ import ItemDetail from "../admin/product/item/ItemDetail.tsx";
 import MasterFashionItemsAdminTable from "../admin/product/master/MasterFashionItemsAdminTable.tsx";
 import FashionItemsAdminTable from "../admin/product/item/FashionItemsAdminTable.tsx";
 import DashBoard from "../admin/dashboard/DashBoard.tsx";
+import OrderAdminPage from "../admin/order/OrderAdminPage.tsx";
 const PrivateRoutes = () => {
   const { currentUser } = useAuth();
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
@@ -64,6 +65,16 @@ const PrivateRoutes = () => {
         <Route path="order/*" element={<OrderPage />} />
         <Route path="refund" element={<RefundPage />} />
         {/* Product Admin Routes */}
+        <Route
+          path="order-admin"
+          element={
+            <ProtectedRoute roles={["Admin"]}>
+              <SuspensedView>
+                <OrderAdminPage />
+              </SuspensedView>
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="product-admin"
           element={
@@ -227,7 +238,7 @@ const PrivateRoutes = () => {
       </Route>
     </Routes>
   );
-}
+};
 
 const SuspensedView: FC<WithChildren> = ({ children }) => {
   const baseColor = getCSSVariableValue("--bs-primary");

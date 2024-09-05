@@ -32,6 +32,12 @@ const SidebarMenuMain = () => {
             fontIcon="bi-app-indicator"
           />
           <SidebarMenuItem
+            to="/order-admin"
+            icon="element-11"
+            title="Orders"
+            fontIcon="bi-app-indicator"
+          />
+          <SidebarMenuItem
             to="/error/404"
             icon="element-11"
             title="Auction"
@@ -55,11 +61,7 @@ const SidebarMenuMain = () => {
           <SidebarMenuItem title="Product" to="/product" icon={"element-10"} />
           <SidebarMenuItem title="Auction" to="auction" icon={"element-11"} />
           <SidebarMenuItem title="Order List" to="order" icon={"element-12"} />
-          <SidebarMenuItem
-            title="Refund List"
-            to="refund"
-            icon={"element-9"}
-          />
+          <SidebarMenuItem title="Refund List" to="refund" icon={"element-9"} />
           <SidebarMenuItem
             title="Order Offline"
             to="order/add-order"

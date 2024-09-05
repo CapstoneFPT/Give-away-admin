@@ -21,7 +21,7 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-  const pageSize = 10; // Items per page
+  const pageSize = 6; // Items per page
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const queryClient = useQueryClient();
   const handleOpenModal = () => setIsModalVisible(true);
@@ -88,7 +88,7 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
 
     { refetchOnWindowFocus: false, keepPreviousData: true }
   );
-
+  console.log(result);
   const MasterResult = useQuery(
     ["MasterFashionItemsDetail", debouncedSearchTerm, currentPage, pageSize],
     async () => {
@@ -101,7 +101,7 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
 
     { refetchOnWindowFocus: false, keepPreviousData: true }
   );
-  console.log(MasterResult);
+
   useEffect(() => {
     // Check if all products have a status other than "Available" or "Unavailable"
     const hasNoActionableProducts = result.data?.items?.every(
@@ -372,7 +372,13 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                   <td>
                     <div className="d-flex align-items-center">
                       <div className="symbol symbol-50px me-5">
-                        <img src={product.image!} alt={product.name || "N/A"} />
+                        <img
+                          src={
+                            product.image! ||
+                            "https://firebasestorage.googleapis.com/v0/b/give-away-a58b2.appspot.com/o/images%2Fhình%20ảnh_2024-09-05_160233840.png?alt=media&token=68885ba5-2f48-49e7-892a-f547d2fe0443"
+                          }
+                          alt={product.name!}
+                        />
                       </div>
                       <div className="d-flex justify-content-start flex-column">
                         <a

@@ -3,14 +3,17 @@ import Swal, { SweetAlertIcon, SweetAlertOptions } from "sweetalert2";
 // Define a type for the alert options
 interface AlertConfig {
   title: string;
+  iconColor: string;
   icon: SweetAlertIcon;
   containerClass: string;
   popupClass: string;
   titleClass: string;
   contentClass: string;
-  confirmButtonClass: string;
+  confirmButtonColor: string;
+  timerProgressBar: boolean;
 }
 
+// Define a map for different alert types
 // Define a map for different alert types
 const alertConfigMap: Record<
   "success" | "error" | "warning" | "info",
@@ -18,39 +21,47 @@ const alertConfigMap: Record<
 > = {
   success: {
     title: "Success!",
+    iconColor: "green",
     icon: "success",
     containerClass: "bg-green-100 text-green-800",
     popupClass: "bg-white p-6 rounded-lg shadow-lg",
     titleClass: "text-xl font-semibold",
     contentClass: "text-lg mt-2",
-    confirmButtonClass: "bg-green-500 text-white hover:bg-green-600",
+    confirmButtonColor: "green",
+    timerProgressBar: true,
   },
   error: {
     title: "Error!",
+    iconColor: "red",
     icon: "error",
     containerClass: "bg-red-100 text-red-800",
     popupClass: "bg-white p-6 rounded-lg shadow-lg",
     titleClass: "text-xl font-semibold",
     contentClass: "text-lg mt-2",
-    confirmButtonClass: "bg-red-500 text-white hover:bg-red-600",
+    confirmButtonColor: "red",
+    timerProgressBar: true,
   },
   warning: {
     title: "Warning!",
+    iconColor: "#CCCC00",
     icon: "warning",
     containerClass: "bg-yellow-100 text-yellow-800",
     popupClass: "bg-white p-6 rounded-lg shadow-lg",
     titleClass: "text-xl font-semibold",
     contentClass: "text-lg mt-2",
-    confirmButtonClass: "bg-yellow-500 text-white hover:bg-yellow-600",
+    confirmButtonColor: "#CCCC00",
+    timerProgressBar: true,
   },
   info: {
     title: "Info",
+    iconColor: "#1E90FF",
     icon: "info",
     containerClass: "bg-blue-100 text-blue-800",
     popupClass: "bg-white p-6 rounded-lg shadow-lg",
     titleClass: "text-xl font-semibold",
     contentClass: "text-lg mt-2",
-    confirmButtonClass: "bg-blue-500 text-white hover:bg-blue-600",
+    confirmButtonColor: "#1E90FF",
+    timerProgressBar: true,
   },
 };
 
@@ -64,13 +75,11 @@ export const showAlert = (
   const swalOptions: SweetAlertOptions = {
     title: config.title,
     html: `<div class="${config.contentClass}">${message}</div>`,
+    iconColor: config.iconColor,
     icon: config.icon,
-    customClass: {
-      container: config.containerClass,
-      popup: config.popupClass,
-      title: config.titleClass,
-      confirmButton: config.confirmButtonClass,
-    },
+    confirmButtonColor: config.confirmButtonColor,
+    timerProgressBar: config.timerProgressBar,
+    timer: 2000,
   };
 
   return Swal.fire(swalOptions);

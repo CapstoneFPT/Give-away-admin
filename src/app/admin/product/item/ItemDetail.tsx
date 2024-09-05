@@ -65,18 +65,30 @@ const ItemDetail: React.FC = () => {
                   <KTCardBody>
                     <h3 className="fs-2 fw-bold mb-5">Product Images</h3>
                     <div className="d-flex flex-wrap gap-3">
-                      {item.images?.map((image, index) => (
+                      {item.images && item.images.length > 0 ? (
+                        item.images.map((image, index) => (
+                          <img
+                            key={index}
+                            src={image}
+                            alt={`Product ${index + 1}`}
+                            style={{
+                              width: "150px",
+                              height: "150px",
+                              objectFit: "cover",
+                            }}
+                          />
+                        ))
+                      ) : (
                         <img
-                          key={index}
-                          src={image}
-                          alt={`Product ${index + 1}`}
+                          src="https://firebasestorage.googleapis.com/v0/b/give-away-a58b2.appspot.com/o/images%2Fhình%20ảnh_2024-09-05_160233840.png?alt=media&token=68885ba5-2f48-49e7-892a-f547d2fe0443"
+                          alt="Default product"
                           style={{
                             width: "150px",
                             height: "150px",
                             objectFit: "cover",
                           }}
                         />
-                      ))}
+                      )}
                     </div>
                   </KTCardBody>
                 </KTCard>

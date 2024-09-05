@@ -18,7 +18,7 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
-  const pageSize = 10;
+  const pageSize = 6;
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearchTerm(searchTerm), 200);
@@ -32,11 +32,14 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
       const response = await fashionItemApi.apiMasterItemsGet(
         searchTerm,
         null!,
+        null!,
         currentPage,
         pageSize,
         null!,
         null!, // filter theo shop
-        null! // filter theo gender
+        null!, // filter theo gender
+        null!, // filter Consignment
+        false
       );
 
       return response.data;
@@ -62,6 +65,7 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
   const handleCloseAddModal = () => setShowAddModal(false);
   const handleItemCreated = () => {
     handleCloseAddModal();
+    result.refetch();
   };
 
   if (result.isLoading) return <div>Loading...</div>;
