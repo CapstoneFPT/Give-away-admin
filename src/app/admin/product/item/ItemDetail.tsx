@@ -1,36 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import { KTCard, KTCardBody, KTIcon } from "../../../../_metronic/helpers";
 import { FashionItemApi } from "../../../../api";
+import UpdateItem from "./UpdateItem";
 
 const fetchItemDetail = async (itemId: string) => {
   const fashionItemApi = new FashionItemApi();
   const response = await fashionItemApi.apiFashionitemsItemIdGet(itemId);
-  return response.data.data; // Adjust if the data path is different
+  return response.data.data;
 };
 
 const ItemDetail: React.FC = () => {
   const { itemId } = useParams<{ itemId: string }>();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const {
     data: item,
     error,
     isLoading,
-  } = useQuery(
-    ["itemDetail", itemId],
-    () => {
-      if (!itemId) {
-        throw new Error("Item ID is required");
-      }
-      return fetchItemDetail(itemId);
-    },
-    {
-      enabled: !!itemId, // Only run the query if itemId is available
-      retry: false, // Optionally disable retries for this query
-    }
-  );
-  console.log(item);
+  } = useQuery(["itemDetail", itemId], () => fetchItemDetail(itemId!), {
+    enabled: !!itemId,
+  });
+
   if (isLoading)
     return <div className="text-blue-500 text-center py-4">Loading...</div>;
   if (error)
@@ -49,7 +41,13 @@ const ItemDetail: React.FC = () => {
           </div>
           {!item?.isConsignment && (
             <div className="text-center">
-              <button className="btn btn-success hover-rotate-end">
+              <button
+                className="btn btn-success hover-rotate-end me-2"
+                onClick={() => setIsEditModalOpen(true)}
+              >
+                Edit
+              </button>
+              <button className="btn btn-primary hover-rotate-end">
                 Update
               </button>
             </div>
@@ -222,6 +220,11 @@ const ItemDetail: React.FC = () => {
           </div>
         )}
       </KTCardBody>
+      <UpdateItem
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        initialData={{...item, images: item?.images}}
+      />
     </KTCard>
   );
 };
