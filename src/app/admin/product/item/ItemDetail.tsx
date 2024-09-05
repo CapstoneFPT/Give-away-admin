@@ -7,8 +7,8 @@ import { Content } from "../../../../_metronic/layout/components/content";
 import { KTCard, KTCardBody } from "../../../../_metronic/helpers";
 import { formatBalance } from "../../../pages/utils/utils";
 import KTInfoItem from "../../../../_metronic/helpers/components/KTInfoItem";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+
+import { showAlert } from "../../../../utils/Alert";
 
 const ItemDetail: React.FC = () => {
   const { itemId } = useParams<{ itemId: string }>();
@@ -32,7 +32,8 @@ const ItemDetail: React.FC = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["FashionItemDetail", itemId]);
-        toast.success(
+        showAlert(
+          "success",
           `Item ${
             data?.status === "Available" ? "taken down" : "posted"
           } successfully`
@@ -40,7 +41,7 @@ const ItemDetail: React.FC = () => {
       },
       onError: (error) => {
         console.error("Error changing item status:", error);
-        toast.error("Failed to change item status");
+        showAlert("error", `Failed to change item status with error: ${error}`);
       },
     }
   );
@@ -247,7 +248,6 @@ const ItemDetail: React.FC = () => {
           </div>
         </div>
       )}
-      <ToastContainer autoClose={2000} position="top-right" />
     </>
   );
 };
