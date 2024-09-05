@@ -1,8 +1,8 @@
-import FashionItemsTable from "./FashionItemTable";
+import MasterProductsTable from "./MasterProductsTable";
 
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 
-const FashionItemsPage = () => {
+const MasterProductsPage = () => {
   return (
     <>
       <Routes>
@@ -11,7 +11,7 @@ const FashionItemsPage = () => {
             path="product-list"
             element={
               <>
-                <FashionItemsTable className="mb-5 mb-xl-8" />
+                <MasterProductsTable className="mb-5 mb-xl-8" />
               </>
             }
           />
@@ -23,4 +23,4 @@ const FashionItemsPage = () => {
   );
 };
 
-export default FashionItemsPage;
+export default MasterProductsPage;

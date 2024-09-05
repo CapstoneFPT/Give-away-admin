@@ -1,4 +1,4 @@
-import { ConfirmPendingOrderRequest, FashionItemStatus, OrderDetailedResponse, OrderLineItemApi, OrderLineItemListResponse } from "../../../api";
+import { ConfirmPendingOrderRequest, FashionItemStatus, OrderDetailedResponse, OrderLineItemApi, OrderLineItemListResponse, PurchaseType } from "../../../api";
 import { formatBalance } from "../utils/utils.ts";
 import { KTCard, KTCardBody } from "../../../_metronic/helpers";
 import { Button } from "react-bootstrap";
@@ -99,8 +99,11 @@ const OrderLineItems = ({ items, orderDetail }: { items: OrderLineItemListRespon
                                             <td className="text-end">{formatBalance((item.unitPrice || 0) * (item.quantity || 0))}</td>
                                             <td className="text-end">{item.itemStatus}</td>
                                             <td className="text-end">
-                                                <div style={{ justifyContent: 'center', }}>
-                                                    <Button
+                                                {
+                                                    orderDetail.purchaseType === PurchaseType.Online &&
+                                                    item.itemStatus === FashionItemStatus.PendingForOrder &&
+                                                    <div style={{ justifyContent: 'center', }}>
+                                                        <Button
                                                         style={{ width: '100px', marginRight: '10px' }}
                                                         className="btn btn-warning hover-rotate-end"
                                                         onClick={() => handleConfirmDelivery(item.orderLineItemId!)}  // Truyền orderLineItemId
@@ -109,6 +112,7 @@ const OrderLineItems = ({ items, orderDetail }: { items: OrderLineItemListRespon
                                                     </Button>
                                                     <Button style={{ width: '100px' }} className="btn btn-danger hover-rotate-end">Cancel</Button>
                                                 </div>
+}
                                             </td>
                                         </tr>
                                     ))}

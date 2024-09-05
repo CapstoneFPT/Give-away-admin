@@ -3,12 +3,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import { KTCard, KTCardBody, KTIcon } from "../../../_metronic/helpers";
 import { formatBalance } from "../utils/utils";
 import { Content } from "../../../_metronic/layout/components/content";
-import { ConsignLineItemApi, ConsignSaleLineItemStatus, MasterItemApi } from '../../../api';
+import { ConsignLineItemApi, ConsignSaleApi, ConsignSaleDetailedResponse, ConsignSaleLineItemDetailedResponse, ConsignSaleLineItemStatus, MasterItemApi } from '../../../api';
 import { useMutation, useQuery } from "react-query";
 import { useAuth } from "../../modules/auth";
 import { AddToInventoryModal } from './AddToInventoryModal';
 import { PriceDifferenceModal } from './PriceDifferenceModal';
 import { ConfirmationModal } from "./ConfirmationModal.tsx";
+import { getConsignLineItemStatusColor, getConsignSaleStatusColor } from '../../utils/statusColors';
 
 export const ConsignLineItemReview: React.FC = () => {
     const { consignSaleId, lineItemId } = useParams<{ consignSaleId: string, lineItemId: string }>();
@@ -18,11 +19,12 @@ export const ConsignLineItemReview: React.FC = () => {
     const [showModal, setShowModal] = useState<boolean>(false);
     const [showConfirmationModal, setShowConfirmationModal] = useState<boolean>(false);
     const [selectedMasterItem, setSelectedMasterItem] = useState<string>('');
+    const [consignSaleDetail, setConsignSaleDetail] = useState<ConsignSaleDetailedResponse | null>(null);
     const [showPriceDifferenceModal, setShowPriceDifferenceModal] = useState<boolean>(false);
     const [priceChangeExplanation, setPriceChangeExplanation] = useState<string>('');
 
     const { currentUser } = useAuth();
-    const { data, isLoading, error } = useQuery({
+    const { data, isLoading, error } = useQuery<ConsignSaleLineItemDetailedResponse,Error>({
         queryKey: ['consignSaleLineItem', consignSaleId, lineItemId],
         queryFn: async () => {
             const consignLineItemApi = new ConsignLineItemApi();
@@ -33,6 +35,19 @@ export const ConsignLineItemReview: React.FC = () => {
             setDealPrice(!data.dealPrice ? data.expectedPrice!.toString() : data.dealPrice!.toString());
         }
     });
+
+    const { data: consignSaleData, isLoading: consignSaleLoading, error: consignSaleError } = useQuery<ConsignSaleDetailedResponse,Error>({
+        queryKey: ['consignSale', consignSaleId],
+        queryFn: async () => {
+            const consignSaleApi = new ConsignSaleApi();
+            const response = await consignSaleApi.apiConsignsalesConsignSaleIdGet(consignSaleId!);
+            return response.data;
+        },
+        onSuccess: (consignSaleData) => {
+            setConsignSaleDetail(consignSaleData);
+        }
+    });
+
     const { data: masterItemsData, isLoading: masterItemsLoading, error: masterItemsError } = useQuery({
         queryKey: ['masterItems'],
         queryFn: async () => {
@@ -211,13 +226,20 @@ export const ConsignLineItemReview: React.FC = () => {
                             <div className='row mb-5'>
                                 <div className='col-6'>
                                     <p><strong>Consignment Code :</strong> {data.consignSaleCode}</p>
-                                    <p><strong>Line Item ID:</strong> {data.consignSaleLineItemId}</p>
                                     <p><strong>Created Date:</strong> {new Date(data.createdDate!).toLocaleString()}</p>
+                                    <p>
+                                        <strong>Status:</strong>{' '}
+                                        <span className={`badge bg-${getConsignLineItemStatusColor(data.status)}`}>
+                                            {data.status}
+                                        </span>
+                                    </p>
                                 </div>
                                 <div className='col-6'>
                                     <p><strong>Expected Price:</strong> {formatBalance(data.expectedPrice || 0)} VND</p>
                                     <p><strong>Deal Price:</strong> {formatBalance(data.dealPrice || 0)} VND</p>
                                     <p><strong>Confirmed Price:</strong> {data.confirmedPrice ? formatBalance(data.confirmedPrice) + ' VND' : 'Not set'}</p>
+                                    <p><strong>Shop Response:</strong> {data.shopResponse}</p>
+                                    <p><strong>Customer Approval:</strong> {data.isApproved ? 'Yes' : 'No'}</p>
                                 </div>
                             </div>
                         </KTCardBody>
@@ -280,14 +302,14 @@ export const ConsignLineItemReview: React.FC = () => {
                                 </div>
                                 <div className='row'>
                                     <div className='col-12'>
-                                        <button type="submit" disabled={!!data.dealPrice} className='btn btn-primary me-3'>
+                                        <button type="submit" disabled={!!data.dealPrice || data.status != 'Received'} className='btn btn-primary me-3'>
                                             <KTIcon iconName='check' className='fs-2 me-2' />
                                             {data.dealPrice ? 'Deal Price Decided' : 'Submit Deal Price'}
                                         </button>
                                         <button
                                             type="button"
                                             className='btn btn-success me-3'
-                                            disabled={!!data.individualItemId || !data.dealPrice || data.status != ConsignSaleLineItemStatus.ReadyForConsignSale}
+                                            disabled={!!data.individualItemId || data.status != ConsignSaleLineItemStatus.ReadyForConsignSale || consignSaleData?.status != 'ReadyToSale'}
                                             onClick={handleCreateNewItem}
                                         >
                                             <KTIcon iconName='plus' className='fs-2 me-2' />

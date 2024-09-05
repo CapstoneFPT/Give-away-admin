@@ -22,6 +22,7 @@ import MasterFashionItemsAdminTable from "../admin/product/master/MasterFashionI
 import FashionItemsAdminTable from "../admin/product/item/FashionItemsAdminTable.tsx";
 import DashBoard from "../admin/dashboard/DashBoard.tsx";
 import OrderAdminPage from "../admin/order/OrderAdminPage.tsx";
+import ProductDetail from "../pages/product/ProductDetail.tsx";
 const PrivateRoutes = () => {
   const { currentUser } = useAuth();
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
@@ -36,7 +37,7 @@ const PrivateRoutes = () => {
     () => import("../pages/consign/ConsignmentPage.tsx")
   );
   const FashionItemsPage = lazy(
-    () => import("../pages/product/FashionItemPage")
+    () => import("../pages/product/MasterProductsPage.tsx")
   );
 
   const getDefaultRoute = () => {
@@ -118,6 +119,8 @@ const PrivateRoutes = () => {
             />
           }
         />
+
+        <Route path='/product/product-list/:itemId' element={<ProductDetail />} />
         <Route
           path="consignment/*"
           element={
@@ -160,6 +163,19 @@ const PrivateRoutes = () => {
               children={
                 <SuspensedView>
                   <ListMasterFashionItems className="mb-5 mb-xl-8" />
+                </SuspensedView>
+              }
+            />
+          }
+        />
+        <Route
+          path="/product/product-list/list-fashion/:masterItemId/:itemId"
+          element={
+            <ProtectedRoute
+              roles={["Staff"]}
+              children={
+                <SuspensedView>
+                  <ProductDetail />
                 </SuspensedView>
               }
             />
