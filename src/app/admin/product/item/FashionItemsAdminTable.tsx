@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { KTIcon } from "../../../../_metronic/helpers";
 import {
+  DeleteDraftItemRequest,
   FashionItemApi,
   FashionItemList,
   MasterItemApi,
@@ -101,7 +102,48 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
 
     { refetchOnWindowFocus: false, keepPreviousData: true }
   );
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const handleSelectItem = (itemId: string) => {
+    setSelectedItems((prev) =>
+      prev.includes(itemId)
+        ? prev.filter((id) => id !== itemId)
+        : [...prev, itemId]
+    );
+  };
+  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      setSelectedItems(result.data?.items?.map((item) => item.itemId!) || []);
+    } else {
+      setSelectedItems([]);
+    }
+  };
+  const handleDeleteSelected = async () => {
+    const result = await showAlert(
+      "warning",
+      `Are you sure you want to delete ${selectedItems.length} item(s)? This action cannot be undone.`
+    );
 
+    if (result.isConfirmed) {
+      try {
+        const fashionItemApi = new FashionItemApi();
+        const deleteRequests: DeleteDraftItemRequest[] = selectedItems.map(
+          (itemId) => ({ itemId })
+        );
+
+        await fashionItemApi.apiFashionitemsDelete(deleteRequests);
+
+        await showAlert(
+          "success",
+          `Successfully deleted ${selectedItems.length} item(s)`
+        );
+        setSelectedItems([]);
+        queryClient.invalidateQueries(["FashionItems"]);
+      } catch (error) {
+        console.error("Error deleting items:", error);
+        await showAlert("error", "Failed to delete selected items");
+      }
+    }
+  };
   useEffect(() => {
     // Check if all products have a status other than "Available" or "Unavailable"
     const hasNoActionableProducts = result.data?.items?.every(
@@ -342,11 +384,21 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
           </span>
         </h3>
       </div>
-      <div className="card-body py-3">
+      <div className="card-body py-2">
         <div className="table-responsive">
           <table className="table align-middle gs-0 gy-4">
             <thead>
               <tr className="fw-bold text-muted bg-light">
+                <th className=" w-30px">
+                  <label htmlFor="">All</label>
+                  <input
+                    type="checkbox"
+                    checked={
+                      selectedItems.length === result.data?.items?.length
+                    }
+                    onChange={handleSelectAll}
+                  />
+                </th>
                 <th className="ps-4 min-w-125px rounded-start">Item Code</th>
 
                 <th className="min-w-200px">Product</th>
@@ -361,6 +413,13 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
             <tbody>
               {result.data?.items?.map((product: FashionItemList) => (
                 <tr key={product.itemId}>
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={selectedItems.includes(product.itemId!)}
+                      onChange={() => handleSelectItem(product.itemId!)}
+                    />
+                  </td>
                   <td>
                     <a
                       href="#"
@@ -451,6 +510,15 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
         </div>
       </div>
       <div className="card-footer d-flex justify-content-between align-items-center">
+        <div>
+          <button
+            className="btn btn-sm btn-danger me-2"
+            onClick={handleDeleteSelected}
+            disabled={selectedItems.length === 0}
+          >
+            Delete Selected ({selectedItems.length})
+          </button>
+        </div>
         <div>
           Showing {(currentPage - 1) * pageSize + 1} to{" "}
           {Math.min(currentPage * pageSize, totalItems)} of {totalItems} items
