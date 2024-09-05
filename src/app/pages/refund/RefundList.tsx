@@ -10,14 +10,17 @@ import { KTTable } from '../../../_metronic/helpers/components/KTTable';
 import { Column } from 'react-table';
 
 const RefundList: React.FC = () => {
-	const [searchTerm, setSearchTerm] = useState("");
 	const [customerName, setCustomerName] = useState("");
 	const [customerPhone, setCustomerPhone] = useState("");
 	const [statusFilter, setStatusFilter] = useState<RefundStatus | null>(null);
 	const { currentUser } = useAuth();
 	const pageSize = 10;
 
-	const fetchData = useCallback(
+	const [orderCode, setOrderCode] = useState("");
+	const [itemCode, setItemCode] = useState("");
+	const [itemName, setItemName] = useState("");
+
+	const fetchData = 
 		async (pageIndex: number, pageSize: number, sortBy: any) => {
 			try {
 				const refundApi = new RefundApi();
@@ -27,7 +30,13 @@ const RefundList: React.FC = () => {
 					currentUser?.shopId,
 					statusFilter ? [statusFilter] : undefined,
 					undefined,
-					undefined
+					undefined,
+					customerName,
+					customerPhone,
+					undefined,
+					orderCode,
+					itemCode,
+					itemName
 				);
 
 				if (!response || !response.data) {
@@ -43,12 +52,9 @@ const RefundList: React.FC = () => {
 				console.error("Error fetching data:", error);
 				throw error;
 			}
-		},
-		[searchTerm, customerName, customerPhone, statusFilter, currentUser?.shopId]
-	);
-
+    }
 	const { data, isLoading, error } = useQuery(
-		["Refunds", searchTerm, customerName, customerPhone, statusFilter],
+		["Refunds", customerName, customerPhone, statusFilter, orderCode, itemCode, itemName],
 		() => fetchData(0, pageSize, []),
 		{ refetchOnWindowFocus: false, keepPreviousData: true }
 	);
@@ -144,13 +150,6 @@ const RefundList: React.FC = () => {
 							<div className="d-flex align-items-center">
 								<input
 									type="text"
-									className="form-control form-control-solid w-250px me-2"
-									placeholder="Search by Order Code"
-									value={searchTerm}
-									onChange={(e) => setSearchTerm(e.target.value)}
-								/>
-								<input
-									type="text"
 									className="form-control form-control-solid w-225px me-2"
 									placeholder="Search by Customer Name"
 									value={customerName}
@@ -173,6 +172,27 @@ const RefundList: React.FC = () => {
 										<option key={status} value={status}>{status}</option>
 									))}
 								</select>
+								<input
+									type="text"
+									className="form-control form-control-solid w-225px me-2"
+									placeholder="Search by Order Code"
+									value={orderCode}
+									onChange={(e) => setOrderCode(e.target.value)}
+								/>
+								<input
+									type="text"
+									className="form-control form-control-solid w-225px me-2"
+									placeholder="Search by Item Code"
+									value={itemCode}
+									onChange={(e) => setItemCode(e.target.value)}
+								/>
+								<input
+									type="text"
+									className="form-control form-control-solid w-225px me-2"
+									placeholder="Search by Item Name"
+									value={itemName}
+									onChange={(e) => setItemName(e.target.value)}
+								/>
 							</div>
 						</div>
 					</div>
