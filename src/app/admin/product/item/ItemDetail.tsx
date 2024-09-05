@@ -9,12 +9,16 @@ import { formatBalance } from "../../../pages/utils/utils";
 import KTInfoItem from "../../../../_metronic/helpers/components/KTInfoItem";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import UpdateItem from "./UpdateItem";
+import { UpdateFashionItemRequest } from "../../../../api";
 
 const ItemDetail: React.FC = () => {
   const { itemId } = useParams<{ itemId: string }>();
   const fashionItemApi = new FashionItemApi();
   const [selectedImage, setSelectedImage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [updateInitialData, setUpdateInitialData] = useState<UpdateFashionItemRequest>({});
   const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery<
@@ -33,8 +37,7 @@ const ItemDetail: React.FC = () => {
       onSuccess: () => {
         queryClient.invalidateQueries(["FashionItemDetail", itemId]);
         toast.success(
-          `Item ${
-            data?.status === "Available" ? "taken down" : "posted"
+          `Item ${data?.status === "Available" ? "taken down" : "posted"
           } successfully`
         );
       },
@@ -47,6 +50,18 @@ const ItemDetail: React.FC = () => {
 
   const handleStatusChange = () => {
     mutation.mutate();
+  };
+
+  const handleOpenUpdateModal = () => {
+    setUpdateInitialData({
+      sellingPrice: data?.sellingPrice,
+      note: data?.note,
+      condition: data?.condition,
+      color: data?.color,
+      size: data?.size,
+      imageUrls: data?.images,
+    });
+    setIsUpdateModalOpen(true);
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -72,9 +87,8 @@ const ItemDetail: React.FC = () => {
                           key={index}
                           src={image}
                           alt={`${data.name || "Product"} ${index + 1}`}
-                          className={`img-thumbnail mb-3 cursor-pointer ${
-                            selectedImage === image ? "border-primary" : ""
-                          }`}
+                          className={`img-thumbnail mb-3 cursor-pointer ${selectedImage === image ? "border-primary" : ""
+                            }`}
                           style={{
                             width: "150px",
                             height: "150px",
@@ -179,24 +193,34 @@ const ItemDetail: React.FC = () => {
                   />
                 </div>
 
-                {(data.status === "Available" ||
-                  data.status === "Unavailable") && (
+                {(data.status === "Unavailable" || data.status === "Draft" || data.status === "Available") && (
                   <div className="mt-5">
-                    <button
-                      onClick={handleStatusChange}
-                      className={`btn ${
-                        data.status === "Available"
-                          ? "btn-danger"
-                          : "btn-success"
-                      } btn-sm`}
-                      disabled={mutation.isLoading}
-                    >
-                      {mutation.isLoading
-                        ? "Processing..."
-                        : data.status === "Available"
-                        ? "Take Down Item"
-                        : "Post Item"}
-                    </button>
+                    {data.status === "Unavailable" && (
+                      <button
+                        onClick={handleStatusChange}
+                        className="btn btn-success btn-sm me-2"
+                        disabled={mutation.isLoading}
+                      >
+                        {mutation.isLoading ? "Processing..." : "Post Item"}
+                      </button>
+                    )}
+                    {data.status === "Available" && (
+                      <button
+                        onClick={handleStatusChange}
+                        className="btn btn-danger btn-sm me-2"
+                        disabled={mutation.isLoading}
+                      >
+                        {mutation.isLoading ? "Processing..." : "Take Down Item"}
+                      </button>
+                    )}
+                    {(data.status === "Draft" || data.status === "Unavailable") && data.isConsignment === false && (
+                      <button
+                        onClick={handleOpenUpdateModal}
+                        className="btn btn-primary btn-sm"
+                      >
+                        Update Item
+                      </button>
+                    )}
                   </div>
                 )}
 
@@ -248,6 +272,11 @@ const ItemDetail: React.FC = () => {
         </div>
       )}
       <ToastContainer autoClose={2000} position="top-right" />
+      <UpdateItem
+        isOpen={isUpdateModalOpen}
+        onClose={() => setIsUpdateModalOpen(false)}
+        initialData={updateInitialData}
+      />
     </>
   );
 };
