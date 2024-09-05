@@ -53,6 +53,12 @@ const getConsignSaleLineItemStatusColor = (
   }
 };
 
+function formatDate(dateValue: string | number | null | undefined): string {
+  if (!dateValue) return "N/A";
+  const date = new Date(typeof dateValue === 'number' ? dateValue * 1000 : dateValue);
+  return date.getTime() > 0 ? date.toLocaleString() : "N/A";
+}
+
 export const ConsignDetail: React.FC = () => {
   const { consignSaleId } = useParams<{ consignSaleId: string }>();
   const {
@@ -82,7 +88,7 @@ export const ConsignDetail: React.FC = () => {
                 <KTInfoItem
                   iconName="calendar"
                   title="Date Added"
-                  value={new Date(consignSaleResponse.createdDate!).toLocaleString()}
+                  value={formatDate(consignSaleResponse.createdDate)}
                 />
                 <KTInfoItem
                   iconName="tag"
@@ -99,7 +105,7 @@ export const ConsignDetail: React.FC = () => {
                   title="Status"
                   value={
                     <span
-                      className={`badge badge-light-${getConsignSaleStatusColor(
+                      className={`badge badge-${getConsignSaleStatusColor(
                         consignSaleResponse.status
                       )}`}
                     >
@@ -115,16 +121,12 @@ export const ConsignDetail: React.FC = () => {
                 <KTInfoItem
                   iconName="calendar-add"
                   title="Start Date"
-                  value={consignSaleResponse.startDate
-                    ? new Date(consignSaleResponse.startDate).toLocaleString()
-                    : "N/A"}
+                  value={formatDate(consignSaleResponse.startDate)}
                 />
                 <KTInfoItem
                   iconName="calendar-tick"
                   title="End Date"
-                  value={consignSaleResponse.endDate
-                    ? new Date(consignSaleResponse.endDate).toLocaleString()
-                    : "N/A"}
+                  value={formatDate(consignSaleResponse.endDate)}
                 />
               </div>
             </div>
@@ -188,35 +190,21 @@ export const ConsignDetail: React.FC = () => {
         <KTCardBody>
           <h3 className="fs-2 fw-bold mb-5">Financial Details</h3>
           <div className="d-flex flex-wrap">
-            <div className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
-              <div className="d-flex align-items-center">
-                <KTIcon iconName="dollar" className="fs-3 text-primary me-2" />
-                <div className="fs-6 text-gray-800 fw-bold">Total Price</div>
-              </div>
-              <div className="fs-2 fw-bold mt-2">
-                {formatBalance(consignSaleResponse.totalPrice || 0)}
-              </div>
-            </div>
-            <div className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
-              <div className="d-flex align-items-center">
-                <KTIcon iconName="dollar" className="fs-3 text-primary me-2" />
-                <div className="fs-6 text-gray-800 fw-bold">Sold Price</div>
-              </div>
-              <div className="fs-2 fw-bold mt-2">
-                {formatBalance(consignSaleResponse.soldPrice || 0)}
-              </div>
-            </div>
-            <div className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
-              <div className="d-flex align-items-center">
-                <KTIcon iconName="dollar" className="fs-3 text-primary me-2" />
-                <div className="fs-6 text-gray-800 fw-bold">
-                  Member Received
-                </div>
-              </div>
-              <div className="fs-2 fw-bold mt-2">
-                {formatBalance(consignSaleResponse.memberReceivedAmount || 0)}
-              </div>
-            </div>
+            <KTInfoItem 
+              iconName="dollar"
+              title="Sold Price"
+              value={consignSaleResponse.soldPrice ? formatBalance(consignSaleResponse.soldPrice) + ' VND' : "N/A"}
+            />
+            <KTInfoItem 
+              iconName="dollar"
+              title="Member Received"
+              value={consignSaleResponse.memberReceivedAmount ? formatBalance(consignSaleResponse.memberReceivedAmount) + ' VND' : "N/A"}
+            />
+            <KTInfoItem 
+              iconName="dollar"
+              title="Total Price"
+              value={consignSaleResponse.totalPrice ? formatBalance(consignSaleResponse.totalPrice) + ' VND' : "N/A"}
+            />
           </div>
         </KTCardBody>
       </KTCard>
@@ -249,7 +237,7 @@ export const ConsignDetail: React.FC = () => {
                     <tr key={item.consignSaleLineItemId}>
                       <td>
                         <span
-                          className={`badge badge-light-${getConsignSaleLineItemStatusColor(
+                          className={`badge badge-${getConsignSaleLineItemStatusColor(
                             item.status
                           )}`}
                         >
@@ -263,16 +251,18 @@ export const ConsignDetail: React.FC = () => {
                       <td>{item.gender || "N/A"}</td>
                       <td>{item.condition || "N/A"}</td>
                       <td>
-                        {item.dealPrice ? formatBalance(item.dealPrice) : "N/A"}
+                        {item.dealPrice ? formatBalance(item.dealPrice) + ' VND' : "N/A"}
                       </td>
-                      <td>{formatBalance(item.expectedPrice || 0)}</td>
+                      <td>{item.expectedPrice ? formatBalance(item.expectedPrice) + ' VND' : "N/A"}</td>
                       <td>
                         {item.confirmedPrice
-                          ? formatBalance(item.confirmedPrice)
+                          ? formatBalance(item.confirmedPrice) + ' VND'
                           : "N/A"}
                       </td>
                       <td>{item.note || "N/A"}</td>
-                      <td>{new Date(item.createdDate!).toLocaleString()}</td>
+                      <td>
+                        {formatDate(item.createdDate)}
+                      </td>
                       <td className="text-end">
                         <Link
                           to={`/consignment/${consignSaleId}/line-item/${item.consignSaleLineItemId}`}

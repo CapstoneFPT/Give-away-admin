@@ -3,12 +3,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import { KTCard, KTCardBody, KTIcon } from "../../../_metronic/helpers";
 import { formatBalance } from "../utils/utils";
 import { Content } from "../../../_metronic/layout/components/content";
-import { ConsignLineItemApi, ConsignSaleApi, ConsignSaleDetailedResponse, ConsignSaleLineItemStatus, MasterItemApi } from '../../../api';
+import { ConsignLineItemApi, ConsignSaleApi, ConsignSaleDetailedResponse, ConsignSaleLineItemDetailedResponse, ConsignSaleLineItemStatus, MasterItemApi } from '../../../api';
 import { useMutation, useQuery } from "react-query";
 import { useAuth } from "../../modules/auth";
 import { AddToInventoryModal } from './AddToInventoryModal';
 import { PriceDifferenceModal } from './PriceDifferenceModal';
 import { ConfirmationModal } from "./ConfirmationModal.tsx";
+import { getConsignLineItemStatusColor, getConsignSaleStatusColor } from '../../utils/statusColors';
 
 export const ConsignLineItemReview: React.FC = () => {
     const { consignSaleId, lineItemId } = useParams<{ consignSaleId: string, lineItemId: string }>();
@@ -23,7 +24,7 @@ export const ConsignLineItemReview: React.FC = () => {
     const [priceChangeExplanation, setPriceChangeExplanation] = useState<string>('');
 
     const { currentUser } = useAuth();
-    const { data, isLoading, error } = useQuery({
+    const { data, isLoading, error } = useQuery<ConsignSaleLineItemDetailedResponse,Error>({
         queryKey: ['consignSaleLineItem', consignSaleId, lineItemId],
         queryFn: async () => {
             const consignLineItemApi = new ConsignLineItemApi();
@@ -225,13 +226,20 @@ export const ConsignLineItemReview: React.FC = () => {
                             <div className='row mb-5'>
                                 <div className='col-6'>
                                     <p><strong>Consignment Code :</strong> {data.consignSaleCode}</p>
-                                    <p><strong>Line Item ID:</strong> {data.consignSaleLineItemId}</p>
                                     <p><strong>Created Date:</strong> {new Date(data.createdDate!).toLocaleString()}</p>
+                                    <p>
+                                        <strong>Status:</strong>{' '}
+                                        <span className={`badge bg-${getConsignLineItemStatusColor(data.status)}`}>
+                                            {data.status}
+                                        </span>
+                                    </p>
                                 </div>
                                 <div className='col-6'>
                                     <p><strong>Expected Price:</strong> {formatBalance(data.expectedPrice || 0)} VND</p>
                                     <p><strong>Deal Price:</strong> {formatBalance(data.dealPrice || 0)} VND</p>
                                     <p><strong>Confirmed Price:</strong> {data.confirmedPrice ? formatBalance(data.confirmedPrice) + ' VND' : 'Not set'}</p>
+                                    <p><strong>Shop Response:</strong> {data.shopResponse}</p>
+                                    <p><strong>Customer Approval:</strong> {data.isApproved ? 'Yes' : 'No'}</p>
                                 </div>
                             </div>
                         </KTCardBody>
