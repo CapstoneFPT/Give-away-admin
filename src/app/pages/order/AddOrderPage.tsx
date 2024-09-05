@@ -34,7 +34,6 @@ const AddOrderPage = () => {
 
       // Send API request to create order
       const createOrderResponse = await shopApi.apiShopsShopIdOrdersPost(currentUser!, orderData);
-      await shopApi.apiShopsShopIdOrdersOrderIdPayOfflinePost(currentUser!, createOrderResponse.data.data?.orderId!);
 
       // Handle success (e.g., show a success message, redirect, etc.)
       alert("Order created successfully!");
