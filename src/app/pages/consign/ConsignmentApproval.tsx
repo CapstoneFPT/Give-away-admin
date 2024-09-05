@@ -74,16 +74,6 @@ export const ConsignmentApproval: React.FC<ConsignmentApprovalProps> = ({ consig
         }
     );
 
-    const listItems = useMutation(
-        async (id: string) => {
-            return await consignSaleApi.apiConsignsalesConsignSaleIdPostItemsToSellPut(id);
-        },
-        {
-            onSuccess: async () => {
-                await queryClient.invalidateQueries(['consignSale', consignSale.consignSaleId]);
-            }
-        }
-    );
 
     const canRejectConsign = (initialStatus: ConsignSaleStatus) => {
         const result = initialStatus === 'Pending'
@@ -128,10 +118,6 @@ export const ConsignmentApproval: React.FC<ConsignmentApprovalProps> = ({ consig
         setStatus(ConsignSaleStatus.Processing);
     };
 
-    const handleList = async () => {
-        await listItems.mutateAsync(consignSale.consignSaleId!);
-        setStatus(ConsignSaleStatus.OnSale);
-    };
 
     async function handleNotifyNegotiation() {
         await notifyNegotiation.mutateAsync(consignSale.consignSaleId!)
@@ -162,94 +148,73 @@ export const ConsignmentApproval: React.FC<ConsignmentApprovalProps> = ({ consig
                     }
                     <div className='row mb-5'>
                         <div className='col-12'>
-                            {
-                                status === ConsignSaleStatus.Pending ? (
-                                    <button
-                                        className='btn btn-danger me-3 mb-3'
-                                        onClick={handleReject}
-                                        disabled={updateConsignSale.isLoading ||
-                                            !canRejectConsign(status)
-                                        }
-                                    >
-                                        {updateConsignSale.isLoading ? (
-                                            <span className="spinner-border spinner-border-sm me-2" role="status"
-                                                aria-hidden="true"></span>
-                                        ) : (
-                                            <KTIcon iconName='cross' className='fs-2 me-2' />
-                                        )}
-                                        Reject
-                                    </button>
-                                ) : (
-                                    <button
-                                        className='btn btn-danger me-3 mb-3'
-                                        onClick={handleReject}
-                                        disabled={updateConsignSale.isLoading ||
-                                            !canCancelConsign(status)
-                                        }
-                                    >
-                                        {updateConsignSale.isLoading ? (
-                                            <span className="spinner-border spinner-border-sm me-2" role="status"
-                                                aria-hidden="true"></span>
-                                        ) : (
-                                            <KTIcon iconName='cross' className='fs-2 me-2' />
-                                        )}
-                                        Cancel
-                                    </button>
-                                )
-                            }
-                            <button
-                                className='btn btn-warning me-3 mb-3'
-                                onClick={handleNotifyDelivery}
-                                disabled={updateConsignSale.isLoading || status !== ConsignSaleStatus.Pending}
-                            >
-                                {updateConsignSale.isLoading && status === ConsignSaleStatus.AwaitDelivery ? (
-                                    <span className="spinner-border spinner-border-sm me-2" role="status"
-                                        aria-hidden="true"></span>
-                                ) : (
-                                    <KTIcon iconName='notification' className='fs-2 me-2' />
-                                )}
-                                Notify Delivery
-                            </button>
-                            <button
-                                className='btn btn-info me-3 mb-3'
-                                onClick={handleConfirmReceived}
-                                disabled={confirmReceived.isLoading || status !== ConsignSaleStatus.AwaitDelivery}
-                            >
-                                {confirmReceived.isLoading ? (
-                                    <span className="spinner-border spinner-border-sm me-2" role="status"
-                                        aria-hidden="true"></span>
-                                ) : (
-                                    <KTIcon iconName='check-circle' className='fs-2 me-2' />
-                                )}
-                                Confirm Received
-                            </button>
-                            <button
-                                className='btn btn-primary me-3 mb-3'
-                                onClick={handleNotifyNegotiation}
-                                disabled={confirmReceived.isLoading || status !== ConsignSaleStatus.Processing
-                                    || lineItems.some((item) => !item.dealPrice) || lineItems.every((item) => item.status != ConsignSaleStatus.Negotiating)}
-                            >
-                                {notifyNegotiation.isLoading ? (
-                                    <span className="spinner-border spinner-border-sm me-2" role="status"
-                                        aria-hidden="true"></span>
-                                ) : (
-                                    <KTIcon iconName='messages' className='fs-2 me-2' />
-                                )}
-                                Notify Negotiation
-                            </button>
-                            {/* <button
-                                className='btn btn-success mb-3'
-                                onClick={handleList}
-                                disabled={listItems.isLoading || cannotListItems()}
-                            >
-                                {listItems.isLoading ? (
-                                    <span className="spinner-border spinner-border-sm me-2" role="status"
-                                        aria-hidden="true"></span>
-                                ) : (
-                                    <KTIcon iconName='check' className='fs-2 me-2' />
-                                )}
-                                List Items
-                            </button> */}
+                            {status === ConsignSaleStatus.Pending && canRejectConsign(status) && (
+                                <button
+                                    className='btn btn-danger me-3 mb-3'
+                                    onClick={handleReject}
+                                >
+                                    {updateConsignSale.isLoading ? (
+                                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                    ) : (
+                                        <KTIcon iconName='cross' className='fs-2 me-2' />
+                                    )}
+                                    Reject
+                                </button>
+                            )}
+                            {status !== ConsignSaleStatus.Pending && canCancelConsign(status) && (
+                                <button
+                                    className='btn btn-danger me-3 mb-3'
+                                    onClick={handleReject}
+                                >
+                                    {updateConsignSale.isLoading ? (
+                                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                    ) : (
+                                        <KTIcon iconName='cross' className='fs-2 me-2' />
+                                    )}
+                                    Cancel
+                                </button>
+                            )}
+                            {status === ConsignSaleStatus.Pending && (
+                                <button
+                                    className='btn btn-warning me-3 mb-3'
+                                    onClick={handleNotifyDelivery}
+                                >
+                                    {updateConsignSale.isLoading && status === ConsignSaleStatus.AwaitDelivery ? (
+                                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                    ) : (
+                                        <KTIcon iconName='notification' className='fs-2 me-2' />
+                                    )}
+                                    Notify Delivery
+                                </button>
+                            )}
+                            {status === ConsignSaleStatus.AwaitDelivery && (
+                                <button
+                                    className='btn btn-info me-3 mb-3'
+                                    onClick={handleConfirmReceived}
+                                >
+                                    {confirmReceived.isLoading ? (
+                                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                    ) : (
+                                        <KTIcon iconName='check-circle' className='fs-2 me-2' />
+                                    )}
+                                    Confirm Received
+                                </button>
+                            )}
+                            {status === ConsignSaleStatus.Processing && 
+                             !lineItems.some((item) => !item.dealPrice) && 
+                             lineItems.some((item) => item.status === ConsignSaleStatus.Negotiating) && (
+                                <button
+                                    className='btn btn-primary me-3 mb-3'
+                                    onClick={handleNotifyNegotiation}
+                                >
+                                    {notifyNegotiation.isLoading ? (
+                                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                    ) : (
+                                        <KTIcon iconName='messages' className='fs-2 me-2' />
+                                    )}
+                                    Notify Negotiation
+                                </button>
+                            )}
                         </div>
                     </div>
                     <div className='row'>
