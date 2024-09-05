@@ -3861,6 +3861,19 @@ export interface DeleteBankAccountResponse {
 /**
  * 
  * @export
+ * @interface DeleteDraftItemRequest
+ */
+export interface DeleteDraftItemRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof DeleteDraftItemRequest
+     */
+    'itemId'?: string;
+}
+/**
+ * 
+ * @export
  * @interface DeliveryListResponse
  */
 export interface DeliveryListResponse {
@@ -10677,12 +10690,6 @@ export interface UpdateMasterItemRequest {
      * @memberof UpdateMasterItemRequest
      */
     'gender'?: GenderType;
-    /**
-     * 
-     * @type {number}
-     * @memberof UpdateMasterItemRequest
-     */
-    'stockCount'?: number | null;
     /**
      * 
      * @type {Array<string>}
@@ -17557,6 +17564,43 @@ export const FashionItemApiAxiosParamCreator = function (configuration?: Configu
     return {
         /**
          * 
+         * @param {Array<DeleteDraftItemRequest>} [deleteDraftItemRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiFashionitemsDelete: async (deleteDraftItemRequest?: Array<DeleteDraftItemRequest>, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/fashionitems`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(deleteDraftItemRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {string} [itemCode] 
          * @param {string} [memberId] 
          * @param {GenderType} [gender] 
@@ -17856,6 +17900,18 @@ export const FashionItemApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
+         * @param {Array<DeleteDraftItemRequest>} [deleteDraftItemRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiFashionitemsDelete(deleteDraftItemRequest?: Array<DeleteDraftItemRequest>, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiFashionitemsDelete(deleteDraftItemRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['FashionItemApi.apiFashionitemsDelete']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {string} [itemCode] 
          * @param {string} [memberId] 
          * @param {GenderType} [gender] 
@@ -17947,6 +18003,15 @@ export const FashionItemApiFactory = function (configuration?: Configuration, ba
     return {
         /**
          * 
+         * @param {Array<DeleteDraftItemRequest>} [deleteDraftItemRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiFashionitemsDelete(deleteDraftItemRequest?: Array<DeleteDraftItemRequest>, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.apiFashionitemsDelete(deleteDraftItemRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @param {string} [itemCode] 
          * @param {string} [memberId] 
          * @param {GenderType} [gender] 
@@ -18021,6 +18086,17 @@ export const FashionItemApiFactory = function (configuration?: Configuration, ba
  * @extends {BaseAPI}
  */
 export class FashionItemApi extends BaseAPI {
+    /**
+     * 
+     * @param {Array<DeleteDraftItemRequest>} [deleteDraftItemRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof FashionItemApi
+     */
+    public apiFashionitemsDelete(deleteDraftItemRequest?: Array<DeleteDraftItemRequest>, options?: RawAxiosRequestConfig) {
+        return FashionItemApiFp(this.configuration).apiFashionitemsDelete(deleteDraftItemRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * 
      * @param {string} [itemCode] 
@@ -20359,10 +20435,11 @@ export const RefundApiAxiosParamCreator = function (configuration?: Configuratio
          * @param {string} [shopId] 
          * @param {Array<RefundStatus>} [status] 
          * @param {string} [previousTime] 
+         * @param {string} [memberId] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiRefundsGet: async (pageNumber?: number, pageSize?: number, shopId?: string, status?: Array<RefundStatus>, previousTime?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        apiRefundsGet: async (pageNumber?: number, pageSize?: number, shopId?: string, status?: Array<RefundStatus>, previousTime?: string, memberId?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/refunds`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -20399,6 +20476,10 @@ export const RefundApiAxiosParamCreator = function (configuration?: Configuratio
                 localVarQueryParameter['PreviousTime'] = (previousTime as any instanceof Date) ?
                     (previousTime as any).toISOString() :
                     previousTime;
+            }
+
+            if (memberId !== undefined) {
+                localVarQueryParameter['MemberId'] = memberId;
             }
 
 
@@ -20581,11 +20662,12 @@ export const RefundApiFp = function(configuration?: Configuration) {
          * @param {string} [shopId] 
          * @param {Array<RefundStatus>} [status] 
          * @param {string} [previousTime] 
+         * @param {string} [memberId] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiRefundsGet(pageNumber?: number, pageSize?: number, shopId?: string, status?: Array<RefundStatus>, previousTime?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<RefundResponsePaginationResponseResult>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiRefundsGet(pageNumber, pageSize, shopId, status, previousTime, options);
+        async apiRefundsGet(pageNumber?: number, pageSize?: number, shopId?: string, status?: Array<RefundStatus>, previousTime?: string, memberId?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<RefundResponsePaginationResponseResult>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiRefundsGet(pageNumber, pageSize, shopId, status, previousTime, memberId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['RefundApi.apiRefundsGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -20656,11 +20738,12 @@ export const RefundApiFactory = function (configuration?: Configuration, basePat
          * @param {string} [shopId] 
          * @param {Array<RefundStatus>} [status] 
          * @param {string} [previousTime] 
+         * @param {string} [memberId] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiRefundsGet(pageNumber?: number, pageSize?: number, shopId?: string, status?: Array<RefundStatus>, previousTime?: string, options?: RawAxiosRequestConfig): AxiosPromise<RefundResponsePaginationResponseResult> {
-            return localVarFp.apiRefundsGet(pageNumber, pageSize, shopId, status, previousTime, options).then((request) => request(axios, basePath));
+        apiRefundsGet(pageNumber?: number, pageSize?: number, shopId?: string, status?: Array<RefundStatus>, previousTime?: string, memberId?: string, options?: RawAxiosRequestConfig): AxiosPromise<RefundResponsePaginationResponseResult> {
+            return localVarFp.apiRefundsGet(pageNumber, pageSize, shopId, status, previousTime, memberId, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -20716,12 +20799,13 @@ export class RefundApi extends BaseAPI {
      * @param {string} [shopId] 
      * @param {Array<RefundStatus>} [status] 
      * @param {string} [previousTime] 
+     * @param {string} [memberId] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof RefundApi
      */
-    public apiRefundsGet(pageNumber?: number, pageSize?: number, shopId?: string, status?: Array<RefundStatus>, previousTime?: string, options?: RawAxiosRequestConfig) {
-        return RefundApiFp(this.configuration).apiRefundsGet(pageNumber, pageSize, shopId, status, previousTime, options).then((request) => request(this.axios, this.basePath));
+    public apiRefundsGet(pageNumber?: number, pageSize?: number, shopId?: string, status?: Array<RefundStatus>, previousTime?: string, memberId?: string, options?: RawAxiosRequestConfig) {
+        return RefundApiFp(this.configuration).apiRefundsGet(pageNumber, pageSize, shopId, status, previousTime, memberId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
