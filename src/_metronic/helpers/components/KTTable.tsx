@@ -1,58 +1,67 @@
 import React from 'react';
-import { useTable, usePagination, useSortBy, useGlobalFilter, UsePaginationInstanceProps, TableInstance, UsePaginationState, UseSortByState, UseGlobalFiltersState, UseGlobalFiltersInstanceProps, TableState, UseTableOptions } from 'react-table';
+import { useTable, useSortBy, UseTableOptions } from 'react-table';
 import { KTIcon } from './KTIcon';
 
 interface KTTableProps {
   columns: any[];
   data: any[];
   totalCount: number;
-  pageCount: number;
-  fetchData: (pageIndex: number, pageSize: number, sortBy: any) => void;
+  currentPage: number;
+  pageSize: number;
+  onPageChange: (newPage: number) => void;
   loading: boolean;
+  totalPages: number;
 }
 
 export const KTTable: React.FC<KTTableProps> = ({
   columns,
   data,
   totalCount,
-  pageCount: controlledPageCount,
-  fetchData,
+  currentPage,
+  pageSize,
+  onPageChange,
   loading,
+  totalPages,
 }) => {
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
     prepareRow,
-    page,
-    canPreviousPage,
-    canNextPage,
-    pageOptions,
-    pageCount,
-    gotoPage,
-    nextPage,
-    previousPage,
-    setPageSize,
-    state: { pageIndex, pageSize, sortBy},
+    rows,
   } = useTable(
     {
       columns,
       data,
-      initialState: { pageIndex: 0, pageSize: 10 },
-      manualPagination: true,
-      manualSortBy: true,
-      pageCount: controlledPageCount,
     } as UseTableOptions<object>,
-    useGlobalFilter,
-    useSortBy,
-    usePagination
-  ) as TableInstance<object> & UsePaginationInstanceProps<object> & UseGlobalFiltersInstanceProps<object> & {
-    state: UsePaginationState<object> & UseSortByState<object> & UseGlobalFiltersState<object>
-  };
+    useSortBy
+  );
 
-  React.useEffect(() => {
-    fetchData(pageIndex, pageSize, sortBy);
-  }, [fetchData, pageIndex, pageSize, sortBy]);
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(
+        <button
+          key={i}
+          onClick={() => onPageChange(i)}
+          disabled={i === currentPage || loading}
+          className={`btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-light-primary'} me-2`}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    return pageNumbers;
+  };
 
   return (
     <>
@@ -82,7 +91,7 @@ export const KTTable: React.FC<KTTableProps> = ({
               ))}
             </thead>
             <tbody {...getTableBodyProps()}>
-              {page.map((row) => {
+              {rows.map((row) => {
                 prepareRow(row);
                 return (
                   <tr {...row.getRowProps()}>
@@ -107,19 +116,20 @@ export const KTTable: React.FC<KTTableProps> = ({
       </div>
       <div className="card-footer d-flex justify-content-between align-items-center">
         <div>
-          Showing {pageIndex * pageSize + 1} to {Math.min((pageIndex + 1) * pageSize, totalCount)} of {totalCount} entries
+          Showing {(currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, totalCount)} of {totalCount} entries
         </div>
         <div>
-          <button onClick={() => gotoPage(0)} disabled={!canPreviousPage || loading} className="btn btn-sm btn-light-primary me-2">
+          <button onClick={() => onPageChange(1)} disabled={currentPage === 1 || loading} className="btn btn-sm btn-light-primary me-2">
             <KTIcon iconName="double-left" className="fs-2" />
           </button>
-          <button onClick={() => previousPage()} disabled={!canPreviousPage || loading} className="btn btn-sm btn-light-primary me-2">
+          <button onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1 || loading} className="btn btn-sm btn-light-primary me-2">
             <KTIcon iconName="left" className="fs-2" />
           </button>
-          <button onClick={() => nextPage()} disabled={!canNextPage || loading} className="btn btn-sm btn-light-primary me-2">
+          {renderPageNumbers()}
+          <button onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages || loading} className="btn btn-sm btn-light-primary me-2">
             <KTIcon iconName="right" className="fs-2" />
           </button>
-          <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage || loading} className="btn btn-sm btn-light-primary">
+          <button onClick={() => onPageChange(totalPages)} disabled={currentPage === totalPages || loading} className="btn btn-sm btn-light-primary">
             <KTIcon iconName="double-right" className="fs-2" />
           </button>
         </div>

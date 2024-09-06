@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback } from "react";
 import { useQuery } from "react-query";
 import { KTIcon } from "../../../_metronic/helpers";
 import { FashionItemApi, FashionItemList } from "../../../api";
@@ -15,9 +15,10 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
   const { masterItemId } = useParams<{ masterItemId: string }>();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
-  const fetchData = useCallback(async (pageIndex: number, pageSize: number, sortBy: any) => {
+  const fetchData = useCallback(async (page: number, pageSize: number, sortBy: any) => {
     const fashionItemApi = new FashionItemApi();
     const response = await fashionItemApi.apiFashionitemsGet(
       null!, // itemCode
@@ -32,7 +33,7 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
       null!, // type
       sortBy.length > 0 ? sortBy[0].id : null!, // sortBy
       sortBy.length > 0 ? sortBy[0].desc : false, // sortDescending
-      pageIndex + 1, // pageNumber
+      page, // pageNumber
       pageSize, // pageSize
       searchTerm, // name
       null!, // categoryId
@@ -42,17 +43,20 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
     );
     return {
       data: response.data.items || [],
-      pageCount: Math.ceil(response.data.totalCount! / pageSize),
-      totalCount: response.data.totalCount!,
+      totalCount: response.data.totalCount || 0,
+      totalPages: response.data.totalPages || 0,
     };
   }, [searchTerm, masterItemId]);
 
-
   const { data, isLoading, error } = useQuery(
-    ["FashionItems", searchTerm, masterItemId],
-    () => fetchData(0, pageSize, []),
+    ["FashionItems", searchTerm, masterItemId, currentPage],
+    () => fetchData(currentPage, pageSize, []),
     { refetchOnWindowFocus: false, keepPreviousData: true }
   );
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
 
   if (error) return <div>An error occurred: {(error as Error).message}</div>;
 
@@ -84,8 +88,10 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
           columns={columns}
           data={data?.data || []}
           totalCount={data?.totalCount || 0}
-          pageCount={data?.pageCount || 0}
-          fetchData={fetchData}
+          currentPage={currentPage}
+          pageSize={pageSize}
+          totalPages={data?.totalPages || 0}
+          onPageChange={handlePageChange}
           loading={isLoading}
         />
       </div>

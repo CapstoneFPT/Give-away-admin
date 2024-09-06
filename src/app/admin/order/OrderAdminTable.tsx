@@ -32,6 +32,7 @@ const OrderAdminList: React.FC<Props> = ({ className }) => {
     PurchaseType | ""
   >("");
   const [statusFilter, setStatusFilter] = useState<OrderStatus | "">("");
+  const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
   const fetchOrders = useCallback(
@@ -52,24 +53,23 @@ const OrderAdminList: React.FC<Props> = ({ className }) => {
       );
       return {
         data: response.data.items || [],
-        pageCount: Math.ceil(response.data.totalCount! / pageSize),
-        totalCount: response.data.totalCount!,
+        pageCount: response.data.totalPages || 0,
+        totalCount: response.data.totalCount || 0,
+        totalPages: response.data.totalPages || 0,
       };
     },
     [searchTerms, paymentMethodFilter, purchaseTypeFilter, statusFilter]
   );
 
   const { data, isLoading, error } = useQuery(
-    [
-      "orders",
-      searchTerms,
-      paymentMethodFilter,
-      purchaseTypeFilter,
-      statusFilter,
-    ],
-    () => fetchOrders(1, pageSize),
+    ["orders", searchTerms, paymentMethodFilter, purchaseTypeFilter, statusFilter, currentPage],
+    () => fetchOrders(currentPage, pageSize),
     { keepPreviousData: true }
   );
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -148,9 +148,11 @@ const OrderAdminList: React.FC<Props> = ({ className }) => {
             columns={orderListAdminColumns}
             data={data?.data || []}
             totalCount={data?.totalCount || 0}
-            pageCount={data?.pageCount || 0}
-            fetchData={fetchOrders}
+            currentPage={currentPage}
+            pageSize={pageSize}
+            onPageChange={handlePageChange}
             loading={isLoading}
+            totalPages={data?.totalPages || 0}
           />
         </KTCardBody>
       </KTCard>

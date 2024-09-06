@@ -1,13 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import { useQuery } from 'react-query';
 import { KTCard, KTCardBody, KTIcon } from '../../../_metronic/helpers';
-import { OrderApi, OrderListResponse, OrderStatus, PaymentMethod, PurchaseType } from '../../../api';
-import { dateTimeOptions, formatBalance, paymentMethod, purchaseType, VNLocale } from '../utils/utils';
-import { Link } from 'react-router-dom';
+import { OrderApi, OrderStatus, PaymentMethod, PurchaseType } from '../../../api';
 import { useAuth } from '../../modules/auth';
 import { Content } from "../../../_metronic/layout/components/content";
 import { KTTable } from '../../../_metronic/helpers/components/KTTable';
-import { Column } from 'react-table';
 import orderListColumns from './_columns';
 
 type Props = {
@@ -25,13 +22,14 @@ const OrderList: React.FC<Props> = ({ className }) => {
     const [paymentMethodFilter, setPaymentMethodFilter] = useState<PaymentMethod | ''>('');
     const [purchaseTypeFilter, setPurchaseTypeFilter] = useState<PurchaseType | ''>('');
     const [statusFilter, setStatusFilter] = useState<OrderStatus | ''>('');
-    const pageSize = 10;
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 5;
     const { currentUser } = useAuth();
 
-    const fetchOrders = useCallback(async (page: number, pageSize: number, sortBy: any) => {
+    const fetchOrders = useCallback(async (pageIndex: number, pageSize: number, sortBy: any) => {
         const orderApi = new OrderApi();
         const response = await orderApi.apiOrdersGet(
-            page,
+            pageIndex,
             pageSize,
             currentUser?.shopId,
             statusFilter || undefined,
@@ -45,14 +43,14 @@ const OrderList: React.FC<Props> = ({ className }) => {
         );
         return {
             data: response.data.items || [],
-            pageCount: Math.ceil(response.data.totalCount! / pageSize),
-            totalCount: response.data.totalCount!,
+            totalCount: response.data.totalCount || 0,
+            totalPages: response.data.totalPages || 0,
         };
-    }, [currentUser?.shopId, searchTerms, paymentMethodFilter, purchaseTypeFilter, statusFilter]);
+    }, [currentUser?.shopId, statusFilter, paymentMethodFilter, purchaseTypeFilter, searchTerms]);
 
     const { data, isLoading, error } = useQuery(
-        ['orders', searchTerms, paymentMethodFilter, purchaseTypeFilter, statusFilter],
-        () => fetchOrders(1, pageSize, []),
+        ['orders', searchTerms, paymentMethodFilter, purchaseTypeFilter, statusFilter, currentPage],
+        () => fetchOrders(currentPage, pageSize, []),
         { keepPreviousData: true }
     );
 
@@ -61,7 +59,9 @@ const OrderList: React.FC<Props> = ({ className }) => {
         setSearchTerms(prev => ({ ...prev, [name]: value }));
     };
 
-    
+    const handlePageChange = (newPage: number) => {
+        setCurrentPage(newPage);
+    };
 
     if (error) return <div>Error: {(error as Error).message}</div>;
 
@@ -121,16 +121,16 @@ const OrderList: React.FC<Props> = ({ className }) => {
                         columns={orderListColumns}
                         data={data?.data || []}
                         totalCount={data?.totalCount || 0}
-                        pageCount={data?.pageCount || 0}
-                        fetchData={fetchOrders}
+                        currentPage={currentPage}
+                        pageSize={pageSize}
+                        onPageChange={handlePageChange}
                         loading={isLoading}
+                        totalPages={data?.totalPages || 0}
                     />
                 </KTCardBody>
             </KTCard>
         </Content>
     );
 };
-
-
 
 export default OrderList;
