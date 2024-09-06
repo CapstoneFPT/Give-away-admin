@@ -21,15 +21,16 @@ const MasterProductsTable: React.FC<Props> = ({ className }) => {
   const [genderType, setGenderType] = useState<GenderType | "">("");
   const [isConsignment, setIsConsignment] = useState<boolean | null>(null);
   const [isLeftInStock, setIsLeftInStock] = useState<boolean | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
-  const fetchData = useCallback(async (pageIndex: number, pageSize: number, sortBy: any) => {
+  const fetchData = useCallback(async (page: number, pageSize: number, sortBy: any) => {
     const masterItemApi = new MasterItemApi();
     const response = await masterItemApi.apiMasterItemsGet(
       searchTerm,
       searchItemCode,
       brand,
-      pageIndex + 1,
+      page,
       pageSize,
       categoryId,
       currentUser?.shopId,
@@ -39,16 +40,21 @@ const MasterProductsTable: React.FC<Props> = ({ className }) => {
     );
     return {
       data: response.data.items || [],
-      pageCount: Math.ceil(response.data.totalCount! / pageSize),
-      totalCount: response.data.totalCount!,
+      pageCount: response.data.totalPages || 0,
+      totalCount: response.data.totalCount || 0,
+      totalPages: response.data.totalPages || 0,
     };
   }, [searchTerm, searchItemCode, brand, categoryId, currentUser?.shopId, genderType, isConsignment, isLeftInStock]);
 
   const { data, isLoading, error } = useQuery(
-    ["MasterItems", searchTerm, searchItemCode, brand, categoryId, currentUser?.shopId, genderType, isConsignment, isLeftInStock],
-    () => fetchData(0, pageSize, []),
+    ["MasterItems", searchTerm, searchItemCode, brand, categoryId, currentUser?.shopId, genderType, isConsignment, isLeftInStock, currentPage],
+    () => fetchData(currentPage, pageSize, []),
     { refetchOnWindowFocus: false, keepPreviousData: true }
   );
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
 
   const columns: Column<MasterItemListResponse>[] = [
     {
@@ -173,9 +179,11 @@ const MasterProductsTable: React.FC<Props> = ({ className }) => {
           columns={columns}
           data={data?.data || []}
           totalCount={data?.totalCount || 0}
-          pageCount={data?.pageCount || 0}
-          fetchData={fetchData}
+          currentPage={currentPage}
+          pageSize={pageSize}
+          onPageChange={handlePageChange}
           loading={isLoading}
+          totalPages={data?.totalPages || 0}
         />
       </div>
     </Content>

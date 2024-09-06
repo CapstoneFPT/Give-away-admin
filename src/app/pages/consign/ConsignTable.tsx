@@ -1,14 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useQuery } from "react-query";
 import { KTCardBody, KTIcon } from "../../../_metronic/helpers";
-import { ConsignSaleApi, ConsignSaleListResponse, ConsignSaleStatus } from "../../../api";
-import { formatBalance } from "../utils/utils";
-import { Link } from "react-router-dom";
+import { ConsignSaleApi, ConsignSaleStatus } from "../../../api";
 import { Content } from "../../../_metronic/layout/components/content";
-import axios from "axios";
 import { useAuth } from "../../modules/auth";
 import { KTTable } from '../../../_metronic/helpers/components/KTTable';
-import { Column } from "react-table";
 import consignSaleColumns from "./_columns";
 
 const ConsignTable: React.FC = () => {
@@ -16,17 +12,16 @@ const ConsignTable: React.FC = () => {
   const [consignorName, setConsignorName] = useState("");
   const [consignorPhone, setConsignorPhone] = useState("");
   const [statusFilter, setStatusFilter] = useState<ConsignSaleStatus | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const { currentUser } = useAuth();
   const pageSize = 10;
 
-  
-
-  const fetchData = React.useCallback(
-    async (pageIndex: number, pageSize: number, sortBy: any) => {
+  const fetchData = useCallback(
+    async (page: number, pageSize: number) => {
       try {
         const consignSaleApi = new ConsignSaleApi();
         const response = await consignSaleApi.apiConsignsalesGet(
-          pageIndex + 1,
+          page,
           pageSize,
           currentUser?.shopId,
           searchTerm,
@@ -45,8 +40,9 @@ const ConsignTable: React.FC = () => {
 
         return {
           data: response.data.items || [],
-          pageCount: Math.ceil(response.data.totalCount! / pageSize),
-          totalCount: response.data.totalCount!,
+          pageCount: response.data.totalPages || 0,
+          totalCount: response.data.totalCount || 0,
+          totalPages: response.data.totalPages || 0,
         };
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -57,10 +53,14 @@ const ConsignTable: React.FC = () => {
   );
 
   const { data, isLoading, error } = useQuery(
-    ["Consign", searchTerm, consignorName, consignorPhone, statusFilter],
-    () => fetchData(0, pageSize, []),
+    ["Consign", searchTerm, consignorName, consignorPhone, statusFilter, currentPage],
+    () => fetchData(currentPage, pageSize),
     { refetchOnWindowFocus: false, keepPreviousData: true }
   );
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
 
   if (error) return <div>An error occurred: {(error as Error).message}</div>;
 
@@ -117,15 +117,15 @@ const ConsignTable: React.FC = () => {
           columns={consignSaleColumns}
           data={data?.data || []}
           totalCount={data?.totalCount || 0}
-          pageCount={data?.pageCount || 0}
-          fetchData={fetchData}
+          currentPage={currentPage}
+          pageSize={pageSize}
+          onPageChange={handlePageChange}
           loading={isLoading}
+          totalPages={data?.totalPages || 0}
         />
       </div>
     </Content>
   );
 };
-
-
 
 export default ConsignTable;

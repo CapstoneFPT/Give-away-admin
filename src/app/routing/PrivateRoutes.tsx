@@ -25,6 +25,7 @@ import OrderAdminPage from "../admin/order/OrderAdminPage.tsx";
 import ProductDetail from "../pages/product/ProductDetail.tsx";
 import OrderAdminDetailPage from "../admin/order/OrderAdminDetailPage.tsx";
 import AuctionAdminPage from "../admin/auction/AuctionAdminPage.tsx";
+import RefundDetail from "../pages/refund/RefundDetail.tsx";
 const PrivateRoutes = () => {
   const { currentUser } = useAuth();
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
@@ -67,6 +68,7 @@ const PrivateRoutes = () => {
         <Route path="auction" element={<Auction />} />
         <Route path="order/*" element={<OrderPage />} />
         <Route path="refund" element={<RefundPage />} />
+        <Route path="refund/:refundId" element={<RefundDetail />} />
         {/* Product Admin Routes */}
         <Route
           path="auction-admin"

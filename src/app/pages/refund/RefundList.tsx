@@ -13,51 +13,55 @@ const RefundList: React.FC = () => {
 	const [customerName, setCustomerName] = useState("");
 	const [customerPhone, setCustomerPhone] = useState("");
 	const [statusFilter, setStatusFilter] = useState<RefundStatus | null>(null);
-	const { currentUser } = useAuth();
-	const pageSize = 10;
-
 	const [orderCode, setOrderCode] = useState("");
 	const [itemCode, setItemCode] = useState("");
 	const [itemName, setItemName] = useState("");
+	const [currentPage, setCurrentPage] = useState(1);
+	const { currentUser } = useAuth();
+	const pageSize = 10;
 
-	const fetchData = 
-		async (pageIndex: number, pageSize: number, sortBy: any) => {
-			try {
-				const refundApi = new RefundApi();
-				const response = await refundApi.apiRefundsGet(
-					pageIndex + 1,
-					pageSize,
-					currentUser?.shopId,
-					statusFilter ? [statusFilter] : undefined,
-					undefined,
-					undefined,
-					customerName,
-					customerPhone,
-					undefined,
-					orderCode,
-					itemCode,
-					itemName
-				);
+	const fetchData = useCallback(async (page: number, pageSize: number) => {
+		try {
+			const refundApi = new RefundApi();
+			const response = await refundApi.apiRefundsGet(
+				page,
+				pageSize,
+				currentUser?.shopId,
+				statusFilter ? [statusFilter] : undefined,
+				undefined,
+				undefined,
+				customerName,
+				customerPhone,
+				undefined,
+				orderCode,
+				itemCode,
+				itemName
+			);
 
-				if (!response || !response.data) {
-					throw new Error("No data received from the API");
-				}
-
-				return {
-					data: response.data.items || [],
-					pageCount: Math.ceil(response.data.totalCount! / pageSize),
-					totalCount: response.data.totalCount!,
-				};
-			} catch (error) {
-				console.error("Error fetching data:", error);
-				throw error;
+			if (!response || !response.data) {
+				throw new Error("No data received from the API");
 			}
-    }
+
+			return {
+				data: response.data.items || [],
+				totalCount: response.data.totalCount || 0,
+				totalPages: response.data.totalPages || 0,
+			};
+		} catch (error) {
+			console.error("Error fetching data:", error);
+			throw error;
+		}
+	}, [currentUser?.shopId, statusFilter, customerName, customerPhone, orderCode, itemCode, itemName]);
+
 	const { data, isLoading, error } = useQuery(
-		["Refunds", customerName, customerPhone, statusFilter, orderCode, itemCode, itemName],
-		() => fetchData(0, pageSize, []),
+		["Refunds", customerName, customerPhone, statusFilter, orderCode, itemCode, itemName, currentPage],
+		() => fetchData(currentPage, pageSize),
 		{ refetchOnWindowFocus: false, keepPreviousData: true }
 	);
+
+	const handlePageChange = (newPage: number) => {
+		setCurrentPage(newPage);
+	};
 
 	const columns: Column<RefundResponse>[] = [
 		{
@@ -201,8 +205,10 @@ const RefundList: React.FC = () => {
 						columns={columns}
 						data={data?.data || []}
 						totalCount={data?.totalCount || 0}
-						pageCount={data?.pageCount || 0}
-						fetchData={fetchData}
+						currentPage={currentPage}
+						totalPages={data?.totalPages || 0}
+						pageSize={pageSize}
+						onPageChange={handlePageChange}
 						loading={isLoading}
 					/>
 				</KTCardBody>

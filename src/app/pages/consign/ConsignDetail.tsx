@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { KTCard, KTCardBody, KTIcon } from "../../../_metronic/helpers";
-import { formatBalance } from "../utils/utils";
+import { formatBalance, formatDate } from "../utils/utils";
 import { useConsignSale, useConsignSaleLineItems } from "./consignSaleHooks";
 import { Content } from "../../../_metronic/layout/components/content";
 import ConsignmentApproval from "./ConsignmentApproval.tsx";
@@ -53,11 +53,7 @@ const getConsignSaleLineItemStatusColor = (
   }
 };
 
-function formatDate(dateValue: string | number | null | undefined): string {
-  if (!dateValue) return "N/A";
-  const date = new Date(typeof dateValue === 'number' ? dateValue * 1000 : dateValue);
-  return date.getTime() > 0 ? date.toLocaleString() : "N/A";
-}
+
 
 export const ConsignDetail: React.FC = () => {
   const { consignSaleId } = useParams<{ consignSaleId: string }>();
