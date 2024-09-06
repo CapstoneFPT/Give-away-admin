@@ -1,6 +1,12 @@
 export const formatBalance = (balance:number) => {
     return new Intl.NumberFormat('de-DE').format(balance);
 };
+
+export function formatDate(dateValue: string | number | null | undefined): string {
+  if (!dateValue) return "N/A";
+  const date = new Date(typeof dateValue === 'number' ? dateValue * 1000 : dateValue);
+  return date.getTime() > 0 ? date.toLocaleString() : "N/A";
+}
 export const dateTimeOptions : Intl.DateTimeFormatOptions = {
     timeZone: "Asia/Ho_Chi_Minh",
     year: "numeric",

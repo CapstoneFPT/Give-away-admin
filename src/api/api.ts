@@ -4215,7 +4215,8 @@ export const ErrorCode = {
     NotFound: 'NotFound',
     UnsupportedShipping: 'UnsupportedShipping',
     DuplicateBankAccount: 'DuplicateBankAccount',
-    NoBankAccountLeft: 'NoBankAccountLeft'
+    NoBankAccountLeft: 'NoBankAccountLeft',
+    RefundStatusNotAvailable: 'RefundStatusNotAvailable'
 } as const;
 
 export type ErrorCode = typeof ErrorCode[keyof typeof ErrorCode];
@@ -4272,7 +4273,8 @@ export const ErrorType = {
     OrderError: 'OrderError',
     PaymentError: 'PaymentError',
     AccountError: 'AccountError',
-    ShippingError: 'ShippingError'
+    ShippingError: 'ShippingError',
+    RefundError: 'RefundError'
 } as const;
 
 export type ErrorType = typeof ErrorType[keyof typeof ErrorType];
@@ -9350,6 +9352,12 @@ export interface RefundResponse {
      * @memberof RefundResponse
      */
     'refundStatus'?: RefundStatus;
+    /**
+     * 
+     * @type {string}
+     * @memberof RefundResponse
+     */
+    'recipientName'?: string | null;
 }
 
 
@@ -9457,7 +9465,8 @@ export const RefundStatus = {
     Pending: 'Pending',
     Approved: 'Approved',
     Rejected: 'Rejected',
-    Completed: 'Completed'
+    Completed: 'Completed',
+    Cancelled: 'Cancelled'
 } as const;
 
 export type RefundStatus = typeof RefundStatus[keyof typeof RefundStatus];
@@ -20623,6 +20632,43 @@ export const RefundApiAxiosParamCreator = function (configuration?: Configuratio
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
+        apiRefundsRefundIdCancelPut: async (refundId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'refundId' is not null or undefined
+            assertParamExists('apiRefundsRefundIdCancelPut', 'refundId', refundId)
+            const localVarPath = `/api/refunds/{refundId}/cancel`
+                .replace(`{${"refundId"}}`, encodeURIComponent(String(refundId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} refundId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
         apiRefundsRefundIdConfirmReceivedAndRefundPut: async (refundId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'refundId' is not null or undefined
             assertParamExists('apiRefundsRefundIdConfirmReceivedAndRefundPut', 'refundId', refundId)
@@ -20755,6 +20801,18 @@ export const RefundApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
+        async apiRefundsRefundIdCancelPut(refundId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<RefundResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiRefundsRefundIdCancelPut(refundId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['RefundApi.apiRefundsRefundIdCancelPut']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} refundId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
         async apiRefundsRefundIdConfirmReceivedAndRefundPut(refundId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<RefundResponseResult>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiRefundsRefundIdConfirmReceivedAndRefundPut(refundId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
@@ -20828,6 +20886,15 @@ export const RefundApiFactory = function (configuration?: Configuration, basePat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
+        apiRefundsRefundIdCancelPut(refundId: string, options?: RawAxiosRequestConfig): AxiosPromise<RefundResponse> {
+            return localVarFp.apiRefundsRefundIdCancelPut(refundId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} refundId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
         apiRefundsRefundIdConfirmReceivedAndRefundPut(refundId: string, options?: RawAxiosRequestConfig): AxiosPromise<RefundResponseResult> {
             return localVarFp.apiRefundsRefundIdConfirmReceivedAndRefundPut(refundId, options).then((request) => request(axios, basePath));
         },
@@ -20893,6 +20960,17 @@ export class RefundApi extends BaseAPI {
      */
     public apiRefundsRefundIdApprovalPut(refundId: string, approvalRefundRequest?: ApprovalRefundRequest, options?: RawAxiosRequestConfig) {
         return RefundApiFp(this.configuration).apiRefundsRefundIdApprovalPut(refundId, approvalRefundRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} refundId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof RefundApi
+     */
+    public apiRefundsRefundIdCancelPut(refundId: string, options?: RawAxiosRequestConfig) {
+        return RefundApiFp(this.configuration).apiRefundsRefundIdCancelPut(refundId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -21599,7 +21677,7 @@ export const ShopApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiShopsShopIdRefundsPost(shopId: string, createRefundByShopRequest?: CreateRefundByShopRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<RefundResponseResult>> {
+        async apiShopsShopIdRefundsPost(shopId: string, createRefundByShopRequest?: CreateRefundByShopRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<RefundResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiShopsShopIdRefundsPost(shopId, createRefundByShopRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['ShopApi.apiShopsShopIdRefundsPost']?.[localVarOperationServerIndex]?.url;
@@ -21736,7 +21814,7 @@ export const ShopApiFactory = function (configuration?: Configuration, basePath?
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiShopsShopIdRefundsPost(shopId: string, createRefundByShopRequest?: CreateRefundByShopRequest, options?: RawAxiosRequestConfig): AxiosPromise<RefundResponseResult> {
+        apiShopsShopIdRefundsPost(shopId: string, createRefundByShopRequest?: CreateRefundByShopRequest, options?: RawAxiosRequestConfig): AxiosPromise<RefundResponse> {
             return localVarFp.apiShopsShopIdRefundsPost(shopId, createRefundByShopRequest, options).then((request) => request(axios, basePath));
         },
     };

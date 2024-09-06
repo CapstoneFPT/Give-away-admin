@@ -23,6 +23,7 @@ import FashionItemsAdminTable from "../admin/product/item/FashionItemsAdminTable
 import DashBoard from "../admin/dashboard/DashBoard.tsx";
 import OrderAdminPage from "../admin/order/OrderAdminPage.tsx";
 import ProductDetail from "../pages/product/ProductDetail.tsx";
+import RefundDetail from "../pages/refund/RefundDetail.tsx";
 const PrivateRoutes = () => {
   const { currentUser } = useAuth();
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
@@ -65,6 +66,7 @@ const PrivateRoutes = () => {
         <Route path="auction" element={<Auction />} />
         <Route path="order/*" element={<OrderPage />} />
         <Route path="refund" element={<RefundPage />} />
+        <Route path="refund/:refundId" element={<RefundDetail />} />
         {/* Product Admin Routes */}
         <Route
           path="order-admin"
