@@ -530,7 +530,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
                               className="form-check-input"
                               type="checkbox"
                               checked={formData.itemForEachShops?.some(item => item.shopId === shop.shopId)}
-                              onChange={() => handleShopSelection(shop.shopId)}
+                              onChange={() => handleShopSelection(shop.shopId!)}
                             />
                           </div>
                         </td>
