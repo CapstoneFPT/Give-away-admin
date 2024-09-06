@@ -22,7 +22,7 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
   const { itemId } = useParams<{ itemId: string }>();
   const [formData, setFormData] = useState<UpdateFashionItemRequest>({});
   const [images, setImages] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [isImageLoading, setIsImageLoading] = useState(false);
   const queryClient = useQueryClient();
   const fashionItemApi = new FashionItemApi();
 
@@ -64,7 +64,7 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
-      setLoading(true);
+      setIsImageLoading(true);
       try {
         const newImages = [...images];
         for (const file of acceptedFiles) {
@@ -81,7 +81,7 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
         console.error("Error uploading files:", error);
         toast.error("Failed to upload images");
       } finally {
-        setLoading(false);
+        setIsImageLoading(false);
       }
     },
     [images]
@@ -191,10 +191,15 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
                 <label>Images (Max 3)</label>
                 <div className="d-flex flex-wrap gap-3 mb-3">
                   {images.map((image, index) => (
-                    <div key={index} className="position-relative">
+                    <div
+                      key={index}
+                      className="text-center"
+                      style={{ width: "100px" }}
+                    >
                       <img
                         src={image}
                         alt={`Product ${index + 1}`}
+                        className="img-thumbnail"
                         style={{
                           width: "100px",
                           height: "100px",
@@ -203,10 +208,16 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
                       />
                       <button
                         type="button"
-                        className="btn btn-sm btn-danger position-absolute top-0 end-0"
+                        className="btn btn-danger mt-2"
                         onClick={() => removeImage(index)}
+                        disabled={isImageLoading || updateMutation.isLoading}
+                        style={{
+                          fontSize: "12px",
+                          padding: "6px 12px",
+                          width: "100%",
+                        }}
                       >
-                        &times;
+                        Remove
                       </button>
                     </div>
                   ))}
@@ -224,7 +235,7 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
                     }}
                   >
                     <input {...getInputProps()} />
-                    {loading ? (
+                    {isImageLoading ? (
                       <div
                         className="spinner-border text-primary"
                         role="status"
@@ -253,15 +264,27 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
                 type="button"
                 className="btn btn-secondary"
                 onClick={onClose}
+                disabled={isImageLoading || updateMutation.isLoading}
               >
                 Close
               </button>
               <button
                 type="submit"
                 className="btn btn-primary"
-                disabled={updateMutation.isLoading}
+                disabled={isImageLoading || updateMutation.isLoading}
               >
-                {updateMutation.isLoading ? "Updating..." : "Update"}
+                {updateMutation.isLoading ? (
+                  <>
+                    <span
+                      className="spinner-border spinner-border-sm me-2"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                    Updating...
+                  </>
+                ) : (
+                  "Update"
+                )}
               </button>
             </div>
           </form>

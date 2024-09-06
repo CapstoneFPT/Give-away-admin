@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
-import { FashionItemApi, FashionItemDetailResponse } from "../../../../api";
+import {
+  FashionItemApi,
+  FashionItemDetailResponse,
+  UpdateFashionItemRequest,
+} from "../../../../api";
 
 import { Content } from "../../../../_metronic/layout/components/content";
 import { KTCard, KTCardBody } from "../../../../_metronic/helpers";
@@ -9,6 +13,7 @@ import { formatBalance } from "../../../pages/utils/utils";
 import KTInfoItem from "../../../../_metronic/helpers/components/KTInfoItem";
 
 import { showAlert } from "../../../../utils/Alert";
+import UpdateItem from "./UpdateItem";
 
 const ItemDetail: React.FC = () => {
   const { itemId } = useParams<{ itemId: string }>();
@@ -16,7 +21,8 @@ const ItemDetail: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [updateInitialData, setUpdateInitialData] = useState<UpdateFashionItemRequest>({});
+  const [updateInitialData, setUpdateInitialData] =
+    useState<UpdateFashionItemRequest>({});
   const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery<
@@ -87,8 +93,9 @@ const ItemDetail: React.FC = () => {
                           key={index}
                           src={image}
                           alt={`${data.name || "Product"} ${index + 1}`}
-                          className={`img-thumbnail mb-3 cursor-pointer ${selectedImage === image ? "border-primary" : ""
-                            }`}
+                          className={`img-thumbnail mb-3 cursor-pointer ${
+                            selectedImage === image ? "border-primary" : ""
+                          }`}
                           style={{
                             width: "150px",
                             height: "150px",
@@ -193,7 +200,9 @@ const ItemDetail: React.FC = () => {
                   />
                 </div>
 
-                {(data.status === "Unavailable" || data.status === "Draft" || data.status === "Available") && (
+                {(data.status === "Unavailable" ||
+                  data.status === "Draft" ||
+                  data.status === "Available") && (
                   <div className="mt-5">
                     {data.status === "Unavailable" && (
                       <button
@@ -210,17 +219,21 @@ const ItemDetail: React.FC = () => {
                         className="btn btn-danger btn-sm me-2"
                         disabled={mutation.isLoading}
                       >
-                        {mutation.isLoading ? "Processing..." : "Take Down Item"}
+                        {mutation.isLoading
+                          ? "Processing..."
+                          : "Take Down Item"}
                       </button>
                     )}
-                    {(data.status === "Draft" || data.status === "Unavailable") && data.isConsignment === false && (
-                      <button
-                        onClick={handleOpenUpdateModal}
-                        className="btn btn-primary btn-sm"
-                      >
-                        Update Item
-                      </button>
-                    )}
+                    {(data.status === "Draft" ||
+                      data.status === "Unavailable") &&
+                      data.isConsignment === false && (
+                        <button
+                          onClick={handleOpenUpdateModal}
+                          className="btn btn-primary btn-sm"
+                        >
+                          Update Item
+                        </button>
+                      )}
                   </div>
                 )}
 
@@ -271,6 +284,11 @@ const ItemDetail: React.FC = () => {
           </div>
         </div>
       )}
+      <UpdateItem
+        isOpen={isUpdateModalOpen}
+        onClose={() => setIsUpdateModalOpen(false)}
+        initialData={updateInitialData}
+      />
     </>
   );
 };

@@ -78,6 +78,7 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
 
   const handleSubmit = async () => {
     if (validateForm()) {
+      setIsLoading(true);
       try {
         await createFashionItem(fashionItem);
         handleSave(fashionItem);
@@ -85,6 +86,8 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
         handleCloseWithReset();
       } catch (error) {
         showAlert("error", "Failed to submit. Please try again.");
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -294,9 +297,40 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
               onClick={handleSubmit}
               disabled={isLoading}
             >
-              {isLoading ? "Saving..." : "Save"}
+              {isLoading ? (
+                <>
+                  <span
+                    className="spinner-border spinner-border-sm"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                  <span className="ms-1">Saving...</span>
+                </>
+              ) : (
+                "Save"
+              )}
             </button>
           </div>
+          {isLoading && (
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: "rgba(255, 255, 255, 0.7)",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                zIndex: 1000,
+              }}
+            >
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
