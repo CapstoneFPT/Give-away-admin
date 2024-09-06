@@ -38,7 +38,7 @@ const SidebarMenuMain = () => {
             fontIcon="bi-app-indicator"
           />
           <SidebarMenuItem
-            to="/error/404"
+            to="/auction-admin"
             icon="element-11"
             title="Auction"
             fontIcon="bi-app-indicator"

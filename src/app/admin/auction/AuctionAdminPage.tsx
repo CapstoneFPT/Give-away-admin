@@ -6,7 +6,7 @@ const Auction = () => {
   return (
     <>
       <KTCard>
-        <AuctionAdminList />
+        <AuctionAdminList className="mb-5 mb-xl-8" />
       </KTCard>
     </>
   );
