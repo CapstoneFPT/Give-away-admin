@@ -138,7 +138,7 @@ const OrderAdminList: React.FC<Props> = ({ className }) => {
                 <option value="">All Statuses</option>
                 {Object.values(OrderStatus).map((status) => (
                   <option key={status} value={status}>
-                    {status}
+                    {status}z
                   </option>
                 ))}
               </select>

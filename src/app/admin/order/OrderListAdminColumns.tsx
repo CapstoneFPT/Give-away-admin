@@ -116,7 +116,7 @@ export const orderListAdminColumns: Column<OrderListResponse>[] = [
     Cell: ({ value }: { value: string | undefined }) =>
       value ? (
         <Link
-          to={`/order-detail/${value}`}
+          to={`/order-admin/${value}`}
           className="btn btn-sm btn-light btn-active-light-primary"
         >
           <KTIcon iconName="pencil" className="fs-5" />
