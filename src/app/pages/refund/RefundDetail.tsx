@@ -50,14 +50,29 @@ const RefundDetail: React.FC = () => {
   const [rejectReason, setRejectReason] = useState('');
   const queryClient = useQueryClient();
   const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
+  const [isRefundApproved, setIsRefundApproved] = useState(false);
 
   const { data, isLoading, error } = useQuery<RefundResponse | undefined, Error>(
     ["RefundDetail", refundId],
     async () => {
       const response = await refundApi.apiRefundsRefundIdGet(refundId!);
+      setIsRefundApproved(response.data.refundStatus === RefundStatus.Approved);
       return response.data;
     }
   );
+
+  const confirmReceivedMutation = useMutation(
+    () => refundApi.apiRefundsRefundIdConfirmReceivedAndRefundPut(refundId!),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["RefundDetail", refundId]);
+        toast.success("Item received confirmation successful");
+      },
+      onError: (error) => {
+        toast.error(`Error: ${(error as Error).message}`);
+      },
+    }
+  )
 
   const approveMutation = useMutation(
     ({
@@ -100,6 +115,10 @@ const RefundDetail: React.FC = () => {
 
   const handleApproval = () => {
     setIsApprovalModalOpen(true);
+  };
+
+  const handleConfirmReceived = () => {
+    confirmReceivedMutation.mutate();
   };
 
   const handleReject = () => {
@@ -193,6 +212,27 @@ const RefundDetail: React.FC = () => {
                           disabled={approveMutation.isLoading}
                         >
                           Reject
+                        </button>
+                      </div>
+                    )}
+                    {isRefundApproved && (
+                      <div className="d-flex justify-content-end mt-5">
+                        <button
+                          className="btn btn-light-primary"
+                          onClick={handleConfirmReceived}
+                          disabled={confirmReceivedMutation.isLoading}
+                        >
+                          {confirmReceivedMutation.isLoading ? (
+                            <span className="indicator-progress" style={{display: "block"}}>
+                              Please wait...
+                              <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
+                            </span>
+                          ) : (
+                            <>
+                              <KTIcon iconName="check" className="fs-2 me-2" />
+                              Confirm Received Item
+                            </>
+                          )}
                         </button>
                       </div>
                     )}
