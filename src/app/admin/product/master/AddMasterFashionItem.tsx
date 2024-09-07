@@ -81,8 +81,8 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
             null!,
             null!,
             formData.gender === "Male"
-              ? "535d3b90-dc58-41e3-ad32-055e261bd6a7"
-              : "3e4c6370-a72b-44e3-a5eb-8f459764158f",
+              ? "550e8400-e29b-41d4-a716-446655440000"
+              : "550e8400-e29b-41d4-a716-446655440001",
             4,
             "Available"
           );
