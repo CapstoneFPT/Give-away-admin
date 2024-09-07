@@ -122,30 +122,37 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
 
   const handleSelectAllShops = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
-      setFormData(prevData => ({
+      setFormData((prevData) => ({
         ...prevData,
-        itemForEachShops: shops.map(shop => ({ shopId: shop.shopId }))
+        itemForEachShops: shops.map((shop) => ({ shopId: shop.shopId })),
       }));
     } else {
-      setFormData(prevData => ({
+      setFormData((prevData) => ({
         ...prevData,
-        itemForEachShops: []
+        itemForEachShops: [],
       }));
     }
   };
 
   const handleShopSelection = (shopId: string) => {
-    setFormData(prevData => {
-      const isShopSelected = prevData.itemForEachShops?.some(item => item.shopId === shopId);
+    setFormData((prevData) => {
+      const isShopSelected = prevData.itemForEachShops?.some(
+        (item) => item.shopId === shopId
+      );
       if (isShopSelected) {
         return {
           ...prevData,
-          itemForEachShops: prevData.itemForEachShops?.filter(item => item.shopId !== shopId)
+          itemForEachShops: prevData.itemForEachShops?.filter(
+            (item) => item.shopId !== shopId
+          ),
         };
       } else {
         return {
           ...prevData,
-          itemForEachShops: [...(prevData.itemForEachShops || []), { shopId, stockCount: 0 }]
+          itemForEachShops: [
+            ...(prevData.itemForEachShops || []),
+            { shopId, stockCount: 0 },
+          ],
         };
       }
     });
@@ -513,7 +520,9 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
                           <input
                             className="form-check-input"
                             type="checkbox"
-                            checked={formData.itemForEachShops?.length === shops.length}
+                            checked={
+                              formData.itemForEachShops?.length === shops.length
+                            }
                             onChange={handleSelectAllShops}
                           />
                         </div>
@@ -529,7 +538,9 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
                             <input
                               className="form-check-input"
                               type="checkbox"
-                              checked={formData.itemForEachShops?.some(item => item.shopId === shop.shopId)}
+                              checked={formData.itemForEachShops?.some(
+                                (item) => item.shopId === shop.shopId
+                              )}
                               onChange={() => handleShopSelection(shop.shopId!)}
                             />
                           </div>

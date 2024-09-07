@@ -23,6 +23,8 @@ import FashionItemsAdminTable from "../admin/product/item/FashionItemsAdminTable
 import DashBoard from "../admin/dashboard/DashBoard.tsx";
 import OrderAdminPage from "../admin/order/OrderAdminPage.tsx";
 import ProductDetail from "../pages/product/ProductDetail.tsx";
+import OrderAdminDetailPage from "../admin/order/OrderAdminDetailPage.tsx";
+import AuctionAdminPage from "../admin/auction/AuctionAdminPage.tsx";
 import RefundDetail from "../pages/refund/RefundDetail.tsx";
 const PrivateRoutes = () => {
   const { currentUser } = useAuth();
@@ -68,6 +70,26 @@ const PrivateRoutes = () => {
         <Route path="refund" element={<RefundPage />} />
         <Route path="refund/:refundId" element={<RefundDetail />} />
         {/* Product Admin Routes */}
+        <Route
+          path="auction-admin"
+          element={
+            <ProtectedRoute roles={["Admin"]}>
+              <SuspensedView>
+                <AuctionAdminPage />
+              </SuspensedView>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="order-admin/:orderId"
+          element={
+            <ProtectedRoute roles={["Admin"]}>
+              <SuspensedView>
+                <OrderAdminDetailPage />
+              </SuspensedView>
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="order-admin"
           element={
@@ -122,7 +144,10 @@ const PrivateRoutes = () => {
           }
         />
 
-        <Route path='/product/product-list/:itemId' element={<ProductDetail />} />
+        <Route
+          path="/product/product-list/:itemId"
+          element={<ProductDetail />}
+        />
         <Route
           path="consignment/*"
           element={

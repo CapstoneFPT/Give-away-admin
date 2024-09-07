@@ -8,7 +8,7 @@ import { KTTable } from '../../../_metronic/helpers/components/KTTable';
 import orderListColumns from './_columns';
 
 type Props = {
-    className: string;
+  className: string;
 };
 
 const OrderList: React.FC<Props> = ({ className }) => {
@@ -54,10 +54,10 @@ const OrderList: React.FC<Props> = ({ className }) => {
         { keepPreviousData: true }
     );
 
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setSearchTerms(prev => ({ ...prev, [name]: value }));
-    };
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setSearchTerms((prev) => ({ ...prev, [name]: value }));
+  };
 
     const handlePageChange = (newPage: number) => {
         setCurrentPage(newPage);
