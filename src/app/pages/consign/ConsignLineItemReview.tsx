@@ -98,9 +98,10 @@ export const ConsignLineItemReview: React.FC = () => {
         null!,
         null!,
         currentUser?.shopId,
-        data!.gender,
+        data?.gender,
         true
       );
+      console.log(response)
       return response.data;
     },
   });

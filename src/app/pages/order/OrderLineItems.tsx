@@ -50,6 +50,19 @@ const OrderLineItems = ({ items, orderDetail }: { items: OrderLineItemListRespon
             console.error("Error during delivery confirmation:", error);
         }
     };
+    const handleCancelDelivery = async (orderLineItemId: string) => {
+        try {
+            const request: ConfirmPendingOrderRequest = {
+                itemStatus: FashionItemStatus.Unavailable
+            };
+            await deliveryMutation.mutateAsync({
+                OrderLineItemId: orderLineItemId,
+                itemStatus: request
+            });
+        } catch (error) {
+            console.error("Error during delivery cancellation:", error);
+        }
+    }
 
 
     return (
@@ -110,7 +123,7 @@ const OrderLineItems = ({ items, orderDetail }: { items: OrderLineItemListRespon
                                                     >
                                                         Delivery
                                                     </Button>
-                                                    <Button style={{ width: '100px' }} className="btn btn-danger hover-rotate-end">Cancel</Button>
+                                                    <Button onClick={() => handleCancelDelivery(item.orderLineItemId!)} style={{ width: '100px' }} className="btn btn-danger hover-rotate-end">Cancel</Button>
                                                 </div>
 }
                                             </td>
