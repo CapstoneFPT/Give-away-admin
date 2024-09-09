@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
-import { FashionItemApi, FashionItemDetailResponse } from "../../../api";
+import { FashionItemApi, FashionItemDetailResponse, FashionItemStatus } from "../../../api";
 import { Content } from "../../../_metronic/layout/components/content";
 import { KTCard, KTCardBody, KTIcon } from "../../../_metronic/helpers";
 import { formatBalance } from "../utils/utils";
@@ -103,15 +103,18 @@ const ProductDetail: React.FC = () => {
                 </div>
 
                 <div className="mt-5">
+                  {
+                    (data.status === FashionItemStatus.Available || data.status === FashionItemStatus.Unavailable) &&
                   <button
                     onClick={handleStatusChange}
                     className={`btn ${
-                      data.status === "Available" ? "btn-danger" : "btn-success"
+                      data.status === FashionItemStatus.Available ? "btn-danger" : "btn-success"
                     } btn-sm`}
                     disabled={mutation.isLoading}
                   >
-                    {mutation.isLoading ? "Processing..." : (data.status === "Available" ? "Take Down Item" : "Post Item")}
+                    {mutation.isLoading ? "Processing..." : (data.status === FashionItemStatus.Available ? "Take Down Item" : "Post Item")}
                   </button>
+                  }
                 </div>
 
                 {data.description && (

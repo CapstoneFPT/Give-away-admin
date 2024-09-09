@@ -38,8 +38,9 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
         null!,
         null!, // filter theo shop
         null!, // filter theo gender
-        null!, // filter Consignment
-        false
+        null!,
+        null!,
+         // filter Consignmentfalse
       );
 
       return response.data;
@@ -99,7 +100,7 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
             onClick={handleShowAddModal}
           >
             <KTIcon iconName="plus" className="fs-2" />
-            Add new master item
+            Add new master product
           </button>
         </div>
       </div>
@@ -113,7 +114,7 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
             {/* begin::Table head */}
             <thead>
               <tr className="fw-bold text-muted bg-light">
-                <th className="ps-4 min-w-125px rounded-start">Item Code</th>
+                <th className="ps-4 min-w-125px rounded-start">Product Code</th>
                 <th className="min-w-200px">Shop address</th>
                 <th className="min-w-50px">Image</th>
                 <th className="min-w-100px">Name</th>
