@@ -16,24 +16,21 @@ const AuctionAdminList: React.FC<Props> = ({ className }) => {
   const [expired, setExpired] = useState<boolean>(false);
   const pageSize = 12;
 
-  const fetchAuctions = useCallback(
-    async (page: number) => {
-      const auctionApi = new AuctionApi();
-      const response = await auctionApi.apiAuctionsGet(
-        searchTerm,
-        expired,
-        statusFilter ? [statusFilter] : undefined,
-        page,
-        pageSize
-      );
-      return response.data;
-    },
-    [searchTerm, expired, statusFilter]
-  );
+  const fetchAuctions = useCallback(async () => {
+    const auctionApi = new AuctionApi();
+    const response = await auctionApi.apiAuctionsGet(
+      searchTerm,
+      expired,
+      statusFilter ? [statusFilter] : undefined,
+      currentPage,
+      pageSize
+    );
+    return response.data;
+  }, [searchTerm, expired, statusFilter, currentPage, pageSize]);
 
   const { data, isLoading, error } = useQuery(
     ["Auctions", currentPage, searchTerm, statusFilter, expired],
-    () => fetchAuctions(currentPage),
+    () => fetchAuctions(),
     { keepPreviousData: true }
   );
 

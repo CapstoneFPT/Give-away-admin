@@ -33,7 +33,10 @@ const AddOrderPage = () => {
       };
 
       // Send API request to create order
-      const createOrderResponse = await shopApi.apiShopsShopIdOrdersPost(currentUser!, orderData);
+      const createOrderResponse = await shopApi.apiShopsShopIdOrdersPost(
+        currentUser!,
+        orderData
+      );
 
       // Handle success (e.g., show a success message, redirect, etc.)
       alert("Order created successfully!");
@@ -46,11 +49,13 @@ const AddOrderPage = () => {
     }
   };
 
-
   return (
     <Content>
       <h1>Create Order</h1>
-      <div id="kt_app_content_container" className="app-container container-xxl">
+      <div
+        id="kt_app_content_container"
+        className="app-container container-xxl"
+      >
         <form
           id="kt_ecommerce_edit_order_form"
           className="form d-flex flex-column flex-lg-row"
