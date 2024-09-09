@@ -97,7 +97,7 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
           </form>
           <button
             className="btn btn-sm btn-light-primary"
-            onClick={handleShowAddModal}
+            onClick={handleShowAddModal} 
           >
             <KTIcon iconName="plus" className="fs-2" />
             Add new master product
