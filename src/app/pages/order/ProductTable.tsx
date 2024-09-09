@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { FashionItemApi, FashionItemList } from "../../../api";
 import { useAuth } from "../../modules/auth";
 import { formatBalance } from "../utils/utils";
@@ -6,11 +6,11 @@ import { formatBalance } from "../utils/utils";
 const ProductTable = ({
   selectedItems,
   setSelectedItems,
-  setTotalCost
+  setTotalCost,
 }: {
   selectedItems: string[];
   setSelectedItems: React.Dispatch<React.SetStateAction<string[]>>;
-  setTotalCost: React.Dispatch<React.SetStateAction<number>>;
+  setTotalCost?: React.Dispatch<React.SetStateAction<number>>;
 }) => {
   const currentUser = useAuth().currentUser?.shopId; // Get shopId from useAuth
   const [fashionItems, setFashionItems] = useState<FashionItemList[]>([]);
@@ -22,37 +22,40 @@ const ProductTable = ({
   const [totalPages, setTotalPages] = useState<number>(0); // Total number of pages
 
   // Function to fetch fashion items with optional search term and pagination
-  const fetchFashionItems = async (searchValue?: string, page?: number) => {
-    try {
-      const fashionItemApi = new FashionItemApi();
-      const response = await fashionItemApi.apiFashionitemsGet(
-        searchValue!,
-        null!,
-        null!,
-        null!,
-        null!,
-        null!,
-        null!,
-        null!,
-        ["Available"],
-        ["ConsignedForSale", "ItemBase"],
-        null!,
-        null!,
-        page!, // Pass the current page to the API
-        pageSize, // Pass the page size to the API
-        null!,
-        null!,
-        currentUser,
-        null!,
-        null!
-      );
-      setFashionItems(response.data.items || []); // Set the fetched items to state
-      setTotalCount(response.data.totalCount || 0); // Set the total count of items
-      setTotalPages(response.data.totalPages || 1); // Set the total number of pages
-    } catch (error) {
-      console.error("Error fetching fashion items:", error);
-    }
-  };
+  const fetchFashionItems = useCallback(
+    async (searchValue?: string, page?: number) => {
+      try {
+        const fashionItemApi = new FashionItemApi();
+        const response = await fashionItemApi.apiFashionitemsGet(
+          searchValue!,
+          null!,
+          null!,
+          null!,
+          null!,
+          null!,
+          null!,
+          null!,
+          ["Available"],
+          ["ConsignedForSale", "ItemBase"],
+          null!,
+          null!,
+          page!, // Pass the current page to the API
+          pageSize, // Pass the page size to the API
+          null!,
+          null!,
+          currentUser,
+          null!,
+          null!
+        );
+        setFashionItems(response.data.items || []); // Set the fetched items to state
+        setTotalCount(response.data.totalCount || 0); // Set the total count of items
+        setTotalPages(response.data.totalPages || 1); // Set the total number of pages
+      } catch (error) {
+        console.error("Error fetching fashion items:", error);
+      }
+    },
+    [currentUser, pageSize]
+  );
 
   // Debounce effect for search input
   useEffect(() => {
@@ -67,7 +70,7 @@ const ProductTable = ({
   // Fetch items whenever the debounced search term or page changes
   useEffect(() => {
     fetchFashionItems(debouncedSearch, currentPage);
-  }, [debouncedSearch, currentPage, currentUser]);
+  }, [debouncedSearch, currentPage, currentUser, fetchFashionItems]);
 
   // Handle page change
   const handlePageChange = (page: number) => {
@@ -96,7 +99,9 @@ const ProductTable = ({
         }, 0);
       }
 
-      setTotalCost(updatedTotalCost); // Update total cost state
+      if (setTotalCost) {
+        setTotalCost(updatedTotalCost);
+      } // Update total cost state
       return updatedSelectedItems;
     });
   };
@@ -132,7 +137,9 @@ const ProductTable = ({
                         </div>
                       </div>
                       <div className="text-gray-700 text-hover-primary fs-6 fw-bold">
-                        <strong>Price: {formatBalance(item.sellingPrice || 0)} VND</strong>
+                        <strong>
+                          Price: {formatBalance(item.sellingPrice || 0)} VND
+                        </strong>
                       </div>
                     </div>
                   </div>
@@ -142,12 +149,16 @@ const ProductTable = ({
             )}
           </div>
           <div className="fw-bold fs-4">
-            Subtotal: <span id="kt_ecommerce_edit_order_total_price">
-              {formatBalance(selectedItems.reduce((acc, itemId) => {
-                const item = fashionItems.find((i) => i.itemId === itemId);
-                return acc + (item?.sellingPrice || 0);
-              }, 0))}
-            </span> VND
+            Subtotal:{" "}
+            <span id="kt_ecommerce_edit_order_total_price">
+              {formatBalance(
+                selectedItems.reduce((acc, itemId) => {
+                  const item = fashionItems.find((i) => i.itemId === itemId);
+                  return acc + (item?.sellingPrice || 0);
+                }, 0)
+              )}
+            </span>{" "}
+            VND
           </div>
         </div>
 
@@ -177,8 +188,12 @@ const ProductTable = ({
           <thead>
             <tr className="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
               <th className="w-25px pe-2"></th>
-              <th className="text-gray-800  fs-5 fw-bold"><strong>Product</strong></th>
-              <th className="text-gray-800  fs-5 fw-bold"><strong>Selling Price</strong></th>
+              <th className="text-gray-800  fs-5 fw-bold">
+                <strong>Product</strong>
+              </th>
+              <th className="text-gray-800  fs-5 fw-bold">
+                <strong>Selling Price</strong>
+              </th>
             </tr>
           </thead>
           <tbody className="fw-semibold text-gray-600">
@@ -191,7 +206,9 @@ const ProductTable = ({
                       type="checkbox"
                       value={item.itemId}
                       checked={selectedItems.includes(item.itemId!)} // Ensure checkbox reflects the current state
-                      onChange={() => handleCheckboxChange(item.itemId!, item.sellingPrice!)}
+                      onChange={() =>
+                        handleCheckboxChange(item.itemId!, item.sellingPrice!)
+                      }
                     />
                   </div>
                 </td>
@@ -214,10 +231,12 @@ const ProductTable = ({
                     </div>
                     <div className="ms-5">
                       <div className="fw-semibold fs-7">
-                        <strong>Size: </strong>{item.size}
+                        <strong>Size: </strong>
+                        {item.size}
                       </div>
                       <div className="fw-semibold fs-7">
-                        <strong>Color: </strong>{item.color}
+                        <strong>Color: </strong>
+                        {item.color}
                       </div>
                       <div className="fw-semibold fs-7">
                         <strong>Condition: </strong> {item.condition}
@@ -233,7 +252,9 @@ const ProductTable = ({
                 </td>
                 <td className="text-end pe-5" data-order={item.sellingPrice}>
                   <span className="fw-bold ms-3">
-                    <strong>{formatBalance(item.sellingPrice!) || 0} VND</strong>
+                    <strong>
+                      {formatBalance(item.sellingPrice!) || 0} VND
+                    </strong>
                   </span>
                 </td>
               </tr>
@@ -245,8 +266,8 @@ const ProductTable = ({
         <div className="card-footer d-flex justify-content-between align-items-center">
           <div>
             Showing {(currentPage - 1) * pageSize + 1} to{" "}
-            {Math.min(currentPage * pageSize, totalCount)} of{" "}
-            {totalCount} entries
+            {Math.min(currentPage * pageSize, totalCount)} of {totalCount}{" "}
+            entries
           </div>
           <div>
             <button

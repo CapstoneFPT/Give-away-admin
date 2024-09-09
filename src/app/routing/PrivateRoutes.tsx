@@ -26,6 +26,7 @@ import ProductDetail from "../pages/product/ProductDetail.tsx";
 import OrderAdminDetailPage from "../admin/order/OrderAdminDetailPage.tsx";
 import AuctionAdminPage from "../admin/auction/AuctionAdminPage.tsx";
 import RefundDetail from "../pages/refund/RefundDetail.tsx";
+import CreateAuction from "../pages/auction/CreateAuction.tsx";
 const PrivateRoutes = () => {
   const { currentUser } = useAuth();
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
@@ -65,8 +66,8 @@ const PrivateRoutes = () => {
         <Route path="dashboard" element={<DashBoard />} />
         <Route path="builder" element={<BuilderPageWrapper />} />
         <Route path="menu-test" element={<MenuTestPage />} />
-        <Route path="auction" element={<Auction />} />
-        <Route path="order/*" element={<OrderPage />} />
+
+        <Route path="/order/order-list" element={<OrderPage />} />
         <Route path="refund" element={<RefundPage />} />
         <Route path="refund/:refundId" element={<RefundDetail />} />
         {/* Product Admin Routes */}
@@ -134,7 +135,7 @@ const PrivateRoutes = () => {
           path="product/*"
           element={
             <ProtectedRoute
-              roles={["Admin", "Staff"]}
+              roles={["Staff"]}
               children={
                 <SuspensedView>
                   <FashionItemsPage />
@@ -143,16 +144,37 @@ const PrivateRoutes = () => {
             />
           }
         />
-
         <Route
-          path="/product/product-list/:itemId"
-          element={<ProductDetail />}
+          path="auction/list"
+          element={
+            <ProtectedRoute
+              roles={["Staff"]}
+              children={
+                <SuspensedView>
+                  <Auction />
+                </SuspensedView>
+              }
+            />
+          }
+        />
+        <Route
+          path="auction/create"
+          element={
+            <ProtectedRoute
+              roles={["Staff"]}
+              children={
+                <SuspensedView>
+                  <CreateAuction />
+                </SuspensedView>
+              }
+            />
+          }
         />
         <Route
           path="consignment/*"
           element={
             <ProtectedRoute
-              roles={["Staff", "Admin"]}
+              roles={["Staff"]}
               children={
                 <SuspensedView>
                   <ConsignmentPage />
@@ -164,9 +186,14 @@ const PrivateRoutes = () => {
         <Route
           path="order/add-order"
           element={
-            <SuspensedView>
-              <AddOrderPage />
-            </SuspensedView>
+            <ProtectedRoute
+              roles={["Staff"]}
+              children={
+                <SuspensedView>
+                  <AddOrderPage />
+                </SuspensedView>
+              }
+            />
           }
         />
         <Route
@@ -210,13 +237,22 @@ const PrivateRoutes = () => {
         />
         <Route
           path="/consignment/:consignSaleId/line-item/:lineItemId"
-          element={<ConsignLineItemReview />}
+          element={
+            <ProtectedRoute
+              roles={["Staff"]}
+              children={
+                <SuspensedView>
+                  <ConsignLineItemReview />
+                </SuspensedView>
+              }
+            />
+          }
         />
         <Route
           path="consignment/:consignSaleId"
           element={
             <ProtectedRoute
-              roles={["Staff", "Admin"]}
+              roles={["Staff"]}
               children={
                 <SuspensedView>
                   <ConsignDetail />
