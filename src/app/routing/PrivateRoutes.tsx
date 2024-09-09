@@ -171,7 +171,7 @@ const PrivateRoutes = () => {
           }
         />
         <Route
-          path="consignment/*"
+          path="consignment/list"
           element={
             <ProtectedRoute
               roles={["Staff"]}
@@ -180,6 +180,15 @@ const PrivateRoutes = () => {
                   <ConsignmentPage />
                 </SuspensedView>
               }
+            />
+          }
+        />
+        <Route
+          path="consignment/create"
+          element={
+            <ProtectedRoute
+              roles={["Staff"]}
+              children={<SuspensedView></SuspensedView>}
             />
           }
         />

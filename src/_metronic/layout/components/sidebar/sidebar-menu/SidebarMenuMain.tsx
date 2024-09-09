@@ -54,9 +54,14 @@ const SidebarMenuMain = () => {
             fontIcon="bi-app-indicator"
           />
           <SidebarMenuItem
-            to="/consignment"
+            to="/consignment/list"
             title={"Consignment"}
             icon={"element-11"}
+          />
+          <SidebarMenuItem
+            to="/consignment/create"
+            title="Create Consignment Offline"
+            icon={"element-10"}
           />
           <SidebarMenuItem title="Product" to="/product" icon={"element-10"} />
           <SidebarMenuItem
@@ -76,7 +81,7 @@ const SidebarMenuMain = () => {
             icon={"element-12"}
           />
           <SidebarMenuItem
-            title="Order Offline"
+            title="Create Order Offline"
             to="/order/add-order"
             icon={"element-8"}
           />
