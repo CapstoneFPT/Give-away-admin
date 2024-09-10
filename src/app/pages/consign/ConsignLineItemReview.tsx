@@ -21,6 +21,7 @@ import {
   getConsignLineItemStatusColor,
   getConsignSaleStatusColor,
 } from "../../utils/statusColors";
+import { showAlert } from "../../../utils/Alert.tsx";
 
 export const ConsignLineItemReview: React.FC = () => {
   const { consignSaleId, lineItemId } = useParams<{
@@ -101,7 +102,7 @@ export const ConsignLineItemReview: React.FC = () => {
         data?.gender,
         true
       );
-      console.log(response)
+      console.log(response);
       return response.data;
     },
   });
@@ -197,21 +198,29 @@ export const ConsignLineItemReview: React.FC = () => {
     setIsPriceChanged(newPrice !== data?.expectedPrice?.toString());
   };
 
-  const handleCreateItemModalSubmit = () => {
+  const handleCreateItemModalSubmit = async (): Promise<void> => {
     if (!selectedMasterItem) {
-      console.error("Please select a master item");
-      return;
+      showAlert("error", "Please select a master item");
+      throw new Error("No master item selected");
     }
 
-    if (dealPrice === data?.expectedPrice?.toString()) {
-      createIndividualMutation.mutate({
-        masterItemId: selectedMasterItem,
-        dealPrice: parseFloat(dealPrice),
-      });
-    } else {
-      createIndividualAfterNegotiationMutation.mutate({
-        masterItemId: selectedMasterItem,
-      });
+    try {
+      if (dealPrice === data?.expectedPrice?.toString()) {
+        await createIndividualMutation.mutateAsync({
+          masterItemId: selectedMasterItem,
+          dealPrice: parseFloat(dealPrice),
+        });
+      } else {
+        await createIndividualAfterNegotiationMutation.mutateAsync({
+          masterItemId: selectedMasterItem,
+        });
+      }
+      showAlert("success", "Item successfully added to inventory");
+      setShowModal(false); // Close the modal on success
+    } catch (error) {
+      console.error(error);
+      showAlert("error", `Failed to add item to inventory. Please try again.`);
+      throw error; // Re-throw the error so it can be caught in the AddToInventoryModal
     }
   };
 
@@ -384,78 +393,80 @@ export const ConsignLineItemReview: React.FC = () => {
           </KTCard>
         </div>
       </div>
-
-      <div className="row g-5 g-xl-8 mt-5">
-        <div className="col-xl-12">
-          <KTCard>
-            <KTCardBody>
-              <h3 className="fs-2 fw-bold mb-5">Add Deal Price</h3>
-              <form onSubmit={handleSubmit}>
-                <div className="row mb-5">
-                  <div className="col-6">
-                    <label htmlFor="confirmedPrice" className="form-label">
-                      Deal Price
-                    </label>
-                    <input
-                      type="number"
-                      className={`form-control ${
-                        isPriceChanged ? "border-warning" : ""
-                      }`}
-                      id="confirmedPrice"
-                      value={dealPrice}
-                      readOnly={!!data.dealPrice}
-                      onChange={handleConfirmedPriceChange}
-                      placeholder="Enter deal price"
-                    />
-                    {isPriceChanged && (
-                      <div className="text-warning mt-2">
-                        Changing the deal price will require negotiation
-                      </div>
-                    )}
+      {!data.individualItemId && (
+        <div className="row g-5 g-xl-8 mt-5">
+          <div className="col-xl-12">
+            <KTCard>
+              <KTCardBody>
+                <h3 className="fs-2 fw-bold mb-5">Add Deal Price</h3>
+                <form onSubmit={handleSubmit}>
+                  <div className="row mb-5">
+                    <div className="col-6">
+                      <label htmlFor="confirmedPrice" className="form-label">
+                        Deal Price
+                      </label>
+                      <input
+                        type="number"
+                        className={`form-control ${
+                          isPriceChanged ? "border-warning" : ""
+                        }`}
+                        id="confirmedPrice"
+                        value={dealPrice}
+                        readOnly={!!data.dealPrice}
+                        onChange={handleConfirmedPriceChange}
+                        placeholder="Enter deal price"
+                      />
+                      {isPriceChanged && (
+                        <div className="text-warning mt-2">
+                          Changing the deal price will require negotiation
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-                <div className="row">
-                  <div className="col-12">
-                    <button
-                      type="submit"
-                      disabled={!!data.dealPrice || data.status != "Received"}
-                      className="btn btn-primary me-3"
-                    >
-                      <KTIcon iconName="check" className="fs-2 me-2" />
-                      {data.dealPrice
-                        ? "Deal Price Decided"
-                        : "Submit Deal Price"}
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-success me-3"
-                      disabled={
-                        !!data.individualItemId ||
-                        data.status !=
-                          ConsignSaleLineItemStatus.ReadyForConsignSale ||
-                        consignSaleData?.status != "ReadyToSale"
-                      }
-                      onClick={handleCreateNewItem}
-                    >
-                      <KTIcon iconName="plus" className="fs-2 me-2" />
-                      Add To Inventory
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-secondary"
-                      onClick={() => navigate(`/consignment/${consignSaleId}`)}
-                    >
-                      <KTIcon iconName="arrow-left" className="fs-2 me-2" />
-                      Back to Consignment
-                    </button>
+                  <div className="row">
+                    <div className="col-12">
+                      <button
+                        type="submit"
+                        disabled={!!data.dealPrice || data.status != "Received"}
+                        className="btn btn-primary me-3"
+                      >
+                        <KTIcon iconName="check" className="fs-2 me-2" />
+                        {data.dealPrice
+                          ? "Deal Price Decided"
+                          : "Submit Deal Price"}
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-success me-3"
+                        disabled={
+                          !!data.individualItemId ||
+                          data.status !=
+                            ConsignSaleLineItemStatus.ReadyForConsignSale ||
+                          consignSaleData?.status != "ReadyToSale"
+                        }
+                        onClick={handleCreateNewItem}
+                      >
+                        <KTIcon iconName="plus" className="fs-2 me-2" />
+                        Add To Inventory
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={() =>
+                          navigate(`/consignment/${consignSaleId}`)
+                        }
+                      >
+                        <KTIcon iconName="arrow-left" className="fs-2 me-2" />
+                        Back to Consignment
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </form>
-            </KTCardBody>
-          </KTCard>
+                </form>
+              </KTCardBody>
+            </KTCard>
+          </div>
         </div>
-      </div>
-
+      )}
       <AddToInventoryModal
         isOpen={showModal}
         onClose={handleModalClose}

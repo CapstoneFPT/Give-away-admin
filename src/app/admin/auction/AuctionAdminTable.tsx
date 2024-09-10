@@ -1,10 +1,11 @@
 import React, { useState, useCallback } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 import { KTCard, KTCardBody, KTIcon } from "../../../_metronic/helpers";
 import { AuctionApi, AuctionStatus, AuctionListResponse } from "../../../api";
 import { Content } from "../../../_metronic/layout/components/content";
 import { Link } from "react-router-dom";
-
+import { showAlert } from "../../../utils/Alert";
+import { formatBalance } from "../../pages/utils/utils";
 type Props = {
   className: string;
 };
@@ -33,7 +34,7 @@ const AuctionAdminList: React.FC<Props> = ({ className }) => {
     () => fetchAuctions(),
     { keepPreviousData: true }
   );
-
+  console.log(data);
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);
@@ -55,6 +56,43 @@ const AuctionAdminList: React.FC<Props> = ({ className }) => {
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
+  };
+
+  const queryClient = useQueryClient();
+  const auctionApi = new AuctionApi();
+
+  const approveAuctionMutation = useMutation(
+    (auctionId: string) => auctionApi.apiAuctionsIdApprovePut(auctionId),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["Auctions"]);
+        showAlert("success", "Auction approved successfully");
+      },
+      onError: (error) => {
+        showAlert("error", `Failed to approve auction: ${error}`);
+      },
+    }
+  );
+
+  const rejectAuctionMutation = useMutation(
+    (auctionId: string) => auctionApi.apiAuctionsIdRejectPut(auctionId),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["Auctions"]);
+        showAlert("success", "Auction rejected successfully");
+      },
+      onError: (error) => {
+        showAlert("error", `Failed to reject auction: ${error}`);
+      },
+    }
+  );
+
+  const handleApprove = (auctionId: string) => {
+    approveAuctionMutation.mutate(auctionId);
+  };
+
+  const handleReject = (auctionId: string) => {
+    rejectAuctionMutation.mutate(auctionId);
   };
 
   return (
@@ -128,27 +166,57 @@ const AuctionAdminList: React.FC<Props> = ({ className }) => {
                         style={{ height: "200px", objectFit: "cover" }}
                       />
                       <div className="card-body d-flex flex-column">
-                        <h5 className="card-title text-truncate">
+                        <h5 className="card-title text-truncate fw-bold">
                           {auction.title}
                         </h5>
                         <p className="card-text small">
-                          Start:{" "}
+                          <strong>Start:</strong>{" "}
                           {new Date(auction.startDate ?? "").toLocaleString()}
                         </p>
                         <p className="card-text small">
-                          End:{" "}
+                          <strong>End:</strong>{" "}
                           {new Date(auction.endDate ?? "").toLocaleString()}
                         </p>
                         <p className="card-text">
-                          Deposit: ${auction.depositFee?.toFixed(2)}
+                          <strong>Deposit:</strong>{" "}
+                          {auction?.depositFee
+                            ? formatBalance(auction.depositFee)
+                            : "N/A"}
+                          VND
                         </p>
-                        <span
-                          className={`badge badge-light-${getStatusColor(
-                            auction.status
-                          )} mb-2`}
-                        >
-                          {auction.status}
-                        </span>
+                        <div className="d-flex justify-content-center mb-2">
+                          <div
+                            className={`badge badge-light-${getStatusColor(
+                              auction.status
+                            )} mb-2 w-50 d-flex justify-content-center align-items-center`}
+                          >
+                            {auction.status}
+                          </div>
+                        </div>
+                        {auction.status === AuctionStatus.Pending && (
+                          <div className="d-flex justify-content-between mt-2 mb-2">
+                            <button
+                              className="btn btn-sm btn-success"
+                              onClick={() => handleApprove(auction.auctionId!)}
+                              disabled={
+                                approveAuctionMutation.isLoading ||
+                                rejectAuctionMutation.isLoading
+                              }
+                            >
+                              Approve
+                            </button>
+                            <button
+                              className="btn btn-sm btn-danger"
+                              onClick={() => handleReject(auction.auctionId!)}
+                              disabled={
+                                approveAuctionMutation.isLoading ||
+                                rejectAuctionMutation.isLoading
+                              }
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        )}
                         <Link
                           to={`/auction-admin/${auction.auctionId}`}
                           className="btn btn-sm btn-primary mt-auto"

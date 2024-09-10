@@ -11,12 +11,6 @@ const SidebarMenuMain = () => {
   const { currentUser } = useAuth();
   return (
     <>
-      {/* 
-      <SidebarMenuItem
-        to={"/consignment"}
-        title={"Consignment"}
-        icon={"element-11"}
-      /> */}
       {currentUser?.role === "Admin" && (
         <>
           <SidebarMenuItem
@@ -58,20 +52,11 @@ const SidebarMenuMain = () => {
             title={"Consignment"}
             icon={"element-11"}
           />
-          <SidebarMenuItem
-            to="/consignment/create"
-            title="Create Consignment Offline"
-            icon={"element-10"}
-          />
+
           <SidebarMenuItem title="Product" to="/product" icon={"element-10"} />
           <SidebarMenuItem
             title="Auction"
             to="/auction/list"
-            icon={"element-11"}
-          />
-          <SidebarMenuItem
-            title="Create Auction"
-            to="auction/create"
             icon={"element-11"}
           />
           <SidebarMenuItem title="Refund List" to="refund" icon={"element-9"} />
@@ -80,11 +65,28 @@ const SidebarMenuMain = () => {
             to="/order/order-list"
             icon={"element-12"}
           />
-          <SidebarMenuItem
-            title="Create Order Offline"
-            to="/order/add-order"
-            icon={"element-8"}
-          />
+          <SidebarMenuItemWithSub
+            to="/create"
+            title="Create"
+            icon="element-plus"
+            fontIcon="bi-plus-circle"
+          >
+            <SidebarMenuItem
+              to="/consignment/create"
+              title="Create Consignment Offline"
+              hasBullet={true}
+            />
+            <SidebarMenuItem
+              to="/auction/create"
+              title="Create Auction"
+              hasBullet={true}
+            />
+            <SidebarMenuItem
+              to="/order/add-order"
+              title="Create Order Offline"
+              hasBullet={true}
+            />
+          </SidebarMenuItemWithSub>
         </>
       )}
       {/* <SidebarMenuItem

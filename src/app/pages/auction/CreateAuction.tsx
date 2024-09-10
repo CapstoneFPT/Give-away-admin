@@ -5,6 +5,7 @@ import ProductTableSingle from "./AuctionTable";
 import { AuctionApi, CreateAuctionRequest } from "../../../api/api";
 import { useAuth } from "../../modules/auth";
 import { toast } from "react-toastify";
+import { showAlert } from "../../../utils/Alert";
 
 const CreateAuction = () => {
   const [selectedItem, setSelectedItem] = useState<string>("");
@@ -119,7 +120,8 @@ const CreateAuction = () => {
       // Optionally, redirect to auction list or clear form
     } catch (error) {
       console.error("Error creating auction:", error);
-      toast.error(
+      showAlert(
+        "error",
         error instanceof Error ? error.message : "Failed to create auction."
       );
     } finally {

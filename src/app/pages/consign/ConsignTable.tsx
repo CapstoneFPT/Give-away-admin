@@ -1,17 +1,19 @@
 import React, { useState, useCallback } from "react";
 import { useQuery } from "react-query";
-import { KTCardBody, KTIcon } from "../../../_metronic/helpers";
+// import { KTCardBody, KTIcon } from "../../../_metronic/helpers";
 import { ConsignSaleApi, ConsignSaleStatus } from "../../../api";
 import { Content } from "../../../_metronic/layout/components/content";
 import { useAuth } from "../../modules/auth";
-import { KTTable } from '../../../_metronic/helpers/components/KTTable';
+import { KTTable } from "../../../_metronic/helpers/components/KTTable";
 import consignSaleColumns from "./_columns";
 
 const ConsignTable: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [consignorName, setConsignorName] = useState("");
   const [consignorPhone, setConsignorPhone] = useState("");
-  const [statusFilter, setStatusFilter] = useState<ConsignSaleStatus | null>(null);
+  const [statusFilter, setStatusFilter] = useState<ConsignSaleStatus | null>(
+    null
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const { currentUser } = useAuth();
   const pageSize = 10;
@@ -49,11 +51,24 @@ const ConsignTable: React.FC = () => {
         throw error;
       }
     },
-    [searchTerm, consignorName, consignorPhone, statusFilter, currentUser?.shopId]
+    [
+      searchTerm,
+      consignorName,
+      consignorPhone,
+      statusFilter,
+      currentUser?.shopId,
+    ]
   );
 
   const { data, isLoading, error } = useQuery(
-    ["Consign", searchTerm, consignorName, consignorPhone, statusFilter, currentPage],
+    [
+      "Consign",
+      searchTerm,
+      consignorName,
+      consignorPhone,
+      statusFilter,
+      currentPage,
+    ],
     () => fetchData(currentPage, pageSize),
     { refetchOnWindowFocus: false, keepPreviousData: true }
   );
@@ -98,18 +113,18 @@ const ConsignTable: React.FC = () => {
                 name="statusFilter"
                 className="form-select form-select-solid w-200px me-2"
                 value={statusFilter || ""}
-                onChange={(e) => setStatusFilter(e.target.value as ConsignSaleStatus)}
+                onChange={(e) =>
+                  setStatusFilter(e.target.value as ConsignSaleStatus)
+                }
               >
                 <option value="">All Statuses</option>
                 {Object.values(ConsignSaleStatus).map((status) => (
-                  <option key={status} value={status}>{status}</option>
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
                 ))}
               </select>
             </div>
-            <a href="#" className="btn btn-sm btn-light-primary">
-              <KTIcon iconName="plus" className="fs-2" />
-              New Consignment
-            </a>
           </div>
         </div>
 

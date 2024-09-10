@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
-import { FashionItemApi, FashionItemDetailResponse, FashionItemStatus } from "../../../api";
+import {
+  FashionItemApi,
+  FashionItemDetailResponse,
+  FashionItemStatus,
+} from "../../../api";
 import { Content } from "../../../_metronic/layout/components/content";
-import { KTCard, KTCardBody, KTIcon } from "../../../_metronic/helpers";
+import { KTCard, KTCardBody } from "../../../_metronic/helpers";
 import { formatBalance } from "../utils/utils";
 import KTInfoItem from "../../../_metronic/helpers/components/KTInfoItem";
 import { toast, ToastContainer } from "react-toastify";
@@ -12,17 +16,17 @@ import "react-toastify/dist/ReactToastify.css";
 const ProductDetail: React.FC = () => {
   const { itemId } = useParams<{ itemId: string }>();
   const fashionItemApi = new FashionItemApi();
-  const [selectedImage, setSelectedImage] = useState('');
+  const [selectedImage, setSelectedImage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const queryClient = useQueryClient();
-
-  const { data, isLoading, error } = useQuery<FashionItemDetailResponse | undefined, Error>(
-    ["FashionItemDetail", itemId],
-    async () => {
-      const response = await fashionItemApi.apiFashionitemsItemIdGet(itemId!);
-      return response.data.data;
-    }
-  );
+  console.log(itemId);
+  const { data, isLoading, error } = useQuery<
+    FashionItemDetailResponse | undefined,
+    Error
+  >(["FashionItemDetail", itemId], async () => {
+    const response = await fashionItemApi.apiFashionitemsItemIdGet(itemId!);
+    return response.data.data;
+  });
 
   const mutation = useMutation(
     async () => {
@@ -31,7 +35,11 @@ const ProductDetail: React.FC = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["FashionItemDetail", itemId]);
-        toast.success(`Item ${data?.status === "Available" ? "taken down" : "posted"} successfully`);
+        toast.success(
+          `Item ${
+            data?.status === "Available" ? "taken down" : "posted"
+          } successfully`
+        );
       },
       onError: (error) => {
         console.error("Error changing item status:", error);
@@ -57,24 +65,43 @@ const ProductDetail: React.FC = () => {
               {/* Left side - Image */}
               <div className="col-xl-7">
                 <div className="d-flex">
-                  <div className="d-flex flex-column me-3" style={{width: '100px'}}>
-                    {data.images && data.images.map((image, index) => (
-                      <img 
-                        key={index} 
-                        src={image} 
-                        alt={`${data.name || "Product"} ${index + 1}`} 
-                        className={`img-thumbnail mb-3 cursor-pointer ${selectedImage === image ? 'border-primary' : ''}`}
-                        style={{width: '150px', height: '150px', objectFit: 'cover'}}
-                        onClick={() => setSelectedImage(image)}
-                      />
-                    ))}
+                  <div
+                    className="d-flex flex-column me-3"
+                    style={{ width: "100px" }}
+                  >
+                    {data.images &&
+                      data.images.map((image, index) => (
+                        <img
+                          key={index}
+                          src={image}
+                          alt={`${data.name || "Product"} ${index + 1}`}
+                          className={`img-thumbnail mb-3 cursor-pointer ${
+                            selectedImage === image ? "border-primary" : ""
+                          }`}
+                          style={{
+                            width: "150px",
+                            height: "150px",
+                            objectFit: "cover",
+                          }}
+                          onClick={() => setSelectedImage(image)}
+                        />
+                      ))}
                   </div>
-                  <div style={{flex: 1, marginLeft: '90px'}}>
-                    <img 
-                      src={selectedImage || (data.images && data.images.length > 0 ? data.images[0] : '')} 
-                      alt={`${data.name || "Product"} main`} 
+                  <div style={{ flex: 1, marginLeft: "90px" }}>
+                    <img
+                      src={
+                        selectedImage ||
+                        (data.images && data.images.length > 0
+                          ? data.images[0]
+                          : "")
+                      }
+                      alt={`${data.name || "Product"} main`}
                       className="img-fluid rounded cursor-pointer"
-                      style={{maxHeight: '700px', width: '100%', objectFit: 'cover'}}
+                      style={{
+                        maxHeight: "700px",
+                        width: "100%",
+                        objectFit: "cover",
+                      }}
                       onClick={() => setIsModalOpen(true)}
                     />
                   </div>
@@ -84,37 +111,96 @@ const ProductDetail: React.FC = () => {
               {/* Right side - Product Information */}
               <div className="col-xl-5">
                 <h3 className="card-title align-items-start flex-column mb-5">
-                  <span className="card-label fw-bold text-dark">{data.name}</span>
-                  <span className="text-muted mt-1 fw-semibold fs-7"> Item Code: {data.itemCode}</span>
+                  <span className="card-label fw-bold text-dark">
+                    {data.name}
+                  </span>
+                  <span className="text-muted mt-1 fw-semibold fs-7">
+                    {" "}
+                    Item Code: {data.itemCode}
+                  </span>
                 </h3>
 
                 <div className="d-flex flex-wrap mb-5">
-                  <KTInfoItem iconName="dollar" title="Price" value={data.sellingPrice ? formatBalance(data.sellingPrice) + ' VND' : 'N/A'} />
-                  <KTInfoItem iconName="category" title="Category" value={data.categoryName || 'N/A'} />
-                  <KTInfoItem iconName="information" title="Status" value={data.status || 'N/A'} />
-                  <KTInfoItem iconName="heart" title="Condition" value={data.condition || 'N/A'} />
-                  <KTInfoItem iconName="tag" title="Type" value={data.type || 'N/A'} />
-                  <KTInfoItem iconName="user" title="Gender" value={data.gender || 'N/A'} />
-                  <KTInfoItem iconName="expand" title="Size" value={data.size || 'N/A'} />
-                  <KTInfoItem iconName="color-lens" title="Color" value={data.color || 'N/A'} />
-                  <KTInfoItem iconName="shop" title="Brand" value={data.brand || 'N/A'} />
-                  <KTInfoItem iconName="handcart" title="Consignment" value={data.isConsignment ? "Yes" : "No"} />
-                  <KTInfoItem iconName="location-pin" title="Shop Address" value={data.shopAddress || 'N/A'} />
+                  <KTInfoItem
+                    iconName="dollar"
+                    title="Price"
+                    value={
+                      data.sellingPrice
+                        ? formatBalance(data.sellingPrice) + " VND"
+                        : "N/A"
+                    }
+                  />
+                  <KTInfoItem
+                    iconName="category"
+                    title="Category"
+                    value={data.categoryName || "N/A"}
+                  />
+                  <KTInfoItem
+                    iconName="information"
+                    title="Status"
+                    value={data.status || "N/A"}
+                  />
+                  <KTInfoItem
+                    iconName="heart"
+                    title="Condition"
+                    value={data.condition || "N/A"}
+                  />
+                  <KTInfoItem
+                    iconName="tag"
+                    title="Type"
+                    value={data.type || "N/A"}
+                  />
+                  <KTInfoItem
+                    iconName="user"
+                    title="Gender"
+                    value={data.gender || "N/A"}
+                  />
+                  <KTInfoItem
+                    iconName="expand"
+                    title="Size"
+                    value={data.size || "N/A"}
+                  />
+                  <KTInfoItem
+                    iconName="color-lens"
+                    title="Color"
+                    value={data.color || "N/A"}
+                  />
+                  <KTInfoItem
+                    iconName="shop"
+                    title="Brand"
+                    value={data.brand || "N/A"}
+                  />
+                  <KTInfoItem
+                    iconName="handcart"
+                    title="Consignment"
+                    value={data.isConsignment ? "Yes" : "No"}
+                  />
+                  <KTInfoItem
+                    iconName="location-pin"
+                    title="Shop Address"
+                    value={data.shopAddress || "N/A"}
+                  />
                 </div>
 
                 <div className="mt-5">
-                  {
-                    (data.status === FashionItemStatus.Available || data.status === FashionItemStatus.Unavailable) &&
-                  <button
-                    onClick={handleStatusChange}
-                    className={`btn ${
-                      data.status === FashionItemStatus.Available ? "btn-danger" : "btn-success"
-                    } btn-sm`}
-                    disabled={mutation.isLoading}
-                  >
-                    {mutation.isLoading ? "Processing..." : (data.status === FashionItemStatus.Available ? "Take Down Item" : "Post Item")}
-                  </button>
-                  }
+                  {(data.status === FashionItemStatus.Available ||
+                    data.status === FashionItemStatus.Unavailable) && (
+                    <button
+                      onClick={handleStatusChange}
+                      className={`btn ${
+                        data.status === FashionItemStatus.Available
+                          ? "btn-danger"
+                          : "btn-success"
+                      } btn-sm`}
+                      disabled={mutation.isLoading}
+                    >
+                      {mutation.isLoading
+                        ? "Processing..."
+                        : data.status === FashionItemStatus.Available
+                        ? "Take Down Item"
+                        : "Post Item"}
+                    </button>
+                  )}
                 </div>
 
                 {data.description && (
@@ -141,21 +227,30 @@ const ProductDetail: React.FC = () => {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">{data.name}</h5>
-                <button type="button" className="btn-close" onClick={() => setIsModalOpen(false)}></button>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setIsModalOpen(false)}
+                ></button>
               </div>
               <div className="modal-body">
-                <img 
-                  src={selectedImage || (data.images && data.images.length > 0 ? data.images[0] : '')} 
-                  alt={`${data.name || "Product"} full`} 
+                <img
+                  src={
+                    selectedImage ||
+                    (data.images && data.images.length > 0
+                      ? data.images[0]
+                      : "")
+                  }
+                  alt={`${data.name || "Product"} full`}
                   className="img-fluid"
-                  style={{width: '100%', height: 'auto'}}
+                  style={{ width: "100%", height: "auto" }}
                 />
               </div>
             </div>
           </div>
         </div>
       )}
-      <ToastContainer autoClose={2000} position="top-right"/>
+      <ToastContainer autoClose={2000} position="top-right" />
     </>
   );
 };

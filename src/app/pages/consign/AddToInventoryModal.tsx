@@ -8,11 +8,8 @@ import {
 import { formatBalance } from "../utils/utils";
 import KTModal from "../../../_metronic/helpers/components/KTModal.tsx";
 import { Button } from "react-bootstrap";
-import { toast } from "react-toastify"; // Import toast
-import 'react-toastify/dist/ReactToastify.css'; // Import toast styles
 
-// Initialize toast (only once in your app, typically in the entry point)
-// toast.configure();
+import { showAlert } from "../../../utils/Alert.tsx";
 
 interface AddToInventoryModalProps {
   isOpen: boolean;
@@ -41,9 +38,12 @@ export const AddToInventoryModal: React.FC<AddToInventoryModalProps> = ({
   const [masterItemCode, setMasterItemCode] = useState("");
   const [description, setDescription] = useState("");
   const [categoryId, setCategoryId] = useState("");
-  const [selectedGender, setSelectedGender] = useState<"550e8400-e29b-41d4-a716-446655440000" | "550e8400-e29b-41d4-a716-446655440001">("550e8400-e29b-41d4-a716-446655440000");
+  const [selectedGender, setSelectedGender] = useState<
+    | "550e8400-e29b-41d4-a716-446655440000"
+    | "550e8400-e29b-41d4-a716-446655440001"
+  >("550e8400-e29b-41d4-a716-446655440000");
   const [categories, setCategories] = useState<any[]>([]);
-  console.log('consignLineItemid',data.consignSaleLineItemId)
+  console.log("consignLineItemid", data.consignSaleLineItemId);
   useEffect(() => {
     const fetchCategories = async () => {
       const categoryApi = new CategoryApi();
@@ -55,7 +55,7 @@ export const AddToInventoryModal: React.FC<AddToInventoryModalProps> = ({
           selectedGender,
           level
         );
-        console.log('category', response);
+        console.log("category", response);
         setCategories(response.data.data!); // Assuming response.data contains the categories array
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -64,16 +64,34 @@ export const AddToInventoryModal: React.FC<AddToInventoryModalProps> = ({
 
     fetchCategories();
   }, [selectedGender]);
-
+  const validateMasterItemForm = (): boolean => {
+    if (!masterItemCode.trim()) {
+      showAlert("error", "Master Item Code is required.");
+      return false;
+    }
+    if (!description.trim()) {
+      showAlert("error", "Description is required.");
+      return false;
+    }
+    if (!categoryId) {
+      showAlert("error", "Please select a category.");
+      return false;
+    }
+    return true;
+  };
   const handleCreateButtonClick = () => {
     setIsCreatingMasterItem(true);
   };
 
-  const handleMasterItemCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMasterItemCodeChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setMasterItemCode(e.target.value);
   };
 
-  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleDescriptionChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
     setDescription(e.target.value);
   };
 
@@ -82,31 +100,46 @@ export const AddToInventoryModal: React.FC<AddToInventoryModalProps> = ({
   };
 
   const handleGenderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedGender(e.target.value as "550e8400-e29b-41d4-a716-446655440000" | "550e8400-e29b-41d4-a716-446655440001");
+    setSelectedGender(
+      e.target.value as
+        | "550e8400-e29b-41d4-a716-446655440000"
+        | "550e8400-e29b-41d4-a716-446655440001"
+    );
   };
-
+  const handleCancelChanges = () => {
+    setIsCreatingMasterItem(false);
+    setMasterItemCode("");
+    setDescription("");
+    setCategoryId("");
+  };
   const handleSaveChanges = async () => {
-    const responseCreateMasterConsign = new ConsignLineItemApi();
-   
-    try {
-      await responseCreateMasterConsign.apiConsignlineitemsConsignLineItemIdCreateMasteritemPost(data.consignSaleLineItemId!, {
-        masterItemCode: masterItemCode,
-        description: description,
-        categoryId: categoryId, // Ensure categoryId is included
-        images: data.images,
-        name: data.productName,
-      });
-
-      // Show success toast
-      toast.success("Master item created successfully!");
-    } catch (error) {
-      console.error("Error creating master item:", error);
-
-      // Show error toast
-      toast.error("Failed to create master item. Please try again.");
+    if (!validateMasterItemForm()) {
+      return;
     }
 
-    setIsCreatingMasterItem(false);
+    const responseCreateMasterConsign = new ConsignLineItemApi();
+
+    try {
+      await responseCreateMasterConsign.apiConsignlineitemsConsignLineItemIdCreateMasteritemPost(
+        data.consignSaleLineItemId!,
+        {
+          masterItemCode: masterItemCode,
+          description: description,
+          categoryId: categoryId,
+          images: data.images,
+          name: data.productName,
+        }
+      );
+
+      showAlert("success", "Master item created successfully!");
+      setMasterItemCode("");
+      setDescription("");
+      setCategoryId("");
+      setIsCreatingMasterItem(false);
+    } catch (error) {
+      console.error("Error creating master item:", error);
+      showAlert("error", "Failed to create master item. Please try again.");
+    }
   };
 
   return (
@@ -219,16 +252,17 @@ export const AddToInventoryModal: React.FC<AddToInventoryModalProps> = ({
               >
                 <option value="">Select a master item</option>
                 {masterItemsData &&
-                  masterItemsData.items?.map(
-                    (item: MasterItemListResponse) => (
-                      <option key={item.masterItemId} value={item.masterItemId}>
-                        {`${item.itemCode} - ${item.name} - ${item.brand} - ${item.gender}`}
-                      </option>
-                    )
-                  )}
+                  masterItemsData.items?.map((item: MasterItemListResponse) => (
+                    <option key={item.masterItemId} value={item.masterItemId}>
+                      {`${item.itemCode} - ${item.name} - ${item.brand} - ${item.gender}`}
+                    </option>
+                  ))}
               </select>
               <h6 className="fw-bold mb-3">Create a Master Product: </h6>
-              <Button className="btn btn-primary" onClick={handleCreateButtonClick}>
+              <Button
+                className="btn btn-primary"
+                onClick={handleCreateButtonClick}
+              >
                 Create
               </Button>
             </>
@@ -270,7 +304,10 @@ export const AddToInventoryModal: React.FC<AddToInventoryModalProps> = ({
                       name="genderRadio"
                       id="menRadio"
                       value="550e8400-e29b-41d4-a716-446655440000"
-                      checked={selectedGender === "550e8400-e29b-41d4-a716-446655440000"}
+                      checked={
+                        selectedGender ===
+                        "550e8400-e29b-41d4-a716-446655440000"
+                      }
                       onChange={handleGenderChange}
                     />
                     <label className="form-check-label" htmlFor="menRadio">
@@ -284,7 +321,10 @@ export const AddToInventoryModal: React.FC<AddToInventoryModalProps> = ({
                       name="genderRadio"
                       id="womenRadio"
                       value="550e8400-e29b-41d4-a716-446655440001"
-                      checked={selectedGender === "550e8400-e29b-41d4-a716-446655440001"}
+                      checked={
+                        selectedGender ===
+                        "550e8400-e29b-41d4-a716-446655440001"
+                      }
                       onChange={handleGenderChange}
                     />
                     <label className="form-check-label" htmlFor="womenRadio">
@@ -302,7 +342,10 @@ export const AddToInventoryModal: React.FC<AddToInventoryModalProps> = ({
                 >
                   <option value="">Select a category</option>
                   {categories.map((category) => (
-                    <option key={category.categoryId} value={category.categoryId}>
+                    <option
+                      key={category.categoryId}
+                      value={category.categoryId}
+                    >
                       {category.name}
                     </option>
                   ))}
@@ -314,6 +357,13 @@ export const AddToInventoryModal: React.FC<AddToInventoryModalProps> = ({
                 onClick={handleSaveChanges}
               >
                 Save Master Item
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={handleCancelChanges}
+              >
+                Cancel
               </button>
             </>
           )}

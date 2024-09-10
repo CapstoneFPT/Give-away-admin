@@ -1,8 +1,8 @@
 import React from "react";
 import { Column } from "react-table";
 import { FashionItemList } from "../../../api";
-import { KTIcon } from "../../../_metronic/helpers";
-import { useNavigate } from 'react-router-dom';
+// import { KTIcon } from "../../../_metronic/helpers";
+import { useNavigate } from "react-router-dom";
 
 export const columns: Column<FashionItemList>[] = [
   {
@@ -48,15 +48,15 @@ export const columns: Column<FashionItemList>[] = [
     Header: "Condition",
     accessor: "condition",
   },
-  {
-    Header: "Selling Price",
-    accessor: "sellingPrice",
-    Cell: ({ value }) => `${value?.toLocaleString()} VND`,
-  },
-  {
-    Header: "Status",
-    accessor: "status",
-  },
+  // {
+  //   Header: "Selling Price",
+  //   accessor: "sellingPrice",
+  //   Cell: ({ value }) => `${value?.toLocaleString()} VND`,
+  // },
+  // {
+  //   Header: "Status",
+  //   accessor: "status",
+  // },
   {
     Header: "Type",
     accessor: "type",
@@ -68,7 +68,11 @@ export const columns: Column<FashionItemList>[] = [
       return (
         <button
           className="btn btn-sm btn-primary"
-          onClick={() => navigate(`/product/product-list/list-fashion/${row.original.masterItemId}/${row.original.itemId}`)}
+          onClick={() =>
+            navigate(
+              `/product/product-list/list-fashion/${row.original.masterItemId}/${row.original.itemId}`
+            )
+          }
         >
           View Details
         </button>
