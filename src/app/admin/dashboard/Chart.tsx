@@ -17,6 +17,7 @@ const Chart: React.FC<Props> = ({ className }) => {
   const [selectedShopId, setSelectedShopId] = useState<string>("");
   const [shops, setShops] = useState<ShopDetailResponse[]>([]); // State to store shops
   const [isYearInputDisabled, setIsYearInputDisabled] = useState<boolean>(true); // Disable year input initially
+  const [inputYear, setInputYear] = useState<string>("2024"); // New state for input year
 
   const refreshMode = useCallback(() => {
     if (!chartRef.current) {
@@ -86,22 +87,30 @@ const Chart: React.FC<Props> = ({ className }) => {
   };
 
   const handleYearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+    setInputYear(e.target.value);
+  };
 
-    // Validate and handle the year as a string
-    const year = parseInt(value, 10);
-
-    if (value === "") {
-      // Handle empty input if needed
-      setSelectedYear("");
-    } else if (isNaN(year) || year < 2000 || year > 3000) {
-      // Optionally set to a default valid value
-      setSelectedYear("2000");
-      e.target.value = "2000"; // Ensure the input field shows a valid value
-    } else {
-      setSelectedYear(value);
+  const handleYearKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      const year = parseInt(inputYear, 10);
+      if (
+        !isNaN(year) &&
+        year >= 2000 &&
+        year <= 3000 &&
+        inputYear.length === 4
+      ) {
+        setSelectedYear(inputYear);
+      } else {
+        // Reset to previous valid year if input is invalid
+        setInputYear(selectedYear);
+        showAlert(
+          "error",
+          "Please enter a valid 4-digit year between 2000 and 3000."
+        );
+      }
     }
   };
+
   const handleShopChange = (shopId: string) => {
     setSelectedShopId(shopId);
   };
@@ -135,13 +144,12 @@ const Chart: React.FC<Props> = ({ className }) => {
 
           {/* Year Selection */}
           <input
-            type="text" // Use text input to handle year as a string
-            value={selectedYear}
+            type="text"
+            value={inputYear}
             onChange={handleYearChange}
-            placeholder="Enter year"
+            onKeyPress={handleYearKeyPress}
+            placeholder="Enter year and press Enter"
             className="form-control"
-            min="2000"
-            max="3000"
             disabled={isYearInputDisabled}
           />
         </div>
