@@ -915,9 +915,34 @@ export interface AuctionItemDetailResponse {
      * @memberof AuctionItemDetailResponse
      */
     'itemCode'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof AuctionItemDetailResponse
+     */
+    'auctionId'?: string;
 }
 
 
+/**
+ * 
+ * @export
+ * @interface AuctionLeaderboardResponse
+ */
+export interface AuctionLeaderboardResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof AuctionLeaderboardResponse
+     */
+    'auctionId'?: string;
+    /**
+     * 
+     * @type {LeaderboardItemListResponsePaginationResponse}
+     * @memberof AuctionLeaderboardResponse
+     */
+    'leaderboard'?: LeaderboardItemListResponsePaginationResponse;
+}
 /**
  * 
  * @export
@@ -3881,6 +3906,19 @@ export interface CreateWithdrawResponse {
 /**
  * 
  * @export
+ * @interface CurrentTimeResponse
+ */
+export interface CurrentTimeResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof CurrentTimeResponse
+     */
+    'currentTime'?: string;
+}
+/**
+ * 
+ * @export
  * @interface DeleteBankAccountResponse
  */
 export interface DeleteBankAccountResponse {
@@ -4512,6 +4550,12 @@ export interface FashionItemDetailResponse {
     'isOrderedYet'?: boolean;
     /**
      * 
+     * @type {boolean}
+     * @memberof FashionItemDetailResponse
+     */
+    'isItemConsigned'?: boolean;
+    /**
+     * 
      * @type {GenderType}
      * @memberof FashionItemDetailResponse
      */
@@ -4810,6 +4854,12 @@ export interface FashionItemList {
      * @memberof FashionItemList
      */
     'categoryId'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof FashionItemList
+     */
+    'initialPrice'?: number;
     /**
      * 
      * @type {boolean}
@@ -6486,6 +6536,104 @@ export const InquiryStatus = {
 export type InquiryStatus = typeof InquiryStatus[keyof typeof InquiryStatus];
 
 
+/**
+ * 
+ * @export
+ * @interface LeaderboardItemListResponse
+ */
+export interface LeaderboardItemListResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof LeaderboardItemListResponse
+     */
+    'memberId'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof LeaderboardItemListResponse
+     */
+    'phone'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof LeaderboardItemListResponse
+     */
+    'highestBid'?: number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof LeaderboardItemListResponse
+     */
+    'isWon'?: boolean;
+}
+/**
+ * 
+ * @export
+ * @interface LeaderboardItemListResponsePaginationResponse
+ */
+export interface LeaderboardItemListResponsePaginationResponse {
+    /**
+     * 
+     * @type {number}
+     * @memberof LeaderboardItemListResponsePaginationResponse
+     */
+    'pageNumber'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof LeaderboardItemListResponsePaginationResponse
+     */
+    'pageSize'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof LeaderboardItemListResponsePaginationResponse
+     */
+    'searchTerm'?: string | null;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof LeaderboardItemListResponsePaginationResponse
+     */
+    'filters'?: Array<string> | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof LeaderboardItemListResponsePaginationResponse
+     */
+    'orderBy'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof LeaderboardItemListResponsePaginationResponse
+     */
+    'totalCount'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof LeaderboardItemListResponsePaginationResponse
+     */
+    'totalPages'?: number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof LeaderboardItemListResponsePaginationResponse
+     */
+    'hasNext'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof LeaderboardItemListResponsePaginationResponse
+     */
+    'hasPrevious'?: boolean;
+    /**
+     * 
+     * @type {Array<LeaderboardItemListResponse>}
+     * @memberof LeaderboardItemListResponsePaginationResponse
+     */
+    'items'?: Array<LeaderboardItemListResponse> | null;
+}
 /**
  * 
  * @export
@@ -10420,7 +10568,8 @@ export const TransactionType = {
     Refund: 'Refund',
     Recharge: 'Recharge',
     Payout: 'Payout',
-    Sale: 'Sale'
+    Sale: 'Sale',
+    RefundAuctionDeposit: 'RefundAuctionDeposit'
 } as const;
 
 export type TransactionType = typeof TransactionType[keyof typeof TransactionType];
@@ -14035,6 +14184,53 @@ export const AuctionApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * 
          * @param {string} id 
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiAuctionsIdLeaderboardGet: async (id: string, page?: number, pageSize?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('apiAuctionsIdLeaderboardGet', 'id', id)
+            const localVarPath = `/api/auctions/{id}/leaderboard`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (page !== undefined) {
+                localVarQueryParameter['Page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['PageSize'] = pageSize;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id 
          * @param {UpdateAuctionRequest} [updateAuctionRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -14242,7 +14438,7 @@ export const AuctionApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiAuctionsCurrentTimeGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async apiAuctionsCurrentTimeGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CurrentTimeResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiAuctionsCurrentTimeGet(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['AuctionApi.apiAuctionsCurrentTimeGet']?.[localVarOperationServerIndex]?.url;
@@ -14350,6 +14546,20 @@ export const AuctionApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiAuctionsIdGet(id, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['AuctionApi.apiAuctionsIdGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiAuctionsIdLeaderboardGet(id: string, page?: number, pageSize?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AuctionLeaderboardResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiAuctionsIdLeaderboardGet(id, page, pageSize, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['AuctionApi.apiAuctionsIdLeaderboardGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -14466,7 +14676,7 @@ export const AuctionApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiAuctionsCurrentTimeGet(options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        apiAuctionsCurrentTimeGet(options?: RawAxiosRequestConfig): AxiosPromise<CurrentTimeResponse> {
             return localVarFp.apiAuctionsCurrentTimeGet(options).then((request) => request(axios, basePath));
         },
         /**
@@ -14548,6 +14758,17 @@ export const AuctionApiFactory = function (configuration?: Configuration, basePa
          */
         apiAuctionsIdGet(id: string, options?: RawAxiosRequestConfig): AxiosPromise<AuctionDetailResponse> {
             return localVarFp.apiAuctionsIdGet(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiAuctionsIdLeaderboardGet(id: string, page?: number, pageSize?: number, options?: RawAxiosRequestConfig): AxiosPromise<AuctionLeaderboardResponse> {
+            return localVarFp.apiAuctionsIdLeaderboardGet(id, page, pageSize, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -14765,6 +14986,19 @@ export class AuctionApi extends BaseAPI {
      */
     public apiAuctionsIdGet(id: string, options?: RawAxiosRequestConfig) {
         return AuctionApiFp(this.configuration).apiAuctionsIdGet(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id 
+     * @param {number} [page] 
+     * @param {number} [pageSize] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuctionApi
+     */
+    public apiAuctionsIdLeaderboardGet(id: string, page?: number, pageSize?: number, options?: RawAxiosRequestConfig) {
+        return AuctionApiFp(this.configuration).apiAuctionsIdLeaderboardGet(id, page, pageSize, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

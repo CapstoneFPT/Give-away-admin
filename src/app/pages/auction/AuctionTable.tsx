@@ -46,6 +46,7 @@ const ProductTableSingle: React.FC<ProductTableSingleProps> = ({
           null!,
           null!
         );
+        console.log("Auction items", response.data.items);
         setFashionItems(response.data.items || []);
         setTotalCount(response.data.totalCount || 0);
         setTotalPages(response.data.totalPages || 1);
@@ -104,9 +105,9 @@ const ProductTableSingle: React.FC<ProductTableSingleProps> = ({
                         Item Code: <strong>{item.itemCode}</strong>
                       </div>
                       <div className="fs-6">
-                        Price:{" "}
+                        Initial Price:{" "}
                         <strong>
-                          {formatBalance(item.sellingPrice || 0)} VND
+                          {formatBalance(item.initialPrice || 0)} VND
                         </strong>
                       </div>
                     </div>
@@ -178,7 +179,7 @@ const ProductTableSingle: React.FC<ProductTableSingleProps> = ({
                 </td>
                 <td className="text-end">
                   <span className="fw-bold">
-                    {formatBalance(item.sellingPrice!) || 0} VND
+                    {formatBalance(item.initialPrice || 0)} VND
                   </span>
                 </td>
               </tr>
