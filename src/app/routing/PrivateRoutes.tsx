@@ -49,9 +49,9 @@ const PrivateRoutes = () => {
       case "Admin":
         return "/dashboard";
       case "Staff":
-        return "/order";
+        return "/order/order-list";
       default:
-        return "/auth"; // Fallback to dashboard if role is unknown
+        return "/auth"; 
     }
   };
 
