@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   FashionItemApi,
   FashionItemDetailResponse,
@@ -15,6 +15,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 const ProductDetail: React.FC = () => {
   const { itemId } = useParams<{ itemId: string }>();
+  const navigate = useNavigate();
   const fashionItemApi = new FashionItemApi();
   const [selectedImage, setSelectedImage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -62,6 +63,15 @@ const ProductDetail: React.FC = () => {
         <KTCard>
           <KTCardBody>
             <div className="row g-5 g-xl-8">
+              <div className="col-12 mb-5">
+                <button
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => navigate(-1)}
+                >
+                  <i className="bi bi-arrow-left me-2"></i>
+                  Back
+                </button>
+              </div>
               {/* Left side - Image */}
               <div className="col-xl-7">
                 <div className="d-flex">

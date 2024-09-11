@@ -55,7 +55,7 @@ const ProductTableSingle: React.FC<ProductTableSingleProps> = ({
     },
     [currentUser, pageSize]
   );
-
+  console.log(fashionItems);
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchTerm);
@@ -94,8 +94,14 @@ const ProductTableSingle: React.FC<ProductTableSingleProps> = ({
                   >
                     <img
                       style={{ width: "100px", height: "100px" }}
-                      src={item.image!}
-                      alt={item.name!}
+                      src={
+                        item?.image ||
+                        "https://firebasestorage.googleapis.com/v0/b/give-away-a58b2.appspot.com/o/asset%2Fhình%20ảnh_2024-09-11_112414592.png?alt=media&token=df36834e-5b2d-47e6-a12d-6c37467e9da2"
+                      }
+                      alt={
+                        item?.name ||
+                        "https://firebasestorage.googleapis.com/v0/b/give-away-a58b2.appspot.com/o/asset%2Fhình%20ảnh_2024-09-11_112414592.png?alt=media&token=df36834e-5b2d-47e6-a12d-6c37467e9da2"
+                      }
                       className="rounded me-3"
                     />
                     <div>

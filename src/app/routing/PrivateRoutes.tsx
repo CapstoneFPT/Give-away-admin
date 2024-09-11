@@ -174,7 +174,7 @@ const PrivateRoutes = () => {
           path="consignment/list"
           element={
             <ProtectedRoute
-              roles={["Staff"]}
+              roles={["Staff", "Admin"]}
               children={
                 <SuspensedView>
                   <ConsignmentPage />
@@ -248,7 +248,7 @@ const PrivateRoutes = () => {
           path="/consignment/:consignSaleId/line-item/:lineItemId"
           element={
             <ProtectedRoute
-              roles={["Staff"]}
+              roles={["Staff", "Admin"]}
               children={
                 <SuspensedView>
                   <ConsignLineItemReview />
@@ -261,7 +261,7 @@ const PrivateRoutes = () => {
           path="consignment/:consignSaleId"
           element={
             <ProtectedRoute
-              roles={["Staff"]}
+              roles={["Staff", "Admin"]}
               children={
                 <SuspensedView>
                   <ConsignDetail />

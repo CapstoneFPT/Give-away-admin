@@ -113,8 +113,6 @@ const CreateAuction = () => {
         throw new Error("Please select an item for the auction.");
       }
 
-      console.log("Auction data being sent to API:", auctionData);
-
       await auctionApi.apiAuctionsPost(auctionData);
       toast.success("Auction created successfully!");
       // Optionally, redirect to auction list or clear form

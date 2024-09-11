@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   FashionItemApi,
   FashionItemDetailResponse,
@@ -24,7 +24,7 @@ const ItemDetail: React.FC = () => {
   const [updateInitialData, setUpdateInitialData] =
     useState<UpdateFashionItemRequest>({});
   const queryClient = useQueryClient();
-
+  const navigate = useNavigate();
   const { data, isLoading, error } = useQuery<
     FashionItemDetailResponse | undefined,
     Error
@@ -80,6 +80,15 @@ const ItemDetail: React.FC = () => {
         <KTCard>
           <KTCardBody>
             <div className="row g-5 g-xl-8">
+              <div className="col-12 mb-5">
+                <button
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => navigate(-1)}
+                >
+                  <i className="bi bi-arrow-left me-2"></i>
+                  Back
+                </button>
+              </div>
               {/* Left side - Image */}
               <div className="col-xl-7">
                 <div className="d-flex">

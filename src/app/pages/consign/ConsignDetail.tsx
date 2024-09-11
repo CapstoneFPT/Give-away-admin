@@ -6,7 +6,12 @@ import { formatBalance, formatDate } from "../utils/utils";
 import { useConsignSale, useConsignSaleLineItems } from "./consignSaleHooks";
 import { Content } from "../../../_metronic/layout/components/content";
 import ConsignmentApproval from "./ConsignmentApproval.tsx";
-import {ConsignSaleLineItemsListResponse, ConsignSaleLineItemStatus, ConsignSaleStatus, ConsignSaleDetailedResponse} from "../../../api";
+import {
+  ConsignSaleLineItemsListResponse,
+  ConsignSaleLineItemStatus,
+  ConsignSaleStatus,
+  ConsignSaleDetailedResponse,
+} from "../../../api";
 import KTInfoItem from "../../../_metronic/helpers/components/KTInfoItem.tsx";
 
 const getConsignSaleStatusColor = (status?: ConsignSaleStatus) => {
@@ -53,8 +58,6 @@ const getConsignSaleLineItemStatusColor = (
   }
 };
 
-
-
 export const ConsignDetail: React.FC = () => {
   const { consignSaleId } = useParams<{ consignSaleId: string }>();
   const {
@@ -67,7 +70,6 @@ export const ConsignDetail: React.FC = () => {
     isLoading: isLoadingItems,
     error: itemsError,
   } = useConsignSaleLineItems(consignSaleId!);
-  const [comment, setComment] = useState<string>("");
 
   if (!consignSaleResponse) {
     return <div>No consignment data found.</div>;
@@ -186,20 +188,33 @@ export const ConsignDetail: React.FC = () => {
         <KTCardBody>
           <h3 className="fs-2 fw-bold mb-5">Financial Details</h3>
           <div className="d-flex flex-wrap">
-            <KTInfoItem 
+            <KTInfoItem
               iconName="dollar"
               title="Sold Price"
-              value={consignSaleResponse.soldPrice ? formatBalance(consignSaleResponse.soldPrice) + ' VND' : "N/A"}
+              value={
+                consignSaleResponse.soldPrice
+                  ? formatBalance(consignSaleResponse.soldPrice) + " VND"
+                  : "N/A"
+              }
             />
-            <KTInfoItem 
+            <KTInfoItem
               iconName="dollar"
               title="Member Received"
-              value={consignSaleResponse.memberReceivedAmount ? formatBalance(consignSaleResponse.memberReceivedAmount) + ' VND' : "N/A"}
+              value={
+                consignSaleResponse.memberReceivedAmount
+                  ? formatBalance(consignSaleResponse.memberReceivedAmount) +
+                    " VND"
+                  : "N/A"
+              }
             />
-            <KTInfoItem 
+            <KTInfoItem
               iconName="dollar"
               title="Total Price"
-              value={consignSaleResponse.totalPrice ? formatBalance(consignSaleResponse.totalPrice) + ' VND' : "N/A"}
+              value={
+                consignSaleResponse.totalPrice
+                  ? formatBalance(consignSaleResponse.totalPrice) + " VND"
+                  : "N/A"
+              }
             />
           </div>
         </KTCardBody>
@@ -229,46 +244,52 @@ export const ConsignDetail: React.FC = () => {
               </thead>
               <tbody className="fw-semibold text-gray-600">
                 {lineItemsResponse &&
-                  lineItemsResponse.map((item : ConsignSaleLineItemsListResponse) => (
-                    <tr key={item.consignSaleLineItemId}>
-                      <td>
-                        <span
-                          className={`badge badge-${getConsignSaleLineItemStatusColor(
-                            item.status
-                          )}`}
-                        >
-                          {item.status || "N/A"}
-                        </span>
-                      </td>
-                      <td>{item.productName || "N/A"}</td>
-                      <td>{item.brand || "N/A"}</td>
-                      <td>{item.color || "N/A"}</td>
-                      <td>{item.size || "N/A"}</td>
-                      <td>{item.gender || "N/A"}</td>
-                      <td>{item.condition || "N/A"}</td>
-                      <td>
-                        {item.dealPrice ? formatBalance(item.dealPrice) + ' VND' : "N/A"}
-                      </td>
-                      <td>{item.expectedPrice ? formatBalance(item.expectedPrice) + ' VND' : "N/A"}</td>
-                      <td>
-                        {item.confirmedPrice
-                          ? formatBalance(item.confirmedPrice) + ' VND'
-                          : "N/A"}
-                      </td>
-                      <td>{item.note || "N/A"}</td>
-                      <td>
-                        {formatDate(item.createdDate)}
-                      </td>
-                      <td className="text-end">
-                        <Link
-                          to={`/consignment/${consignSaleId}/line-item/${item.consignSaleLineItemId}`}
-                          className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
-                        >
-                          <KTIcon iconName="eye" className="fs-3" />
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
+                  lineItemsResponse.map(
+                    (item: ConsignSaleLineItemsListResponse) => (
+                      <tr key={item.consignSaleLineItemId}>
+                        <td>
+                          <span
+                            className={`badge badge-${getConsignSaleLineItemStatusColor(
+                              item.status
+                            )}`}
+                          >
+                            {item.status || "N/A"}
+                          </span>
+                        </td>
+                        <td>{item.productName || "N/A"}</td>
+                        <td>{item.brand || "N/A"}</td>
+                        <td>{item.color || "N/A"}</td>
+                        <td>{item.size || "N/A"}</td>
+                        <td>{item.gender || "N/A"}</td>
+                        <td>{item.condition || "N/A"}</td>
+                        <td>
+                          {item.dealPrice
+                            ? formatBalance(item.dealPrice) + " VND"
+                            : "N/A"}
+                        </td>
+                        <td>
+                          {item.expectedPrice
+                            ? formatBalance(item.expectedPrice) + " VND"
+                            : "N/A"}
+                        </td>
+                        <td>
+                          {item.confirmedPrice
+                            ? formatBalance(item.confirmedPrice) + " VND"
+                            : "N/A"}
+                        </td>
+                        <td>{item.note || "N/A"}</td>
+                        <td>{formatDate(item.createdDate)}</td>
+                        <td className="text-end">
+                          <Link
+                            to={`/consignment/${consignSaleId}/line-item/${item.consignSaleLineItemId}`}
+                            className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
+                          >
+                            <KTIcon iconName="eye" className="fs-3" />
+                          </Link>
+                        </td>
+                      </tr>
+                    )
+                  )}
               </tbody>
             </table>
           </div>

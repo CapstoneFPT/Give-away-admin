@@ -13,7 +13,7 @@ const AuctionList: React.FC<Props> = ({ className }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<AuctionStatus | null>(null);
-  const [expired, setExpired] = useState<boolean>(false);
+  const [expired, setExpired] = useState<boolean>(true);
   const pageSize = 12;
 
   const fetchAuctions = useCallback(async () => {
@@ -95,7 +95,6 @@ const AuctionList: React.FC<Props> = ({ className }) => {
                 value={expired === undefined ? "" : expired.toString()}
                 onChange={handleExpiredFilterChange}
               >
-                <option value="">All</option>
                 <option value="true">Expired</option>
                 <option value="false">Not Expired</option>
               </select>
@@ -142,13 +141,15 @@ const AuctionList: React.FC<Props> = ({ className }) => {
                         <p className="card-text">
                           Deposit: ${auction.depositFee?.toFixed(2)}
                         </p>
-                        <span
-                          className={`badge badge-light-${getStatusColor(
-                            auction.status
-                          )} mb-2`}
-                        >
-                          {auction.status}
-                        </span>
+                        <div className="d-flex justify-content-center align-items-center mb-5">
+                          <span
+                            className={`badge badge-light-${getStatusColor(
+                              auction.status
+                            )}`}
+                          >
+                            {auction.status}
+                          </span>
+                        </div>
                         <Link
                           to={`/auction-admin/${auction.auctionId}`}
                           className="btn btn-sm btn-primary mt-auto"

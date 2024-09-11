@@ -14,7 +14,7 @@ const AuctionAdminList: React.FC<Props> = ({ className }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<AuctionStatus | null>(null);
-  const [expired, setExpired] = useState<boolean>(false);
+  const [expired, setExpired] = useState<boolean>(true);
   const pageSize = 12;
 
   const fetchAuctions = useCallback(async () => {
@@ -133,7 +133,6 @@ const AuctionAdminList: React.FC<Props> = ({ className }) => {
                 value={expired === undefined ? "" : expired.toString()}
                 onChange={handleExpiredFilterChange}
               >
-                <option value="">All</option>
                 <option value="true">Expired</option>
                 <option value="false">Not Expired</option>
               </select>

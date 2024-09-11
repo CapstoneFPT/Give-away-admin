@@ -1,4 +1,4 @@
-import {Roles} from "../../../../api";
+import { Roles } from "../../../../api";
 
 export interface AuthModel {
   api_token: string;
@@ -50,6 +50,7 @@ export interface CurrentUserModel {
   id: string;
   email: string;
   shopId: string;
+  isAdmin?: boolean;
 }
 export interface UserModel {
   id: number;

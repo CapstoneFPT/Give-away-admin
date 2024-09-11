@@ -22,10 +22,11 @@ const ConsignTable: React.FC = () => {
     async (page: number, pageSize: number) => {
       try {
         const consignSaleApi = new ConsignSaleApi();
+        const shopId = currentUser?.isAdmin ? null! : currentUser?.shopId; // Check if user is admin
         const response = await consignSaleApi.apiConsignsalesGet(
           page,
           pageSize,
-          currentUser?.shopId,
+          shopId,
           searchTerm,
           null!,
           null!,
@@ -56,6 +57,7 @@ const ConsignTable: React.FC = () => {
       consignorName,
       consignorPhone,
       statusFilter,
+      currentUser?.isAdmin, // Add dependency for isAdmin
       currentUser?.shopId,
     ]
   );
