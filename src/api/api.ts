@@ -2136,33 +2136,6 @@ export interface ConsignSaleDetailedResponsePaginationResponse {
 /**
  * 
  * @export
- * @interface ConsignSaleDetailedResponsePaginationResponseResult
- */
-export interface ConsignSaleDetailedResponsePaginationResponseResult {
-    /**
-     * 
-     * @type {ConsignSaleDetailedResponsePaginationResponse}
-     * @memberof ConsignSaleDetailedResponsePaginationResponseResult
-     */
-    'data'?: ConsignSaleDetailedResponsePaginationResponse;
-    /**
-     * 
-     * @type {ResultStatus}
-     * @memberof ConsignSaleDetailedResponsePaginationResponseResult
-     */
-    'resultStatus'?: ResultStatus;
-    /**
-     * 
-     * @type {Array<string>}
-     * @memberof ConsignSaleDetailedResponsePaginationResponseResult
-     */
-    'messages'?: Array<string> | null;
-}
-
-
-/**
- * 
- * @export
  * @interface ConsignSaleDetailedResponseResult
  */
 export interface ConsignSaleDetailedResponseResult {
@@ -4923,6 +4896,7 @@ export const FashionItemStatus = {
     Available: 'Available',
     Unavailable: 'Unavailable',
     OnDelivery: 'OnDelivery',
+    ReadyForDelivery: 'ReadyForDelivery',
     Sold: 'Sold',
     UnSold: 'UnSold',
     Reserved: 'Reserved',
@@ -6681,12 +6655,6 @@ export interface MasterFashionItem {
      * @memberof MasterFashionItem
      */
     'shopId'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof MasterFashionItem
-     */
-    'stockCount'?: number;
     /**
      * 
      * @type {Array<IndividualFashionItem>}
@@ -8455,33 +8423,6 @@ export interface OrderResponsePaginationResponse {
      */
     'items'?: Array<OrderResponse> | null;
 }
-/**
- * 
- * @export
- * @interface OrderResponsePaginationResponseResult
- */
-export interface OrderResponsePaginationResponseResult {
-    /**
-     * 
-     * @type {OrderResponsePaginationResponse}
-     * @memberof OrderResponsePaginationResponseResult
-     */
-    'data'?: OrderResponsePaginationResponse;
-    /**
-     * 
-     * @type {ResultStatus}
-     * @memberof OrderResponsePaginationResponseResult
-     */
-    'resultStatus'?: ResultStatus;
-    /**
-     * 
-     * @type {Array<string>}
-     * @memberof OrderResponsePaginationResponseResult
-     */
-    'messages'?: Array<string> | null;
-}
-
-
 /**
  * 
  * @export
@@ -11265,10 +11206,13 @@ export const AccountApiAxiosParamCreator = function (configuration?: Configurati
          * @param {string} [shopId] 
          * @param {string} [consignSaleCode] 
          * @param {ConsignSaleStatus} [status] 
+         * @param {ConsignSaleType} [type] 
+         * @param {string} [startDate] 
+         * @param {string} [endDate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiAccountsAccountIdConsignsalesGet: async (accountId: string, pageNumber?: number, pageSize?: number, shopId?: string, consignSaleCode?: string, status?: ConsignSaleStatus, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        apiAccountsAccountIdConsignsalesGet: async (accountId: string, pageNumber?: number, pageSize?: number, shopId?: string, consignSaleCode?: string, status?: ConsignSaleStatus, type?: ConsignSaleType, startDate?: string, endDate?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'accountId' is not null or undefined
             assertParamExists('apiAccountsAccountIdConsignsalesGet', 'accountId', accountId)
             const localVarPath = `/api/accounts/{accountId}/consignsales`
@@ -11306,6 +11250,22 @@ export const AccountApiAxiosParamCreator = function (configuration?: Configurati
 
             if (status !== undefined) {
                 localVarQueryParameter['Status'] = status;
+            }
+
+            if (type !== undefined) {
+                localVarQueryParameter['Type'] = type;
+            }
+
+            if (startDate !== undefined) {
+                localVarQueryParameter['StartDate'] = (startDate as any instanceof Date) ?
+                    (startDate as any).toISOString() :
+                    startDate;
+            }
+
+            if (endDate !== undefined) {
+                localVarQueryParameter['EndDate'] = (endDate as any instanceof Date) ?
+                    (endDate as any).toISOString() :
+                    endDate;
             }
 
 
@@ -11580,11 +11540,10 @@ export const AccountApiAxiosParamCreator = function (configuration?: Configurati
          * @param {string} [customerName] 
          * @param {string} [orderCode] 
          * @param {boolean} [isFromAuction] 
-         * @param {boolean} [isPointPackage] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiAccountsAccountIdOrdersGet: async (accountId: string, pageNumber?: number, pageSize?: number, shopId?: string, status?: OrderStatus, paymentMethod?: PaymentMethod, purchaseType?: PurchaseType, phone?: string, recipientName?: string, email?: string, customerName?: string, orderCode?: string, isFromAuction?: boolean, isPointPackage?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        apiAccountsAccountIdOrdersGet: async (accountId: string, pageNumber?: number, pageSize?: number, shopId?: string, status?: OrderStatus, paymentMethod?: PaymentMethod, purchaseType?: PurchaseType, phone?: string, recipientName?: string, email?: string, customerName?: string, orderCode?: string, isFromAuction?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'accountId' is not null or undefined
             assertParamExists('apiAccountsAccountIdOrdersGet', 'accountId', accountId)
             const localVarPath = `/api/accounts/{accountId}/orders`
@@ -11650,10 +11609,6 @@ export const AccountApiAxiosParamCreator = function (configuration?: Configurati
 
             if (isFromAuction !== undefined) {
                 localVarQueryParameter['IsFromAuction'] = isFromAuction;
-            }
-
-            if (isPointPackage !== undefined) {
-                localVarQueryParameter['IsPointPackage'] = isPointPackage;
             }
 
 
@@ -12253,11 +12208,14 @@ export const AccountApiFp = function(configuration?: Configuration) {
          * @param {string} [shopId] 
          * @param {string} [consignSaleCode] 
          * @param {ConsignSaleStatus} [status] 
+         * @param {ConsignSaleType} [type] 
+         * @param {string} [startDate] 
+         * @param {string} [endDate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiAccountsAccountIdConsignsalesGet(accountId: string, pageNumber?: number, pageSize?: number, shopId?: string, consignSaleCode?: string, status?: ConsignSaleStatus, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConsignSaleDetailedResponsePaginationResponseResult>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiAccountsAccountIdConsignsalesGet(accountId, pageNumber, pageSize, shopId, consignSaleCode, status, options);
+        async apiAccountsAccountIdConsignsalesGet(accountId: string, pageNumber?: number, pageSize?: number, shopId?: string, consignSaleCode?: string, status?: ConsignSaleStatus, type?: ConsignSaleType, startDate?: string, endDate?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConsignSaleDetailedResponsePaginationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiAccountsAccountIdConsignsalesGet(accountId, pageNumber, pageSize, shopId, consignSaleCode, status, type, startDate, endDate, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['AccountApi.apiAccountsAccountIdConsignsalesGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -12355,12 +12313,11 @@ export const AccountApiFp = function(configuration?: Configuration) {
          * @param {string} [customerName] 
          * @param {string} [orderCode] 
          * @param {boolean} [isFromAuction] 
-         * @param {boolean} [isPointPackage] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiAccountsAccountIdOrdersGet(accountId: string, pageNumber?: number, pageSize?: number, shopId?: string, status?: OrderStatus, paymentMethod?: PaymentMethod, purchaseType?: PurchaseType, phone?: string, recipientName?: string, email?: string, customerName?: string, orderCode?: string, isFromAuction?: boolean, isPointPackage?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrderResponsePaginationResponseResult>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiAccountsAccountIdOrdersGet(accountId, pageNumber, pageSize, shopId, status, paymentMethod, purchaseType, phone, recipientName, email, customerName, orderCode, isFromAuction, isPointPackage, options);
+        async apiAccountsAccountIdOrdersGet(accountId: string, pageNumber?: number, pageSize?: number, shopId?: string, status?: OrderStatus, paymentMethod?: PaymentMethod, purchaseType?: PurchaseType, phone?: string, recipientName?: string, email?: string, customerName?: string, orderCode?: string, isFromAuction?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrderResponsePaginationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiAccountsAccountIdOrdersGet(accountId, pageNumber, pageSize, shopId, status, paymentMethod, purchaseType, phone, recipientName, email, customerName, orderCode, isFromAuction, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['AccountApi.apiAccountsAccountIdOrdersGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -12592,11 +12549,14 @@ export const AccountApiFactory = function (configuration?: Configuration, basePa
          * @param {string} [shopId] 
          * @param {string} [consignSaleCode] 
          * @param {ConsignSaleStatus} [status] 
+         * @param {ConsignSaleType} [type] 
+         * @param {string} [startDate] 
+         * @param {string} [endDate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiAccountsAccountIdConsignsalesGet(accountId: string, pageNumber?: number, pageSize?: number, shopId?: string, consignSaleCode?: string, status?: ConsignSaleStatus, options?: RawAxiosRequestConfig): AxiosPromise<ConsignSaleDetailedResponsePaginationResponseResult> {
-            return localVarFp.apiAccountsAccountIdConsignsalesGet(accountId, pageNumber, pageSize, shopId, consignSaleCode, status, options).then((request) => request(axios, basePath));
+        apiAccountsAccountIdConsignsalesGet(accountId: string, pageNumber?: number, pageSize?: number, shopId?: string, consignSaleCode?: string, status?: ConsignSaleStatus, type?: ConsignSaleType, startDate?: string, endDate?: string, options?: RawAxiosRequestConfig): AxiosPromise<ConsignSaleDetailedResponsePaginationResponse> {
+            return localVarFp.apiAccountsAccountIdConsignsalesGet(accountId, pageNumber, pageSize, shopId, consignSaleCode, status, type, startDate, endDate, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -12673,12 +12633,11 @@ export const AccountApiFactory = function (configuration?: Configuration, basePa
          * @param {string} [customerName] 
          * @param {string} [orderCode] 
          * @param {boolean} [isFromAuction] 
-         * @param {boolean} [isPointPackage] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiAccountsAccountIdOrdersGet(accountId: string, pageNumber?: number, pageSize?: number, shopId?: string, status?: OrderStatus, paymentMethod?: PaymentMethod, purchaseType?: PurchaseType, phone?: string, recipientName?: string, email?: string, customerName?: string, orderCode?: string, isFromAuction?: boolean, isPointPackage?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<OrderResponsePaginationResponseResult> {
-            return localVarFp.apiAccountsAccountIdOrdersGet(accountId, pageNumber, pageSize, shopId, status, paymentMethod, purchaseType, phone, recipientName, email, customerName, orderCode, isFromAuction, isPointPackage, options).then((request) => request(axios, basePath));
+        apiAccountsAccountIdOrdersGet(accountId: string, pageNumber?: number, pageSize?: number, shopId?: string, status?: OrderStatus, paymentMethod?: PaymentMethod, purchaseType?: PurchaseType, phone?: string, recipientName?: string, email?: string, customerName?: string, orderCode?: string, isFromAuction?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<OrderResponsePaginationResponse> {
+            return localVarFp.apiAccountsAccountIdOrdersGet(accountId, pageNumber, pageSize, shopId, status, paymentMethod, purchaseType, phone, recipientName, email, customerName, orderCode, isFromAuction, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -12889,12 +12848,15 @@ export class AccountApi extends BaseAPI {
      * @param {string} [shopId] 
      * @param {string} [consignSaleCode] 
      * @param {ConsignSaleStatus} [status] 
+     * @param {ConsignSaleType} [type] 
+     * @param {string} [startDate] 
+     * @param {string} [endDate] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AccountApi
      */
-    public apiAccountsAccountIdConsignsalesGet(accountId: string, pageNumber?: number, pageSize?: number, shopId?: string, consignSaleCode?: string, status?: ConsignSaleStatus, options?: RawAxiosRequestConfig) {
-        return AccountApiFp(this.configuration).apiAccountsAccountIdConsignsalesGet(accountId, pageNumber, pageSize, shopId, consignSaleCode, status, options).then((request) => request(this.axios, this.basePath));
+    public apiAccountsAccountIdConsignsalesGet(accountId: string, pageNumber?: number, pageSize?: number, shopId?: string, consignSaleCode?: string, status?: ConsignSaleStatus, type?: ConsignSaleType, startDate?: string, endDate?: string, options?: RawAxiosRequestConfig) {
+        return AccountApiFp(this.configuration).apiAccountsAccountIdConsignsalesGet(accountId, pageNumber, pageSize, shopId, consignSaleCode, status, type, startDate, endDate, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -12984,13 +12946,12 @@ export class AccountApi extends BaseAPI {
      * @param {string} [customerName] 
      * @param {string} [orderCode] 
      * @param {boolean} [isFromAuction] 
-     * @param {boolean} [isPointPackage] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AccountApi
      */
-    public apiAccountsAccountIdOrdersGet(accountId: string, pageNumber?: number, pageSize?: number, shopId?: string, status?: OrderStatus, paymentMethod?: PaymentMethod, purchaseType?: PurchaseType, phone?: string, recipientName?: string, email?: string, customerName?: string, orderCode?: string, isFromAuction?: boolean, isPointPackage?: boolean, options?: RawAxiosRequestConfig) {
-        return AccountApiFp(this.configuration).apiAccountsAccountIdOrdersGet(accountId, pageNumber, pageSize, shopId, status, paymentMethod, purchaseType, phone, recipientName, email, customerName, orderCode, isFromAuction, isPointPackage, options).then((request) => request(this.axios, this.basePath));
+    public apiAccountsAccountIdOrdersGet(accountId: string, pageNumber?: number, pageSize?: number, shopId?: string, status?: OrderStatus, paymentMethod?: PaymentMethod, purchaseType?: PurchaseType, phone?: string, recipientName?: string, email?: string, customerName?: string, orderCode?: string, isFromAuction?: boolean, options?: RawAxiosRequestConfig) {
+        return AccountApiFp(this.configuration).apiAccountsAccountIdOrdersGet(accountId, pageNumber, pageSize, shopId, status, paymentMethod, purchaseType, phone, recipientName, email, customerName, orderCode, isFromAuction, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -19727,11 +19688,10 @@ export const OrderApiAxiosParamCreator = function (configuration?: Configuration
          * @param {string} [customerName] 
          * @param {string} [orderCode] 
          * @param {boolean} [isFromAuction] 
-         * @param {boolean} [isPointPackage] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiOrdersGet: async (pageNumber?: number, pageSize?: number, shopId?: string, status?: OrderStatus, paymentMethod?: PaymentMethod, purchaseType?: PurchaseType, phone?: string, recipientName?: string, email?: string, customerName?: string, orderCode?: string, isFromAuction?: boolean, isPointPackage?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        apiOrdersGet: async (pageNumber?: number, pageSize?: number, shopId?: string, status?: OrderStatus, paymentMethod?: PaymentMethod, purchaseType?: PurchaseType, phone?: string, recipientName?: string, email?: string, customerName?: string, orderCode?: string, isFromAuction?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/orders`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -19794,10 +19754,6 @@ export const OrderApiAxiosParamCreator = function (configuration?: Configuration
 
             if (isFromAuction !== undefined) {
                 localVarQueryParameter['IsFromAuction'] = isFromAuction;
-            }
-
-            if (isPointPackage !== undefined) {
-                localVarQueryParameter['IsPointPackage'] = isPointPackage;
             }
 
 
@@ -20126,12 +20082,11 @@ export const OrderApiFp = function(configuration?: Configuration) {
          * @param {string} [customerName] 
          * @param {string} [orderCode] 
          * @param {boolean} [isFromAuction] 
-         * @param {boolean} [isPointPackage] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiOrdersGet(pageNumber?: number, pageSize?: number, shopId?: string, status?: OrderStatus, paymentMethod?: PaymentMethod, purchaseType?: PurchaseType, phone?: string, recipientName?: string, email?: string, customerName?: string, orderCode?: string, isFromAuction?: boolean, isPointPackage?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrderListResponsePaginationResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiOrdersGet(pageNumber, pageSize, shopId, status, paymentMethod, purchaseType, phone, recipientName, email, customerName, orderCode, isFromAuction, isPointPackage, options);
+        async apiOrdersGet(pageNumber?: number, pageSize?: number, shopId?: string, status?: OrderStatus, paymentMethod?: PaymentMethod, purchaseType?: PurchaseType, phone?: string, recipientName?: string, email?: string, customerName?: string, orderCode?: string, isFromAuction?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrderListResponsePaginationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiOrdersGet(pageNumber, pageSize, shopId, status, paymentMethod, purchaseType, phone, recipientName, email, customerName, orderCode, isFromAuction, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['OrderApi.apiOrdersGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -20258,12 +20213,11 @@ export const OrderApiFactory = function (configuration?: Configuration, basePath
          * @param {string} [customerName] 
          * @param {string} [orderCode] 
          * @param {boolean} [isFromAuction] 
-         * @param {boolean} [isPointPackage] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiOrdersGet(pageNumber?: number, pageSize?: number, shopId?: string, status?: OrderStatus, paymentMethod?: PaymentMethod, purchaseType?: PurchaseType, phone?: string, recipientName?: string, email?: string, customerName?: string, orderCode?: string, isFromAuction?: boolean, isPointPackage?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<OrderListResponsePaginationResponse> {
-            return localVarFp.apiOrdersGet(pageNumber, pageSize, shopId, status, paymentMethod, purchaseType, phone, recipientName, email, customerName, orderCode, isFromAuction, isPointPackage, options).then((request) => request(axios, basePath));
+        apiOrdersGet(pageNumber?: number, pageSize?: number, shopId?: string, status?: OrderStatus, paymentMethod?: PaymentMethod, purchaseType?: PurchaseType, phone?: string, recipientName?: string, email?: string, customerName?: string, orderCode?: string, isFromAuction?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<OrderListResponsePaginationResponse> {
+            return localVarFp.apiOrdersGet(pageNumber, pageSize, shopId, status, paymentMethod, purchaseType, phone, recipientName, email, customerName, orderCode, isFromAuction, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -20368,13 +20322,12 @@ export class OrderApi extends BaseAPI {
      * @param {string} [customerName] 
      * @param {string} [orderCode] 
      * @param {boolean} [isFromAuction] 
-     * @param {boolean} [isPointPackage] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof OrderApi
      */
-    public apiOrdersGet(pageNumber?: number, pageSize?: number, shopId?: string, status?: OrderStatus, paymentMethod?: PaymentMethod, purchaseType?: PurchaseType, phone?: string, recipientName?: string, email?: string, customerName?: string, orderCode?: string, isFromAuction?: boolean, isPointPackage?: boolean, options?: RawAxiosRequestConfig) {
-        return OrderApiFp(this.configuration).apiOrdersGet(pageNumber, pageSize, shopId, status, paymentMethod, purchaseType, phone, recipientName, email, customerName, orderCode, isFromAuction, isPointPackage, options).then((request) => request(this.axios, this.basePath));
+    public apiOrdersGet(pageNumber?: number, pageSize?: number, shopId?: string, status?: OrderStatus, paymentMethod?: PaymentMethod, purchaseType?: PurchaseType, phone?: string, recipientName?: string, email?: string, customerName?: string, orderCode?: string, isFromAuction?: boolean, options?: RawAxiosRequestConfig) {
+        return OrderApiFp(this.configuration).apiOrdersGet(pageNumber, pageSize, shopId, status, paymentMethod, purchaseType, phone, recipientName, email, customerName, orderCode, isFromAuction, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
