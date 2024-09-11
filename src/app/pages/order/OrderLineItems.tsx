@@ -40,7 +40,7 @@ const OrderLineItems = ({ items, orderDetail }: { items: OrderLineItemListRespon
     const handleConfirmDelivery = async (orderLineItemId: string) => {
         try {
             const request: ConfirmPendingOrderRequest = {
-                itemStatus: FashionItemStatus.OnDelivery 
+                itemStatus: FashionItemStatus.ReadyForDelivery 
             };
             await deliveryMutation.mutateAsync({
                 OrderLineItemId: orderLineItemId,
