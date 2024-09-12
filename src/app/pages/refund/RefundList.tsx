@@ -1,220 +1,290 @@
-import React, { useState, useCallback } from 'react';
-import { useQuery } from 'react-query';
-import { KTCard, KTCardBody, KTIcon } from '../../../_metronic/helpers';
-import { RefundApi, RefundResponse, RefundStatus } from '../../../api';
-import { formatBalance } from '../utils/utils';
-import { Link } from 'react-router-dom';
+import React, { useState, useCallback, useEffect } from "react";
+import { useQuery } from "react-query";
+import { KTCard, KTCardBody, KTIcon } from "../../../_metronic/helpers";
+import {
+  RefundApi,
+  RefundResponse,
+  RefundStatus,
+  ShopApi,
+  ShopDetailResponse,
+} from "../../../api";
+import { formatBalance } from "../utils/utils";
+import { Link } from "react-router-dom";
 import { Content } from "../../../_metronic/layout/components/content";
-import { useAuth } from '../../modules/auth';
-import { KTTable } from '../../../_metronic/helpers/components/KTTable';
-import { Column } from 'react-table';
+import { useAuth } from "../../modules/auth";
+import { KTTable } from "../../../_metronic/helpers/components/KTTable";
+import { Column } from "react-table";
 
 const RefundList: React.FC = () => {
-	const [customerName, setCustomerName] = useState("");
-	const [customerPhone, setCustomerPhone] = useState("");
-	const [statusFilter, setStatusFilter] = useState<RefundStatus | null>(null);
-	const [orderCode, setOrderCode] = useState("");
-	const [itemCode, setItemCode] = useState("");
-	const [itemName, setItemName] = useState("");
-	const [currentPage, setCurrentPage] = useState(1);
-	const { currentUser } = useAuth();
-	const pageSize = 10;
+  const [customerName, setCustomerName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [statusFilter, setStatusFilter] = useState<RefundStatus | null>(null);
+  const [orderCode, setOrderCode] = useState("");
+  const [itemCode, setItemCode] = useState("");
+  const [itemName, setItemName] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedShopId, setSelectedShopId] = useState("");
+  const [shops, setShops] = useState<ShopDetailResponse[]>([]);
+  const { currentUser } = useAuth();
+  const pageSize = 10;
 
-	const fetchData = useCallback(async (page: number, pageSize: number) => {
-		try {
-			const refundApi = new RefundApi();
-			const response = await refundApi.apiRefundsGet(
-				page,
-				pageSize,
-				currentUser?.shopId,
-				statusFilter ? [statusFilter] : undefined,
-				undefined,
-				undefined,
-				customerName,
-				customerPhone,
-				undefined,
-				orderCode,
-				itemCode,
-				itemName
-			);
+  useEffect(() => {
+    const shopApi = new ShopApi();
+    if (currentUser?.role === "Admin") {
+      shopApi.apiShopsGet().then((response) => {
+        setShops(response.data.data!);
+      });
+    }
+  }, [currentUser?.role]);
 
-			if (!response || !response.data) {
-				throw new Error("No data received from the API");
-			}
+  const fetchData = useCallback(
+    async (page: number, pageSize: number) => {
+      try {
+        const refundApi = new RefundApi();
+        const response = await refundApi.apiRefundsGet(
+          page,
+          pageSize,
+          currentUser?.role === "Admin" ? selectedShopId : currentUser?.shopId,
+          statusFilter ? [statusFilter] : undefined,
+          undefined,
+          undefined,
+          customerName,
+          customerPhone,
+          undefined,
+          orderCode,
+          itemCode,
+          itemName
+        );
 
-			return {
-				data: response.data.items || [],
-				totalCount: response.data.totalCount || 0,
-				totalPages: response.data.totalPages || 0,
-			};
-		} catch (error) {
-			console.error("Error fetching data:", error);
-			throw error;
-		}
-	}, [currentUser?.shopId, statusFilter, customerName, customerPhone, orderCode, itemCode, itemName]);
+        if (!response || !response.data) {
+          throw new Error("No data received from the API");
+        }
 
-	const { data, isLoading, error } = useQuery(
-		["Refunds", customerName, customerPhone, statusFilter, orderCode, itemCode, itemName, currentPage],
-		() => fetchData(currentPage, pageSize),
-		{ refetchOnWindowFocus: false, keepPreviousData: true }
-	);
+        return {
+          data: response.data.items || [],
+          totalCount: response.data.totalCount || 0,
+          totalPages: response.data.totalPages || 0,
+        };
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        throw error;
+      }
+    },
+    [
+      currentUser?.role,
+      currentUser?.shopId,
+      selectedShopId,
+      statusFilter,
+      customerName,
+      customerPhone,
+      orderCode,
+      itemCode,
+      itemName,
+    ]
+  );
 
-	const handlePageChange = (newPage: number) => {
-		setCurrentPage(newPage);
-	};
+  const { data, isLoading, error } = useQuery(
+    [
+      "Refunds",
+      customerName,
+      customerPhone,
+      statusFilter,
+      orderCode,
+      itemCode,
+      itemName,
+      currentPage,
+      selectedShopId,
+    ],
+    () => fetchData(currentPage, pageSize),
+    { refetchOnWindowFocus: false, keepPreviousData: true }
+  );
 
-	const columns: Column<RefundResponse>[] = [
-		{
-			Header: 'Order Code',
-			accessor: 'orderCode',
-		},
-		{
-			Header: 'Item Code',
-			accessor: 'itemCode',
-		},
-		{
-			Header: 'Item Name',
-			accessor: 'itemName',
-		},
-		{
-			Header: 'Created Date',
-			accessor: 'createdDate',
-			Cell: ({ value }) => value ? new Date(value).toLocaleString() : 'N/A',
-		},
-		{
-			Header: 'Unit Price',
-			accessor: 'unitPrice',
-			Cell: ({ value }) => formatBalance(value || 0) + ' VND',
-		},
-		{
-			Header: 'Customer Name',
-			accessor: 'customerName',
-		},
-		{
-			Header: 'Customer Phone',
-			accessor: 'customerPhone',
-		},
-		{
-			Header: 'Customer Email',
-			accessor: 'customerEmail',
-		},
-		{
-			Header: 'Refund Percentage',
-			accessor: 'refundPercentage',
-			Cell: ({ value }) => value ? `${value}%` : 'N/A',
-		},
-		{
-			Header: 'Refund Amount',
-			accessor: 'refundAmount',
-			Cell: ({ value }) => value ? formatBalance(value) + ' VND' : 'N/A',
-		},
-		{
-			Header: 'Status',
-			accessor: 'refundStatus',
-			Cell: ({ value }) => (
-				<span className={`badge badge-light-${getStatusColor(value)}`}>
-					{value}
-				</span>
-			),
-		},
-		{
-			Header: 'Actions',
-			Cell: ({ row }) => (
-				<Link
-					to={`/refund/${row.original.refundId}`}
-					className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
-				>
-					<KTIcon iconName="eye" className="fs-3" />
-				</Link>
-			),
-		},
-	];
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
 
-	const getStatusColor = (status?: RefundStatus) => {
-		switch (status) {
-			case RefundStatus.Pending:
-				return 'warning';
-			case RefundStatus.Approved:
-				return 'success';
-			case RefundStatus.Rejected:
-				return 'danger';
-			default:
-				return 'primary';
-		}
-	};
+  const columns: Column<RefundResponse>[] = [
+    {
+      Header: "Order Code",
+      accessor: "orderCode",
+    },
+    {
+      Header: "Item Code",
+      accessor: "itemCode",
+    },
+    {
+      Header: "Item Name",
+      accessor: "itemName",
+    },
+    {
+      Header: "Created Date",
+      accessor: "createdDate",
+      Cell: ({ value }) => (value ? new Date(value).toLocaleString() : "N/A"),
+    },
+    {
+      Header: "Unit Price",
+      accessor: "unitPrice",
+      Cell: ({ value }) => formatBalance(value || 0) + " VND",
+    },
+    {
+      Header: "Customer Name",
+      accessor: "customerName",
+    },
+    {
+      Header: "Customer Phone",
+      accessor: "customerPhone",
+    },
+    {
+      Header: "Refund Percentage",
+      accessor: "refundPercentage",
+      Cell: ({ value }) => (value ? `${value}%` : "N/A"),
+    },
+    {
+      Header: "Status",
+      accessor: "refundStatus",
+      Cell: ({ value }) => (
+        <span className={`badge badge-light-${getStatusColor(value)}`}>
+          {value}
+        </span>
+      ),
+    },
+    {
+      Header: "Actions",
+      Cell: ({ row }) => (
+        <Link
+          to={`/refund/${row.original.refundId}`}
+          className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
+        >
+          <KTIcon iconName="eye" className="fs-3" />
+        </Link>
+      ),
+    },
+  ];
 
-	if (error) return <div>An error occurred: {(error as Error).message}</div>;
+  const getStatusColor = (status?: RefundStatus) => {
+    switch (status) {
+      case RefundStatus.Pending:
+        return "warning";
+      case RefundStatus.Approved:
+        return "success";
+      case RefundStatus.Rejected:
+        return "danger";
+      case RefundStatus.Completed:
+        return "success";
+      case RefundStatus.Cancelled:
+        return "danger";
+      default:
+        return "dark";
+    }
+  };
 
-	return (
-		<Content>
-			<KTCard>
-				<KTCardBody>
-					<div className="card-header border-0 pt-5">
-						<div className="card-toolbar">
-							<div className="d-flex align-items-center">
-								<input
-									type="text"
-									className="form-control form-control-solid w-225px me-2"
-									placeholder="Search by Customer Name"
-									value={customerName}
-									onChange={(e) => setCustomerName(e.target.value)}
-								/>
-								<input
-									type="text"
-									className="form-control form-control-solid w-225px me-2"
-									placeholder="Search by Customer Phone"
-									value={customerPhone}
-									onChange={(e) => setCustomerPhone(e.target.value)}
-								/>
-								<select
-									className="form-select form-select-solid w-200px me-2"
-									value={statusFilter || ""}
-									onChange={(e) => setStatusFilter(e.target.value as RefundStatus)}
-								>
-									<option value="">All Statuses</option>
-									{Object.values(RefundStatus).map((status) => (
-										<option key={status} value={status}>{status}</option>
-									))}
-								</select>
-								<input
-									type="text"
-									className="form-control form-control-solid w-225px me-2"
-									placeholder="Search by Order Code"
-									value={orderCode}
-									onChange={(e) => setOrderCode(e.target.value)}
-								/>
-								<input
-									type="text"
-									className="form-control form-control-solid w-225px me-2"
-									placeholder="Search by Item Code"
-									value={itemCode}
-									onChange={(e) => setItemCode(e.target.value)}
-								/>
-								<input
-									type="text"
-									className="form-control form-control-solid w-225px me-2"
-									placeholder="Search by Item Name"
-									value={itemName}
-									onChange={(e) => setItemName(e.target.value)}
-								/>
-							</div>
-						</div>
-					</div>
+  if (error) return <div>An error occurred: {(error as Error).message}</div>;
 
-					<KTTable
-						columns={columns}
-						data={data?.data || []}
-						totalCount={data?.totalCount || 0}
-						currentPage={currentPage}
-						totalPages={data?.totalPages || 0}
-						pageSize={pageSize}
-						onPageChange={handlePageChange}
-						loading={isLoading}
-					/>
-				</KTCardBody>
-			</KTCard>
-		</Content>
-	);
+  return (
+    <Content>
+      <KTCard>
+        <KTCardBody>
+          <div className="mb-5">
+            <h3 className="card-title align-items-start flex-column mb-4">
+              <span className="card-label fw-bold fs-3 mb-1">Refund List</span>
+            </h3>
+            <div className="d-flex flex-wrap gap-3">
+              {currentUser?.role === "Admin" && (
+                <div className="flex-grow-1">
+                  <select
+                    className="form-select form-select-solid"
+                    value={selectedShopId}
+                    onChange={(e) => setSelectedShopId(e.target.value)}
+                  >
+                    <option value="">All Shops</option>
+                    {shops.map((shop) => (
+                      <option key={shop.shopId} value={shop.shopId}>
+                        {shop.address}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+              <div className="flex-grow-1">
+                <input
+                  type="text"
+                  className="form-control form-control-solid"
+                  placeholder="Search by Customer Name"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                />
+              </div>
+              <div className="flex-grow-1">
+                <input
+                  type="text"
+                  className="form-control form-control-solid"
+                  placeholder="Search by Customer Phone"
+                  value={customerPhone}
+                  onChange={(e) => setCustomerPhone(e.target.value)}
+                />
+              </div>
+              <div className="flex-grow-1">
+                <select
+                  className="form-select form-select-solid"
+                  value={statusFilter || ""}
+                  onChange={(e) =>
+                    setStatusFilter(e.target.value as RefundStatus)
+                  }
+                >
+                  <option value="">All Statuses</option>
+                  {Object.values(RefundStatus).map((status) => (
+                    <option key={status} value={status}>
+                      {status}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="d-flex flex-wrap gap-3 mt-3">
+              <div className="flex-grow-1">
+                <input
+                  type="text"
+                  className="form-control form-control-solid"
+                  placeholder="Search by Order Code"
+                  value={orderCode}
+                  onChange={(e) => setOrderCode(e.target.value)}
+                />
+              </div>
+              <div className="flex-grow-1">
+                <input
+                  type="text"
+                  className="form-control form-control-solid"
+                  placeholder="Search by Item Code"
+                  value={itemCode}
+                  onChange={(e) => setItemCode(e.target.value)}
+                />
+              </div>
+              <div className="flex-grow-1">
+                <input
+                  type="text"
+                  className="form-control form-control-solid"
+                  placeholder="Search by Item Name"
+                  value={itemName}
+                  onChange={(e) => setItemName(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+
+          <KTTable
+            columns={columns}
+            data={data?.data || []}
+            totalCount={data?.totalCount || 0}
+            currentPage={currentPage}
+            totalPages={data?.totalPages || 0}
+            pageSize={pageSize}
+            onPageChange={handlePageChange}
+            loading={isLoading}
+          />
+        </KTCardBody>
+      </KTCard>
+    </Content>
+  );
 };
 
 export default RefundList;

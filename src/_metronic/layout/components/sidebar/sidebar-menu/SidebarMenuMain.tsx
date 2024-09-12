@@ -90,6 +90,18 @@ const SidebarMenuMain = () => {
               hasBullet={true}
             />
           </SidebarMenuItemWithSub>
+          <SidebarMenuItemWithSub
+            to="/refund"
+            title="Refund"
+            icon="element-11"
+            fontIcon="bi-bag"
+          >
+            <SidebarMenuItem
+              to="/refund"
+              title="Refund List"
+              hasBullet={true}
+            />
+          </SidebarMenuItemWithSub>
         </>
       )}
       {currentUser?.role === "Staff" && (
