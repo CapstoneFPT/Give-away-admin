@@ -62,7 +62,14 @@ const OrderAdminList: React.FC<Props> = ({ className }) => {
   );
 
   const { data, isLoading, error } = useQuery(
-    ["orders", searchTerms, paymentMethodFilter, purchaseTypeFilter, statusFilter, currentPage],
+    [
+      "orders",
+      searchTerms,
+      paymentMethodFilter,
+      purchaseTypeFilter,
+      statusFilter,
+      currentPage,
+    ],
     () => fetchOrders(currentPage, pageSize),
     { keepPreviousData: true }
   );
@@ -88,22 +95,57 @@ const OrderAdminList: React.FC<Props> = ({ className }) => {
                 Recent Orders
               </span>
             </h3>
-            <div className="card-toolbar">
-              {Object.entries(searchTerms).map(([key, value]) => (
+          </div>
+          <div className="d-flex flex-column flex-md-row gap-4 mb-5">
+            <div className="d-flex flex-column flex-grow-1 gap-2">
+              <div className="d-flex gap-2">
                 <input
-                  key={key}
                   type="text"
-                  name={key}
-                  className="form-control form-control-solid w-250px me-2"
-                  placeholder={`Search ${
-                    key.charAt(0).toUpperCase() + key.slice(1)
-                  }`}
-                  value={value}
+                  name="orderCode"
+                  className="form-control form-control-solid"
+                  placeholder="Search Order Code"
+                  value={searchTerms.orderCode}
                   onChange={handleSearchChange}
                 />
-              ))}
+                <input
+                  type="text"
+                  name="recipientName"
+                  className="form-control form-control-solid"
+                  placeholder="Search Recipient Name"
+                  value={searchTerms.recipientName}
+                  onChange={handleSearchChange}
+                />
+              </div>
+              <div className="d-flex gap-2">
+                <input
+                  type="text"
+                  name="phone"
+                  className="form-control form-control-solid"
+                  placeholder="Search Phone"
+                  value={searchTerms.phone}
+                  onChange={handleSearchChange}
+                />
+                <input
+                  type="text"
+                  name="email"
+                  className="form-control form-control-solid"
+                  placeholder="Search Email"
+                  value={searchTerms.email}
+                  onChange={handleSearchChange}
+                />
+              </div>
+              <input
+                type="text"
+                name="customerName"
+                className="form-control form-control-solid"
+                placeholder="Search Customer Name"
+                value={searchTerms.customerName}
+                onChange={handleSearchChange}
+              />
+            </div>
+            <div className="d-flex flex-column gap-2">
               <select
-                className="form-select form-select-solid w-200px me-2"
+                className="form-select form-select-solid"
                 value={paymentMethodFilter}
                 onChange={(e) =>
                   setPaymentMethodFilter(e.target.value as PaymentMethod)
@@ -117,7 +159,7 @@ const OrderAdminList: React.FC<Props> = ({ className }) => {
                 ))}
               </select>
               <select
-                className="form-select form-select-solid w-200px me-2"
+                className="form-select form-select-solid"
                 value={purchaseTypeFilter}
                 onChange={(e) =>
                   setPurchaseTypeFilter(e.target.value as PurchaseType)
@@ -131,14 +173,14 @@ const OrderAdminList: React.FC<Props> = ({ className }) => {
                 ))}
               </select>
               <select
-                className="form-select form-select-solid w-200px me-2"
+                className="form-select form-select-solid"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value as OrderStatus)}
               >
                 <option value="">All Statuses</option>
                 {Object.values(OrderStatus).map((status) => (
                   <option key={status} value={status}>
-                    {status}z
+                    {status}
                   </option>
                 ))}
               </select>

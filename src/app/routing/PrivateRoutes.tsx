@@ -27,6 +27,7 @@ import OrderAdminDetailPage from "../admin/order/OrderAdminDetailPage.tsx";
 import AuctionAdminPage from "../admin/auction/AuctionAdminPage.tsx";
 import RefundDetail from "../pages/refund/RefundDetail.tsx";
 import CreateAuction from "../pages/auction/CreateAuction.tsx";
+import AccountManagement from "../admin/account/AccountManagement.tsx";
 const PrivateRoutes = () => {
   const { currentUser } = useAuth();
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
@@ -51,7 +52,7 @@ const PrivateRoutes = () => {
       case "Staff":
         return "/order/order-list";
       default:
-        return "/auth"; 
+        return "/auth";
     }
   };
 
@@ -71,6 +72,16 @@ const PrivateRoutes = () => {
         <Route path="refund" element={<RefundPage />} />
         <Route path="refund/:refundId" element={<RefundDetail />} />
         {/* Product Admin Routes */}
+        <Route
+          path="account-admin"
+          element={
+            <ProtectedRoute roles={["Admin"]}>
+              <SuspensedView>
+                <AccountManagement />
+              </SuspensedView>
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="auction-admin"
           element={

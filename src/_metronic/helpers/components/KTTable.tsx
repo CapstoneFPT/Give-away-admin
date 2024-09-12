@@ -1,6 +1,6 @@
-import React from 'react';
-import { useTable, useSortBy, UseTableOptions } from 'react-table';
-import { KTIcon } from './KTIcon';
+import React from "react";
+import { useTable, useSortBy, UseTableOptions } from "react-table";
+import { KTIcon } from "./KTIcon";
 
 interface KTTableProps {
   columns: any[];
@@ -23,19 +23,14 @@ export const KTTable: React.FC<KTTableProps> = ({
   loading,
   totalPages,
 }) => {
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    prepareRow,
-    rows,
-  } = useTable(
-    {
-      columns,
-      data,
-    } as UseTableOptions<object>,
-    useSortBy
-  );
+  const { getTableProps, getTableBodyProps, headerGroups, prepareRow, rows } =
+    useTable(
+      {
+        columns,
+        data,
+      } as UseTableOptions<object>,
+      useSortBy
+    );
 
   const renderPageNumbers = () => {
     const pageNumbers = [];
@@ -53,7 +48,9 @@ export const KTTable: React.FC<KTTableProps> = ({
           key={i}
           onClick={() => onPageChange(i)}
           disabled={i === currentPage || loading}
-          className={`btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-light-primary'} me-2`}
+          className={`btn btn-sm ${
+            i === currentPage ? "btn-primary" : "btn-light-primary"
+          } me-2`}
         >
           {i}
         </button>
@@ -78,12 +75,24 @@ export const KTTable: React.FC<KTTableProps> = ({
           <table {...getTableProps()} className="table align-middle gs-0 gy-4">
             <thead>
               {headerGroups.map((headerGroup) => (
-                <tr {...headerGroup.getHeaderGroupProps()} className="fw-bold text-muted bg-light">
+                <tr
+                  {...headerGroup.getHeaderGroupProps()}
+                  className="fw-bold text-muted bg-light"
+                >
                   {headerGroup.headers.map((column) => (
-                    <th {...column.getHeaderProps((column as any).getSortByToggleProps())} className="ps-4 min-w-125px rounded-start">
-                      {column.render('Header')}
+                    <th
+                      {...column.getHeaderProps(
+                        (column as any).getSortByToggleProps()
+                      )}
+                      className="ps-4 min-w-125px rounded-start"
+                    >
+                      {column.render("Header")}
                       <span>
-                        {(column as any).isSorted ? ((column as any).isSortedDesc ? ' 🔽' : ' 🔼') : ''}
+                        {(column as any).isSorted
+                          ? (column as any).isSortedDesc
+                            ? " 🔽"
+                            : " 🔼"
+                          : ""}
                       </span>
                     </th>
                   ))}
@@ -96,7 +105,7 @@ export const KTTable: React.FC<KTTableProps> = ({
                 return (
                   <tr {...row.getRowProps()}>
                     {row.cells.map((cell) => (
-                      <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                      <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
                     ))}
                   </tr>
                 );
@@ -105,7 +114,10 @@ export const KTTable: React.FC<KTTableProps> = ({
           </table>
         </div>
         {loading ? (
-          <div className="d-flex justify-content-center align-items-center" style={{ height: '200px' }}>
+          <div
+            className="d-flex justify-content-center align-items-center"
+            style={{ height: "200px" }}
+          >
             <div className="spinner-border text-primary" role="status">
               <span className="visually-hidden">Loading...</span>
             </div>
@@ -116,20 +128,37 @@ export const KTTable: React.FC<KTTableProps> = ({
       </div>
       <div className="card-footer d-flex justify-content-between align-items-center">
         <div>
-          Showing {(currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, totalCount)} of {totalCount} entries
+          Showing {(currentPage - 1) * pageSize + 1} to{" "}
+          {Math.min(currentPage * pageSize, totalCount)} of {totalCount} entries
         </div>
         <div>
-          <button onClick={() => onPageChange(1)} disabled={currentPage === 1 || loading} className="btn btn-sm btn-light-primary me-2">
+          <button
+            onClick={() => onPageChange(1)}
+            disabled={currentPage === 1 || loading}
+            className="btn btn-sm btn-light-primary me-2"
+          >
             <KTIcon iconName="double-left" className="fs-2" />
           </button>
-          <button onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1 || loading} className="btn btn-sm btn-light-primary me-2">
+          <button
+            onClick={() => onPageChange(currentPage - 1)}
+            disabled={currentPage === 1 || loading}
+            className="btn btn-sm btn-light-primary me-2"
+          >
             <KTIcon iconName="left" className="fs-2" />
           </button>
           {renderPageNumbers()}
-          <button onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages || loading} className="btn btn-sm btn-light-primary me-2">
+          <button
+            onClick={() => onPageChange(currentPage + 1)}
+            disabled={currentPage === totalPages || loading}
+            className="btn btn-sm btn-light-primary me-2"
+          >
             <KTIcon iconName="right" className="fs-2" />
           </button>
-          <button onClick={() => onPageChange(totalPages)} disabled={currentPage === totalPages || loading} className="btn btn-sm btn-light-primary">
+          <button
+            onClick={() => onPageChange(totalPages)}
+            disabled={currentPage === totalPages || loading}
+            className="btn btn-sm btn-light-primary"
+          >
             <KTIcon iconName="double-right" className="fs-2" />
           </button>
         </div>

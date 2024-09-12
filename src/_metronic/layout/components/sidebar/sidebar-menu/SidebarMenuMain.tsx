@@ -20,6 +20,12 @@ const SidebarMenuMain = () => {
             fontIcon="bi-app-indicator"
           />
           <SidebarMenuItem
+            to="/account-admin"
+            icon="element-11"
+            title="Account Management"
+            fontIcon="bi-app-indicator"
+          />
+          <SidebarMenuItem
             to="/consignment/list"
             icon="element-11"
             title="Consignment"
