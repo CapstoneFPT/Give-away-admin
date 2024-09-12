@@ -10,7 +10,6 @@ import {
   ConsignSaleLineItemsListResponse,
   ConsignSaleLineItemStatus,
   ConsignSaleStatus,
-  ConsignSaleDetailedResponse,
 } from "../../../api";
 import KTInfoItem from "../../../_metronic/helpers/components/KTInfoItem.tsx";
 
@@ -60,23 +59,74 @@ const getConsignSaleLineItemStatusColor = (
 
 export const ConsignDetail: React.FC = () => {
   const { consignSaleId } = useParams<{ consignSaleId: string }>();
+  const [isActionInProgress, setIsActionInProgress] = useState(false);
   const {
     data: consignSaleResponse,
     isLoading: isLoadingSale,
     error: saleError,
+    refetch: refetchConsignSale,
   } = useConsignSale(consignSaleId!);
   const {
     data: lineItemsResponse,
     isLoading: isLoadingItems,
     error: itemsError,
+    refetch: refetchLineItems,
   } = useConsignSaleLineItems(consignSaleId!);
 
+  const handleActionStart = () => {
+    setIsActionInProgress(true);
+  };
+
+  const handleActionComplete = async () => {
+    await Promise.all([refetchConsignSale(), refetchLineItems()]);
+    setIsActionInProgress(false);
+  };
+
+  if (isLoadingSale || isLoadingItems) {
+    return (
+      <Content>
+        <div
+          className="d-flex justify-content-center align-items-center"
+          style={{ height: "400px" }}
+        >
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </Content>
+    );
+  }
+
+  if (saleError || itemsError) {
+    return (
+      <Content>
+        <div className="alert alert-danger">
+          Error loading data. Please try again later.
+        </div>
+      </Content>
+    );
+  }
+
   if (!consignSaleResponse) {
-    return <div>No consignment data found.</div>;
+    return (
+      <Content>
+        <div className="alert alert-warning">No consignment data found.</div>
+      </Content>
+    );
   }
 
   return (
     <Content>
+      {isActionInProgress && (
+        <div
+          className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
+          style={{ backgroundColor: "rgba(0,0,0,0.5)", zIndex: 9999 }}
+        >
+          <div className="spinner-border text-light" role="status">
+            <span className="visually-hidden">Processing...</span>
+          </div>
+        </div>
+      )}
       <KTCard className="mb-5 mb-xl-8">
         <KTCardBody>
           <div className="row g-5 g-xl-8">
@@ -182,6 +232,8 @@ export const ConsignDetail: React.FC = () => {
         consignSale={consignSaleResponse}
         initialStatus={consignSaleResponse.status || "Pending"}
         lineItems={lineItemsResponse || []}
+        onActionStart={handleActionStart}
+        onActionComplete={handleActionComplete}
       />
 
       <KTCard className="mb-5 mb-xl-8">

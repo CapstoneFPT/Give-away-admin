@@ -5,16 +5,17 @@ import {
   ConsignSaleApi,
   ConsignSaleDetailedResponse,
   ConsignSaleLineItemsListResponse,
-  ConsignSaleLineItemStatus,
   ConsignSaleStatus,
 } from "../../../api";
-import KTModal from "../../../_metronic/helpers/components/KTModal.tsx";
+
 import { RejectConsignmentModal } from "./RejectConsignmentModal.tsx";
 
 interface ConsignmentApprovalProps {
   consignSale: ConsignSaleDetailedResponse;
   initialStatus: ConsignSaleStatus;
   lineItems: ConsignSaleLineItemsListResponse[];
+  onActionStart: () => void;
+  onActionComplete: () => void;
 }
 
 const consignSaleApi = new ConsignSaleApi();
@@ -23,6 +24,8 @@ export const ConsignmentApproval: React.FC<ConsignmentApprovalProps> = ({
   consignSale,
   initialStatus,
   lineItems,
+  onActionStart,
+  onActionComplete,
 }) => {
   const [comment, setComment] = useState<string>("");
   const [status, setStatus] = useState<ConsignSaleStatus>(initialStatus);
@@ -34,16 +37,6 @@ export const ConsignmentApproval: React.FC<ConsignmentApprovalProps> = ({
     setStatus(initialStatus);
   }, [initialStatus]);
 
-  const cannotListItems = () => {
-    const result = lineItems
-      .filter(
-        (item) => item.status === ConsignSaleLineItemStatus.ReadyForConsignSale
-      )
-      .every((item) => !item.individualItemId);
-    console.log("Cannot list items ", result);
-    return result;
-  };
-
   const updateConsignSale = useMutation(
     async ({
       id,
@@ -54,6 +47,7 @@ export const ConsignmentApproval: React.FC<ConsignmentApprovalProps> = ({
       status: ConsignSaleStatus;
       comment?: string;
     }) => {
+      onActionStart();
       return await consignSaleApi.apiConsignsalesConsignSaleIdApprovalPut(id, {
         status,
         responseFromShop: comment,
@@ -65,12 +59,18 @@ export const ConsignmentApproval: React.FC<ConsignmentApprovalProps> = ({
           "consignSale",
           consignSale.consignSaleId,
         ]);
+        onActionComplete();
+      },
+      onError: (error) => {
+        console.error("Error updating consignment:", error);
+        onActionComplete();
       },
     }
   );
 
   const notifyNegotiation = useMutation(
     async (id: string) => {
+      onActionStart();
       return await consignSaleApi.apiConsignsalesConsignSaleIdNegotiatingPut(
         id
       );
@@ -81,12 +81,18 @@ export const ConsignmentApproval: React.FC<ConsignmentApprovalProps> = ({
           "consignSale",
           consignSale.consignSaleId,
         ]);
+        onActionComplete();
+      },
+      onError: (error) => {
+        console.error("Error notifying negotiation:", error);
+        onActionComplete();
       },
     }
   );
 
   const confirmReceived = useMutation(
     async (id: string) => {
+      onActionStart();
       return await consignSaleApi.apiConsignsalesConsignSaleIdConfirmReceivedPut(
         id
       );
@@ -97,14 +103,18 @@ export const ConsignmentApproval: React.FC<ConsignmentApprovalProps> = ({
           "consignSale",
           consignSale.consignSaleId,
         ]);
+        onActionComplete();
+      },
+      onError: (error) => {
+        console.error("Error confirming received:", error);
+        onActionComplete();
       },
     }
   );
 
   const canRejectConsign = (initialStatus: ConsignSaleStatus) => {
     const result = initialStatus === "Pending";
-    console.log("Status", initialStatus);
-    console.log("Can reject", result);
+
     return result;
   };
 
@@ -118,14 +128,20 @@ export const ConsignmentApproval: React.FC<ConsignmentApprovalProps> = ({
   };
 
   const handleConfirmReject = async () => {
-    await updateConsignSale.mutateAsync({
-      id: consignSale.consignSaleId!,
-      status: ConsignSaleStatus.Rejected,
-      comment: rejectReason,
-    });
-    setStatus(ConsignSaleStatus.Rejected);
-    setShowRejectModal(false);
-    setRejectReason("");
+    onActionStart();
+    try {
+      await updateConsignSale.mutateAsync({
+        id: consignSale.consignSaleId!,
+        status: ConsignSaleStatus.Rejected,
+        comment: rejectReason,
+      });
+      setStatus(ConsignSaleStatus.Rejected);
+      setShowRejectModal(false);
+      setRejectReason("");
+    } finally {
+      setShowRejectModal(false);
+      onActionComplete();
+    }
   };
 
   const handleModalClose = () => {
@@ -134,22 +150,37 @@ export const ConsignmentApproval: React.FC<ConsignmentApprovalProps> = ({
   };
 
   const handleNotifyDelivery = async () => {
-    await updateConsignSale.mutateAsync({
-      id: consignSale.consignSaleId!,
-      status: ConsignSaleStatus.AwaitDelivery,
-    });
-    setStatus(ConsignSaleStatus.AwaitDelivery);
+    onActionStart();
+    try {
+      await updateConsignSale.mutateAsync({
+        id: consignSale.consignSaleId!,
+        status: ConsignSaleStatus.AwaitDelivery,
+      });
+      setStatus(ConsignSaleStatus.AwaitDelivery);
+    } finally {
+      onActionComplete();
+    }
   };
 
   const handleConfirmReceived = async () => {
-    await confirmReceived.mutateAsync(consignSale.consignSaleId!);
-    setStatus(ConsignSaleStatus.Processing);
+    onActionStart();
+    try {
+      await confirmReceived.mutateAsync(consignSale.consignSaleId!);
+      setStatus(ConsignSaleStatus.Processing);
+    } finally {
+      onActionComplete();
+    }
   };
 
-  async function handleNotifyNegotiation() {
-    await notifyNegotiation.mutateAsync(consignSale.consignSaleId!);
-    setStatus(ConsignSaleStatus.Negotiating);
-  }
+  const handleNotifyNegotiation = async () => {
+    onActionStart();
+    try {
+      await notifyNegotiation.mutateAsync(consignSale.consignSaleId!);
+      setStatus(ConsignSaleStatus.Negotiating);
+    } finally {
+      onActionComplete();
+    }
+  };
 
   return (
     <>
