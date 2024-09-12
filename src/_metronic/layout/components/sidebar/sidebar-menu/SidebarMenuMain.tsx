@@ -49,6 +49,12 @@ const SidebarMenuMain = () => {
             title="Auction"
             fontIcon="bi-app-indicator"
           />
+          <SidebarMenuItem
+            to="/transaction"
+            icon="element-11"
+            title="Transaction"
+            fontIcon="bi-app-indicator"
+          />
         </>
       )}
       {currentUser?.role === "Staff" && (
