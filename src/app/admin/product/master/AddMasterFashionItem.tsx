@@ -230,7 +230,6 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
   const handleSubmit = async () => {
     if (validateForm()) {
       try {
-        console.log(formData);
         await createMasterItem(formData);
         handleSave(formData);
         handleClose();

@@ -22,7 +22,7 @@ const TransactionManagement: React.FC = () => {
       transactionApi.apiTransactionsGet(
         currentPage,
         pageSize,
-        undefined,
+        null!,
         transactionTypeFilter || undefined
       ),
     {

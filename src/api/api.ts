@@ -107,6 +107,18 @@ export interface Account {
      * @memberof Account
      */
     'createdDate'?: string;
+    /**
+     * 
+     * @type {Array<Transaction>}
+     * @memberof Account
+     */
+    'sentTransactions'?: Array<Transaction> | null;
+    /**
+     * 
+     * @type {Array<Transaction>}
+     * @memberof Account
+     */
+    'receivedTransactions'?: Array<Transaction> | null;
 }
 
 
@@ -5629,13 +5641,25 @@ export interface GetTransactionsResponse {
      * @type {string}
      * @memberof GetTransactionsResponse
      */
-    'memberId'?: string | null;
+    'senderId'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetTransactionsResponse
+     */
+    'receiverId'?: string | null;
     /**
      * 
      * @type {string}
      * @memberof GetTransactionsResponse
      */
     'depositCode'?: string | null;
+    /**
+     * 
+     * @type {PaymentMethod}
+     * @memberof GetTransactionsResponse
+     */
+    'paymentMethod'?: PaymentMethod;
 }
 
 
@@ -7251,6 +7275,18 @@ export interface Member {
      * @memberof Member
      */
     'createdDate'?: string;
+    /**
+     * 
+     * @type {Array<Transaction>}
+     * @memberof Member
+     */
+    'sentTransactions'?: Array<Transaction> | null;
+    /**
+     * 
+     * @type {Array<Transaction>}
+     * @memberof Member
+     */
+    'receivedTransactions'?: Array<Transaction> | null;
 }
 
 
@@ -7871,6 +7907,12 @@ export interface OrderLineItemDetailedResponse {
      * @type {string}
      * @memberof OrderLineItemDetailedResponse
      */
+    'itemId'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof OrderLineItemDetailedResponse
+     */
     'itemName'?: string | null;
     /**
      * 
@@ -8001,6 +8043,12 @@ export interface OrderLineItemListResponse {
      * @memberof OrderLineItemListResponse
      */
     'refundExpirationDate'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof OrderLineItemListResponse
+     */
+    'itemId'?: string | null;
     /**
      * 
      * @type {string}
@@ -8824,7 +8872,7 @@ export interface PayWithPointsResponse {
 export const PaymentMethod = {
     Cod: 'COD',
     Point: 'Point',
-    QrCode: 'QRCode',
+    Banking: 'Banking',
     Cash: 'Cash'
 } as const;
 
@@ -10110,6 +10158,18 @@ export interface Staff {
     'createdDate'?: string;
     /**
      * 
+     * @type {Array<Transaction>}
+     * @memberof Staff
+     */
+    'sentTransactions'?: Array<Transaction> | null;
+    /**
+     * 
+     * @type {Array<Transaction>}
+     * @memberof Staff
+     */
+    'receivedTransactions'?: Array<Transaction> | null;
+    /**
+     * 
      * @type {Shop}
      * @memberof Staff
      */
@@ -10276,13 +10336,25 @@ export interface Transaction {
      * @type {string}
      * @memberof Transaction
      */
-    'memberId'?: string | null;
+    'senderId'?: string | null;
     /**
      * 
-     * @type {Member}
+     * @type {Account}
      * @memberof Transaction
      */
-    'member'?: Member;
+    'sender'?: Account;
+    /**
+     * 
+     * @type {string}
+     * @memberof Transaction
+     */
+    'receiverId'?: string | null;
+    /**
+     * 
+     * @type {Account}
+     * @memberof Transaction
+     */
+    'receiver'?: Account;
     /**
      * 
      * @type {string}
@@ -10301,6 +10373,12 @@ export interface Transaction {
      * @memberof Transaction
      */
     'transactionCode'?: string | null;
+    /**
+     * 
+     * @type {PaymentMethod}
+     * @memberof Transaction
+     */
+    'paymentMethod'?: PaymentMethod;
 }
 
 
@@ -10359,39 +10437,6 @@ export interface TransactionDetailResponse {
      */
     'wallet'?: WalletDetailResponse;
 }
-/**
- * 
- * @export
- * @interface TransactionRequest
- */
-export interface TransactionRequest {
-    /**
-     * 
-     * @type {number}
-     * @memberof TransactionRequest
-     */
-    'page'?: number | null;
-    /**
-     * 
-     * @type {number}
-     * @memberof TransactionRequest
-     */
-    'pageSize'?: number | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof TransactionRequest
-     */
-    'shopId'?: string | null;
-    /**
-     * 
-     * @type {TransactionType}
-     * @memberof TransactionRequest
-     */
-    'transactionType'?: TransactionType;
-}
-
-
 /**
  * 
  * @export
@@ -10458,6 +10503,12 @@ export interface TransactionResponse {
      * @memberof TransactionResponse
      */
     'customerPhone'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof TransactionResponse
+     */
+    'shopId'?: string | null;
 }
 
 
@@ -10562,13 +10613,13 @@ export interface TransactionResponsePaginationResponseResult {
  */
 
 export const TransactionType = {
-    AuctionDeposit: 'AuctionDeposit',
-    Withdraw: 'Withdraw',
     Purchase: 'Purchase',
-    Refund: 'Refund',
-    Recharge: 'Recharge',
-    Payout: 'Payout',
-    Sale: 'Sale',
+    CustomerSale: 'CustomerSale',
+    AddFund: 'AddFund',
+    Withdraw: 'Withdraw',
+    RefundProduct: 'RefundProduct',
+    AuctionDeposit: 'AuctionDeposit',
+    ConsignPayout: 'ConsignPayout',
     RefundAuctionDeposit: 'RefundAuctionDeposit'
 } as const;
 
@@ -14147,10 +14198,11 @@ export const AuctionApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * 
          * @param {string} id 
+         * @param {string} [memberId] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiAuctionsIdGet: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        apiAuctionsIdGet: async (id: string, memberId?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('apiAuctionsIdGet', 'id', id)
             const localVarPath = `/api/auctions/{id}`
@@ -14169,6 +14221,10 @@ export const AuctionApiAxiosParamCreator = function (configuration?: Configurati
             // authentication Bearer required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (memberId !== undefined) {
+                localVarQueryParameter['memberId'] = memberId;
+            }
 
 
     
@@ -14539,11 +14595,12 @@ export const AuctionApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @param {string} id 
+         * @param {string} [memberId] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiAuctionsIdGet(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AuctionDetailResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiAuctionsIdGet(id, options);
+        async apiAuctionsIdGet(id: string, memberId?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AuctionDetailResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiAuctionsIdGet(id, memberId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['AuctionApi.apiAuctionsIdGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -14753,11 +14810,12 @@ export const AuctionApiFactory = function (configuration?: Configuration, basePa
         /**
          * 
          * @param {string} id 
+         * @param {string} [memberId] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiAuctionsIdGet(id: string, options?: RawAxiosRequestConfig): AxiosPromise<AuctionDetailResponse> {
-            return localVarFp.apiAuctionsIdGet(id, options).then((request) => request(axios, basePath));
+        apiAuctionsIdGet(id: string, memberId?: string, options?: RawAxiosRequestConfig): AxiosPromise<AuctionDetailResponse> {
+            return localVarFp.apiAuctionsIdGet(id, memberId, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -14980,12 +15038,13 @@ export class AuctionApi extends BaseAPI {
     /**
      * 
      * @param {string} id 
+     * @param {string} [memberId] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuctionApi
      */
-    public apiAuctionsIdGet(id: string, options?: RawAxiosRequestConfig) {
-        return AuctionApiFp(this.configuration).apiAuctionsIdGet(id, options).then((request) => request(this.axios, this.basePath));
+    public apiAuctionsIdGet(id: string, memberId?: string, options?: RawAxiosRequestConfig) {
+        return AuctionApiFp(this.configuration).apiAuctionsIdGet(id, memberId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -19188,10 +19247,11 @@ export const MasterItemApiAxiosParamCreator = function (configuration?: Configur
          * @param {GenderType} [genderType] 
          * @param {boolean} [isConsignment] 
          * @param {boolean} [isLeftInStock] 
+         * @param {boolean} [isForSale] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiMasterItemsGet: async (searchTerm?: string, searchItemCode?: string, brand?: string, pageNumber?: number, pageSize?: number, categoryId?: string, shopId?: string, genderType?: GenderType, isConsignment?: boolean, isLeftInStock?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        apiMasterItemsGet: async (searchTerm?: string, searchItemCode?: string, brand?: string, pageNumber?: number, pageSize?: number, categoryId?: string, shopId?: string, genderType?: GenderType, isConsignment?: boolean, isLeftInStock?: boolean, isForSale?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/master-items`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -19246,6 +19306,10 @@ export const MasterItemApiAxiosParamCreator = function (configuration?: Configur
 
             if (isLeftInStock !== undefined) {
                 localVarQueryParameter['IsLeftInStock'] = isLeftInStock;
+            }
+
+            if (isForSale !== undefined) {
+                localVarQueryParameter['IsForSale'] = isForSale;
             }
 
 
@@ -19307,10 +19371,11 @@ export const MasterItemApiAxiosParamCreator = function (configuration?: Configur
          * @param {number} [maxSellingPrice] 
          * @param {Array<FashionItemStatus>} [status] 
          * @param {Array<FashionItemType>} [types] 
+         * @param {boolean} [isForSale] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiMasterItemsMasterItemIdIndividualItemsGet: async (masterItemId: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, memberId?: string, minSellingPrice?: number, maxSellingPrice?: number, status?: Array<FashionItemStatus>, types?: Array<FashionItemType>, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        apiMasterItemsMasterItemIdIndividualItemsGet: async (masterItemId: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, memberId?: string, minSellingPrice?: number, maxSellingPrice?: number, status?: Array<FashionItemStatus>, types?: Array<FashionItemType>, isForSale?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'masterItemId' is not null or undefined
             assertParamExists('apiMasterItemsMasterItemIdIndividualItemsGet', 'masterItemId', masterItemId)
             const localVarPath = `/api/master-items/{masterItemId}/individual-items`
@@ -19360,6 +19425,10 @@ export const MasterItemApiAxiosParamCreator = function (configuration?: Configur
 
             if (types) {
                 localVarQueryParameter['Types'] = types;
+            }
+
+            if (isForSale !== undefined) {
+                localVarQueryParameter['IsForSale'] = isForSale;
             }
 
 
@@ -19545,11 +19614,12 @@ export const MasterItemApiFp = function(configuration?: Configuration) {
          * @param {GenderType} [genderType] 
          * @param {boolean} [isConsignment] 
          * @param {boolean} [isLeftInStock] 
+         * @param {boolean} [isForSale] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiMasterItemsGet(searchTerm?: string, searchItemCode?: string, brand?: string, pageNumber?: number, pageSize?: number, categoryId?: string, shopId?: string, genderType?: GenderType, isConsignment?: boolean, isLeftInStock?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterItemListResponsePaginationResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiMasterItemsGet(searchTerm, searchItemCode, brand, pageNumber, pageSize, categoryId, shopId, genderType, isConsignment, isLeftInStock, options);
+        async apiMasterItemsGet(searchTerm?: string, searchItemCode?: string, brand?: string, pageNumber?: number, pageSize?: number, categoryId?: string, shopId?: string, genderType?: GenderType, isConsignment?: boolean, isLeftInStock?: boolean, isForSale?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterItemListResponsePaginationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiMasterItemsGet(searchTerm, searchItemCode, brand, pageNumber, pageSize, categoryId, shopId, genderType, isConsignment, isLeftInStock, isForSale, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['MasterItemApi.apiMasterItemsGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -19577,11 +19647,12 @@ export const MasterItemApiFp = function(configuration?: Configuration) {
          * @param {number} [maxSellingPrice] 
          * @param {Array<FashionItemStatus>} [status] 
          * @param {Array<FashionItemType>} [types] 
+         * @param {boolean} [isForSale] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiMasterItemsMasterItemIdIndividualItemsGet(masterItemId: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, memberId?: string, minSellingPrice?: number, maxSellingPrice?: number, status?: Array<FashionItemStatus>, types?: Array<FashionItemType>, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IndividualItemListResponsePaginationResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiMasterItemsMasterItemIdIndividualItemsGet(masterItemId, searchItemCode, pageNumber, pageSize, memberId, minSellingPrice, maxSellingPrice, status, types, options);
+        async apiMasterItemsMasterItemIdIndividualItemsGet(masterItemId: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, memberId?: string, minSellingPrice?: number, maxSellingPrice?: number, status?: Array<FashionItemStatus>, types?: Array<FashionItemType>, isForSale?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IndividualItemListResponsePaginationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiMasterItemsMasterItemIdIndividualItemsGet(masterItemId, searchItemCode, pageNumber, pageSize, memberId, minSellingPrice, maxSellingPrice, status, types, isForSale, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['MasterItemApi.apiMasterItemsMasterItemIdIndividualItemsGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -19671,11 +19742,12 @@ export const MasterItemApiFactory = function (configuration?: Configuration, bas
          * @param {GenderType} [genderType] 
          * @param {boolean} [isConsignment] 
          * @param {boolean} [isLeftInStock] 
+         * @param {boolean} [isForSale] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiMasterItemsGet(searchTerm?: string, searchItemCode?: string, brand?: string, pageNumber?: number, pageSize?: number, categoryId?: string, shopId?: string, genderType?: GenderType, isConsignment?: boolean, isLeftInStock?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<MasterItemListResponsePaginationResponse> {
-            return localVarFp.apiMasterItemsGet(searchTerm, searchItemCode, brand, pageNumber, pageSize, categoryId, shopId, genderType, isConsignment, isLeftInStock, options).then((request) => request(axios, basePath));
+        apiMasterItemsGet(searchTerm?: string, searchItemCode?: string, brand?: string, pageNumber?: number, pageSize?: number, categoryId?: string, shopId?: string, genderType?: GenderType, isConsignment?: boolean, isLeftInStock?: boolean, isForSale?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<MasterItemListResponsePaginationResponse> {
+            return localVarFp.apiMasterItemsGet(searchTerm, searchItemCode, brand, pageNumber, pageSize, categoryId, shopId, genderType, isConsignment, isLeftInStock, isForSale, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -19697,11 +19769,12 @@ export const MasterItemApiFactory = function (configuration?: Configuration, bas
          * @param {number} [maxSellingPrice] 
          * @param {Array<FashionItemStatus>} [status] 
          * @param {Array<FashionItemType>} [types] 
+         * @param {boolean} [isForSale] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiMasterItemsMasterItemIdIndividualItemsGet(masterItemId: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, memberId?: string, minSellingPrice?: number, maxSellingPrice?: number, status?: Array<FashionItemStatus>, types?: Array<FashionItemType>, options?: RawAxiosRequestConfig): AxiosPromise<IndividualItemListResponsePaginationResponse> {
-            return localVarFp.apiMasterItemsMasterItemIdIndividualItemsGet(masterItemId, searchItemCode, pageNumber, pageSize, memberId, minSellingPrice, maxSellingPrice, status, types, options).then((request) => request(axios, basePath));
+        apiMasterItemsMasterItemIdIndividualItemsGet(masterItemId: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, memberId?: string, minSellingPrice?: number, maxSellingPrice?: number, status?: Array<FashionItemStatus>, types?: Array<FashionItemType>, isForSale?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<IndividualItemListResponsePaginationResponse> {
+            return localVarFp.apiMasterItemsMasterItemIdIndividualItemsGet(masterItemId, searchItemCode, pageNumber, pageSize, memberId, minSellingPrice, maxSellingPrice, status, types, isForSale, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -19783,12 +19856,13 @@ export class MasterItemApi extends BaseAPI {
      * @param {GenderType} [genderType] 
      * @param {boolean} [isConsignment] 
      * @param {boolean} [isLeftInStock] 
+     * @param {boolean} [isForSale] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof MasterItemApi
      */
-    public apiMasterItemsGet(searchTerm?: string, searchItemCode?: string, brand?: string, pageNumber?: number, pageSize?: number, categoryId?: string, shopId?: string, genderType?: GenderType, isConsignment?: boolean, isLeftInStock?: boolean, options?: RawAxiosRequestConfig) {
-        return MasterItemApiFp(this.configuration).apiMasterItemsGet(searchTerm, searchItemCode, brand, pageNumber, pageSize, categoryId, shopId, genderType, isConsignment, isLeftInStock, options).then((request) => request(this.axios, this.basePath));
+    public apiMasterItemsGet(searchTerm?: string, searchItemCode?: string, brand?: string, pageNumber?: number, pageSize?: number, categoryId?: string, shopId?: string, genderType?: GenderType, isConsignment?: boolean, isLeftInStock?: boolean, isForSale?: boolean, options?: RawAxiosRequestConfig) {
+        return MasterItemApiFp(this.configuration).apiMasterItemsGet(searchTerm, searchItemCode, brand, pageNumber, pageSize, categoryId, shopId, genderType, isConsignment, isLeftInStock, isForSale, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -19813,12 +19887,13 @@ export class MasterItemApi extends BaseAPI {
      * @param {number} [maxSellingPrice] 
      * @param {Array<FashionItemStatus>} [status] 
      * @param {Array<FashionItemType>} [types] 
+     * @param {boolean} [isForSale] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof MasterItemApi
      */
-    public apiMasterItemsMasterItemIdIndividualItemsGet(masterItemId: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, memberId?: string, minSellingPrice?: number, maxSellingPrice?: number, status?: Array<FashionItemStatus>, types?: Array<FashionItemType>, options?: RawAxiosRequestConfig) {
-        return MasterItemApiFp(this.configuration).apiMasterItemsMasterItemIdIndividualItemsGet(masterItemId, searchItemCode, pageNumber, pageSize, memberId, minSellingPrice, maxSellingPrice, status, types, options).then((request) => request(this.axios, this.basePath));
+    public apiMasterItemsMasterItemIdIndividualItemsGet(masterItemId: string, searchItemCode?: string, pageNumber?: number, pageSize?: number, memberId?: string, minSellingPrice?: number, maxSellingPrice?: number, status?: Array<FashionItemStatus>, types?: Array<FashionItemType>, isForSale?: boolean, options?: RawAxiosRequestConfig) {
+        return MasterItemApiFp(this.configuration).apiMasterItemsMasterItemIdIndividualItemsGet(masterItemId, searchItemCode, pageNumber, pageSize, memberId, minSellingPrice, maxSellingPrice, status, types, isForSale, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -22041,47 +22116,6 @@ export const ShopApiAxiosParamCreator = function (configuration?: Configuration)
         /**
          * 
          * @param {string} shopId 
-         * @param {TransactionRequest} [transactionRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        apiShopsShopIdOfflineTransactionsGet: async (shopId: string, transactionRequest?: TransactionRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'shopId' is not null or undefined
-            assertParamExists('apiShopsShopIdOfflineTransactionsGet', 'shopId', shopId)
-            const localVarPath = `/api/shops/{shopId}/offline-transactions`
-                .replace(`{${"shopId"}}`, encodeURIComponent(String(shopId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication Bearer required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(transactionRequest, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string} shopId 
          * @param {string} orderId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -22354,19 +22388,6 @@ export const ShopApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @param {string} shopId 
-         * @param {TransactionRequest} [transactionRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async apiShopsShopIdOfflineTransactionsGet(shopId: string, transactionRequest?: TransactionRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TransactionResponsePaginationResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiShopsShopIdOfflineTransactionsGet(shopId, transactionRequest, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['ShopApi.apiShopsShopIdOfflineTransactionsGet']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @param {string} shopId 
          * @param {string} orderId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -22499,16 +22520,6 @@ export const ShopApiFactory = function (configuration?: Configuration, basePath?
          */
         apiShopsShopIdGet(shopId: string, options?: RawAxiosRequestConfig): AxiosPromise<ShopDetailResponseResult> {
             return localVarFp.apiShopsShopIdGet(shopId, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {string} shopId 
-         * @param {TransactionRequest} [transactionRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        apiShopsShopIdOfflineTransactionsGet(shopId: string, transactionRequest?: TransactionRequest, options?: RawAxiosRequestConfig): AxiosPromise<TransactionResponsePaginationResponse> {
-            return localVarFp.apiShopsShopIdOfflineTransactionsGet(shopId, transactionRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -22648,18 +22659,6 @@ export class ShopApi extends BaseAPI {
      */
     public apiShopsShopIdGet(shopId: string, options?: RawAxiosRequestConfig) {
         return ShopApiFp(this.configuration).apiShopsShopIdGet(shopId, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {string} shopId 
-     * @param {TransactionRequest} [transactionRequest] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof ShopApi
-     */
-    public apiShopsShopIdOfflineTransactionsGet(shopId: string, transactionRequest?: TransactionRequest, options?: RawAxiosRequestConfig) {
-        return ShopApiFp(this.configuration).apiShopsShopIdOfflineTransactionsGet(shopId, transactionRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23079,6 +23078,64 @@ export const WithdrawApiAxiosParamCreator = function (configuration?: Configurat
     return {
         /**
          * 
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {WithdrawStatus} [status] 
+         * @param {string} [withdrawCode] 
+         * @param {string} [memberId] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiWithdrawsGet: async (page?: number, pageSize?: number, status?: WithdrawStatus, withdrawCode?: string, memberId?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/withdraws`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (page !== undefined) {
+                localVarQueryParameter['Page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['PageSize'] = pageSize;
+            }
+
+            if (status !== undefined) {
+                localVarQueryParameter['Status'] = status;
+            }
+
+            if (withdrawCode !== undefined) {
+                localVarQueryParameter['WithdrawCode'] = withdrawCode;
+            }
+
+            if (memberId !== undefined) {
+                localVarQueryParameter['MemberId'] = memberId;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {string} withdrawId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -23126,6 +23183,22 @@ export const WithdrawApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {WithdrawStatus} [status] 
+         * @param {string} [withdrawCode] 
+         * @param {string} [memberId] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiWithdrawsGet(page?: number, pageSize?: number, status?: WithdrawStatus, withdrawCode?: string, memberId?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetWithdrawsResponsePaginationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiWithdrawsGet(page, pageSize, status, withdrawCode, memberId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['WithdrawApi.apiWithdrawsGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {string} withdrawId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -23148,6 +23221,19 @@ export const WithdrawApiFactory = function (configuration?: Configuration, baseP
     return {
         /**
          * 
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {WithdrawStatus} [status] 
+         * @param {string} [withdrawCode] 
+         * @param {string} [memberId] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiWithdrawsGet(page?: number, pageSize?: number, status?: WithdrawStatus, withdrawCode?: string, memberId?: string, options?: RawAxiosRequestConfig): AxiosPromise<GetWithdrawsResponsePaginationResponse> {
+            return localVarFp.apiWithdrawsGet(page, pageSize, status, withdrawCode, memberId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @param {string} withdrawId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -23165,6 +23251,21 @@ export const WithdrawApiFactory = function (configuration?: Configuration, baseP
  * @extends {BaseAPI}
  */
 export class WithdrawApi extends BaseAPI {
+    /**
+     * 
+     * @param {number} [page] 
+     * @param {number} [pageSize] 
+     * @param {WithdrawStatus} [status] 
+     * @param {string} [withdrawCode] 
+     * @param {string} [memberId] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof WithdrawApi
+     */
+    public apiWithdrawsGet(page?: number, pageSize?: number, status?: WithdrawStatus, withdrawCode?: string, memberId?: string, options?: RawAxiosRequestConfig) {
+        return WithdrawApiFp(this.configuration).apiWithdrawsGet(page, pageSize, status, withdrawCode, memberId, options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * 
      * @param {string} withdrawId 

@@ -102,6 +102,18 @@ const SidebarMenuMain = () => {
               hasBullet={true}
             />
           </SidebarMenuItemWithSub>
+          <SidebarMenuItemWithSub
+            to="/withdraw"
+            title="Withdraw"
+            icon="element-11"
+            fontIcon="bi-cash-coin"
+          >
+            <SidebarMenuItem
+              to="/withdraw"
+              title="Withdraw List"
+              hasBullet={true}
+            />
+          </SidebarMenuItemWithSub>
         </>
       )}
       {currentUser?.role === "Staff" && (
