@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
 import { Content } from "../../../_metronic/layout/components/content";
 import ProductTable from "./ProductTable";
@@ -43,7 +44,7 @@ const AddOrderPage = () => {
   ) => {
     try {
       const orderData: CreateOrderRequest = {
-        recipientName: values.recipientName ,
+        recipientName: values.recipientName,
         phone: values.phone,
         itemIds: values.itemIds,
       };
@@ -62,14 +63,21 @@ const AddOrderPage = () => {
   return (
     <Content>
       <h1>Create Order</h1>
-      <div id="kt_app_content_container" className="app-container container-xxl">
+      <div
+        id="kt_app_content_container"
+        className="app-container container-xxl"
+      >
         <Formik<CreateOrderRequest>
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
           {({ isSubmitting, setFieldValue, values }) => (
-            <Form placeholder={"Order Details"} id="kt_ecommerce_edit_order_form" className="form d-flex flex-column flex-lg-row">
+            <Form
+              placeholder={"Order Details"}
+              id="kt_ecommerce_edit_order_form"
+              className="form d-flex flex-column flex-lg-row"
+            >
               <div className="w-100 flex-lg-row-auto w-lg-300px mb-7 me-7 me-lg-10">
                 <div className="card card-flush py-4">
                   <div className="card-header">
@@ -80,25 +88,37 @@ const AddOrderPage = () => {
                   <div className="card-body pt-0">
                     <div className="d-flex flex-column gap-10">
                       <div className="fv-row">
-                        <label className="required form-label">Buyer's Name</label>
+                        <label className="required form-label">
+                          Buyer's Name
+                        </label>
                         <Field
                           type="text"
                           name="recipientName"
                           className="form-control mb-2"
                           placeholder="Enter buyer's name"
                         />
-                        <ErrorMessage name="recipientName" component="div" className="text-danger" />
+                        <ErrorMessage
+                          name="recipientName"
+                          component="div"
+                          className="text-danger"
+                        />
                       </div>
 
                       <div className="fv-row">
-                        <label className="required form-label">Phone Number</label>
+                        <label className="required form-label">
+                          Phone Number
+                        </label>
                         <Field
                           type="text"
                           name="phone"
                           className="form-control mb-2"
                           placeholder="Enter phone number"
                         />
-                        <ErrorMessage name="phone" component="div" className="text-danger" />
+                        <ErrorMessage
+                          name="phone"
+                          component="div"
+                          className="text-danger"
+                        />
                       </div>
 
                       <div className="fw-bold fs-4">
@@ -133,10 +153,16 @@ const AddOrderPage = () => {
                     <div className="d-flex flex-column gap-10">
                       <ProductTable
                         selectedItems={values.itemIds ?? []}
-                        setSelectedItems={(items) => setFieldValue("itemIds", items)}
+                        setSelectedItems={(items) =>
+                          setFieldValue("itemIds", items)
+                        }
                         setTotalCost={setTotalCost}
                       />
-                      <ErrorMessage name="itemIds" component="div" className="text-danger" />
+                      <ErrorMessage
+                        name="itemIds"
+                        component="div"
+                        className="text-danger"
+                      />
                     </div>
                   </div>
                 </div>

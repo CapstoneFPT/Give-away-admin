@@ -4,7 +4,7 @@ import { KTCard, KTCardBody, KTIcon } from "../../../_metronic/helpers";
 import { AuctionApi, AuctionStatus, AuctionListResponse } from "../../../api";
 import { Content } from "../../../_metronic/layout/components/content";
 import { Link } from "react-router-dom";
-
+import { formatBalance } from "../utils/utils";
 type Props = {
   className: string;
 };
@@ -139,7 +139,7 @@ const AuctionList: React.FC<Props> = ({ className }) => {
                           {new Date(auction.endDate ?? "").toLocaleString()}
                         </p>
                         <p className="card-text">
-                          Deposit: ${auction.depositFee?.toFixed(2)}
+                          Deposit: {formatBalance(auction.depositFee || 0)} VND
                         </p>
                         <div className="d-flex justify-content-center align-items-center mb-5">
                           <span
