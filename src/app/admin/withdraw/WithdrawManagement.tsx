@@ -83,9 +83,20 @@ const WithdrawManagement: React.FC = () => {
     () => fetchWithdraws(currentPage, pageSize),
     { keepPreviousData: true }
   );
-
+  console.log(data);
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
+  };
+
+  const getStatusBadgeClass = (status: WithdrawStatus) => {
+    switch (status) {
+      case WithdrawStatus.Processing:
+        return "badge badge-light-warning";
+      case WithdrawStatus.Completed:
+        return "badge badge-light-success";
+      default:
+        return "badge badge-light-primary";
+    }
   };
 
   const columns = useMemo<WithdrawColumn[]>(() => {
@@ -103,12 +114,29 @@ const WithdrawManagement: React.FC = () => {
       {
         Header: "Status",
         accessor: "status",
+        Cell: ({ value }: WithdrawColumnCellProps) => (
+          <span className={getStatusBadgeClass(value as WithdrawStatus)}>
+            {value}
+          </span>
+        ),
       },
       {
         Header: "Created Date",
         accessor: "createdDate",
         Cell: ({ value }: WithdrawColumnCellProps) =>
           new Date(value as string).toLocaleString(),
+      },
+      {
+        Header: "Bank",
+        accessor: "bank",
+      },
+      {
+        Header: "Bank Account Name",
+        accessor: "bankAccountName",
+      },
+      {
+        Header: "Bank Account Number",
+        accessor: "bankAccountNumber",
       },
     ];
 
