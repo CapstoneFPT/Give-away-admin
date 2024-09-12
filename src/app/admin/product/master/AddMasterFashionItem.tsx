@@ -234,6 +234,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
         await createMasterItem(formData);
         handleSave(formData);
         handleClose();
+        resetForm();
       } catch (error) {
         showAlert("error", `${error}`);
       }
