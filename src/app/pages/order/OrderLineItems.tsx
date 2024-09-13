@@ -121,7 +121,7 @@ const OrderLineItems = ({ items, orderDetail }: { items: OrderLineItemListRespon
                                                         className="btn btn-warning hover-rotate-end"
                                                         onClick={() => handleConfirmDelivery(item.orderLineItemId!)}  // Truyền orderLineItemId
                                                     >
-                                                        Delivery
+                                                        Deliver
                                                     </Button>
                                                     <Button onClick={() => handleCancelDelivery(item.orderLineItemId!)} style={{ width: '100px' }} className="btn btn-danger hover-rotate-end">Cancel</Button>
                                                 </div>
