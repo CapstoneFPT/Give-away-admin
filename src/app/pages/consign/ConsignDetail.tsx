@@ -232,17 +232,15 @@ export const ConsignDetail: React.FC = () => {
           </div>
         </KTCardBody>
       </KTCard>
-      {isStaff &&
-        (consignSaleResponse.status === ConsignSaleStatus.Pending ||
-          consignSaleResponse.status === ConsignSaleStatus.AwaitDelivery) && (
-          <ConsignmentApproval
-            consignSale={consignSaleResponse}
-            initialStatus={consignSaleResponse.status || "Pending"}
-            lineItems={lineItemsResponse || []}
-            onActionStart={handleActionStart}
-            onActionComplete={handleActionComplete}
-          />
-        )}
+      {isStaff && (
+        <ConsignmentApproval
+          consignSale={consignSaleResponse}
+          initialStatus={consignSaleResponse.status || "Pending"}
+          lineItems={lineItemsResponse || []}
+          onActionStart={handleActionStart}
+          onActionComplete={handleActionComplete}
+        />
+      )}
       <KTCard className="mb-5 mb-xl-8">
         <KTCardBody>
           <h3 className="fs-2 fw-bold mb-5">Financial Details</h3>
