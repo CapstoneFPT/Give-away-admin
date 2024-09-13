@@ -137,7 +137,16 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
         return "primary";
     }
   };
-
+  const getTypeColor = (type?: string) => {
+    switch (type) {
+      case "ConsignedForSale":
+        return "info";
+      case "ConsignedForAuction":
+        return "warning";
+      default:
+        return "primary";
+    }
+  };
   const handleSort = (columnId: string) => {
     setSortBy((prevSort) => {
       if (prevSort && prevSort.id === columnId) {
@@ -202,6 +211,15 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
       accessor: "status",
       Cell: ({ value }: { value: string }) => (
         <span className={`badge badge-light-${getStatusColor(value)}`}>
+          {value}
+        </span>
+      ),
+    },
+    {
+      Header: "Type",
+      accessor: "type",
+      Cell: ({ value }: { value: string }) => (
+        <span className={`badge badge-light-${getTypeColor(value)}`}>
           {value}
         </span>
       ),

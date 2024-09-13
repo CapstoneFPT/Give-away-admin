@@ -43,6 +43,7 @@ export const ConsignLineItemReview: React.FC = () => {
     useState<string>("");
 
   const { currentUser } = useAuth();
+  const isStaff = currentUser?.role === "Staff";
   const { data, isLoading, error } = useQuery<
     ConsignSaleLineItemDetailedResponse,
     Error
@@ -393,7 +394,7 @@ export const ConsignLineItemReview: React.FC = () => {
           </KTCard>
         </div>
       </div>
-      {!data.individualItemId && (
+      {!data.individualItemId && isStaff && (
         <div className="row g-5 g-xl-8 mt-5">
           <div className="col-xl-12">
             <KTCard>

@@ -34,7 +34,7 @@ const AuctionAdminList: React.FC<Props> = ({ className }) => {
     () => fetchAuctions(),
     { keepPreviousData: true }
   );
-  console.log(data);
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);

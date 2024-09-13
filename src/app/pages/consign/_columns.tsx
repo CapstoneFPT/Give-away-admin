@@ -32,18 +32,27 @@ const consignSaleColumns: Column<ConsignSaleListResponse>[] = [
     Cell: ({ value }: { value: string | undefined }) =>
       value ? new Date(value).toLocaleString() : "N/A",
   },
+  // {
+  //   Header: "Start Date",
+  //   accessor: "startDate",
+  //   Cell: ({ value }: { value: string | undefined | null }) =>
+  //     value ? new Date(value).toLocaleString() : "N/A",
+  // },
   {
-    Header: "Start Date",
-    accessor: "startDate",
-    Cell: ({ value }: { value: string | undefined | null }) =>
-      value ? new Date(value).toLocaleString() : "N/A",
+    Header: "Consignor",
+    accessor: "consginor",
   },
   {
-    Header: "End Date",
-    accessor: "endDate",
-    Cell: ({ value }: { value: string | undefined | null }) =>
-      value ? new Date(value).toLocaleString() : "N/A",
+    Header: "Phone",
+    accessor: "phone",
   },
+
+  // {
+  //   Header: "End Date",
+  //   accessor: "endDate",
+  //   Cell: ({ value }: { value: string | undefined | null }) =>
+  //     value ? new Date(value).toLocaleString() : "N/A",
+  // },
   {
     Header: "Status",
     accessor: "status",

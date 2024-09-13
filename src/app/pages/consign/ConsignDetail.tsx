@@ -12,6 +12,7 @@ import {
   ConsignSaleStatus,
 } from "../../../api";
 import KTInfoItem from "../../../_metronic/helpers/components/KTInfoItem.tsx";
+import { useAuth } from "../../modules/auth"; // Import the useAuth hook or your authentication mechanism
 
 const getConsignSaleStatusColor = (status?: ConsignSaleStatus) => {
   switch (status) {
@@ -58,6 +59,9 @@ const getConsignSaleLineItemStatusColor = (
 };
 
 export const ConsignDetail: React.FC = () => {
+  const { currentUser } = useAuth(); // Get the current user
+  const isStaff = currentUser?.role === "Staff"; // Adjust this condition based on your user role structure
+
   const { consignSaleId } = useParams<{ consignSaleId: string }>();
   const [isActionInProgress, setIsActionInProgress] = useState(false);
   const {
@@ -228,14 +232,17 @@ export const ConsignDetail: React.FC = () => {
           </div>
         </KTCardBody>
       </KTCard>
-      <ConsignmentApproval
-        consignSale={consignSaleResponse}
-        initialStatus={consignSaleResponse.status || "Pending"}
-        lineItems={lineItemsResponse || []}
-        onActionStart={handleActionStart}
-        onActionComplete={handleActionComplete}
-      />
-
+      {isStaff &&
+        (consignSaleResponse.status === ConsignSaleStatus.Pending ||
+          consignSaleResponse.status === ConsignSaleStatus.AwaitDelivery) && (
+          <ConsignmentApproval
+            consignSale={consignSaleResponse}
+            initialStatus={consignSaleResponse.status || "Pending"}
+            lineItems={lineItemsResponse || []}
+            onActionStart={handleActionStart}
+            onActionComplete={handleActionComplete}
+          />
+        )}
       <KTCard className="mb-5 mb-xl-8">
         <KTCardBody>
           <h3 className="fs-2 fw-bold mb-5">Financial Details</h3>

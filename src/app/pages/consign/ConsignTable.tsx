@@ -1,7 +1,6 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useQuery } from "react-query";
-// import { KTCardBody, KTIcon } from "../../../_metronic/helpers";
-import { ConsignSaleApi, ConsignSaleStatus } from "../../../api";
+import { ConsignSaleApi, ConsignSaleStatus, ShopApi } from "../../../api";
 import { Content } from "../../../_metronic/layout/components/content";
 import { useAuth } from "../../modules/auth";
 import { KTTable } from "../../../_metronic/helpers/components/KTTable";
@@ -15,24 +14,52 @@ const ConsignTable: React.FC = () => {
     null
   );
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedShop, setSelectedShop] = useState<string | null>(null);
+  const [shops, setShops] = useState<Array<{ id: string; name: string }>>([]);
   const { currentUser } = useAuth();
   const pageSize = 10;
+
+  useEffect(() => {
+    if (currentUser?.role === "Admin") {
+      const fetchShops = async () => {
+        try {
+          const shopApi = new ShopApi();
+          const response = await shopApi.apiShopsGet();
+          if (response.data && response.data.data) {
+            setShops(
+              response.data.data.map((shop) => ({
+                id: shop.shopId!,
+                name: shop.address!,
+              }))
+            );
+          }
+        } catch (error) {
+          console.error("Error fetching shops:", error);
+        }
+      };
+      fetchShops();
+    }
+  }, [currentUser?.role]);
 
   const fetchData = useCallback(
     async (page: number, pageSize: number) => {
       try {
         const consignSaleApi = new ConsignSaleApi();
-        const shopId = currentUser?.isAdmin ? null! : currentUser?.shopId; // Check if user is admin
+        const shopId =
+          currentUser?.role === "Admin"
+            ? selectedShop || undefined
+            : currentUser?.shopId;
+
         const response = await consignSaleApi.apiConsignsalesGet(
           page,
           pageSize,
           shopId,
           searchTerm,
-          null!,
-          null!,
-          statusFilter as ConsignSaleStatus,
-          null!,
-          null!,
+          undefined,
+          undefined,
+          statusFilter || undefined,
+          undefined,
+          undefined,
           consignorName,
           consignorPhone
         );
@@ -57,12 +84,13 @@ const ConsignTable: React.FC = () => {
       consignorName,
       consignorPhone,
       statusFilter,
-      currentUser?.isAdmin, // Add dependency for isAdmin
+      currentUser?.role,
       currentUser?.shopId,
+      selectedShop,
     ]
   );
 
-  const { data, isLoading, error } = useQuery(
+  const { data, isLoading, error, refetch } = useQuery(
     [
       "Consign",
       searchTerm,
@@ -70,10 +98,21 @@ const ConsignTable: React.FC = () => {
       consignorPhone,
       statusFilter,
       currentPage,
+      selectedShop,
     ],
     () => fetchData(currentPage, pageSize),
-    { refetchOnWindowFocus: false, keepPreviousData: true }
+    {
+      refetchOnWindowFocus: false,
+      keepPreviousData: true,
+      enabled: currentUser?.role === "Admin" ? selectedShop !== null : true,
+    }
   );
+
+  useEffect(() => {
+    if (currentUser?.role === "Admin") {
+      refetch();
+    }
+  }, [selectedShop, currentUser?.role, refetch]);
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -126,6 +165,21 @@ const ConsignTable: React.FC = () => {
                   </option>
                 ))}
               </select>
+              {currentUser?.role === "Admin" && (
+                <select
+                  name="shopFilter"
+                  className="form-select form-select-solid w-200px me-2"
+                  value={selectedShop || ""}
+                  onChange={(e) => setSelectedShop(e.target.value || null)}
+                >
+                  <option value="">All Shops</option>
+                  {shops.map((shop) => (
+                    <option key={shop.id} value={shop.id}>
+                      {shop.name}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
           </div>
         </div>

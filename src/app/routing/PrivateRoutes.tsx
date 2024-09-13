@@ -30,6 +30,7 @@ import CreateAuction from "../pages/auction/CreateAuction.tsx";
 import AccountManagement from "../admin/account/AccountManagement.tsx";
 import TransactionManagement from "../admin/transactions/TransactionManagement.tsx";
 import WithdrawManagement from "../admin/withdraw/WithdrawManagement.tsx";
+import AuctionDetail from "../pages/auction/AuctionDetail.tsx";
 const PrivateRoutes = () => {
   const { currentUser } = useAuth();
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
@@ -90,6 +91,16 @@ const PrivateRoutes = () => {
             <ProtectedRoute roles={["Admin"]}>
               <SuspensedView>
                 <AuctionAdminPage />
+              </SuspensedView>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="auction-admin/:auctionId"
+          element={
+            <ProtectedRoute roles={["Admin"]}>
+              <SuspensedView>
+                <AuctionDetail />
               </SuspensedView>
             </ProtectedRoute>
           }

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Content } from "../../../_metronic/layout/components/content";
 import ProductTableSingle from "./AuctionTable";
-
 import { AuctionApi, CreateAuctionRequest } from "../../../api/api";
 import { useAuth } from "../../modules/auth";
 import { toast } from "react-toastify";
 import { showAlert } from "../../../utils/Alert";
+import { useMutation, useQueryClient } from "react-query";
+import { Spinner } from "react-bootstrap";
 
 const CreateAuction = () => {
   const [selectedItem, setSelectedItem] = useState<string>("");
@@ -16,13 +17,13 @@ const CreateAuction = () => {
   const [stepIncrementPercentage, setStepIncrementPercentage] =
     useState<number>(1);
   const [depositFee, setDepositFee] = useState<string>("0");
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [minDate, setMinDate] = useState<string>("");
   const [dateError, setDateError] = useState<string>("");
   const [timeError, setTimeError] = useState<string>("");
 
   const auctionApi = new AuctionApi();
   const { currentUser } = useAuth();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const now = new Date();
@@ -91,40 +92,59 @@ const CreateAuction = () => {
   const startDateTime = getValidDateTime(selectedDate, startTime);
   const endDateTime = getValidDateTime(selectedDate, endTime);
 
-  const auctionData: CreateAuctionRequest = {
-    title,
-    shopId: currentUser?.shopId || "",
-    auctionItemId: selectedItem,
-    startTime: startDateTime?.toISOString() || "",
-    endTime: endDateTime?.toISOString() || "",
-    stepIncrementPercentage,
-    depositFee: Number(depositFee),
+  const createAuctionMutation = useMutation(
+    (data: CreateAuctionRequest) => auctionApi.apiAuctionsPost(data),
+    {
+      onSuccess: () => {
+        toast.success("Auction created successfully!");
+        queryClient.invalidateQueries("auctions"); // Invalidate and refetch auctions list
+        // Reset form or redirect to auction list
+        resetForm();
+      },
+      onError: (error) => {
+        console.error("Error creating auction:", error);
+        showAlert(
+          "error",
+          error instanceof Error ? error.message : "Failed to create auction."
+        );
+      },
+    }
+  );
+
+  const resetForm = () => {
+    setSelectedItem("");
+    setTitle("");
+    setSelectedDate(new Date().toISOString().split("T")[0]);
+    setStartTime(new Date().toTimeString().slice(0, 5));
+    setEndTime(new Date().toTimeString().slice(0, 5));
+    setStepIncrementPercentage(1);
+    setDepositFee("0");
+    setDateError("");
+    setTimeError("");
   };
-  console.log(auctionData);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validateTimes(startTime, endTime)) {
       return;
     }
-    setIsSubmitting(true);
 
-    try {
-      if (!selectedItem) {
-        throw new Error("Please select an item for the auction.");
-      }
-
-      await auctionApi.apiAuctionsPost(auctionData);
-      toast.success("Auction created successfully!");
-      // Optionally, redirect to auction list or clear form
-    } catch (error) {
-      console.error("Error creating auction:", error);
-      showAlert(
-        "error",
-        error instanceof Error ? error.message : "Failed to create auction."
-      );
-    } finally {
-      setIsSubmitting(false);
+    if (!selectedItem) {
+      showAlert("error", "Please select an item for the auction.");
+      return;
     }
+
+    const auctionData: CreateAuctionRequest = {
+      title,
+      shopId: currentUser?.shopId || "",
+      auctionItemId: selectedItem,
+      startTime: startDateTime?.toISOString() || "",
+      endTime: endDateTime?.toISOString() || "",
+      stepIncrementPercentage,
+      depositFee: Number(depositFee),
+    };
+
+    createAuctionMutation.mutate(auctionData);
   };
 
   return (
@@ -237,10 +257,23 @@ const CreateAuction = () => {
                       type="submit"
                       className="btn btn-primary"
                       disabled={
-                        isSubmitting || dateError !== "" || timeError !== ""
+                        createAuctionMutation.isLoading ||
+                        dateError !== "" ||
+                        timeError !== ""
                       }
                     >
-                      {isSubmitting ? "Creating Auction..." : "Create Auction"}
+                      {createAuctionMutation.isLoading ? (
+                        <>
+                          <Spinner
+                            animation="border"
+                            size="sm"
+                            className="me-2"
+                          />
+                          Creating Auction...
+                        </>
+                      ) : (
+                        "Create Auction"
+                      )}
                     </button>
                   </div>
                 </div>
