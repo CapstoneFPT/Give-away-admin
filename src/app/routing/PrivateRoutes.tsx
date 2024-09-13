@@ -216,6 +216,19 @@ const PrivateRoutes = () => {
           }
         />
         <Route
+          path="auction/:auctionId"
+          element={
+            <ProtectedRoute
+              roles={["Staff"]}
+              children={
+                <SuspensedView>
+                  <AuctionDetail />
+                </SuspensedView>
+              }
+            />
+          }
+        />
+        <Route
           path="consignment/list"
           element={
             <ProtectedRoute

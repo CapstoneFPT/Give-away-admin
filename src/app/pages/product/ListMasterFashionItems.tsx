@@ -267,7 +267,42 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
           <div className="row g-5 g-xl-8">
             <div className="col-xl-6">
               <h3 className="fs-2 fw-bold mb-5">Master Item Details</h3>
-              {/* Add master item details here similar to FashionItemsAdminTable */}
+              {masterItemQuery.isLoading ? (
+                <div>Loading master item details...</div>
+              ) : masterItemQuery.error ? (
+                <div>Error loading master item details</div>
+              ) : (
+                <div className="table-responsive">
+                  <table className="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
+                    <tbody>
+                      <tr>
+                        <th>Master Item Code</th>
+                        <td>{masterItemQuery.data?.masterItemCode}</td>
+                      </tr>
+                      <tr>
+                        <th>Name</th>
+                        <td>{masterItemQuery.data?.name}</td>
+                      </tr>
+                      <tr>
+                        <th>Brand</th>
+                        <td>{masterItemQuery.data?.brand}</td>
+                      </tr>
+                      <tr>
+                        <th>Category</th>
+                        <td>{masterItemQuery.data?.categoryName}</td>
+                      </tr>
+                      <tr>
+                        <th>Description</th>
+                        <td>{masterItemQuery.data?.description}</td>
+                      </tr>
+                      <tr>
+                        <th>Gender</th>
+                        <td>{masterItemQuery.data?.gender}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
             <div className="col-xl-6">
               <div className="row g-5 g-xl-8 mt-5">

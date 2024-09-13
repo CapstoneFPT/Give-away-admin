@@ -151,7 +151,7 @@ const AuctionList: React.FC<Props> = ({ className }) => {
                           </span>
                         </div>
                         <Link
-                          to={`/auction-admin/${auction.auctionId}`}
+                          to={`/auction/${auction.auctionId}`}
                           className="btn btn-sm btn-primary mt-auto"
                         >
                           View Details

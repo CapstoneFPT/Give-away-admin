@@ -103,7 +103,7 @@ export const ConsignLineItemReview: React.FC = () => {
         data?.gender,
         true
       );
-      console.log(response);
+
       return response.data;
     },
   });

@@ -3,7 +3,7 @@ import { Content } from "../../../_metronic/layout/components/content";
 import ProductTableSingle from "./AuctionTable";
 import { AuctionApi, CreateAuctionRequest } from "../../../api/api";
 import { useAuth } from "../../modules/auth";
-import { toast } from "react-toastify";
+
 import { showAlert } from "../../../utils/Alert";
 import { useMutation, useQueryClient } from "react-query";
 import { Spinner } from "react-bootstrap";
@@ -96,16 +96,17 @@ const CreateAuction = () => {
     (data: CreateAuctionRequest) => auctionApi.apiAuctionsPost(data),
     {
       onSuccess: () => {
-        toast.success("Auction created successfully!");
-        queryClient.invalidateQueries("auctions"); // Invalidate and refetch auctions list
-        // Reset form or redirect to auction list
+        showAlert("success", "Auction created successfully!");
+        queryClient.invalidateQueries("auctions");
         resetForm();
       },
       onError: (error) => {
-        console.error("Error creating auction:", error);
         showAlert(
           "error",
-          error instanceof Error ? error.message : "Failed to create auction."
+          error instanceof Error
+            ? //@ts-expect-error type
+              error.response.data.detail
+            : "Failed to create auction."
         );
       },
     }
