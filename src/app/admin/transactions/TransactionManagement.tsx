@@ -5,8 +5,11 @@ import { TransactionApi, TransactionType } from "../../../api";
 import { Content } from "../../../_metronic/layout/components/content";
 import { KTTable } from "../../../_metronic/helpers/components/KTTable";
 import { formatBalance } from "../../pages/utils/utils";
-
+import { useAuth } from "../../modules/auth";
 const TransactionManagement: React.FC = () => {
+  const { currentUser } = useAuth();
+  const shopId = currentUser?.shopId;
+  console.log(shopId);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
@@ -22,7 +25,7 @@ const TransactionManagement: React.FC = () => {
       transactionApi.apiTransactionsGet(
         currentPage,
         pageSize,
-        null!,
+        shopId!,
         transactionTypeFilter || undefined
       ),
     {
@@ -37,8 +40,8 @@ const TransactionManagement: React.FC = () => {
   const columns = useMemo(
     () => [
       {
-        Header: "Transaction ID",
-        accessor: "transactionId",
+        Header: "Transaction Code",
+        accessor: "transactionCode",
       },
       {
         Header: "Amount",

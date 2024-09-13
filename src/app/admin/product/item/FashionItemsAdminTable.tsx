@@ -373,7 +373,7 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                             alt={`Product ${index + 1}`}
                             style={{
                               width: "150px",
-                              height: "150px",
+                              height: "200px",
                               objectFit: "cover",
                             }}
                           />

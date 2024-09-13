@@ -91,13 +91,13 @@ const SidebarMenuMain = () => {
             />
           </SidebarMenuItemWithSub>
           <SidebarMenuItemWithSub
-            to="/refund"
+            to="/refund/list"
             title="Refund"
             icon="element-11"
             fontIcon="bi-bag"
           >
             <SidebarMenuItem
-              to="/refund"
+              to="/refund/list"
               title="Refund List"
               hasBullet={true}
             />
@@ -135,11 +135,11 @@ const SidebarMenuMain = () => {
               title="View Consignments"
               hasBullet={true}
             />
-            <SidebarMenuItem
+            {/* <SidebarMenuItem
               to="/consignment/create"
               title="Create Consignment Offline"
               hasBullet={true}
-            />
+            /> */}
           </SidebarMenuItemWithSub>
           <SidebarMenuItemWithSub
             to="/product"
@@ -171,14 +171,19 @@ const SidebarMenuMain = () => {
             />
           </SidebarMenuItemWithSub>
           <SidebarMenuItemWithSub
-            to="/refund"
+            to="/refund/list"
             title="Refund"
             icon="element-9"
             fontIcon="bi-arrow-counterclockwise"
           >
             <SidebarMenuItem
-              to="/refund"
+              to="/refund/list"
               title="Refund List"
+              hasBullet={true}
+            />
+            <SidebarMenuItem
+              to="/refund/create"
+              title="Create Refund Offline"
               hasBullet={true}
             />
           </SidebarMenuItemWithSub>
@@ -196,6 +201,18 @@ const SidebarMenuMain = () => {
             <SidebarMenuItem
               to="/order/add-order"
               title="Create Order Offline"
+              hasBullet={true}
+            />
+          </SidebarMenuItemWithSub>
+          <SidebarMenuItemWithSub
+            to="/transaction"
+            title="Transaction"
+            icon="element-11"
+            fontIcon="bi-cash-coin"
+          >
+            <SidebarMenuItem
+              to="/transaction"
+              title="View Transactions"
               hasBullet={true}
             />
           </SidebarMenuItemWithSub>

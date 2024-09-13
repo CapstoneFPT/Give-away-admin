@@ -31,6 +31,7 @@ import AccountManagement from "../admin/account/AccountManagement.tsx";
 import TransactionManagement from "../admin/transactions/TransactionManagement.tsx";
 import WithdrawManagement from "../admin/withdraw/WithdrawManagement.tsx";
 import AuctionDetail from "../pages/auction/AuctionDetail.tsx";
+import CreateRefund from "../pages/refund/CreateRefund.tsx";
 const PrivateRoutes = () => {
   const { currentUser } = useAuth();
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
@@ -72,8 +73,7 @@ const PrivateRoutes = () => {
         <Route path="menu-test" element={<MenuTestPage />} />
 
         <Route path="/order/order-list" element={<OrderPage />} />
-        <Route path="refund" element={<RefundPage />} />
-        <Route path="refund/:refundId" element={<RefundDetail />} />
+
         {/* Product Admin Routes */}
         <Route
           path="account-admin"
@@ -158,7 +158,7 @@ const PrivateRoutes = () => {
         <Route
           path="transaction"
           element={
-            <ProtectedRoute roles={["Admin"]}>
+            <ProtectedRoute roles={["Admin", "Staff"]}>
               <SuspensedView>
                 <TransactionManagement />
               </SuspensedView>
@@ -328,7 +328,39 @@ const PrivateRoutes = () => {
             />
           }
         />
-
+        <Route
+          path="/refund/list"
+          element={
+            <ProtectedRoute roles={["Staff", "Admin"]}>
+              <SuspensedView>
+                <RefundPage />
+              </SuspensedView>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="refund/:refundId"
+          element={
+            <ProtectedRoute roles={["Staff", "Admin"]}>
+              <SuspensedView>
+                <RefundDetail />
+              </SuspensedView>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="refund/create"
+          element={
+            <ProtectedRoute
+              roles={["Staff"]}
+              children={
+                <SuspensedView>
+                  <CreateRefund />
+                </SuspensedView>
+              }
+            />
+          }
+        />
         {/* Lazy Modules */}
         <Route
           path="crafted/pages/profile/*"

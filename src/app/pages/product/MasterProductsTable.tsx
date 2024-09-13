@@ -26,7 +26,7 @@ const MasterProductsTable: React.FC<Props> = ({ className }) => {
   const [isConsignment, setIsConsignment] = useState<boolean | null>(null);
   const [isLeftInStock, setIsLeftInStock] = useState<boolean | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 10;
+  const pageSize = 5;
 
   const fetchData = useCallback(
     async (page: number, pageSize: number, sortBy: any) => {

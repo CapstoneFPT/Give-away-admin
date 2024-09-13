@@ -2,22 +2,25 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "react-query";
 import { FashionItemApi, UpdateFashionItemRequest } from "../../../../api";
-import { toast } from "react-toastify";
+
 import { useDropzone } from "react-dropzone";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../../firebaseconfig";
 import { KTIcon } from "../../../../_metronic/helpers";
+import { showAlert } from "../../../../utils/Alert";
 
 interface UpdateItemProps {
   isOpen: boolean;
   onClose: () => void;
   initialData: UpdateFashionItemRequest;
+  onUpdateSuccess: () => void;
 }
 
 const UpdateItem: React.FC<UpdateItemProps> = ({
   isOpen,
   onClose,
   initialData,
+  onUpdateSuccess,
 }) => {
   const { itemId } = useParams<{ itemId: string }>();
   const [formData, setFormData] = useState<UpdateFashionItemRequest>({});
@@ -45,12 +48,13 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["itemDetail", itemId]);
-        toast.success("Item updated successfully");
+        showAlert("success", "Item updated successfully");
         onClose();
+        onUpdateSuccess();
       },
       onError: (error) => {
         console.error("Error updating item:", error);
-        toast.error("Failed to update item");
+        showAlert("error", "Failed to update item");
       },
     }
   );
@@ -79,7 +83,7 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
         setFormData((prev) => ({ ...prev, imageUrls: newImages }));
       } catch (error) {
         console.error("Error uploading files:", error);
-        toast.error("Failed to upload images");
+        showAlert("error", "Failed to upload images");
       } finally {
         setIsImageLoading(false);
       }
@@ -185,6 +189,9 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
                   <option value="M">M</option>
                   <option value="L">L</option>
                   <option value="XL">XL</option>
+                  <option value="XXL">XXL</option>
+                  <option value="XXXL">3XL</option>
+                  <option value="XXXXL">4XL</option>
                 </select>
               </div>
               <div className="form-group mb-3">

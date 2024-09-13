@@ -25,7 +25,7 @@ const ItemDetail: React.FC = () => {
     useState<UpdateFashionItemRequest>({});
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { data, isLoading, error } = useQuery<
+  const { data, isLoading, error, refetch } = useQuery<
     FashionItemDetailResponse | undefined,
     Error
   >(["FashionItemDetail", itemId], async () => {
@@ -297,6 +297,10 @@ const ItemDetail: React.FC = () => {
         isOpen={isUpdateModalOpen}
         onClose={() => setIsUpdateModalOpen(false)}
         initialData={updateInitialData}
+        onUpdateSuccess={() => {
+          setIsUpdateModalOpen(false);
+          refetch();
+        }}
       />
     </>
   );
