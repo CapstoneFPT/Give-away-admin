@@ -1,10 +1,16 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useQuery } from "react-query";
-import { ConsignSaleApi, ConsignSaleStatus, ShopApi } from "../../../api";
+import {
+  ConsignSaleApi,
+  ConsignSaleStatus,
+  ShopApi,
+  ConsignSaleType,
+} from "../../../api";
 import { Content } from "../../../_metronic/layout/components/content";
 import { useAuth } from "../../modules/auth";
 import { KTTable } from "../../../_metronic/helpers/components/KTTable";
-import consignSaleColumns from "./_columns";
+import { consignSaleColumns, consignAuctionColumns } from "./_columns";
+import { Tabs, Tab } from "react-bootstrap";
 
 const ConsignTable: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -16,6 +22,9 @@ const ConsignTable: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedShop, setSelectedShop] = useState<string | null>(null);
   const [shops, setShops] = useState<Array<{ id: string; name: string }>>([]);
+  const [consignType, setConsignType] = useState<ConsignSaleType>(
+    ConsignSaleType.ConsignedForSale
+  );
   const { currentUser } = useAuth();
   const pageSize = 10;
 
@@ -58,7 +67,7 @@ const ConsignTable: React.FC = () => {
           undefined,
           undefined,
           statusFilter || undefined,
-          undefined,
+          consignType,
           undefined,
           consignorName,
           consignorPhone
@@ -87,6 +96,7 @@ const ConsignTable: React.FC = () => {
       currentUser?.role,
       currentUser?.shopId,
       selectedShop,
+      consignType,
     ]
   );
 
@@ -99,6 +109,7 @@ const ConsignTable: React.FC = () => {
       statusFilter,
       currentPage,
       selectedShop,
+      consignType,
     ],
     () => fetchData(currentPage, pageSize),
     {
@@ -118,74 +129,104 @@ const ConsignTable: React.FC = () => {
     setCurrentPage(newPage);
   };
 
+  const handleConsignTypeChange = (type: ConsignSaleType) => {
+    setConsignType(type);
+    setCurrentPage(1);
+  };
+
   if (error) return <div>An error occurred: {(error as Error).message}</div>;
 
   return (
     <Content>
       <div className={`card`}>
         <div className="card-header border-0 pt-5">
-          <div className="card-toolbar">
-            <div className="d-flex align-items-center">
-              <input
-                type="text"
-                name="consignSaleCode"
-                className="form-control form-control-solid w-250px me-2"
-                placeholder="Search by Consignment Code"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <input
-                type="text"
-                name="consignorName"
-                className="form-control form-control-solid w-225px me-2"
-                placeholder="Search by Consignor Name"
-                value={consignorName}
-                onChange={(e) => setConsignorName(e.target.value)}
-              />
-              <input
-                type="text"
-                name="consignorPhone"
-                className="form-control form-control-solid w-225px me-2"
-                placeholder="Search by Consignor Phone"
-                value={consignorPhone}
-                onChange={(e) => setConsignorPhone(e.target.value)}
-              />
-              <select
-                name="statusFilter"
-                className="form-select form-select-solid w-200px me-2"
-                value={statusFilter || ""}
-                onChange={(e) =>
-                  setStatusFilter(e.target.value as ConsignSaleStatus)
-                }
-              >
-                <option value="">All Statuses</option>
-                {Object.values(ConsignSaleStatus).map((status) => (
-                  <option key={status} value={status}>
-                    {status}
-                  </option>
-                ))}
-              </select>
-              {currentUser?.role === "Admin" && (
-                <select
-                  name="shopFilter"
-                  className="form-select form-select-solid w-200px me-2"
-                  value={selectedShop || ""}
-                  onChange={(e) => setSelectedShop(e.target.value || null)}
-                >
-                  <option value="">All Shops</option>
-                  {shops.map((shop) => (
-                    <option key={shop.id} value={shop.id}>
-                      {shop.name}
-                    </option>
-                  ))}
-                </select>
-              )}
-            </div>
-          </div>
+          <Tabs
+            activeKey={consignType}
+            onSelect={(k) => handleConsignTypeChange(k as ConsignSaleType)}
+            className="mb-3"
+          >
+            <Tab
+              eventKey={ConsignSaleType.ConsignedForSale}
+              title="Consign Sale"
+            >
+              <div className="card-toolbar">
+                <div className="d-flex align-items-center">
+                  <input
+                    type="text"
+                    name="consignSaleCode"
+                    className="form-control form-control-solid w-250px me-2"
+                    placeholder="Search by Consignment Code"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    name="consignorName"
+                    className="form-control form-control-solid w-225px me-2"
+                    placeholder="Search by Consignor Name"
+                    value={consignorName}
+                    onChange={(e) => setConsignorName(e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    name="consignorPhone"
+                    className="form-control form-control-solid w-225px me-2"
+                    placeholder="Search by Consignor Phone"
+                    value={consignorPhone}
+                    onChange={(e) => setConsignorPhone(e.target.value)}
+                  />
+                  <select
+                    name="statusFilter"
+                    className="form-select form-select-solid w-200px me-2"
+                    value={statusFilter || ""}
+                    onChange={(e) =>
+                      setStatusFilter(e.target.value as ConsignSaleStatus)
+                    }
+                  >
+                    <option value="">All Statuses</option>
+                    {Object.values(ConsignSaleStatus).map((status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    ))}
+                  </select>
+                  {currentUser?.role === "Admin" && (
+                    <select
+                      name="shopFilter"
+                      className="form-select form-select-solid w-200px me-2"
+                      value={selectedShop || ""}
+                      onChange={(e) => setSelectedShop(e.target.value || null)}
+                    >
+                      <option value="">All Shops</option>
+                      {shops.map((shop) => (
+                        <option key={shop.id} value={shop.id}>
+                          {shop.name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+              </div>
+            </Tab>
+            <Tab
+              eventKey={ConsignSaleType.ConsignedForAuction}
+              title="Consign Auction"
+            >
+              <div className="card-toolbar">
+                <div className="d-flex align-items-center">
+                  {/* You can add specific filters for Consign Auction here if needed */}
+                </div>
+              </div>
+            </Tab>
+          </Tabs>
         </div>
 
         <KTTable
-          columns={consignSaleColumns}
+          columns={
+            consignType === ConsignSaleType.ConsignedForSale
+              ? consignSaleColumns
+              : consignAuctionColumns
+          }
           data={data?.data || []}
           totalCount={data?.totalCount || 0}
           currentPage={currentPage}

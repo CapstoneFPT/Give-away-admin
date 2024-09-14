@@ -14,7 +14,7 @@ const AuctionList: React.FC<Props> = ({ className }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<AuctionStatus | null>(null);
   const [expired, setExpired] = useState<boolean>(true);
-  const pageSize = 12;
+  const pageSize = 8;
 
   const fetchAuctions = useCallback(async () => {
     const auctionApi = new AuctionApi();
@@ -33,7 +33,7 @@ const AuctionList: React.FC<Props> = ({ className }) => {
     () => fetchAuctions(),
     { keepPreviousData: true }
   );
-
+  console.log(data);
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);
@@ -139,7 +139,8 @@ const AuctionList: React.FC<Props> = ({ className }) => {
                           {new Date(auction.endDate ?? "").toLocaleString()}
                         </p>
                         <p className="card-text">
-                          Deposit: {formatBalance(auction.depositFee || 0)} VND
+                          Deposit Fee: {formatBalance(auction.depositFee || 0)}{" "}
+                          VND
                         </p>
                         <div className="d-flex justify-content-center align-items-center mb-5">
                           <span

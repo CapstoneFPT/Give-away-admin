@@ -177,7 +177,7 @@ const AuctionAdminList: React.FC<Props> = ({ className }) => {
                           {new Date(auction.endDate ?? "").toLocaleString()}
                         </p>
                         <p className="card-text">
-                          <strong>Deposit:</strong>{" "}
+                          <strong>Deposit Fee:</strong>{" "}
                           {auction?.depositFee
                             ? formatBalance(auction.depositFee)
                             : "N/A"}
