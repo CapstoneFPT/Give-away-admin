@@ -443,12 +443,9 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                   )}
 
                   <td>
-                    <a
-                      href="#"
-                      className="text-gray-900 fw-bold text-hover-primary mb-1 fs-6"
-                    >
+                    <p className="text-gray-900 fw-bold mb-1 fs-6">
                       {product.itemCode}
-                    </a>
+                    </p>
                   </td>
                   <td>
                     <div className="d-flex align-items-center">
@@ -464,7 +461,7 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                       <div className="d-flex justify-content-start flex-column">
                         <a
                           href="#"
-                          className="text-gray-900 fw-bold text-hover-primary mb-1 fs-6"
+                          className="text-gray-900 fw-bold  mb-1 fs-6"
                         >
                           {product.name}
                         </a>
