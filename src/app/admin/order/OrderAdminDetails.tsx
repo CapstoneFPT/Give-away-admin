@@ -98,7 +98,7 @@ const OrderAdminDetails: React.FC<{
                 </div>
               </td>
               <td className="fw-bold text-end">
-                {orderAdminDetail?.completedDate
+                {orderAdminDetail?.status === "Completed"
                   ? new Date(orderAdminDetail.completedDate!).toLocaleString()
                   : "N/A"}
               </td>

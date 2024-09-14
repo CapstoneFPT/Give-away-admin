@@ -2,28 +2,10 @@ import React, { useState } from "react";
 import { Content } from "../../../_metronic/layout/components/content";
 import ProductTable from "./ProductTable";
 import { formatBalance } from "../utils/utils";
-import { CreateOrderRequest, OrderApi, ShopApi } from "../../../api/api";
+import { CreateOrderRequest, ShopApi } from "../../../api/api";
 import { useAuth } from "../../modules/auth";
-import { toast } from "react-toastify";
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { showAlert } from "../../../utils/Alert";
 
 const AddOrderPage = () => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
@@ -35,18 +17,13 @@ const AddOrderPage = () => {
   const subtotal = totalCost;
   const total = subtotal;
   const shopApi = new ShopApi();
-  const orderApi = new OrderApi();
+
   const currentUser = useAuth().currentUser?.shopId; // Get shopId from useAuth
 
   // Function to handle form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent default form submission behavior
     setIsSubmitting(true); // Set submitting state to true
-
-
-
-
-
 
     try {
       // Prepare order data
@@ -63,11 +40,11 @@ const AddOrderPage = () => {
       );
 
       // Handle success (e.g., show a success message, redirect, etc.)
-      alert("Order created successfully!");
+      showAlert("success", "Order created successfully");
     } catch (error) {
       // Handle error (e.g., show an error message)
       console.error("Error creating order:", error);
-      toast("Failed to create order.");
+      showAlert("error", `Failed to create order with ${error}`);
     } finally {
       setIsSubmitting(false); // Set submitting state to false
     }
@@ -112,19 +89,6 @@ const AddOrderPage = () => {
                       Enter the name of the buyer.
                     </div>
                   </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
                   <div className="fv-row">
                     <label className="required form-label">Phone Number</label>
                     <input
@@ -159,7 +123,6 @@ const AddOrderPage = () => {
                     >
                       {isSubmitting ? "Checking out..." : "Checkout"}
                     </button>
-
                   </div>
                 </div>
               </div>
@@ -180,9 +143,6 @@ const AddOrderPage = () => {
                     setSelectedItems={setSelectedItems}
                     setTotalCost={setTotalCost}
                   />
-
-
-
                 </div>
               </div>
             </div>

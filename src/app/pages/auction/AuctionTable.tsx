@@ -3,14 +3,16 @@ import { FashionItemApi, FashionItemList } from "../../../api";
 import { useAuth } from "../../modules/auth";
 import { formatBalance } from "../utils/utils";
 
-type ProductTableSingleProps = {
+interface ProductTableSingleProps {
   selectedItem: string;
-  setSelectedItem: React.Dispatch<React.SetStateAction<string>>;
-};
+  setSelectedItem: (id: string) => void;
+  setInitialPrice: (price: number) => void;
+}
 
 const ProductTableSingle: React.FC<ProductTableSingleProps> = ({
   selectedItem,
   setSelectedItem,
+  setInitialPrice,
 }) => {
   const currentUser = useAuth().currentUser?.shopId;
   const [fashionItems, setFashionItems] = useState<FashionItemList[]>([]);
@@ -74,8 +76,9 @@ const ProductTableSingle: React.FC<ProductTableSingleProps> = ({
     setCurrentPage(page);
   };
 
-  const handleRadioChange = (itemId: string) => {
+  const handleRadioChange = (itemId: string, price: number) => {
     setSelectedItem(itemId);
+    setInitialPrice(price);
   };
 
   return (
@@ -162,7 +165,9 @@ const ProductTableSingle: React.FC<ProductTableSingleProps> = ({
                       name="auctionItem"
                       value={item.itemId}
                       checked={selectedItem === item.itemId}
-                      onChange={() => handleRadioChange(item.itemId!)}
+                      onChange={() =>
+                        handleRadioChange(item.itemId!, item.initialPrice!)
+                      }
                     />
                   </div>
                 </td>

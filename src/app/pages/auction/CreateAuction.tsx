@@ -7,6 +7,7 @@ import { useAuth } from "../../modules/auth";
 import { showAlert } from "../../../utils/Alert";
 import { useMutation, useQueryClient } from "react-query";
 import { Spinner } from "react-bootstrap";
+import { formatBalance } from "../utils/utils"; // Adjust the import path as needed
 
 const CreateAuction = () => {
   const [selectedItem, setSelectedItem] = useState<string>("");
@@ -20,6 +21,8 @@ const CreateAuction = () => {
   const [minDate, setMinDate] = useState<string>("");
   const [dateError, setDateError] = useState<string>("");
   const [timeError, setTimeError] = useState<string>("");
+  const [initialPrice, setInitialPrice] = useState<number>(0);
+  const [depositFeeError, setDepositFeeError] = useState<string>("");
 
   const auctionApi = new AuctionApi();
   const { currentUser } = useAuth();
@@ -124,9 +127,25 @@ const CreateAuction = () => {
     setTimeError("");
   };
 
+  const validateDepositFee = (value: string) => {
+    const depositFeeNumber = Number(value);
+    if (isNaN(depositFeeNumber) || depositFeeNumber >= initialPrice) {
+      setDepositFeeError("Deposit fee must be less than the initial price.");
+      return false;
+    }
+    setDepositFeeError("");
+    return true;
+  };
+
+  const handleDepositFeeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/[^0-9]/g, "");
+    setDepositFee(value);
+    validateDepositFee(value);
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!validateTimes(startTime, endTime)) {
+    if (!validateTimes(startTime, endTime) || !validateDepositFee(depositFee)) {
       return;
     }
 
@@ -248,9 +267,12 @@ const CreateAuction = () => {
                       type="text"
                       className="form-control mb-2"
                       placeholder="Enter deposit fee"
-                      value={depositFee}
-                      onChange={(e) => setDepositFee(e.target.value)}
+                      value={formatBalance(Number(depositFee))}
+                      onChange={handleDepositFeeChange}
                     />
+                    {depositFeeError && (
+                      <div className="text-danger">{depositFeeError}</div>
+                    )}
                   </div>
 
                   <div className="mt-5">
@@ -293,6 +315,7 @@ const CreateAuction = () => {
                 <ProductTableSingle
                   selectedItem={selectedItem}
                   setSelectedItem={setSelectedItem}
+                  setInitialPrice={setInitialPrice}
                 />
               </div>
             </div>
