@@ -174,7 +174,7 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
             />
           </div>
           <div className="d-flex justify-content-start flex-column">
-            <span className="text-gray-900 fw-bold text-hover-primary mb-1 fs-6">
+            <span className="text-gray-900 fw-bold mb-1 fs-6">
               {row.original.name}
             </span>
             <span className="text-muted fw-semibold text-muted d-block fs-7">

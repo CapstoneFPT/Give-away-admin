@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useCallback } from "react";
 import { useQuery } from "react-query";
 import { KTIcon, toAbsoluteUrl } from "../../../_metronic/helpers";
@@ -29,7 +30,7 @@ const MasterProductsTable: React.FC<Props> = ({ className }) => {
   const pageSize = 5;
 
   const fetchData = useCallback(
-    async (page: number, pageSize: number, sortBy: any) => {
+    async (page: number, pageSize: number, sortBy: string[]) => {
       const masterItemApi = new MasterItemApi();
       const response = await masterItemApi.apiMasterItemsGet(
         searchTerm,
@@ -103,7 +104,7 @@ const MasterProductsTable: React.FC<Props> = ({ className }) => {
             />
           </div>
           <div className="d-flex justify-content-start flex-column">
-            <span className="text-gray-900 fw-bold text-hover-primary mb-1 fs-6">
+            <span className="text-gray-900 fw-bold mb-1 fs-6">
               {row.original.name}
             </span>
             <span className="text-muted fw-semibold text-muted d-block fs-7">
