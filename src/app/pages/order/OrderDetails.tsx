@@ -2,34 +2,41 @@
 import React from "react";
 import { KTCard, KTCardBody, KTIcon } from "../../../_metronic/helpers";
 import { OrderDetailedResponse, OrderStatus, OrderApi } from "../../../api";
-
 import { formatBalance, paymentMethod, purchaseType } from "../utils/utils";
 import { useAuth } from "../../modules/auth";
+import { useMutation } from "react-query";
 
 const OrderDetails: React.FC<{
   orderDetail: OrderDetailedResponse | undefined;
 }> = ({ orderDetail }) => {
   const { currentUser } = useAuth();
-  const handleGenerateInvoice = async () => {
-    if (orderDetail?.orderId) {
-      try {
-        const orderApi = new OrderApi();
-        const response = await orderApi.apiOrdersOrderIdInvoiceGet(orderDetail.orderId, currentUser?.shopId, { responseType: 'arraybuffer' });
-        
+
+  const generateInvoiceMutation = useMutation(
+    async () => {
+      if (!orderDetail?.orderId) {
+        throw new Error("Order ID is missing");
+      }
+      const orderApi = new OrderApi();
+      return await orderApi.apiOrdersOrderIdInvoiceGet(orderDetail.orderId, currentUser?.shopId, { responseType: 'arraybuffer' });
+    },
+    {
+      onSuccess: (response) => {
         const blob = new Blob([response.data], { type: 'application/pdf' });
         const url = window.URL.createObjectURL(blob);
-        
-        // Open the PDF in a new tab
         window.open(url, '_blank');
-        
-        // Clean up the URL object after the new tab is opened
         window.URL.revokeObjectURL(url);
-      } catch (error) {
+      },
+      onError: (error) => {
         console.error("Error generating invoice:", error);
         // Handle error (e.g., show an error message to the user)
       }
     }
+  );
+
+  const handleGenerateInvoice = () => {
+    generateInvoiceMutation.mutate();
   };
+
   return (
     <KTCard className="card-flush py-4 flex-row-fluid">
       <div className="card-header">
@@ -226,17 +233,22 @@ const OrderDetails: React.FC<{
           <button
             className="btn btn-primary"
             onClick={handleGenerateInvoice}
-            disabled={!orderDetail?.orderId}
+            disabled={!orderDetail?.orderId || generateInvoiceMutation.isLoading || orderDetail.status !== "Completed"}
           >
-            Generate Invoice
+            {generateInvoiceMutation.isLoading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Generating Invoice...
+              </>
+            ) : (
+              "Generate Invoice"
+            )}
           </button>
         </div>
       </KTCardBody>
     </KTCard>
   );
-}
-
-
+};
 
 const getStatusBadge = (status: OrderStatus) => {
   switch (status) {
