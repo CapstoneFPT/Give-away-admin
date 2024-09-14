@@ -39,8 +39,8 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
         null!, // filter theo shop
         null!, // filter theo gender
         null!,
-        null!,
-         // filter Consignmentfalse
+        null!
+        // filter Consignmentfalse
       );
 
       return response.data;
@@ -97,7 +97,7 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
           </form>
           <button
             className="btn btn-sm btn-light-primary"
-            onClick={handleShowAddModal} 
+            onClick={handleShowAddModal}
           >
             <KTIcon iconName="plus" className="fs-2" />
             Add new master product
@@ -134,10 +134,7 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
               {result.data?.items!.map((product: MasterItemListResponse) => (
                 <tr key={product.masterItemId}>
                   <td>
-                    <a
-                      href="#"
-                      className="text-gray-900 fw-bold text-hover-primary mb-1 fs-6"
-                    >
+                    <a href="#" className="text-gray-900 fw-bold mb-1 fs-6">
                       {product.itemCode}
                     </a>
                   </td>
@@ -164,10 +161,7 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                   </td>
                   <td>
                     {" "}
-                    <a
-                      href="#"
-                      className="text-gray-900 fw-bold text-hover-primary mb-1 fs-6"
-                    >
+                    <a href="#" className="text-gray-900 fw-bold  mb-1 fs-6">
                       {product.name}
                     </a>
                   </td>
