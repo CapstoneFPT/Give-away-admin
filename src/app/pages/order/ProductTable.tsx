@@ -1,7 +1,8 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { FashionItemApi, FashionItemList } from "../../../api";
 import { useAuth } from "../../modules/auth";
 import { formatBalance } from "../utils/utils";
+import { useQuery } from "react-query";
 
 const ProductTable = ({
   selectedItems,
@@ -12,99 +13,81 @@ const ProductTable = ({
   setSelectedItems: React.Dispatch<React.SetStateAction<string[]>>;
   setTotalCost?: React.Dispatch<React.SetStateAction<number>>;
 }) => {
-  const currentUser = useAuth().currentUser?.shopId; // Get shopId from useAuth
-  const [fashionItems, setFashionItems] = useState<FashionItemList[]>([]);
-  const [searchTerm, setSearchTerm] = useState<string>(""); // State for search input
-  const [debouncedSearch, setDebouncedSearch] = useState<string>(""); // State for debounced search term
-  const [currentPage, setCurrentPage] = useState<number>(1); // State for current page
-  const [pageSize] = useState<number>(10); // Items per page
-  const [totalCount, setTotalCount] = useState<number>(0); // Total number of items
-  const [totalPages, setTotalPages] = useState<number>(0); // Total number of pages
+  const { currentUser } = useAuth();
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const pageSize = 10;
 
-  // Function to fetch fashion items with optional search term and pagination
-  const fetchFashionItems = useCallback(
-    async (searchValue?: string, page?: number) => {
-      try {
-        const fashionItemApi = new FashionItemApi();
-        const response = await fashionItemApi.apiFashionitemsGet(
-          searchValue!,
-          null!,
-          null!,
-          null!,
-          null!,
-          null!,
-          null!,
-          null!,
-          ["Available"],
-          ["ConsignedForSale", "ItemBase"],
-          null!,
-          null!,
-          page!, // Pass the current page to the API
-          pageSize, // Pass the page size to the API
-          null!,
-          null!,
-          currentUser,
-          null!,
-          null!
-        );
-        setFashionItems(response.data.items || []); // Set the fetched items to state
-        setTotalCount(response.data.totalCount || 0); // Set the total count of items
-        setTotalPages(response.data.totalPages || 1); // Set the total number of pages
-      } catch (error) {
-        console.error("Error fetching fashion items:", error);
-      }
-    },
-    [currentUser, pageSize]
-  );
+  const fetchFashionItems = async ({ queryKey }: any) => {
+    const [_, searchValue, page] = queryKey;
+    const fashionItemApi = new FashionItemApi();
+    const response = await fashionItemApi.apiFashionitemsGet(
+      searchValue,
+      null!,
+      null!,
+      null!,
+      null!,
+      null!,
+      null!,
+      null!,
+      ["Available"],
+      ["ConsignedForSale", "ItemBase"],
+      null!,
+      null!,
+      page,
+      pageSize,
+      null!,
+      null!,
+      currentUser?.shopId,
+      null!,
+      null!
+    );
+    return response.data;
+  };
 
-  // Debounce effect for search input
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["fashionItems", searchTerm, currentPage],
+    queryFn: fetchFashionItems,
+    keepPreviousData: true,
+  });
+
+  const fashionItems = data?.items || [];
+  const totalCount = data?.totalCount || 0;
+  const totalPages = data?.totalPages || 1;
+
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(searchTerm); // Update debounced search term after delay
-      setCurrentPage(1); // Reset to the first page on search
-    }, 300); // Set the debounce delay (e.g., 300ms)
-
-    return () => clearTimeout(timer); // Clear the timer on component unmount or when searchTerm changes
+    setCurrentPage(1);
   }, [searchTerm]);
 
-  // Fetch items whenever the debounced search term or page changes
-  useEffect(() => {
-    fetchFashionItems(debouncedSearch, currentPage);
-  }, [debouncedSearch, currentPage, currentUser, fetchFashionItems]);
-
-  // Handle page change
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
-  // Handle checkbox change
   const handleCheckboxChange = (itemId: string, itemPrice: number) => {
     setSelectedItems((prevSelectedItems) => {
       let updatedSelectedItems;
       let updatedTotalCost = 0;
 
       if (prevSelectedItems.includes(itemId)) {
-        // Remove item if already selected and deduct its price
         updatedSelectedItems = prevSelectedItems.filter((id) => id !== itemId);
-        updatedTotalCost = prevSelectedItems.reduce((acc, id) => {
-          const item = fashionItems.find((i) => i.itemId === id);
-          return acc + (item?.sellingPrice || 0);
-        }, 0);
       } else {
-        // Add item if not selected and add its price
         updatedSelectedItems = [...prevSelectedItems, itemId];
-        updatedTotalCost = updatedSelectedItems.reduce((acc, id) => {
-          const item = fashionItems.find((i) => i.itemId === id);
-          return acc + (item?.sellingPrice || 0);
-        }, 0);
       }
+
+      updatedTotalCost = updatedSelectedItems.reduce((acc, id) => {
+        const item = fashionItems.find((i) => i.itemId === id);
+        return acc + (item?.sellingPrice || 0);
+      }, 0);
 
       if (setTotalCost) {
         setTotalCost(updatedTotalCost);
-      } // Update total cost state
+      }
       return updatedSelectedItems;
     });
   };
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>An error occurred: {(error as Error).message}</div>;
 
   return (
     <div className="card-body pt-0">
@@ -175,8 +158,8 @@ const ProductTable = ({
             data-kt-ecommerce-edit-order-filter="search"
             className="form-control form-control-solid w-100 w-lg-50 ps-12"
             placeholder="Search Products by Item Code"
-            value={searchTerm} // Bind the input to the searchTerm state
-            onChange={(e) => setSearchTerm(e.target.value)} // Update searchTerm state on input change
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
 
@@ -205,7 +188,7 @@ const ProductTable = ({
                       className="form-check-input"
                       type="checkbox"
                       value={item.itemId}
-                      checked={selectedItems.includes(item.itemId!)} // Ensure checkbox reflects the current state
+                      checked={selectedItems.includes(item.itemId!)}
                       onChange={() =>
                         handleCheckboxChange(item.itemId!, item.sellingPrice!)
                       }
