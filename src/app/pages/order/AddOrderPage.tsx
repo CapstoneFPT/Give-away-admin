@@ -14,6 +14,7 @@ import { useMutation, useQueryClient } from "react-query";
 import { Tabs, Tab } from "react-bootstrap";
 import { KTTable } from "../../../_metronic/helpers/components/KTTable";
 import { showAlert } from "../../../utils/Alert";
+import { useNavigate } from "react-router-dom";
 
 const AddOrderPage = () => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
@@ -25,6 +26,7 @@ const AddOrderPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedAccount, setSelectedAccount] =
     useState<AccountResponse | null>(null);
+  const navigate = useNavigate();
   const pageSize = 6;
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -38,11 +40,12 @@ const AddOrderPage = () => {
       const shopApi = new ShopApi();
       return shopApi.apiShopsShopIdOrdersPost(shopId!, orderData);
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       showAlert("success", "Order created successfully!");
       queryClient.invalidateQueries({ queryKey: ["orders"] });
       queryClient.invalidateQueries({ queryKey: ["fashionItems"] });
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
+      navigate(`/order-detail/${data.data.data?.orderId}`);
     },
     onError: () => {
       showAlert("error", "Failed to create order.");

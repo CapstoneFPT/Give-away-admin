@@ -1,36 +1,45 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import React from "react";
 import { KTCard, KTCardBody, KTIcon } from "../../../_metronic/helpers";
-import { OrderDetailedResponse, OrderStatus } from "../../../api";
-
+import { OrderDetailedResponse, OrderStatus, OrderApi } from "../../../api";
 import { formatBalance, paymentMethod, purchaseType } from "../utils/utils";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../modules/auth";
+import { useMutation } from "react-query";
+
 const OrderDetails: React.FC<{
   orderDetail: OrderDetailedResponse | undefined;
 }> = ({ orderDetail }) => {
-  const navigate = useNavigate();
-  const getStatusBadge = (status: OrderStatus) => {
-    switch (status) {
-      case "AwaitingPayment":
-        return "warning";
-      case "Completed":
-        return "success";
-      case "Cancelled":
-        return "danger";
-      case "Pending":
-        return "info";
-      default:
-        return "secondary";
+  const { currentUser } = useAuth();
+
+  const generateInvoiceMutation = useMutation(
+    async () => {
+      if (!orderDetail?.orderId) {
+        throw new Error("Order ID is missing");
+      }
+      const orderApi = new OrderApi();
+      return await orderApi.apiOrdersOrderIdInvoiceGet(orderDetail.orderId, currentUser?.shopId, { responseType: 'arraybuffer' });
+    },
+    {
+      onSuccess: (response) => {
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        window.URL.revokeObjectURL(url);
+      },
+      onError: (error) => {
+        console.error("Error generating invoice:", error);
+        // Handle error (e.g., show an error message to the user)
+      }
     }
+  );
+
+  const handleGenerateInvoice = () => {
+    generateInvoiceMutation.mutate();
   };
+
   return (
     <KTCard className="card-flush py-4 flex-row-fluid">
       <div className="card-header">
-        <div>
-          <button className="btn btn-primary" onClick={() => navigate(-1)}>
-            Back
-          </button>
-        </div>
         <div className="card-title">
           <h2>Order Details ({orderDetail?.orderCode})</h2>
         </div>
@@ -220,9 +229,40 @@ const OrderDetails: React.FC<{
             </tbody>
           </table>
         </div>
+        <div className="mt-5">
+          <button
+            className="btn btn-primary"
+            onClick={handleGenerateInvoice}
+            disabled={!orderDetail?.orderId || generateInvoiceMutation.isLoading || orderDetail.status !== "Completed"}
+          >
+            {generateInvoiceMutation.isLoading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Generating Invoice...
+              </>
+            ) : (
+              "Generate Invoice"
+            )}
+          </button>
+        </div>
       </KTCardBody>
     </KTCard>
   );
-}; // Add this closing brace
+};
+
+const getStatusBadge = (status: OrderStatus) => {
+  switch (status) {
+    case "AwaitingPayment":
+      return "warning";
+    case "Completed":
+      return "success";
+    case "Cancelled":
+      return "danger";
+    case "Pending":
+      return "info";
+    default:
+      return "secondary";
+  }
+};
 
 export default OrderDetails;
