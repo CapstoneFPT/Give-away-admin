@@ -69,8 +69,8 @@ const AuctionDetail: React.FC = () => {
 
   const bidColumns = [
     {
-      Header: "Bidder",
-      accessor: "bidderName",
+      Header: "Phone Bidder",
+      accessor: "phone",
     },
     {
       Header: "Amount",
