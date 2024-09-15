@@ -111,6 +111,10 @@ const CreateRefund: React.FC = () => {
     },
   });
 
+  const handleItemDetail = (itemDetailId: string) => {
+    navigate(`/refund/item-detail/${itemDetailId}`);
+  };
+
   return (
     <Content>
       <KTCard>
@@ -147,10 +151,16 @@ const CreateRefund: React.FC = () => {
                   <table className="table table-row-bordered table-row-gray-100 align-middle gs-0 gy-3">
                     <thead>
                       <tr className="fw-bold text-muted bg-light">
-                        <th className="min-w-150px">Item Name</th>
-                        <th className="min-w-100px">Quantity</th>
-                        <th className="min-w-100px">Unit Price</th>
-                        <th className="min-w-100px text-end">Action</th>
+                        <th className="min-w-100px">Item Name</th>
+                        <th className="min-w-50px">Quantity</th>
+                        <th className="min-w-50px">Unit Price</th>
+                        <th className="min-w-50px">Status</th>
+                        {/* @ts-expect-error idk */}
+                        {orderLineItems.items.some(
+                          (item: OrderLineItemListResponse) =>
+                            item.itemStatus !== "Returned"
+                        ) && <th className="min-w-50px">Action</th>}
+                        <th className="min-w-50px">Detail</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -161,21 +171,34 @@ const CreateRefund: React.FC = () => {
                             <td>{item.itemName}</td>
                             <td>{item.quantity}</td>
                             <td>{item.unitPrice}</td>
-                            <td className="text-end">
+                            <td>{item.itemStatus}</td>
+                            {item.itemStatus !== "Returned" && (
+                              <td>
+                                <button
+                                  type="button"
+                                  className={`btn btn-sm ${
+                                    selectedItem === item.orderLineItemId
+                                      ? "btn-primary"
+                                      : "btn-light-primary"
+                                  }`}
+                                  onClick={() =>
+                                    handleItemSelect(item.orderLineItemId || "")
+                                  }
+                                >
+                                  {selectedItem === item.orderLineItemId
+                                    ? "Selected"
+                                    : "Select"}
+                                </button>
+                              </td>
+                            )}
+                            <td>
                               <button
-                                type="button"
-                                className={`btn btn-sm ${
-                                  selectedItem === item.orderLineItemId
-                                    ? "btn-primary"
-                                    : "btn-light-primary"
-                                }`}
+                                className="btn btn-light-primary"
                                 onClick={() =>
-                                  handleItemSelect(item.orderLineItemId || "")
+                                  handleItemDetail(item.itemId || "")
                                 }
                               >
-                                {selectedItem === item.orderLineItemId
-                                  ? "Selected"
-                                  : "Select"}
+                                Detail
                               </button>
                             </td>
                           </tr>
