@@ -32,6 +32,7 @@ import TransactionManagement from "../admin/transactions/TransactionManagement.t
 import WithdrawManagement from "../admin/withdraw/WithdrawManagement.tsx";
 import AuctionDetail from "../pages/auction/AuctionDetail.tsx";
 import CreateRefund from "../pages/refund/CreateRefund.tsx";
+import RefundItemDetail from "../pages/refund/RefundItemDetail.tsx";
 const PrivateRoutes = () => {
   const { currentUser } = useAuth();
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
@@ -213,6 +214,16 @@ const PrivateRoutes = () => {
                 </SuspensedView>
               }
             />
+          }
+        />
+        <Route
+          path="refund/item-detail/:itemId"
+          element={
+            <ProtectedRoute roles={["Staff"]}>
+              <SuspensedView>
+                <RefundItemDetail />
+              </SuspensedView>
+            </ProtectedRoute>
           }
         />
         <Route
