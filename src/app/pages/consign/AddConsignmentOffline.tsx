@@ -77,7 +77,7 @@ const AddConsignmentOffline: React.FC = () => {
   const currentUser = useAuth();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<string>("manual");
-  console.log(formData);
+
   // Query to fetch master items
   const { data: masterItems } = useQuery({
     queryKey: ["masterItems"],
@@ -441,7 +441,7 @@ const AddConsignmentOffline: React.FC = () => {
                 onSelect={(k) => handleTabChange(k || "manual")}
                 className="mb-5"
               >
-                <Tab eventKey="manual" title="Enter Consignor Details">
+                <Tab eventKey="manual" title="Enter Manually">
                   <form onSubmit={handleSubmit}>
                     <div className="mb-5">
                       <label htmlFor="consignorName" className="form-label">

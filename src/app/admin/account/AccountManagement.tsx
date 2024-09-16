@@ -5,14 +5,21 @@ import { AccountApi, AccountStatus, Roles } from "../../../api";
 import { Content } from "../../../_metronic/layout/components/content";
 import { KTTable } from "../../../_metronic/helpers/components/KTTable";
 import { formatBalance } from "../../pages/utils/utils";
+import { useMutation, useQueryClient } from "react-query";
+import CreateStaffModal from "./CreateStaffAccount";
+import { showAlert } from "../../../utils/Alert";
 
 const AccountManagement: React.FC = () => {
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<"Member" | "Staff">("Member");
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<AccountStatus | "">("");
+  const [statusFilter, setStatusFilter] = useState<AccountStatus | "">(
+    AccountStatus.Active
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
-  console.log(statusFilter);
+  const [showCreateStaffModal, setShowCreateStaffModal] = useState(false);
+
   const fetchAccounts = useCallback(
     async (page: number, pageSize: number) => {
       try {
@@ -40,12 +47,12 @@ const AccountManagement: React.FC = () => {
     [searchTerm, statusFilter, activeTab]
   );
 
-  const { data, isLoading, error } = useQuery(
+  const { data, isLoading, error, isFetching, refetch } = useQuery(
     ["accounts", searchTerm, statusFilter, currentPage, activeTab],
     () => fetchAccounts(currentPage, pageSize),
     { keepPreviousData: true }
   );
-  console.log(data);
+
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
   };
@@ -54,6 +61,33 @@ const AccountManagement: React.FC = () => {
     setActiveTab(tab);
     setCurrentPage(1);
   };
+
+  const banUnbanMutation = useMutation(
+    (accountId: string) => {
+      const accountApi = new AccountApi();
+      return accountApi.apiAccountsIdBanPut(accountId);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["accounts"]);
+        refetch();
+        showAlert("success", "Account status updated successfully");
+      },
+      onError: (error) => {
+        showAlert(
+          "error",
+          "Failed to update account status " + (error as Error).message
+        );
+      },
+    }
+  );
+
+  const handleBanUnban = useCallback(
+    (accountId: string) => {
+      banUnbanMutation.mutate(accountId);
+    },
+    [banUnbanMutation]
+  );
 
   const columns = useMemo(() => {
     const baseColumns = [
@@ -81,42 +115,80 @@ const AccountManagement: React.FC = () => {
       {
         Header: "Status",
         accessor: "status",
-      },
-      {
-        Header: "Actions",
-        accessor: "accountId",
-        Cell: ({ value }: { value: string }) => (
-          <button
-            className="btn btn-sm btn-light-primary"
-            onClick={() => handleEdit(value)}
+        Cell: ({ value }: { value: AccountStatus }) => (
+          <span
+            className={`badge badge-light-${
+              value === AccountStatus.Active ? "success" : "danger"
+            }`}
           >
-            Edit
-          </button>
+            {value}
+          </span>
         ),
       },
     ];
 
     if (activeTab === "Staff") {
       return [
-        ...baseColumns.slice(0, 6),
+        ...baseColumns,
         {
           Header: "Shop ID",
           accessor: "shopId",
           Cell: ({ value }: { value: string | null }) => value || "N/A",
         },
-        ...baseColumns.slice(6),
       ];
     }
 
-    return baseColumns;
-  }, [activeTab]);
+    return [
+      ...baseColumns,
+      {
+        Header: "Action",
+        accessor: "accountId",
+        Cell: ({
+          row,
+        }: {
+          row: { original: { accountId: string; status: AccountStatus } };
+        }) => {
+          const isActive = row.original.status === AccountStatus.Active;
+          const isLoading =
+            banUnbanMutation.isLoading &&
+            banUnbanMutation.variables === row.original.accountId;
 
-  const handleEdit = (accountId: string) => {
-    console.log("Edit account:", accountId);
-  };
+          return (
+            <button
+              className={`btn btn-sm ${
+                isActive ? "btn-light-danger" : "btn-light-success"
+              }`}
+              onClick={() => handleBanUnban(row.original.accountId)}
+              disabled={banUnbanMutation.isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <span
+                    className="spinner-border spinner-border-sm"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                  <span className="visually-hidden">Loading...</span>
+                </>
+              ) : isActive ? (
+                "Ban"
+              ) : (
+                "Unban"
+              )}
+            </button>
+          );
+        },
+      },
+    ];
+  }, [
+    activeTab,
+    banUnbanMutation.isLoading,
+    banUnbanMutation.variables,
+    handleBanUnban,
+  ]);
 
   const handleCreateStaffAccount = () => {
-    console.log("Create staff account");
+    setShowCreateStaffModal(true);
   };
 
   if (error) return <div>An error occurred: {(error as Error).message}</div>;
@@ -144,7 +216,6 @@ const AccountManagement: React.FC = () => {
                   setStatusFilter(e.target.value as AccountStatus | "")
                 }
               >
-                <option value="">All Statuses</option>
                 {Object.values(AccountStatus).map((status) => (
                   <option key={status} value={status}>
                     {status}
@@ -181,7 +252,7 @@ const AccountManagement: React.FC = () => {
             </li>
           </ul>
 
-          {isLoading ? (
+          {isLoading || isFetching ? (
             <div
               className="d-flex justify-content-center align-items-center"
               style={{ height: "200px" }}
@@ -191,19 +262,32 @@ const AccountManagement: React.FC = () => {
               </div>
             </div>
           ) : (
-            <KTTable
-              columns={columns}
-              data={data?.data || []}
-              totalCount={data?.totalCount || 0}
-              currentPage={currentPage}
-              pageSize={pageSize}
-              onPageChange={handlePageChange}
-              loading={isLoading}
-              totalPages={data?.totalPages || 0}
-            />
+            <>
+              <KTTable
+                columns={columns}
+                data={data?.data || []}
+                totalCount={data?.totalCount || 0}
+                currentPage={currentPage}
+                pageSize={pageSize}
+                onPageChange={handlePageChange}
+                loading={isLoading || isFetching}
+                totalPages={data?.totalPages || 0}
+              />
+              {(isLoading || isFetching) && (
+                <div className="position-absolute top-50 start-50 translate-middle">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </KTCardBody>
       </KTCard>
+      <CreateStaffModal
+        show={showCreateStaffModal}
+        onHide={() => setShowCreateStaffModal(false)}
+      />
     </Content>
   );
 };
