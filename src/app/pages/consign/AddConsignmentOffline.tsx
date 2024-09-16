@@ -18,6 +18,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { GenderType, ConsignSaleType } from "../../../api";
 import { CreateMasterOfflineConsignRequest } from "../../../api";
 import { showAlert } from "../../../utils/Alert";
+import { Tabs, Tab } from "react-bootstrap";
 interface ConsignDetailRequest {
   masterItemId: string;
   note: string;
@@ -75,6 +76,7 @@ const AddConsignmentOffline: React.FC = () => {
   const [selectedGender, setSelectedGender] = useState<string>("");
   const currentUser = useAuth();
   const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState<string>("manual");
   console.log(formData);
   // Query to fetch master items
   const { data: masterItems } = useQuery({
@@ -413,6 +415,20 @@ const AddConsignmentOffline: React.FC = () => {
     // Note: You may want to also delete the image from Firebase Storage here
   };
 
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    if (tab === "manual") {
+      setSelectedAccount(null);
+      setFormData((prevData) => ({
+        ...prevData,
+        consignorName: "",
+        phone: "",
+        email: "",
+        address: "",
+      }));
+    }
+  };
+
   return (
     <>
       <div className="d-flex flex-column flex-lg-row">
@@ -420,91 +436,139 @@ const AddConsignmentOffline: React.FC = () => {
           <KTCard>
             <KTCardBody>
               <h2 className="fw-bold mb-5">Consignor Details</h2>
-              {selectedAccount ? (
-                <>
-                  <div className="d-flex flex-column mb-7">
-                    <div className="fs-6 fw-bold mb-2">Phone Number:</div>
-                    <div className="fs-6">{selectedAccount.phone}</div>
-                  </div>
-                  <div className="d-flex flex-column mb-7">
-                    <div className="fs-6 fw-bold mb-2">Consignor's Name:</div>
-                    <div className="fs-6">{selectedAccount.fullname}</div>
-                  </div>
-                  <div className="d-flex flex-column mb-7">
-                    <div className="fs-6 fw-bold mb-2">Email:</div>
-                    <div className="fs-6">{selectedAccount.email}</div>
-                  </div>
-
-                  <button
-                    type="button"
-                    className="btn btn-light-primary mb-7"
-                    onClick={handleBackToSearch}
-                  >
-                    Back to Search
-                  </button>
-                </>
-              ) : (
-                <>
-                  <div className="fv-row mb-7">
-                    <label className="form-label fs-6 fw-bold mb-3">
-                      Phone Number
-                    </label>
-                    <div className="input-group input-group-solid">
+              <Tabs
+                activeKey={activeTab}
+                onSelect={(k) => handleTabChange(k || "manual")}
+                className="mb-5"
+              >
+                <Tab eventKey="manual" title="Enter Consignor Details">
+                  <form onSubmit={handleSubmit}>
+                    <div className="mb-5">
+                      <label htmlFor="consignorName" className="form-label">
+                        Consignor Name
+                      </label>
                       <input
-                        type="text"
-                        className="form-control form-control-solid"
-                        placeholder="Enter phone number"
-                        value={searchTerm}
-                        onChange={handleSearchChange}
+                        id="consignorName"
+                        name="consignorName"
+                        className="form-control"
+                        value={formData.consignorName}
+                        onChange={handleChange}
+                        required
                       />
+                    </div>
+                    <div className="mb-5">
+                      <label htmlFor="phone" className="form-label">
+                        Phone
+                      </label>
+                      <input
+                        id="phone"
+                        name="phone"
+                        className="form-control"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+                    <div className="mb-5">
+                      <label htmlFor="address" className="form-label">
+                        Address
+                      </label>
+                      <input
+                        id="address"
+                        name="address"
+                        className="form-control"
+                        value={formData.address}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+                    <div className="mb-5">
+                      <label htmlFor="email" className="form-label">
+                        Email
+                      </label>
+                      <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        className="form-control"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+                  </form>
+                </Tab>
+                <Tab eventKey="findAccount" title="Find Account">
+                  {selectedAccount ? (
+                    <>
+                      <div className="d-flex flex-column mb-7">
+                        <div className="fs-6 fw-bold mb-2">Phone Number:</div>
+                        <div className="fs-6">{selectedAccount.phone}</div>
+                      </div>
+                      <div className="d-flex flex-column mb-7">
+                        <div className="fs-6 fw-bold mb-2">
+                          Consignor's Name:
+                        </div>
+                        <div className="fs-6">{selectedAccount.fullname}</div>
+                      </div>
+                      <div className="d-flex flex-column mb-7">
+                        <div className="fs-6 fw-bold mb-2">Email:</div>
+                        <div className="fs-6">{selectedAccount.email}</div>
+                      </div>
+
                       <button
                         type="button"
-                        className="btn btn-light-primary"
-                        onClick={handleFindAccount}
-                        disabled={isLoading}
+                        className="btn btn-light-primary mb-7"
+                        onClick={handleBackToSearch}
                       >
-                        {isLoading ? (
-                          <>
-                            <span
-                              className="spinner-border spinner-border-sm me-2"
-                              role="status"
-                              aria-hidden="true"
-                            ></span>
-                            Finding...
-                          </>
-                        ) : (
-                          "Find Account"
-                        )}
+                        Back to Search
                       </button>
-                    </div>
-                  </div>
-                </>
-              )}
-              <form onSubmit={handleSubmit}>
-                <div className="mb-5">
-                  <label htmlFor="type" className="form-label">
-                    Consignment Type
-                  </label>
-                  <select
-                    id="type"
-                    name="type"
-                    className="form-select"
-                    value={formData.type}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="ConsignedForSale">Consigned for Sale</option>
-                    <option value="ConsignedForAuction">
-                      Consigned for Auction
-                    </option>
-                  </select>
-                </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="fv-row mb-7">
+                        <label className="form-label fs-6 fw-bold mb-3">
+                          Phone Number
+                        </label>
+                        <div className="input-group input-group-solid">
+                          <input
+                            type="text"
+                            className="form-control form-control-solid"
+                            placeholder="Enter phone number"
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                          />
+                          <button
+                            type="button"
+                            className="btn btn-light-primary"
+                            onClick={handleFindAccount}
+                            disabled={isLoading}
+                          >
+                            {isLoading ? (
+                              <>
+                                <span
+                                  className="spinner-border spinner-border-sm me-2"
+                                  role="status"
+                                  aria-hidden="true"
+                                ></span>
+                                Finding...
+                              </>
+                            ) : (
+                              "Find Account"
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </Tab>
+              </Tabs>
+              {activeTab === "findAccount" && (
                 <div className="mb-5">
                   <label htmlFor="address" className="form-label">
                     Address
                   </label>
                   <input
-                    type="text"
                     id="address"
                     name="address"
                     className="form-control"
@@ -513,32 +577,56 @@ const AddConsignmentOffline: React.FC = () => {
                     required
                   />
                 </div>
-                <button type="submit" className="btn btn-primary">
-                  Submit Consignment
-                </button>
-              </form>
+              )}
+              <div className="mb-5">
+                <label htmlFor="type" className="form-label">
+                  Consignment Type
+                </label>
+                <select
+                  id="type"
+                  name="type"
+                  className="form-select"
+                  value={formData.type}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="ConsignedForSale">Consigned for Sale</option>
+                  <option value="ConsignedForAuction">
+                    Consigned for Auction
+                  </option>
+                </select>
+              </div>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                onClick={handleSubmit}
+              >
+                Submit Consignment
+              </button>
             </KTCardBody>
           </KTCard>
         </div>
 
         <div className="d-flex flex-column flex-lg-row-fluid gap-7 gap-lg-10">
-          {searchResults.length > 0 && !selectedAccount && (
-            <KTCard>
-              <KTCardBody>
-                <h2 className="fw-bold mb-5">Found Accounts</h2>
-                <KTTable
-                  columns={accountColumns}
-                  data={searchResults}
-                  totalCount={searchResults.length}
-                  currentPage={currentPage}
-                  pageSize={pageSize}
-                  loading={isLoading}
-                  onPageChange={handlePageChange}
-                  totalPages={totalPages}
-                />
-              </KTCardBody>
-            </KTCard>
-          )}
+          {searchResults.length > 0 &&
+            activeTab === "findAccount" &&
+            !selectedAccount && (
+              <KTCard>
+                <KTCardBody>
+                  <h2 className="fw-bold mb-5">Found Accounts</h2>
+                  <KTTable
+                    columns={accountColumns}
+                    data={searchResults}
+                    totalCount={searchResults.length}
+                    currentPage={currentPage}
+                    pageSize={pageSize}
+                    loading={isLoading}
+                    onPageChange={handlePageChange}
+                    totalPages={totalPages}
+                  />
+                </KTCardBody>
+              </KTCard>
+            )}
 
           <KTCard>
             <KTCardBody>
