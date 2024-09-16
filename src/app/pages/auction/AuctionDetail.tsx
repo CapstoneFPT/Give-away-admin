@@ -43,7 +43,7 @@ const AuctionDetail: React.FC = () => {
     queryKey: ["auction", auctionId],
     queryFn: () => auctionApi.apiAuctionsIdGet(auctionId!),
   });
-  console.log(auctionData);
+
   const { data: bidsData, isLoading: isLoadingBids } = useQuery({
     queryKey: ["bids", auctionId, currentPage, pageSize],
     queryFn: () =>

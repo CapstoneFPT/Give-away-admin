@@ -135,11 +135,11 @@ const SidebarMenuMain = () => {
               title="View Consignments"
               hasBullet={true}
             />
-            {/* <SidebarMenuItem
-              to="/consignment/create"
+            <SidebarMenuItem
+              to="/consignment/create-offline"
               title="Create Consignment Offline"
               hasBullet={true}
-            /> */}
+            />
           </SidebarMenuItemWithSub>
           <SidebarMenuItemWithSub
             to="/product"

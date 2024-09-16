@@ -34,7 +34,7 @@ const AuctionAdminList: React.FC<Props> = ({ className }) => {
     () => fetchAuctions(),
     { keepPreviousData: true }
   );
-
+  console.log(data);
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);
@@ -183,6 +183,21 @@ const AuctionAdminList: React.FC<Props> = ({ className }) => {
                             : "N/A"}
                           VND
                         </p>
+                        <p className="card-text">
+                          <strong>Initial Price:</strong>{" "}
+                          {auction?.initialPrice
+                            ? formatBalance(auction.initialPrice)
+                            : "N/A"}
+                          VND
+                        </p>
+                        {auction.status === AuctionStatus.Finished && (
+                          <p className="card-text">
+                            <strong>Successful Bid Amount:</strong>{" "}
+                            {auction?.sucessfulBidAmount
+                              ? formatBalance(auction.sucessfulBidAmount)
+                              : "N/A"}
+                          </p>
+                        )}
                         <div className="d-flex justify-content-center mb-2">
                           <div
                             className={`badge badge-light-${getStatusColor(

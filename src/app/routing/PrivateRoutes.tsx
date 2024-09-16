@@ -33,6 +33,7 @@ import WithdrawManagement from "../admin/withdraw/WithdrawManagement.tsx";
 import AuctionDetail from "../pages/auction/AuctionDetail.tsx";
 import CreateRefund from "../pages/refund/CreateRefund.tsx";
 import RefundItemDetail from "../pages/refund/RefundItemDetail.tsx";
+import AddConsignmentOffline from "../pages/consign/AddConsignmentOffline.tsx";
 const PrivateRoutes = () => {
   const { currentUser } = useAuth();
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
@@ -258,6 +259,20 @@ const PrivateRoutes = () => {
             <ProtectedRoute
               roles={["Staff"]}
               children={<SuspensedView></SuspensedView>}
+            />
+          }
+        />
+        <Route
+          path="consignment/create-offline"
+          element={
+            <ProtectedRoute
+              roles={["Staff"]}
+              children={
+                <SuspensedView>
+                  {" "}
+                  <AddConsignmentOffline />{" "}
+                </SuspensedView>
+              }
             />
           }
         />

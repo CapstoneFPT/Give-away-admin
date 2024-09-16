@@ -128,29 +128,42 @@ const AuctionList: React.FC<Props> = ({ className }) => {
                       />
                       <div className="card-body d-flex flex-column">
                         <h5 className="card-title text-truncate">
-                          {auction.title}
+                          <strong>{auction.title}</strong>
                         </h5>
                         <p className="card-text small">
-                          Start:{" "}
+                          <strong>Start:</strong>{" "}
                           {new Date(auction.startDate ?? "").toLocaleString()}
                         </p>
                         <p className="card-text small">
-                          End:{" "}
+                          <strong>End:</strong>{" "}
                           {new Date(auction.endDate ?? "").toLocaleString()}
                         </p>
                         <p className="card-text">
-                          Deposit Fee: {formatBalance(auction.depositFee || 0)}{" "}
-                          VND
+                          <strong>Deposit Fee:</strong>{" "}
+                          {formatBalance(auction.depositFee || 0)} VND
                         </p>
+                        <p className="card-text">
+                          <strong>Initial Price:</strong>{" "}
+                          {formatBalance(auction.initialPrice || 0)} VND
+                        </p>
+                        {auction.status === AuctionStatus.Finished && (
+                          <p className="card-text">
+                            <strong>Successful Bid Amount:</strong>{" "}
+                            {auction.sucessfulBidAmount
+                              ? formatBalance(auction.sucessfulBidAmount)
+                              : "No one bidding"}
+                          </p>
+                        )}
                         <div className="d-flex justify-content-center align-items-center mb-5">
                           <span
                             className={`badge badge-light-${getStatusColor(
                               auction.status
                             )}`}
                           >
-                            {auction.status}
+                            <strong>{auction.status}</strong>
                           </span>
                         </div>
+
                         <Link
                           to={`/auction/${auction.auctionId}`}
                           className="btn btn-sm btn-primary mt-auto"
