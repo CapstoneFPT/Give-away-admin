@@ -9,7 +9,8 @@ import {
 import { Content } from "../../../_metronic/layout/components/content";
 import { KTTable } from "../../../_metronic/helpers/components/KTTable";
 import { formatBalance } from "../../pages/utils/utils";
-import { toast } from "react-toastify";
+import { AxiosError } from "axios";
+import { showAlert } from "../../../utils/Alert";
 
 type WithdrawColumnCellProps = {
   value: string | number;
@@ -40,10 +41,13 @@ const WithdrawManagement: React.FC = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["withdraws"]);
-        toast.success("Withdraw confirmed successfully");
+        showAlert("success", "Withdraw confirmed successfully");
       },
-      onError: (error) => {
-        toast.error(`Failed to confirm withdraw: ${error}`);
+      onError: (error: AxiosError) => {
+        showAlert(
+          "error",
+          `Failed to confirm withdraw: ${error.response?.data}`
+        );
       },
     }
   );
@@ -83,7 +87,7 @@ const WithdrawManagement: React.FC = () => {
     () => fetchWithdraws(currentPage, pageSize),
     { keepPreviousData: true }
   );
-  console.log(data);
+
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
   };
