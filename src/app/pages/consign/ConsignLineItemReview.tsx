@@ -63,6 +63,7 @@ export const ConsignLineItemReview: React.FC = () => {
           ? data.expectedPrice!.toString()
           : data.dealPrice!.toString()
       );
+      showAlert("success", "Consignment details loaded successfully");
     },
   });
 
@@ -81,6 +82,7 @@ export const ConsignLineItemReview: React.FC = () => {
     },
     onSuccess: (consignSaleData) => {
       setConsignSaleDetail(consignSaleData);
+      showAlert("success", "Consignment details loaded successfully");
     },
   });
 
@@ -119,9 +121,11 @@ export const ConsignLineItemReview: React.FC = () => {
     {
       onSuccess: () => {
         navigate(`/consignment/${consignSaleId}`);
+        showAlert("success", "Product ready for consignment");
       },
       onError: (error) => {
-        console.error("Error setting item ready for consign:", error);
+        console.error("Error setting product ready for consign:", error);
+        showAlert("error", "Error setting product ready for consign");
       },
     }
   );
@@ -140,7 +144,7 @@ export const ConsignLineItemReview: React.FC = () => {
         navigate(`/consignment/${consignSaleId}`);
       },
       onError: (error) => {
-        console.error("Error creating individual item:", error);
+        console.error("Error creating individual product:", error);
       },
     }
   );
@@ -161,7 +165,7 @@ export const ConsignLineItemReview: React.FC = () => {
       onError: (error) => {
         console.log(lineItemId);
         console.error(
-          "Error creating individual item after negotiation:",
+          "Error creating individual product after negotiation:",
           error
         );
       },
@@ -182,7 +186,7 @@ export const ConsignLineItemReview: React.FC = () => {
         navigate(`/consignment/${consignSaleId}`);
       },
       onError: (error) => {
-        console.error("Error negotiating item price:", error);
+        console.error("Error negotiating product price:", error);
       },
     }
   );
@@ -201,8 +205,8 @@ export const ConsignLineItemReview: React.FC = () => {
 
   const handleCreateItemModalSubmit = async (): Promise<void> => {
     if (!selectedMasterItem) {
-      showAlert("error", "Please select a master item");
-      throw new Error("No master item selected");
+      showAlert("error", "Please select a master product");
+      throw new Error("No master product selected");
     }
 
     try {
@@ -216,11 +220,14 @@ export const ConsignLineItemReview: React.FC = () => {
           masterItemId: selectedMasterItem,
         });
       }
-      showAlert("success", "Item successfully added to inventory");
+      showAlert("success", "Product successfully added to inventory");
       setShowModal(false); // Close the modal on success
     } catch (error) {
       console.error(error);
-      showAlert("error", `Failed to add item to inventory. Please try again.`);
+      showAlert(
+        "error",
+        `Failed to add product to inventory. Please try again.`
+      );
       throw error; // Re-throw the error so it can be caught in the AddToInventoryModal
     }
   };

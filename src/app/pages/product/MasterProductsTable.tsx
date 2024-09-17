@@ -86,7 +86,7 @@ const MasterProductsTable: React.FC<Props> = ({ className }) => {
 
   const columns: Column<MasterItemListResponse>[] = [
     {
-      Header: "Item Code",
+      Header: "Product Code",
       accessor: "itemCode",
     },
     {
@@ -142,7 +142,7 @@ const MasterProductsTable: React.FC<Props> = ({ className }) => {
     {
       Header: "Type",
       accessor: "isConsignment",
-      Cell: ({ value }) => (value ? "Consigned Item" : "Shop Item"),
+      Cell: ({ value }) => (value ? "Consigned Product" : "Shop Product"),
     },
     {
       Header: "Shop Address",
@@ -196,7 +196,7 @@ const MasterProductsTable: React.FC<Props> = ({ className }) => {
               <input
                 type="text"
                 className="form-control form-control-solid w-250px me-2"
-                placeholder="Search by Item Code"
+                placeholder="Search by Product Code"
                 value={searchItemCode}
                 onChange={(e) => setSearchItemCode(e.target.value)}
               />

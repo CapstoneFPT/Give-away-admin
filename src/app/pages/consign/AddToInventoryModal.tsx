@@ -67,7 +67,7 @@ export const AddToInventoryModal: React.FC<AddToInventoryModalProps> = ({
   }, [selectedGender]);
   const validateMasterItemForm = (): boolean => {
     if (!masterItemCode.trim()) {
-      showAlert("error", "Master Item Code is required.");
+      showAlert("error", "Master Product Code is required.");
       return false;
     }
     if (!description.trim()) {
@@ -132,14 +132,14 @@ export const AddToInventoryModal: React.FC<AddToInventoryModalProps> = ({
         }
       );
 
-      showAlert("success", "Master item created successfully!");
+      showAlert("success", "Master product created successfully!");
       setMasterItemCode("");
       setDescription("");
       setCategoryId("");
       setIsCreatingMasterItem(false);
     } catch (error) {
-      console.error("Error creating master item:", error);
-      showAlert("error", "Failed to create master item. Please try again.");
+      console.error("Error creating master product:", error);
+      showAlert("error", "Failed to create master product. Please try again.");
     }
   };
 
@@ -178,7 +178,7 @@ export const AddToInventoryModal: React.FC<AddToInventoryModalProps> = ({
     >
       <div className="row">
         <div className="col-md-6">
-          <h6 className="fw-bold mb-3">Consign Line Item Details:</h6>
+          <h6 className="fw-bold mb-3">Consign Line Product Details:</h6>
           <table className="table table-borderless">
             <tbody>
               <tr>
@@ -273,7 +273,7 @@ export const AddToInventoryModal: React.FC<AddToInventoryModalProps> = ({
             <>
               <div className="mb-3">
                 <label htmlFor="masterItemCode" className="form-label">
-                  Master Item Code
+                  Master Product Code
                 </label>
                 <input
                   type="text"
@@ -357,7 +357,7 @@ export const AddToInventoryModal: React.FC<AddToInventoryModalProps> = ({
                 className="btn btn-primary"
                 onClick={handleSaveChanges}
               >
-                Save Master Item
+                Save Master Product
               </button>
               <button
                 type="button"

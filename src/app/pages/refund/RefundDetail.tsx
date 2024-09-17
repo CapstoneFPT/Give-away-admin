@@ -12,13 +12,14 @@ import { Content } from "../../../_metronic/layout/components/content";
 import { KTCard, KTCardBody, KTIcon } from "../../../_metronic/helpers";
 import { formatBalance, formatDate } from "../utils/utils";
 import KTInfoItem from "../../../_metronic/helpers/components/KTInfoItem";
-import { toast, ToastContainer } from "react-toastify";
+
 import "react-toastify/dist/ReactToastify.css";
-import KTModal from "../../../_metronic/helpers/components/KTModal";
+import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../modules/auth";
 import { ConfirmReceivedModal } from "./ConfirmReceivedModal";
 import { RejectModal } from "./RejectModal";
+import { showAlert } from "../../../utils/Alert";
 
 interface ImageGalleryProps {
   images: string[];
@@ -49,8 +50,9 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
           key={index}
           src={image}
           alt={`Image ${index + 1}`}
-          className={`img-thumbnail m-2 cursor-pointer ${selectedImage === image ? "border-primary" : ""
-            }`}
+          className={`img-thumbnail m-2 cursor-pointer ${
+            selectedImage === image ? "border-primary" : ""
+          }`}
           style={{
             width: "200px",
             height: "200px",
@@ -74,7 +76,8 @@ const RefundDetail: React.FC = () => {
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
   const queryClient = useQueryClient();
-  const [isConfirmReceivedModalOpen, setIsConfirmReceivedModalOpen] = useState(false);
+  const [isConfirmReceivedModalOpen, setIsConfirmReceivedModalOpen] =
+    useState(false);
   const [isRefundApproved, setIsRefundApproved] = useState(false);
 
   const { data, isLoading, error } = useQuery<
@@ -87,18 +90,19 @@ const RefundDetail: React.FC = () => {
   });
 
   const confirmReceivedMutation = useMutation(
-    ({ refundPercentage, responseFromShop, status }: ConfirmReceivedRequest) => refundApi.apiRefundsRefundIdConfirmReceivedAndRefundPut(refundId!, {
-      refundPercentage,
-      responseFromShop,
-      status
-    }),
+    ({ refundPercentage, responseFromShop, status }: ConfirmReceivedRequest) =>
+      refundApi.apiRefundsRefundIdConfirmReceivedAndRefundPut(refundId!, {
+        refundPercentage,
+        responseFromShop,
+        status,
+      }),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["RefundDetail", refundId]);
-        toast.success("Item received confirmation successful");
+        showAlert("success", "Product received confirmation successful");
       },
-      onError: (error) => {
-        toast.error(`Error: ${(error as Error).message}`);
+      onError: (error: AxiosError) => {
+        showAlert("error", `Error: ${(error as Error).message}`);
       },
     }
   );
@@ -111,13 +115,15 @@ const RefundDetail: React.FC = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["RefundDetail", refundId]);
-        toast.success(
-          `Refund ${status === RefundStatus.Approved ? "approved" : "rejected"
+        showAlert(
+          "success",
+          `Refund ${
+            status === RefundStatus.Approved ? "approved" : "rejected"
           } successfully`
         );
       },
-      onError: (error) => {
-        toast.error(`Error: ${(error as Error).message}`);
+      onError: (error: AxiosError) => {
+        showAlert("error", `Error: ${(error as Error).message}`);
       },
     }
   );
@@ -152,15 +158,17 @@ const RefundDetail: React.FC = () => {
     setIsConfirmReceivedModalOpen(true);
   };
 
-  const handleConfirmReceived = (refundPercentage: number, responseFromShop: string) => {
+  const handleConfirmReceived = (
+    refundPercentage: number,
+    responseFromShop: string
+  ) => {
     confirmReceivedMutation.mutate({
       refundPercentage,
       responseFromShop,
-      status: RefundStatus.Completed
+      status: RefundStatus.Completed,
     });
     setIsConfirmReceivedModalOpen(false);
   };
-
 
   const handleApprove = () => {
     approveMutation.mutate({
@@ -205,7 +213,7 @@ const RefundDetail: React.FC = () => {
               <div className="col-xl-5">
                 <h3 className="card-title align-items-start flex-column mb-5">
                   <span className="card-label fw-bold text-dark">
-                    Item Images
+                    Product Images
                   </span>
                 </h3>
                 <div style={{ maxHeight: "300px", overflowY: "auto" }}>
@@ -271,35 +279,37 @@ const RefundDetail: React.FC = () => {
                         <p>{data.responseFromShop}</p>
                       </div>
                     )}
-                    {data.refundStatus === RefundStatus.Pending && currentUser?.role === "Staff" && (
-                      <div className="d-flex justify-content-end mt-5">
-                        <button
-                          className="btn btn-light-success me-3"
-                          onClick={handleApprove}
-                          disabled={approveMutation.isLoading}
-                        >
-                          Approve
-                        </button>
-                        <button
-                          className="btn btn-light-danger"
-                          onClick={handleReject}
-                          disabled={approveMutation.isLoading}
-                        >
-                          Reject
-                        </button>
-                      </div>
-                    )}
-                    {data.refundStatus === RefundStatus.Approved && currentUser?.role === "Staff" && (
-                      <div className="d-flex justify-content-end mt-5">
-                        <button
-                          className="btn btn-light-danger"
-                          onClick={handleReject}
-                          disabled={approveMutation.isLoading}
-                        >
-                          Reject
-                        </button>
-                      </div>
-                    )}
+                    {data.refundStatus === RefundStatus.Pending &&
+                      currentUser?.role === "Staff" && (
+                        <div className="d-flex justify-content-end mt-5">
+                          <button
+                            className="btn btn-light-success me-3"
+                            onClick={handleApprove}
+                            disabled={approveMutation.isLoading}
+                          >
+                            Approve
+                          </button>
+                          <button
+                            className="btn btn-light-danger"
+                            onClick={handleReject}
+                            disabled={approveMutation.isLoading}
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      )}
+                    {data.refundStatus === RefundStatus.Approved &&
+                      currentUser?.role === "Staff" && (
+                        <div className="d-flex justify-content-end mt-5">
+                          <button
+                            className="btn btn-light-danger"
+                            onClick={handleReject}
+                            disabled={approveMutation.isLoading}
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      )}
                     {isRefundApproved && currentUser?.role === "Staff" && (
                       <div className="d-flex justify-content-end mt-5">
                         <button
@@ -318,7 +328,7 @@ const RefundDetail: React.FC = () => {
                           ) : (
                             <>
                               <KTIcon iconName="check" className="fs-2 me-2" />
-                              Confirm Received Item
+                              Confirm Received Product
                             </>
                           )}
                         </button>
@@ -360,12 +370,12 @@ const RefundDetail: React.FC = () => {
                       />
                       <KTInfoItem
                         iconName="code"
-                        title="Item Code"
+                        title="Product Code"
                         value={data.itemCode || "N/A"}
                       />
                       <KTInfoItem
                         iconName="basket"
-                        title="Item Name"
+                        title="Product Name"
                         value={data.itemName || "N/A"}
                       />
                       <KTInfoItem
@@ -437,7 +447,6 @@ const RefundDetail: React.FC = () => {
         onConfirm={handleConfirmReceived}
         isLoading={confirmReceivedMutation.isLoading}
       />
-      <ToastContainer autoClose={2000} position="top-right" />
     </>
   );
 };

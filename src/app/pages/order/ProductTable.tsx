@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from "react";
 import { FashionItemApi, FashionItemList } from "../../../api";
 import { useAuth } from "../../modules/auth";
@@ -19,7 +21,7 @@ const ProductTable = ({
   const pageSize = 10;
 
   const fetchFashionItems = async ({ queryKey }: any) => {
-    const [_, searchValue, page] = queryKey;
+    const [searchValue, page] = queryKey;
     const fashionItemApi = new FashionItemApi();
     const response = await fashionItemApi.apiFashionitemsGet(
       searchValue,

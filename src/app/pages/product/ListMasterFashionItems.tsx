@@ -88,7 +88,7 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
           masterItemId,
           currentPage,
         ]);
-        showAlert("success", "Item posted successfully");
+        showAlert("success", "Product posted successfully");
       },
     }
   );
@@ -104,7 +104,7 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
           masterItemId,
           currentPage,
         ]);
-        showAlert("success", "Item marked as taken successfully");
+        showAlert("success", "Product marked as taken successfully");
       },
     }
   );
@@ -158,7 +158,7 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
 
   const columns = [
     {
-      Header: "Item Code",
+      Header: "Product Code",
       accessor: "itemCode",
       onClick: () => handleSort("itemCode"),
     },
@@ -266,17 +266,17 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
         <KTCardBody>
           <div className="row g-5 g-xl-8">
             <div className="col-xl-6">
-              <h3 className="fs-2 fw-bold mb-5">Master Item Details</h3>
+              <h3 className="fs-2 fw-bold mb-5">Master Product Details</h3>
               {masterItemQuery.isLoading ? (
-                <div>Loading master item details...</div>
+                <div>Loading master product details...</div>
               ) : masterItemQuery.error ? (
-                <div>Error loading master item details</div>
+                <div>Error loading master product details</div>
               ) : (
                 <div className="table-responsive">
                   <table className="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
                     <tbody>
                       <tr>
-                        <th>Master Item Code</th>
+                        <th>Master Product Code</th>
                         <td>{masterItemQuery.data?.masterItemCode}</td>
                       </tr>
                       <tr>
@@ -352,7 +352,7 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
               <input
                 type="text"
                 className="form-control form-control-solid w-250px ps-12"
-                placeholder="Search by Item Code"
+                placeholder="Search by Product Code"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />

@@ -53,12 +53,12 @@ const ProductTableSingle: React.FC<ProductTableSingleProps> = ({
         setTotalCount(response.data.totalCount || 0);
         setTotalPages(response.data.totalPages || 1);
       } catch (error) {
-        console.error("Error fetching fashion items:", error);
+        console.error("Error fetching fashion products:", error);
       }
     },
     [currentUser, pageSize]
   );
-  console.log(fashionItems);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchTerm);
@@ -86,7 +86,7 @@ const ProductTableSingle: React.FC<ProductTableSingleProps> = ({
       <div className="d-flex flex-column gap-10">
         {/* Selected Item Display */}
         <div>
-          <label className="form-label">Selected Item for Auction</label>
+          <label className="form-label">Selected Product for Auction</label>
           <div className="border border-dashed rounded pt-3 pb-1 px-2 mb-5">
             {selectedItem ? (
               fashionItems
@@ -123,7 +123,9 @@ const ProductTableSingle: React.FC<ProductTableSingleProps> = ({
                   </div>
                 ))
             ) : (
-              <span className="text-muted">No item selected for auction.</span>
+              <span className="text-muted">
+                No product selected for auction.
+              </span>
             )}
           </div>
         </div>
@@ -139,7 +141,7 @@ const ProductTableSingle: React.FC<ProductTableSingleProps> = ({
           <input
             type="text"
             className="form-control form-control-solid w-100 ps-12"
-            placeholder="Search Products by Item Code"
+            placeholder="Search Products by Product Code"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />

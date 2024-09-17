@@ -138,7 +138,7 @@ const AddConsignmentOffline: React.FC = () => {
           categoryId: "",
           images: [],
         });
-        showAlert("success", "Master item created successfully");
+        showAlert("success", "Master product created successfully");
       },
     }
   );
@@ -631,14 +631,14 @@ const AddConsignmentOffline: React.FC = () => {
           <KTCard>
             <KTCardBody>
               <div className="d-flex justify-content-between align-items-center mb-5">
-                <h2 className="fw-bold">Consignment Items</h2>
+                <h2 className="fw-bold">Consignment Products</h2>
                 <div>
                   <button
                     type="button"
                     className="btn btn-primary me-3"
                     onClick={handleCreateNewMasterItem}
                   >
-                    Create Master Item
+                    Create Master Product
                   </button>
                   <button
                     type="button"
@@ -655,7 +655,7 @@ const AddConsignmentOffline: React.FC = () => {
                     <div className="card card-flush h-100">
                       <div className="card-header">
                         <div className="card-title">
-                          <h3 className="fs-5">Item {index + 1}</h3>
+                          <h3 className="fs-5">Product {index + 1}</h3>
                         </div>
                         <div className="card-toolbar">
                           <button
@@ -711,7 +711,7 @@ const AddConsignmentOffline: React.FC = () => {
                           </div>
                         </div>
                         <div className="mb-3">
-                          <label className="form-label">Master Item</label>
+                          <label className="form-label">Master Product</label>
                           <select
                             className="form-select form-select-sm"
                             value={item.masterItemId}
@@ -719,7 +719,7 @@ const AddConsignmentOffline: React.FC = () => {
                               handleMasterItemChange(index, e.target.value)
                             }
                           >
-                            <option value="">Select a Master Item</option>
+                            <option value="">Select a Master Product</option>
                             {masterItems?.items?.map(
                               (masterItem: MasterItemListResponse) => (
                                 <option
@@ -837,7 +837,15 @@ const AddConsignmentOffline: React.FC = () => {
                               handleItemChange(
                                 index,
                                 "size",
-                                e.target.value as "XS" | "S" | "M" | "L" | "XL"
+                                e.target.value as
+                                  | "XS"
+                                  | "S"
+                                  | "M"
+                                  | "L"
+                                  | "XL"
+                                  | "XXL"
+                                  | "XXXL"
+                                  | "XXXXL"
                               )
                             }
                           >
@@ -861,18 +869,18 @@ const AddConsignmentOffline: React.FC = () => {
         </div>
       </div>
 
-      {/* Modal for creating a new master item */}
+      {/* Modal for creating a new master product */}
       <Modal
         show={showNewMasterItemModal}
         onHide={() => setShowNewMasterItemModal(false)}
       >
         <Modal.Header closeButton>
-          <Modal.Title>Create New Master Item</Modal.Title>
+          <Modal.Title>Create New Master Product</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleNewMasterItemSubmit}>
             <Form.Group className="mb-3">
-              <Form.Label>Master Item Code</Form.Label>
+              <Form.Label>Master Product Code</Form.Label>
               <Form.Control
                 type="text"
                 value={newMasterItem.masterItemCode || ""}
@@ -964,7 +972,7 @@ const AddConsignmentOffline: React.FC = () => {
                   <div key={imageIndex} className="position-relative me-2 mb-2">
                     <img
                       src={url}
-                      alt={`New Master Item Image ${imageIndex + 1}`}
+                      alt={`New Master Product Image ${imageIndex + 1}`}
                       style={{
                         width: "100px",
                         height: "100px",
@@ -987,7 +995,7 @@ const AddConsignmentOffline: React.FC = () => {
               </div>
             </Form.Group>
             <Button variant="primary" type="submit">
-              Create Master Item
+              Create Master Product
             </Button>
           </Form>
         </Modal.Body>

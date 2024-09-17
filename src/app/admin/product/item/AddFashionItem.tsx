@@ -45,7 +45,7 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
         itemData
       );
     } catch (error) {
-      console.error("Error creating fashion item:", error);
+      console.error("Error creating fashion product:", error);
 
       throw error;
     } finally {
@@ -190,7 +190,7 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
                     type="text"
                     className="form-control"
                     id="color"
-                    placeholder="Enter item color"
+                    placeholder="Enter product color"
                     value={fashionItem.color || ""}
                     onChange={handleChange}
                     disabled={isLoading}
@@ -233,7 +233,7 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
                   <textarea
                     className="form-control"
                     id="note"
-                    placeholder="Additional notes about the item"
+                    placeholder="Additional notes about the product"
                     value={fashionItem.note || ""}
                     onChange={handleChange}
                     disabled={isLoading}

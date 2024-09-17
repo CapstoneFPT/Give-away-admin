@@ -25,7 +25,7 @@ export const ConfirmReceivedModal: React.FC<ConfirmReceivedModalProps> = ({
     <KTModal
       isOpen={isOpen}
       onClose={onClose}
-      title="Confirm Received Item"
+      title="Confirm Received Product"
       footer={
         <>
           <button type="button" className="btn btn-light" onClick={onClose}>

@@ -49,7 +49,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         Are you sure you want to set the deal price to{" "}
         {formatBalance(parseFloat(dealPrice))} VND?
       </p>
-      <p>This action will mark the item as ready for consignment.</p>
+      <p>This action will mark the product as ready for consignment.</p>
     </KTModal>
   );
 };

@@ -10,7 +10,8 @@ import { Content } from "../../../_metronic/layout/components/content";
 import { KTCard, KTCardBody } from "../../../_metronic/helpers";
 import { formatBalance } from "../utils/utils";
 import KTInfoItem from "../../../_metronic/helpers/components/KTInfoItem";
-import { toast, ToastContainer } from "react-toastify";
+import { showAlert } from "../../../utils/Alert";
+
 import "react-toastify/dist/ReactToastify.css";
 
 const ProductDetail: React.FC = () => {
@@ -20,7 +21,7 @@ const ProductDetail: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const queryClient = useQueryClient();
-  console.log(itemId);
+
   const { data, isLoading, error } = useQuery<
     FashionItemDetailResponse | undefined,
     Error
@@ -36,15 +37,16 @@ const ProductDetail: React.FC = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["FashionItemDetail", itemId]);
-        toast.success(
-          `Item ${
+        showAlert(
+          "success",
+          `Product ${
             data?.status === "Available" ? "taken down" : "posted"
           } successfully`
         );
       },
       onError: (error) => {
-        console.error("Error changing item status:", error);
-        toast.error("Failed to change item status");
+        console.error("Error changing product status:", error);
+        showAlert("error", "Failed to change product status");
       },
     }
   );
@@ -126,7 +128,7 @@ const ProductDetail: React.FC = () => {
                   </span>
                   <span className="text-muted mt-1 fw-semibold fs-7">
                     {" "}
-                    Item Code: {data.itemCode}
+                    Product Code: {data.itemCode}
                   </span>
                 </h3>
 
@@ -207,8 +209,8 @@ const ProductDetail: React.FC = () => {
                       {mutation.isLoading
                         ? "Processing..."
                         : data.status === FashionItemStatus.Available
-                        ? "Take Down Item"
-                        : "Post Item"}
+                        ? "Take Down Product"
+                        : "Post Product"}
                     </button>
                   )}
                 </div>
@@ -260,7 +262,6 @@ const ProductDetail: React.FC = () => {
           </div>
         </div>
       )}
-      <ToastContainer autoClose={2000} position="top-right" />
     </>
   );
 };

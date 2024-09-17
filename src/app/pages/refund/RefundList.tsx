@@ -109,11 +109,11 @@ const RefundList: React.FC = () => {
       accessor: "orderCode",
     },
     {
-      Header: "Item Code",
+      Header: "Product Code",
       accessor: "itemCode",
     },
     {
-      Header: "Item Name",
+      Header: "Product Name",
       accessor: "itemName",
     },
     {
@@ -254,7 +254,7 @@ const RefundList: React.FC = () => {
                 <input
                   type="text"
                   className="form-control form-control-solid"
-                  placeholder="Search by Item Code"
+                  placeholder="Search by Product Code"
                   value={itemCode}
                   onChange={(e) => setItemCode(e.target.value)}
                 />
@@ -263,7 +263,7 @@ const RefundList: React.FC = () => {
                 <input
                   type="text"
                   className="form-control form-control-solid"
-                  placeholder="Search by Item Name"
+                  placeholder="Search by Product Name"
                   value={itemName}
                   onChange={(e) => setItemName(e.target.value)}
                 />

@@ -98,7 +98,7 @@ const RefundItemDetail: React.FC = () => {
                   </span>
                   <span className="text-muted mt-1 fw-semibold fs-7">
                     {" "}
-                    Item Code: {data.itemCode}
+                    Product Code: {data.itemCode}
                   </span>
                 </h3>
 

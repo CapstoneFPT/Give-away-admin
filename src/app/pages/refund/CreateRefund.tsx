@@ -9,7 +9,7 @@ import {
 } from "../../../api";
 import { Content } from "../../../_metronic/layout/components/content";
 import { KTCard, KTCardBody } from "../../../_metronic/helpers";
-import { toast } from "react-toastify";
+
 import { useNavigate } from "react-router-dom";
 import OrderTableForRefund from "./OrderTableForRefund";
 import { useAuth } from "../../modules/auth";
@@ -72,7 +72,7 @@ const CreateRefund: React.FC = () => {
     e.preventDefault();
 
     if (!selectedItem) {
-      toast.error("Please select an item to refund");
+      showAlert("error", "Please select an product to refund");
       return;
     }
 
@@ -146,12 +146,12 @@ const CreateRefund: React.FC = () => {
 
             {selectedOrder && orderLineItems && (
               <div className="mb-8">
-                <h4 className="mb-4">Order Line Items</h4>
+                <h4 className="mb-4">Order Line Products</h4>
                 <div className="table-responsive">
                   <table className="table table-row-bordered table-row-gray-100 align-middle gs-0 gy-3">
                     <thead>
                       <tr className="fw-bold text-muted bg-light">
-                        <th className="min-w-100px">Item Name</th>
+                        <th className="min-w-100px">Product Name</th>
                         <th className="min-w-50px">Quantity</th>
                         <th className="min-w-50px">Unit Price</th>
                         <th className="min-w-50px">Status</th>
