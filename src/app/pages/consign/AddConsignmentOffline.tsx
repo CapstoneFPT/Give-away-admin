@@ -19,6 +19,7 @@ import { GenderType, ConsignSaleType } from "../../../api";
 import { CreateMasterOfflineConsignRequest } from "../../../api";
 import { showAlert } from "../../../utils/Alert";
 import { Tabs, Tab } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 interface ConsignDetailRequest {
   masterItemId: string;
   note: string;
@@ -27,7 +28,6 @@ interface ConsignDetailRequest {
   gender: GenderType;
   condition: string;
   color: string;
-
   size: "XS" | "S" | "M" | "L" | "XL" | "XXL" | "XXXL" | "XXXXL";
   imageUrls: string[];
 }
@@ -54,6 +54,7 @@ const MALE_ID = "550e8400-e29b-41d4-a716-446655440000";
 const FEMALE_ID = "550e8400-e29b-41d4-a716-446655440001";
 
 const AddConsignmentOffline: React.FC = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<AccountResponse[]>([]);
   const [selectedAccount, setSelectedAccount] =
@@ -341,6 +342,9 @@ const AddConsignmentOffline: React.FC = () => {
       console.log(createConsignmentOffline);
       showAlert("success", "Consignment created successfully");
       setFormData(initialFormData);
+      navigate(
+        `/consignment/${createConsignmentOffline.data.data?.consignSaleId}`
+      );
     } catch (error) {
       console.error("Error creating consignment:", error);
       showAlert("error", "Failed to create consignment");

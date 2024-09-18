@@ -7,13 +7,16 @@ import { useConsignSale, useConsignSaleLineItems } from "./consignSaleHooks";
 import { Content } from "../../../_metronic/layout/components/content";
 import ConsignmentApproval from "./ConsignmentApproval.tsx";
 import {
+  ConsignSaleApi,
   ConsignSaleLineItemsListResponse,
   ConsignSaleLineItemStatus,
   ConsignSaleStatus,
 } from "../../../api";
 import KTInfoItem from "../../../_metronic/helpers/components/KTInfoItem.tsx";
 import { useAuth } from "../../modules/auth"; // Import the useAuth hook or your authentication mechanism
-
+import { useMutation } from "react-query";
+import { showAlert } from "../../../utils/Alert.tsx";
+import { AxiosError } from "axios";
 const getConsignSaleStatusColor = (status?: ConsignSaleStatus) => {
   switch (status) {
     case ConsignSaleStatus.Pending:
@@ -76,9 +79,41 @@ export const ConsignDetail: React.FC = () => {
     error: itemsError,
     refetch: refetchLineItems,
   } = useConsignSaleLineItems(consignSaleId!);
-
+  console.log(consignSaleResponse?.consignSaleId);
+  console.log(currentUser?.shopId);
   const handleActionStart = () => {
     setIsActionInProgress(true);
+  };
+  const generateInvoiceMutation = useMutation(
+    async () => {
+      if (!consignSaleResponse?.consignSaleId) {
+        throw new Error("Consignment ID is missing");
+      }
+      const consignApi = new ConsignSaleApi();
+      return await consignApi.apiConsignsalesConsignsaleIdInvoiceGet(
+        consignSaleResponse.consignSaleId,
+        currentUser?.shopId,
+        { responseType: "arraybuffer" }
+      );
+    },
+    {
+      onSuccess: (response) => {
+        const blob = new Blob([response.data], { type: "application/pdf" });
+        const url = window.URL.createObjectURL(blob);
+        window.open(url, "_blank");
+        window.URL.revokeObjectURL(url);
+      },
+      onError: (error: AxiosError) => {
+        console.error("Error generating invoice:", error);
+        showAlert(
+          "error",
+          `Error generating invoice with error :${error.message}`
+        );
+      },
+    }
+  );
+  const handleGenerateInvoice = () => {
+    generateInvoiceMutation.mutate();
   };
 
   const handleActionComplete = async () => {
@@ -182,7 +217,7 @@ export const ConsignDetail: React.FC = () => {
                 />
               </div>
             </div>
-            <div className="col-xl-6">
+            <div className="col-xl-4">
               <h3 className="fs-2 fw-bold mb-5">Consigner Information</h3>
               <div className="d-flex flex-column">
                 <div className="d-flex align-items-center mb-5">
@@ -228,6 +263,14 @@ export const ConsignDetail: React.FC = () => {
                   </div>
                 </div>
               </div>
+            </div>
+            <div className="col-xl-2">
+              <button
+                onClick={handleGenerateInvoice}
+                className="btn btn-primary"
+              >
+                Generate Invoice
+              </button>
             </div>
           </div>
         </KTCardBody>

@@ -4865,7 +4865,8 @@ export const ErrorCode = {
     RefundStatusNotAvailable: 'RefundStatusNotAvailable',
     MissingFeature: 'MissingFeature',
     InvalidOperation: 'InvalidOperation',
-    PaymentFailed: 'PaymentFailed'
+    PaymentFailed: 'PaymentFailed',
+    OrderAlreadyProcessed: 'OrderAlreadyProcessed'
 } as const;
 
 export type ErrorCode = typeof ErrorCode[keyof typeof ErrorCode];
@@ -21547,7 +21548,7 @@ export const OrderApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiOrdersOrderIdCheckoutAuctionPatch(orderId: string, checkoutAuctionRequest?: CheckoutAuctionRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async apiOrdersOrderIdCheckoutAuctionPatch(orderId: string, checkoutAuctionRequest?: CheckoutAuctionRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PayWithPointsResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiOrdersOrderIdCheckoutAuctionPatch(orderId, checkoutAuctionRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['OrderApi.apiOrdersOrderIdCheckoutAuctionPatch']?.[localVarOperationServerIndex]?.url;
@@ -21705,7 +21706,7 @@ export const OrderApiFactory = function (configuration?: Configuration, basePath
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiOrdersOrderIdCheckoutAuctionPatch(orderId: string, checkoutAuctionRequest?: CheckoutAuctionRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        apiOrdersOrderIdCheckoutAuctionPatch(orderId: string, checkoutAuctionRequest?: CheckoutAuctionRequest, options?: RawAxiosRequestConfig): AxiosPromise<PayWithPointsResponse> {
             return localVarFp.apiOrdersOrderIdCheckoutAuctionPatch(orderId, checkoutAuctionRequest, options).then((request) => request(axios, basePath));
         },
         /**
