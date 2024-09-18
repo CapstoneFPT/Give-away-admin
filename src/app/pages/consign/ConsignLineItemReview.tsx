@@ -63,7 +63,6 @@ export const ConsignLineItemReview: React.FC = () => {
           ? data.expectedPrice!.toString()
           : data.dealPrice!.toString()
       );
-      showAlert("success", "Consignment details loaded successfully");
     },
   });
 
@@ -82,7 +81,9 @@ export const ConsignLineItemReview: React.FC = () => {
     },
     onSuccess: (consignSaleData) => {
       setConsignSaleDetail(consignSaleData);
-      showAlert("success", "Consignment details loaded successfully");
+    },
+    onError: (error) => {
+      console.error("Error loading consignment details:", error);
     },
   });
 
