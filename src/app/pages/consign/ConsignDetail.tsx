@@ -86,6 +86,7 @@ export const ConsignDetail: React.FC = () => {
   };
   const generateInvoiceMutation = useMutation(
     async () => {
+      setIsActionInProgress(true);
       if (!consignSaleResponse?.consignSaleId) {
         throw new Error("Consignment ID is missing");
       }
@@ -109,6 +110,9 @@ export const ConsignDetail: React.FC = () => {
           "error",
           `Error generating invoice with error :${error.message}`
         );
+      },
+      onSettled: () => {
+        setIsActionInProgress(false);
       },
     }
   );

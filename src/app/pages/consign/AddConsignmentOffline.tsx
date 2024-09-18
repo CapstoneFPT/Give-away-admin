@@ -649,7 +649,7 @@ const AddConsignmentOffline: React.FC = () => {
                     className="btn btn-primary"
                     onClick={addItem}
                   >
-                    Add Item
+                    Add Products to Consignment
                   </button>
                 </div>
               </div>
