@@ -25,6 +25,7 @@ interface ConsignDetailRequest {
   note: string;
   expectedPrice: number;
   productName: string;
+  brand: string;
   gender: GenderType;
   condition: string;
   color: string;
@@ -281,7 +282,7 @@ const AddConsignmentOffline: React.FC = () => {
           gender: "Male",
           condition: "",
           color: "",
-
+          brand: "",
           size: "XS",
           imageUrls: [],
         },

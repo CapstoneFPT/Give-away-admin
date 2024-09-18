@@ -8,8 +8,9 @@ import { showAlert } from "../../../utils/Alert";
 import { useMutation, useQueryClient } from "react-query";
 import { Spinner } from "react-bootstrap";
 import { formatBalance } from "../utils/utils"; // Adjust the import path as needed
-
+import { useNavigate } from "react-router-dom";
 const CreateAuction = () => {
+  const navigate = useNavigate();
   const [selectedItem, setSelectedItem] = useState<string>("");
   const [title, setTitle] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<string>("");
@@ -102,6 +103,7 @@ const CreateAuction = () => {
         showAlert("success", "Auction created successfully!");
         queryClient.invalidateQueries("auctions");
         resetForm();
+        navigate("/auction/list");
       },
       onError: (error) => {
         showAlert(
