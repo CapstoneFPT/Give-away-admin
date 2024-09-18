@@ -163,7 +163,6 @@ const AddConsignmentOffline: React.FC = () => {
       if (data.data && data.data.items && data.data.items.length > 0) {
         setSearchResults(data.data.items);
         setTotalPages(Math.ceil((data.data.totalCount || 0) / pageSize));
-        showAlert("success", "Accounts found!");
       } else {
         showAlert("error", "No accounts found with this phone number.");
         setSearchResults([]);
