@@ -79,7 +79,7 @@ const AddConsignmentOffline: React.FC = () => {
   const currentUser = useAuth();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<string>("manual");
-
+  console.log(formData);
   // Query to fetch master items
   const { data: masterItems } = useQuery({
     queryKey: ["masterItems"],
@@ -300,13 +300,20 @@ const AddConsignmentOffline: React.FC = () => {
   };
 
   const handleImageUpload = useCallback(
-    (index: number, acceptedFiles: File[]) => {
-      const imageUrls = acceptedFiles.map((file) => URL.createObjectURL(file));
+    async (index: number, acceptedFiles: File[]) => {
+      const uploadPromises = acceptedFiles.map(async (file) => {
+        const storageRef = ref(storage, `consignment_images/${file.name}`);
+        const snapshot = await uploadBytes(storageRef, file);
+        return getDownloadURL(snapshot.ref);
+      });
+
+      const firebaseUrls = await Promise.all(uploadPromises);
+
       setFormData((prevData) => {
         const updatedItems = [...prevData.consignDetailRequests];
         updatedItems[index] = {
           ...updatedItems[index],
-          imageUrls: [...updatedItems[index].imageUrls, ...imageUrls],
+          imageUrls: [...updatedItems[index].imageUrls, ...firebaseUrls],
         };
         return {
           ...prevData,
