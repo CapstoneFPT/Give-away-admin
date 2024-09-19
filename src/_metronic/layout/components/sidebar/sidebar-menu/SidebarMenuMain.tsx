@@ -19,6 +19,18 @@ const SidebarMenuMain = () => {
             fontIcon="bi-app-indicator"
           />
           <SidebarMenuItemWithSub
+            to="/category-admin"
+            title="Category"
+            icon="element-11"
+            fontIcon="bi-box"
+          >
+            <SidebarMenuItem
+              to="/category-admin"
+              title="Category Management"
+              hasBullet={true}
+            />
+          </SidebarMenuItemWithSub>
+          <SidebarMenuItemWithSub
             to="/account"
             title="Account"
             icon="profile-circle"

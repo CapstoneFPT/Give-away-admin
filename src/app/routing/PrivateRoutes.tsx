@@ -34,6 +34,7 @@ import AuctionDetail from "../pages/auction/AuctionDetail.tsx";
 import CreateRefund from "../pages/refund/CreateRefund.tsx";
 import RefundItemDetail from "../pages/refund/RefundItemDetail.tsx";
 import AddConsignmentOffline from "../pages/consign/AddConsignmentOffline.tsx";
+import AddCategory from "../admin/category/AddCategory.tsx";
 const PrivateRoutes = () => {
   const { currentUser } = useAuth();
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
@@ -93,6 +94,16 @@ const PrivateRoutes = () => {
             <ProtectedRoute roles={["Admin"]}>
               <SuspensedView>
                 <AuctionAdminPage />
+              </SuspensedView>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="category-admin"
+          element={
+            <ProtectedRoute roles={["Admin"]}>
+              <SuspensedView>
+                <AddCategory />
               </SuspensedView>
             </ProtectedRoute>
           }

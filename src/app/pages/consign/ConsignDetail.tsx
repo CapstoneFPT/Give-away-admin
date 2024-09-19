@@ -268,14 +268,18 @@ export const ConsignDetail: React.FC = () => {
                 </div>
               </div>
             </div>
-            <div className="col-xl-2">
-              <button
-                onClick={handleGenerateInvoice}
-                className="btn btn-primary"
-              >
-                Generate Invoice
-              </button>
-            </div>
+            {isStaff &&
+              (consignSaleResponse.status === ConsignSaleStatus.OnSale ||
+                consignSaleResponse.status === ConsignSaleStatus.Completed) && (
+                <div className="col-xl-2">
+                  <button
+                    onClick={handleGenerateInvoice}
+                    className="btn btn-primary"
+                  >
+                    Generate Invoice
+                  </button>
+                </div>
+              )}
           </div>
         </KTCardBody>
       </KTCard>
