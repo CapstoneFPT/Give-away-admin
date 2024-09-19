@@ -13,6 +13,9 @@ const CategoryManagement: React.FC = () => {
   const [selectedCategory, setSelectedCategory] =
     useState<CategoryTreeNode | null>(null);
   const [newCategoryName, setNewCategoryName] = useState("");
+  const [editingCategory, setEditingCategory] =
+    useState<CategoryTreeNode | null>(null);
+  const [editCategoryName, setEditCategoryName] = useState("");
   const queryClient = useQueryClient();
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
 
@@ -48,6 +51,53 @@ const CategoryManagement: React.FC = () => {
         showAlert(
           "error",
           "Failed to add category: " + (error as Error).message
+        );
+      },
+    }
+  );
+
+  const updateCategoryMutation = useMutation(
+    (updatedCategory: { categoryId: string; name: string }) => {
+      const categoryApi = new CategoryApi();
+      return categoryApi.apiCategoriesCategoryIdPut(
+        updatedCategory.categoryId,
+        {
+          name: updatedCategory.name,
+        }
+      );
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("categories");
+        showAlert("success", "Category updated successfully");
+        setEditingCategory(null);
+        setEditCategoryName("");
+      },
+      onError: (error) => {
+        showAlert(
+          "error",
+          "Failed to update category: " + (error as Error).message
+        );
+      },
+    }
+  );
+
+  const updateCategoryStatusMutation = useMutation(
+    (updatedCategory: { categoryId: string }) => {
+      const categoryApi = new CategoryApi();
+      return categoryApi.apiCategoriesCategoryIdStatusPut(
+        updatedCategory.categoryId
+      );
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("categories");
+        showAlert("success", "Category status updated successfully");
+      },
+      onError: (error) => {
+        showAlert(
+          "error",
+          "Failed to update category status: " + (error as Error).message
         );
       },
     }
@@ -98,6 +148,22 @@ const CategoryManagement: React.FC = () => {
                   <i className="bi bi-plus-lg"></i>
                 </button>
               )}
+              <button
+                className="btn btn-sm btn-outline-secondary ms-2"
+                onClick={() => handleEditCategory(node)}
+              >
+                <i className="bi bi-pencil"></i>
+              </button>
+              <button
+                className={`btn btn-sm ${
+                  node.status === "Available"
+                    ? "btn-outline-danger"
+                    : "btn-outline-success"
+                } ms-2`}
+                onClick={() => handleToggleStatus(node)}
+              >
+                {node.status === "Available" ? "Disable" : "Activate"}
+              </button>
             </div>
             {expandedCategories.includes(node.categoryId || "") &&
               node.children &&
@@ -121,6 +187,26 @@ const CategoryManagement: React.FC = () => {
     }
   };
 
+  const handleEditCategory = (category: CategoryTreeNode) => {
+    setEditingCategory(category);
+    setEditCategoryName(category.name || "");
+  };
+
+  const handleUpdateCategory = () => {
+    if (editingCategory && editCategoryName) {
+      updateCategoryMutation.mutate({
+        categoryId: editingCategory.categoryId || "",
+        name: editCategoryName,
+      });
+    }
+  };
+
+  const handleToggleStatus = (category: CategoryTreeNode) => {
+    updateCategoryStatusMutation.mutate({
+      categoryId: category.categoryId || "",
+    });
+  };
+
   if (isLoading)
     return (
       <div className="spinner-border" role="status">
@@ -137,10 +223,12 @@ const CategoryManagement: React.FC = () => {
   return (
     <KTCard>
       <KTCardBody>
-        <h2 className="mb-4">Category Management</h2>
+        <h1 className="mb-4 fw-bold d-flex justify-content-center mb-15">
+          Category Management
+        </h1>
         <div className="row">
           <div className="col-md-6">
-            <h3>Category List</h3>
+            <h3 className="fw-bold">Category List</h3>
             <p className="text-muted">
               Click on '+' to expand categories or add subcategories. You can
               add up to 4 levels of categories.
@@ -148,42 +236,80 @@ const CategoryManagement: React.FC = () => {
             {renderCategoryList(categories)}
           </div>
           <div className="col-md-6">
-            <h3>
-              {selectedCategory
-                ? `Add Subcategory to ${selectedCategory.name}`
-                : "Add Root Category"}
-            </h3>
-            <div className="mb-3">
-              <input
-                type="text"
-                className="form-control"
-                value={newCategoryName}
-                onChange={(e) => setNewCategoryName(e.target.value)}
-                placeholder="Enter new category name"
-              />
-            </div>
-            <div className="mb-3">
-              <button
-                className="btn btn-primary me-2"
-                onClick={handleAddCategory}
-                disabled={!newCategoryName}
-              >
-                Add Category
-              </button>
-              {selectedCategory && (
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => setSelectedCategory(null)}
-                >
-                  Clear Selection
-                </button>
-              )}
-            </div>
-            {selectedCategory && (
+            {editingCategory ? (
+              <>
+                <h3>Edit Category: {editingCategory.name}</h3>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={editCategoryName}
+                    onChange={(e) => setEditCategoryName(e.target.value)}
+                    placeholder="Enter category name"
+                  />
+                </div>
+                <div className="mb-3">
+                  <button
+                    className="btn btn-primary me-2"
+                    onClick={handleUpdateCategory}
+                    disabled={!editCategoryName}
+                  >
+                    Update Category
+                  </button>
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => setEditingCategory(null)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <h3>
+                  {selectedCategory
+                    ? `Add Subcategory to ${selectedCategory.name}`
+                    : "Add Root Category"}
+                </h3>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={newCategoryName}
+                    onChange={(e) => setNewCategoryName(e.target.value)}
+                    placeholder="Enter new category name"
+                  />
+                </div>
+                <div className="mb-3">
+                  <button
+                    className="btn btn-primary me-2"
+                    onClick={handleAddCategory}
+                    disabled={!newCategoryName}
+                  >
+                    Add Category
+                  </button>
+                  {selectedCategory && (
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => setSelectedCategory(null)}
+                    >
+                      Clear Selection
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
+            {selectedCategory && !editingCategory && (
               <div className="card mt-4">
                 <div className="card-body">
                   <h4 className="card-title">Selected Category Details</h4>
                   <p className="card-text">Name: {selectedCategory.name}</p>
+                  <p className="card-text">
+                    Status:{" "}
+                    {selectedCategory.status === "Available"
+                      ? "Active"
+                      : "Inactive"}
+                  </p>
                 </div>
               </div>
             )}
