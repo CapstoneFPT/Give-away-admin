@@ -160,15 +160,7 @@ export function Login() {
       {/* end::Form group */}
 
       {/* begin::Wrapper */}
-      <div className="d-flex flex-stack flex-wrap gap-3 fs-base fw-semibold mb-8">
-        <div />
 
-        {/* begin::Link */}
-        <Link to="/auth/forgot-password" className="link-primary">
-          Forgot Password ?
-        </Link>
-        {/* end::Link */}
-      </div>
       {/* end::Wrapper */}
 
       {/* begin::Action */}
