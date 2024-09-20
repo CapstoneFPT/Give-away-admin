@@ -219,6 +219,9 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
                     <option value="M">M</option>
                     <option value="L">L</option>
                     <option value="XL">XL</option>
+                    <option value="XXL">2XL</option>
+                    <option value="XXXL">3XL</option>
+                    <option value="XXXXL">4XL</option>
                   </select>
                 </div>
 

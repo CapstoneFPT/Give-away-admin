@@ -423,6 +423,9 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
                   disabled={isCategoryDisabled}
                   style={{ width: "100%" }}
                 >
+                  <option className="form-control mb-2" value="">
+                    Select Category
+                  </option>
                   {categories.map((category) => (
                     <option
                       className="form-control mb-2"
