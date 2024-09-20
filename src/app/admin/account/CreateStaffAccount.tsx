@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { AuthApi } from "../../../api";
 import { useMutation, useQueryClient } from "react-query";
-
+import { showAlert } from "../../../utils/Alert";
+import { AxiosError } from "axios";
+import { CreateStaffAccountRequest } from "../../../api";
 interface CreateStaffModalProps {
   show: boolean;
   onHide: () => void;
@@ -12,14 +14,12 @@ const CreateStaffModal: React.FC<CreateStaffModalProps> = ({
   show,
   onHide,
 }) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<CreateStaffAccountRequest>({
     email: "",
     fullname: "",
     phone: "",
     password: "",
     confirmPassword: "",
-    address: "",
-    shopPhone: "",
   });
 
   const queryClient = useQueryClient();
@@ -33,6 +33,17 @@ const CreateStaffModal: React.FC<CreateStaffModalProps> = ({
       onSuccess: () => {
         queryClient.invalidateQueries(["accounts"]);
         onHide();
+        showAlert("success", "Staff account created successfully");
+        setFormData({
+          email: "",
+          fullname: "",
+          phone: "",
+          password: "",
+          confirmPassword: "",
+        });
+      },
+      onError: (error: AxiosError) => {
+        showAlert("error", "Failed to create staff account" + error.message);
       },
     }
   );
@@ -104,26 +115,7 @@ const CreateStaffModal: React.FC<CreateStaffModalProps> = ({
               required
             />
           </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Address</Form.Label>
-            <Form.Control
-              type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Shop Phone</Form.Label>
-            <Form.Control
-              type="tel"
-              name="shopPhone"
-              value={formData.shopPhone}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group>
+
           <Button
             variant="primary"
             type="submit"

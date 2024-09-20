@@ -51,6 +51,13 @@ const CreateShopModal: React.FC<CreateShopModalProps> = ({
         queryClient.invalidateQueries(["accounts"]);
         showAlert("success", "Shop created successfully");
         onHide();
+        setFormData({
+          phone: "",
+          address: "",
+          wardCode: "",
+          districtId: 0,
+          provinceId: 0,
+        });
       },
       onError: (error) => {
         showAlert(
@@ -101,7 +108,7 @@ const CreateShopModal: React.FC<CreateShopModalProps> = ({
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
-            <Form.Label>Phone</Form.Label>
+            <Form.Label>Shop Phone</Form.Label>
             <Form.Control
               type="text"
               name="phone"
