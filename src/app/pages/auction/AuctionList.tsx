@@ -155,13 +155,17 @@ const AuctionList: React.FC<Props> = ({ className }) => {
                   <h5 className="card-title text-truncate">
                     <strong>{auction.title}</strong>
                   </h5>
+                  <p className="card-text">
+                    <strong>Date:</strong>{" "}
+                    {new Date(auction.startDate ?? "").toLocaleDateString()}
+                  </p>
                   <p className="card-text small">
                     <strong>Start:</strong>{" "}
-                    {new Date(auction.startDate ?? "").toLocaleString()}
+                    {new Date(auction.startDate ?? "").toLocaleTimeString()}
                   </p>
                   <p className="card-text small">
                     <strong>End:</strong>{" "}
-                    {new Date(auction.endDate ?? "").toLocaleString()}
+                    {new Date(auction.endDate ?? "").toLocaleTimeString()}
                   </p>
                   <p className="card-text">
                     <strong>Deposit Fee:</strong>{" "}
