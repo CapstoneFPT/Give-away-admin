@@ -1,12 +1,11 @@
 import React, { useState, useCallback, useMemo } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 import { KTCard, KTCardBody } from "../../../_metronic/helpers";
 import { AccountApi, AccountStatus, Roles } from "../../../api";
 import { Content } from "../../../_metronic/layout/components/content";
 import { KTTable } from "../../../_metronic/helpers/components/KTTable";
-import { formatBalance } from "../../pages/utils/utils";
-import { useMutation, useQueryClient } from "react-query";
 import CreateStaffModal from "./CreateStaffAccount";
+import CreateShopModal from "./CreateShopModal";
 import { showAlert } from "../../../utils/Alert";
 
 const AccountManagement: React.FC = () => {
@@ -19,6 +18,8 @@ const AccountManagement: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
   const [showCreateStaffModal, setShowCreateStaffModal] = useState(false);
+  const [showCreateShopModal, setShowCreateShopModal] = useState(false);
+  const [selectedStaffId, setSelectedStaffId] = useState<string | null>(null);
 
   const fetchAccounts = useCallback(
     async (page: number, pageSize: number) => {
@@ -52,7 +53,7 @@ const AccountManagement: React.FC = () => {
     () => fetchAccounts(currentPage, pageSize),
     { keepPreviousData: true }
   );
-
+  console.log(data);
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
   };
@@ -89,6 +90,11 @@ const AccountManagement: React.FC = () => {
     [banUnbanMutation]
   );
 
+  const handleCreateShop = (staffId: string) => {
+    setSelectedStaffId(staffId);
+    setShowCreateShopModal(true);
+  };
+
   const columns = useMemo(() => {
     const baseColumns = [
       {
@@ -107,11 +113,7 @@ const AccountManagement: React.FC = () => {
         Header: "Role",
         accessor: "role",
       },
-      {
-        Header: "Balance",
-        accessor: "balance",
-        Cell: ({ value }: { value: number }) => formatBalance(value),
-      },
+
       {
         Header: "Status",
         accessor: "status",
@@ -131,9 +133,28 @@ const AccountManagement: React.FC = () => {
       return [
         ...baseColumns,
         {
-          Header: "Shop ID",
-          accessor: "shopId",
-          Cell: ({ value }: { value: string | null }) => value || "N/A",
+          Header: "Shop Code",
+          accessor: "shopCode",
+
+          Cell: ({
+            value,
+            row,
+          }: {
+            value: string | null;
+            row: { original: { accountId: string } };
+          }) => {
+            if (value && value !== "N/A") {
+              return value;
+            }
+            return (
+              <button
+                className="btn btn-sm btn-primary"
+                onClick={() => handleCreateShop(row.original.accountId)}
+              >
+                Create Shop
+              </button>
+            );
+          },
         },
       ];
     }
@@ -287,6 +308,11 @@ const AccountManagement: React.FC = () => {
       <CreateStaffModal
         show={showCreateStaffModal}
         onHide={() => setShowCreateStaffModal(false)}
+      />
+      <CreateShopModal
+        show={showCreateShopModal}
+        onHide={() => setShowCreateShopModal(false)}
+        staffId={selectedStaffId}
       />
     </Content>
   );
