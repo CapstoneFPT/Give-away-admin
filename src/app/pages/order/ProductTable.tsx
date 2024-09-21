@@ -22,6 +22,7 @@ const ProductTable = ({
 
   const fetchFashionItems = async ({ queryKey }: any) => {
     const [searchValue, page] = queryKey;
+
     const fashionItemApi = new FashionItemApi();
     const response = await fashionItemApi.apiFashionitemsGet(
       searchValue,
@@ -36,8 +37,8 @@ const ProductTable = ({
       ["ConsignedForSale", "ItemBase"],
       null!,
       null!,
-      page,
-      pageSize,
+      null!,
+      null!,
       null!,
       null!,
       currentUser?.shopId,

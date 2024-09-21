@@ -152,7 +152,7 @@ const CreateAuction = () => {
     }
 
     if (!selectedItem) {
-      showAlert("error", "Please select an item for the auction.");
+      showAlert("error", "Please select an product for the auction.");
       return;
     }
 

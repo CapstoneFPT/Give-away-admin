@@ -235,7 +235,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
         handleClose();
         resetForm();
       } catch (error) {
-        showAlert("error", `${error}`);
+        showAlert("error", `Error submit: ${error}`);
       }
     }
   };

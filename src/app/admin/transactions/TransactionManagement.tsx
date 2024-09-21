@@ -9,24 +9,23 @@ import { useAuth } from "../../modules/auth";
 const TransactionManagement: React.FC = () => {
   const { currentUser } = useAuth();
   const shopId = currentUser?.shopId;
-  console.log(shopId);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
   const [transactionTypeFilter, setTransactionTypeFilter] = useState<
     TransactionType | ""
-  >("");
+  >(null!);
 
   const transactionApi = new TransactionApi();
-
+  console.log(shopId);
   const { data, isLoading, error } = useQuery(
-    ["transactions", currentPage, pageSize, searchTerm, transactionTypeFilter],
+    ["transactions", currentPage, pageSize, shopId, transactionTypeFilter],
     () =>
       transactionApi.apiTransactionsGet(
         currentPage,
         pageSize,
-        shopId!,
-        transactionTypeFilter || undefined
+        shopId,
+        transactionTypeFilter || null!
       ),
     {
       keepPreviousData: true,

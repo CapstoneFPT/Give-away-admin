@@ -67,9 +67,10 @@ export const AddToInventoryModal: React.FC<AddToInventoryModalProps> = ({
   }, [selectedGender]);
   const validateMasterItemForm = (): boolean => {
     if (!masterItemCode.trim()) {
-      showAlert("error", "Master Product Code is required.");
+      showAlert("error", "Master product code is required.");
       return false;
     }
+
     if (!description.trim()) {
       showAlert("error", "Description is required.");
       return false;
