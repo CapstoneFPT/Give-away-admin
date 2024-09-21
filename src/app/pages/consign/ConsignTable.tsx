@@ -9,7 +9,11 @@ import {
 import { Content } from "../../../_metronic/layout/components/content";
 import { useAuth } from "../../modules/auth";
 import { KTTable } from "../../../_metronic/helpers/components/KTTable";
-import { consignSaleColumns, consignAuctionColumns } from "./_columns";
+import {
+  consignSaleColumns,
+  consignAuctionColumns,
+  customerSaleColumns,
+} from "./_columns";
 import { Tabs, Tab } from "react-bootstrap";
 
 const ConsignTable: React.FC = () => {
@@ -218,6 +222,66 @@ const ConsignTable: React.FC = () => {
                 </div>
               </div>
             </Tab>
+            <Tab eventKey={ConsignSaleType.CustomerSale} title="Customer Sale">
+              <div className="card-toolbar">
+                <div className="d-flex align-items-center">
+                  <input
+                    type="text"
+                    name="customerSaleCode"
+                    className="form-control form-control-solid w-250px me-2"
+                    placeholder="Search by Customer Sale Code"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    name="customerName"
+                    className="form-control form-control-solid w-225px me-2"
+                    placeholder="Search by Customer Name"
+                    value={consignorName}
+                    onChange={(e) => setConsignorName(e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    name="customerPhone"
+                    className="form-control form-control-solid w-225px me-2"
+                    placeholder="Search by Customer Phone"
+                    value={consignorPhone}
+                    onChange={(e) => setConsignorPhone(e.target.value)}
+                  />
+                  <select
+                    name="statusFilter"
+                    className="form-select form-select-solid w-200px me-2"
+                    value={statusFilter || ""}
+                    onChange={(e) =>
+                      setStatusFilter(e.target.value as ConsignSaleStatus)
+                    }
+                  >
+                    <option value="">All Statuses</option>
+                    {Object.values(ConsignSaleStatus).map((status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    ))}
+                  </select>
+                  {currentUser?.role === "Admin" && (
+                    <select
+                      name="shopFilter"
+                      className="form-select form-select-solid w-200px me-2"
+                      value={selectedShop || ""}
+                      onChange={(e) => setSelectedShop(e.target.value || null)}
+                    >
+                      <option value="">All Shops</option>
+                      {shops.map((shop) => (
+                        <option key={shop.id} value={shop.id}>
+                          {shop.name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+              </div>
+            </Tab>
           </Tabs>
         </div>
 
@@ -225,7 +289,9 @@ const ConsignTable: React.FC = () => {
           columns={
             consignType === ConsignSaleType.ConsignedForSale
               ? consignSaleColumns
-              : consignAuctionColumns
+              : consignType === ConsignSaleType.ConsignedForAuction
+              ? consignAuctionColumns
+              : customerSaleColumns
           }
           data={data?.data || []}
           totalCount={data?.totalCount || 0}

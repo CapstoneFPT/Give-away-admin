@@ -605,8 +605,10 @@ const AddConsignmentOffline: React.FC = () => {
                   <option value="ConsignedForAuction">
                     Consigned for Auction
                   </option>
+                  <option value="CustomerSale">Customer Sale</option>
                 </select>
               </div>
+
               <button
                 type="submit"
                 className="btn btn-primary"

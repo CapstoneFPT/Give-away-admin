@@ -127,3 +127,44 @@ export const consignAuctionColumns: Column<ConsignSaleListResponse>[] = [
     ),
   },
 ];
+export const customerSaleColumns: Column<ConsignSaleListResponse>[] = [
+  {
+    Header: "Customer Sale Code",
+    accessor: "consignSaleCode",
+  },
+  {
+    Header: "Created Date",
+    accessor: "createdDate",
+    Cell: ({ value }: { value: string | undefined }) =>
+      value ? new Date(value).toLocaleString() : "N/A",
+  },
+  {
+    Header: "Consignor",
+    accessor: "consginor",
+  },
+  {
+    Header: "Phone",
+    accessor: "phone",
+  },
+  {
+    Header: "Status",
+    accessor: "status",
+    Cell: ({ value }: { value: ConsignSaleStatus | undefined }) => (
+      <span className={`badge badge-light-${getStatusColor(value)}`}>
+        {value}
+      </span>
+    ),
+  },
+  {
+    Header: "Actions",
+    accessor: "consignSaleId",
+    Cell: ({ value }: { value: string | undefined | null }) => (
+      <Link
+        to={`/consignment/${value}`}
+        className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
+      >
+        <KTIcon iconName="pencil" className="fs-3" />
+      </Link>
+    ),
+  },
+];
