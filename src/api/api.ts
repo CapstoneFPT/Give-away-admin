@@ -876,6 +876,12 @@ export interface AuctionDepositListResponse {
      * @type {string}
      * @memberof AuctionDepositListResponse
      */
+    'depositCode'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof AuctionDepositListResponse
+     */
     'customerName'?: string | null;
     /**
      * 
@@ -1535,6 +1541,12 @@ export interface BidListResponse {
      * @memberof BidListResponse
      */
     'memberId'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof BidListResponse
+     */
+    'memberName'?: string | null;
     /**
      * 
      * @type {string}
@@ -14503,10 +14515,12 @@ export const AuctionApiAxiosParamCreator = function (configuration?: Configurati
          * @param {number} [pageNumber] 
          * @param {number} [pageSize] 
          * @param {string} [memberId] 
+         * @param {string} [memberName] 
+         * @param {string} [phone] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiAuctionsIdBidsGet: async (id: string, pageNumber?: number, pageSize?: number, memberId?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        apiAuctionsIdBidsGet: async (id: string, pageNumber?: number, pageSize?: number, memberId?: string, memberName?: string, phone?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('apiAuctionsIdBidsGet', 'id', id)
             const localVarPath = `/api/auctions/{id}/bids`
@@ -14536,6 +14550,14 @@ export const AuctionApiAxiosParamCreator = function (configuration?: Configurati
 
             if (memberId !== undefined) {
                 localVarQueryParameter['MemberId'] = memberId;
+            }
+
+            if (memberName !== undefined) {
+                localVarQueryParameter['MemberName'] = memberName;
+            }
+
+            if (phone !== undefined) {
+                localVarQueryParameter['Phone'] = phone;
             }
 
 
@@ -15019,11 +15041,13 @@ export const AuctionApiFp = function(configuration?: Configuration) {
          * @param {number} [pageNumber] 
          * @param {number} [pageSize] 
          * @param {string} [memberId] 
+         * @param {string} [memberName] 
+         * @param {string} [phone] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiAuctionsIdBidsGet(id: string, pageNumber?: number, pageSize?: number, memberId?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BidListResponsePaginationResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiAuctionsIdBidsGet(id, pageNumber, pageSize, memberId, options);
+        async apiAuctionsIdBidsGet(id: string, pageNumber?: number, pageSize?: number, memberId?: string, memberName?: string, phone?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BidListResponsePaginationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiAuctionsIdBidsGet(id, pageNumber, pageSize, memberId, memberName, phone, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['AuctionApi.apiAuctionsIdBidsGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -15250,11 +15274,13 @@ export const AuctionApiFactory = function (configuration?: Configuration, basePa
          * @param {number} [pageNumber] 
          * @param {number} [pageSize] 
          * @param {string} [memberId] 
+         * @param {string} [memberName] 
+         * @param {string} [phone] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiAuctionsIdBidsGet(id: string, pageNumber?: number, pageSize?: number, memberId?: string, options?: RawAxiosRequestConfig): AxiosPromise<BidListResponsePaginationResponse> {
-            return localVarFp.apiAuctionsIdBidsGet(id, pageNumber, pageSize, memberId, options).then((request) => request(axios, basePath));
+        apiAuctionsIdBidsGet(id: string, pageNumber?: number, pageSize?: number, memberId?: string, memberName?: string, phone?: string, options?: RawAxiosRequestConfig): AxiosPromise<BidListResponsePaginationResponse> {
+            return localVarFp.apiAuctionsIdBidsGet(id, pageNumber, pageSize, memberId, memberName, phone, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -15474,12 +15500,14 @@ export class AuctionApi extends BaseAPI {
      * @param {number} [pageNumber] 
      * @param {number} [pageSize] 
      * @param {string} [memberId] 
+     * @param {string} [memberName] 
+     * @param {string} [phone] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuctionApi
      */
-    public apiAuctionsIdBidsGet(id: string, pageNumber?: number, pageSize?: number, memberId?: string, options?: RawAxiosRequestConfig) {
-        return AuctionApiFp(this.configuration).apiAuctionsIdBidsGet(id, pageNumber, pageSize, memberId, options).then((request) => request(this.axios, this.basePath));
+    public apiAuctionsIdBidsGet(id: string, pageNumber?: number, pageSize?: number, memberId?: string, memberName?: string, phone?: string, options?: RawAxiosRequestConfig) {
+        return AuctionApiFp(this.configuration).apiAuctionsIdBidsGet(id, pageNumber, pageSize, memberId, memberName, phone, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

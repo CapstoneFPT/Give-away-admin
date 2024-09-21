@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import { AuctionApi, FashionItemStatus } from "../../../api";
@@ -10,17 +10,44 @@ import {
   Badge,
   Button,
   Spinner,
+  Form,
 } from "react-bootstrap";
 
 import { formatBalance } from "../utils/utils";
 import { KTTable } from "../../../_metronic/helpers/components/KTTable";
 import { AuctionStatus } from "../../../api";
 
+// Custom debounce hook
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
 const AuctionDetail: React.FC = () => {
   const { auctionId } = useParams<{ auctionId: string }>();
   const [currentPage, setCurrentPage] = useState(1);
+  const [depositCurrentPage, setDepositCurrentPage] = useState(1);
+  const [bidSearchTermName, setBidSearchTermName] = useState("");
+  const [bidSearchTermPhone, setBidSearchTermPhone] = useState("");
+  const [depositSearchTerm, setDepositSearchTerm] = useState("");
   const pageSize = 10;
+  const depositPageSize = 10;
   const auctionApi = new AuctionApi();
+
+  const debouncedBidSearchTermName = useDebounce(bidSearchTermName, 300);
+  const debouncedBidSearchTermPhone = useDebounce(bidSearchTermPhone, 300);
+  const debouncedDepositSearchTerm = useDebounce(depositSearchTerm, 300);
 
   const getAuctionStatus = (status: string) => {
     switch (status) {
@@ -45,29 +72,99 @@ const AuctionDetail: React.FC = () => {
   });
 
   const { data: bidsData, isLoading: isLoadingBids } = useQuery({
-    queryKey: ["bids", auctionId, currentPage, pageSize],
+    queryKey: [
+      "bids",
+      auctionId,
+      currentPage,
+      pageSize,
+      debouncedBidSearchTermName,
+      debouncedBidSearchTermPhone,
+    ],
     queryFn: () =>
-      auctionApi.apiAuctionsIdBidsGet(auctionId!, currentPage, pageSize),
+      auctionApi.apiAuctionsIdBidsGet(
+        auctionId!,
+        currentPage,
+        pageSize,
+        null!,
+        debouncedBidSearchTermName,
+        debouncedBidSearchTermPhone
+      ),
   });
-
+  console.log(bidsData);
   const { data: itemData, isLoading: isLoadingItem } = useQuery({
     queryKey: ["auctionItem", auctionId],
     queryFn: () => auctionApi.apiAuctionsIdAuctionItemGet(auctionId!),
+  });
+
+  const { data: depositData, isLoading: isLoadingDeposits } = useQuery({
+    queryKey: [
+      "deposits",
+      auctionId,
+      depositCurrentPage,
+      depositPageSize,
+      debouncedDepositSearchTerm,
+    ],
+    queryFn: () =>
+      auctionApi.apiAuctionsAuctionIdDepositsGet(
+        auctionId!,
+        depositCurrentPage,
+        depositPageSize,
+        debouncedDepositSearchTerm
+      ),
   });
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
   };
 
-  if (isLoadingAuction || isLoadingBids || isLoadingItem) {
+  const handleDepositPageChange = (newPage: number) => {
+    setDepositCurrentPage(newPage);
+  };
+
+  const handleBidSearchName = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setBidSearchTermName(e.target.value);
+    },
+    []
+  );
+
+  const handleBidSearchPhone = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setBidSearchTermPhone(e.target.value);
+    },
+    []
+  );
+
+  const handleDepositSearch = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setDepositSearchTerm(e.target.value);
+    },
+    []
+  );
+
+  // Reset pages when search terms change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedBidSearchTermName, debouncedBidSearchTermPhone]);
+
+  useEffect(() => {
+    setDepositCurrentPage(1);
+  }, [debouncedDepositSearchTerm]);
+
+  if (isLoadingAuction || isLoadingItem) {
     return <Spinner animation="border" />;
   }
 
   const auction = auctionData?.data;
   const bids = bidsData?.data.items || [];
   const item = itemData?.data;
+  const deposits = depositData?.data.items || [];
 
   const bidColumns = [
+    {
+      Header: "Bidder Name",
+      accessor: "memberName",
+    },
     {
       Header: "Bidder Phone",
       accessor: "phone",
@@ -83,6 +180,33 @@ const AuctionDetail: React.FC = () => {
       Cell: ({ value }: { value: string }) => new Date(value).toLocaleString(),
     },
   ];
+
+  const depositColumns = [
+    {
+      Header: "Deposit Code",
+      accessor: "depositCode",
+    },
+    {
+      Header: "User Name",
+      accessor: "customerName",
+    },
+    {
+      Header: "User Phone",
+      accessor: "customerPhone",
+    },
+
+    {
+      Header: "Deposit Amount",
+      accessor: "amount",
+      Cell: ({ value }: { value: number }) => `${formatBalance(value)} VND`,
+    },
+    {
+      Header: "Deposit Date",
+      accessor: "depositDate",
+      Cell: ({ value }: { value: string }) => new Date(value).toLocaleString(),
+    },
+  ];
+
   const getStatusColor = (status: FashionItemStatus | undefined) => {
     switch (status) {
       case FashionItemStatus.Available:
@@ -99,6 +223,7 @@ const AuctionDetail: React.FC = () => {
         return "secondary";
     }
   };
+
   return (
     <Container fluid>
       <Button
@@ -202,6 +327,22 @@ const AuctionDetail: React.FC = () => {
           <Card>
             <Card.Body>
               <Card.Title>Bid History</Card.Title>
+              <Form.Group className="mb-3">
+                <Form.Control
+                  type="text"
+                  placeholder="Search by phone number"
+                  value={bidSearchTermPhone}
+                  onChange={handleBidSearchPhone}
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Control
+                  type="text"
+                  placeholder="Search by name"
+                  value={bidSearchTermName}
+                  onChange={handleBidSearchName}
+                />
+              </Form.Group>
               <KTTable
                 columns={bidColumns}
                 data={bids}
@@ -209,8 +350,42 @@ const AuctionDetail: React.FC = () => {
                 currentPage={currentPage}
                 pageSize={pageSize}
                 onPageChange={handlePageChange}
-                loading={isLoadingBids}
+                loading={
+                  isLoadingBids ||
+                  bidSearchTermName !== debouncedBidSearchTermName ||
+                  bidSearchTermPhone !== debouncedBidSearchTermPhone
+                }
                 totalPages={bidsData?.data.totalPages || 1}
+              />
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+      <Row className="mt-3">
+        <Col>
+          <Card>
+            <Card.Body>
+              <Card.Title>Deposit List</Card.Title>
+              <Form.Group className="mb-3">
+                <Form.Control
+                  type="text"
+                  placeholder="Search by deposit code"
+                  value={depositSearchTerm}
+                  onChange={handleDepositSearch}
+                />
+              </Form.Group>
+              <KTTable
+                columns={depositColumns}
+                data={deposits}
+                totalCount={depositData?.data.totalCount || 0}
+                currentPage={depositCurrentPage}
+                pageSize={depositPageSize}
+                onPageChange={handleDepositPageChange}
+                loading={
+                  isLoadingDeposits ||
+                  depositSearchTerm !== debouncedDepositSearchTerm
+                }
+                totalPages={depositData?.data.totalPages || 1}
               />
             </Card.Body>
           </Card>
