@@ -68,14 +68,14 @@ const ConsignTable: React.FC = () => {
           page,
           pageSize,
           shopId,
-          searchTerm,
+          searchTerm, // This will work for both consignSaleCode and consignmentCode
           undefined,
           undefined,
           statusFilter || undefined,
           type,
           undefined,
-          consignorName,
-          consignorPhone
+          consignorName, // This will work for both consignor and customer name
+          consignorPhone // This will work for both consignor and customer phone
         );
 
         if (!response || !response.data) {
@@ -122,7 +122,7 @@ const ConsignTable: React.FC = () => {
       enabled: currentUser?.role === "Admin" ? selectedShop !== null : true,
     }
   );
-
+  console.log(data);
   useEffect(() => {
     if (currentUser?.role === "Admin") {
       refetch();
@@ -149,6 +149,23 @@ const ConsignTable: React.FC = () => {
     }, 0);
   };
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    switch (name) {
+      case "searchTerm":
+        setSearchTerm(value);
+        break;
+      case "consignorName":
+        setConsignorName(value);
+        break;
+      case "consignorPhone":
+        setConsignorPhone(value);
+        break;
+    }
+    setCurrentPage(1);
+    refetch();
+  };
+
   const renderFilters = () => {
     const commonFilters = (
       <>
@@ -156,57 +173,55 @@ const ConsignTable: React.FC = () => {
           type="text"
           name="searchTerm"
           className="form-control form-control-solid w-250px me-2"
-          placeholder={`Search by ${
-            consignType === ConsignSaleType.CustomerSale
-              ? "Customer Sale"
-              : "Consignment"
-          } Code`}
+          placeholder="Search by Sale Code"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={handleSearchChange}
         />
         <input
           type="text"
           name="consignorName"
           className="form-control form-control-solid w-225px me-2"
-          placeholder={`Search by ${
-            consignType === ConsignSaleType.CustomerSale
-              ? "Customer"
-              : "Consignor"
-          } Name`}
+          placeholder="Search by Name"
           value={consignorName}
-          onChange={(e) => setConsignorName(e.target.value)}
+          onChange={handleSearchChange}
         />
         <input
           type="text"
           name="consignorPhone"
           className="form-control form-control-solid w-225px me-2"
-          placeholder={`Search by ${
-            consignType === ConsignSaleType.CustomerSale
-              ? "Customer"
-              : "Consignor"
-          } Phone`}
+          placeholder="Search by Phone"
           value={consignorPhone}
-          onChange={(e) => setConsignorPhone(e.target.value)}
+          onChange={handleSearchChange}
         />
-        <select
-          name="statusFilter"
-          className="form-select form-select-solid w-200px me-2"
-          value={statusFilter || ""}
-          onChange={(e) => setStatusFilter(e.target.value as ConsignSaleStatus)}
-        >
-          <option value="">All Statuses</option>
-          {Object.values(ConsignSaleStatus).map((status) => (
-            <option key={status} value={status}>
-              {status}
-            </option>
-          ))}
-        </select>
+        {consignType !== ConsignSaleType.CustomerSale && (
+          <select
+            name="statusFilter"
+            className="form-select form-select-solid w-200px me-2"
+            value={statusFilter || ""}
+            onChange={(e) => {
+              setStatusFilter(e.target.value as ConsignSaleStatus);
+              setCurrentPage(1);
+              refetch();
+            }}
+          >
+            <option value="">All Statuses</option>
+            {Object.values(ConsignSaleStatus).map((status) => (
+              <option key={status} value={status}>
+                {status}
+              </option>
+            ))}
+          </select>
+        )}
         {currentUser?.role === "Admin" && (
           <select
             name="shopFilter"
             className="form-select form-select-solid w-200px me-2"
             value={selectedShop || ""}
-            onChange={(e) => setSelectedShop(e.target.value || null)}
+            onChange={(e) => {
+              setSelectedShop(e.target.value || null);
+              setCurrentPage(1);
+              refetch();
+            }}
           >
             <option value="">All Shops</option>
             {shops.map((shop) => (
@@ -219,18 +234,11 @@ const ConsignTable: React.FC = () => {
       </>
     );
 
-    switch (consignType) {
-      case ConsignSaleType.ConsignedForSale:
-      case ConsignSaleType.CustomerSale:
-      case ConsignSaleType.ConsignedForAuction:
-        return (
-          <div className="card-toolbar">
-            <div className="d-flex align-items-center">{commonFilters}</div>
-          </div>
-        );
-      default:
-        return null;
-    }
+    return (
+      <div className="card-toolbar">
+        <div className="d-flex align-items-center">{commonFilters}</div>
+      </div>
+    );
   };
 
   if (error) return <div>An error occurred: {(error as Error).message}</div>;
