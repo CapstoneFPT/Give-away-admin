@@ -28,6 +28,8 @@ export const ConsignLineItemReview: React.FC = () => {
     consignSaleId: string;
     lineItemId: string;
   }>();
+console.log("lineItemId", lineItemId);
+      console.log("consignSaleId", consignSaleId);
   const navigate = useNavigate();
   const [dealPrice, setDealPrice] = useState<string>("");
   const [isPriceChanged, setIsPriceChanged] = useState<boolean>(false);
@@ -50,6 +52,7 @@ export const ConsignLineItemReview: React.FC = () => {
   >({
     queryKey: ["consignSaleLineItem", consignSaleId, lineItemId],
     queryFn: async () => {
+      
       const consignLineItemApi = new ConsignLineItemApi();
       const response =
         await consignLineItemApi.apiConsignlineitemsConsignLineItemIdGet(
@@ -63,6 +66,7 @@ export const ConsignLineItemReview: React.FC = () => {
           ? data.expectedPrice!.toString()
           : data.dealPrice!.toString()
       );
+      console.log("Gender", data.gender);
     },
   });
 
@@ -92,7 +96,7 @@ export const ConsignLineItemReview: React.FC = () => {
     isLoading: masterItemsLoading,
     error: masterItemsError,
   } = useQuery({
-    queryKey: ["masterItems"],
+    queryKey: ["masterItems",lineItemId,data?.gender],
     queryFn: async () => {
       const masterItemApi = new MasterItemApi();
       const response = await masterItemApi.apiMasterItemsGet(
@@ -109,6 +113,7 @@ export const ConsignLineItemReview: React.FC = () => {
 
       return response.data;
     },
+    enabled: !!data?.gender,
   });
 
   const readyForConsignMutation = useMutation(
@@ -164,7 +169,6 @@ export const ConsignLineItemReview: React.FC = () => {
         navigate(`/consignment/${consignSaleId}`);
       },
       onError: (error) => {
-        console.log(lineItemId);
         console.error(
           "Error creating individual product after negotiation:",
           error
