@@ -43,7 +43,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
   const [categories, setCategories] = useState<Category[]>([]);
   const [isCategoryDisabled, setIsCategoryDisabled] = useState(true);
   const [loading, setLoading] = useState<boolean>(false);
-  console.log(formData);
+
   const createMasterItem = async (itemData: CreateMasterItemRequest) => {
     setLoading(true);
     try {
