@@ -71,7 +71,6 @@ const AddOrderPage = () => {
       if (data.data && data.data.items && data.data.items.length > 0) {
         setAccounts(data.data.items);
         setTotalPages(Math.ceil((data.data.totalCount || 0) / pageSize));
-        showAlert("success", "Accounts found!");
       } else {
         showAlert("error", "No accounts found with this phone number.");
         setAccounts([]);
@@ -80,7 +79,7 @@ const AddOrderPage = () => {
       setIsLoading(false);
     },
     onError: () => {
-      showAlert("error", "Failed to find account.");
+      showAlert("error", "Failed to find account with error.");
       setAccounts([]);
       setTotalPages(1);
       setIsLoading(false);

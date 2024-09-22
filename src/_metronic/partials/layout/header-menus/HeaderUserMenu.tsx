@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FC } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../../app/modules/auth";
@@ -30,6 +31,11 @@ const HeaderUserMenu: FC = () => {
       <div className="separator my-2"></div>
 
       <div className="menu-item px-5">
+        {currentUser?.role === "Admin" && (
+          <a href="/change-password" className="menu-link px-5">
+            Change password
+          </a>
+        )}
         <a onClick={logout} className="menu-link px-5">
           Sign Out
         </a>

@@ -35,6 +35,7 @@ import CreateRefund from "../pages/refund/CreateRefund.tsx";
 import RefundItemDetail from "../pages/refund/RefundItemDetail.tsx";
 import AddConsignmentOffline from "../pages/consign/AddConsignmentOffline.tsx";
 import AddCategory from "../admin/category/AddCategory.tsx";
+import ChangePassword from "../admin/account/ChangePassword.tsx";
 const PrivateRoutes = () => {
   const { currentUser } = useAuth();
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
@@ -78,6 +79,14 @@ const PrivateRoutes = () => {
         <Route path="/order/order-list" element={<OrderPage />} />
 
         {/* Product Admin Routes */}
+        <Route
+          path="change-password"
+          element={
+            <ProtectedRoute roles={["Admin"]}>
+              <ChangePassword />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="account-admin"
           element={

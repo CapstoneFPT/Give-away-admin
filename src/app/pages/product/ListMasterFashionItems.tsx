@@ -104,7 +104,7 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
           masterItemId,
           currentPage,
         ]);
-        showAlert("success", "Product marked as taken successfully");
+        showAlert("success", "Product taken down successfully");
       },
     }
   );

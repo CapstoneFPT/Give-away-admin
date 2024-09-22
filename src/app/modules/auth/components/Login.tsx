@@ -22,7 +22,7 @@ const loginSchema = Yup.object().shape({
 
 const initialValues = {
   email: "admin@gmail.com",
-  password: "admin1",
+  password: "123456",
 };
 
 /*
@@ -78,7 +78,6 @@ export function Login() {
 
         setCurrentUser(currentUser);
       } catch (error) {
-        console.error(error);
         saveAuth(undefined);
         setError("The login details are incorrect");
         setSubmitting(false);
@@ -160,7 +159,17 @@ export function Login() {
       {/* end::Form group */}
 
       {/* begin::Wrapper */}
-
+      <div className="d-flex flex-wrap justify-content-center pb-lg-0">
+        <Link to="/auth/forgot-password">
+          <button
+            type="button"
+            id="kt_login_password_reset_form_cancel_button"
+            className="btn btn-light"
+          >
+            Forgot Password
+          </button>
+        </Link>
+      </div>
       {/* end::Wrapper */}
 
       {/* begin::Action */}

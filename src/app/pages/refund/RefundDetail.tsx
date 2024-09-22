@@ -102,7 +102,10 @@ const RefundDetail: React.FC = () => {
         showAlert("success", "Product received confirmation successful");
       },
       onError: (error: AxiosError) => {
-        showAlert("error", `Error: ${(error as Error).message}`);
+        showAlert(
+          "error",
+          `Error confirm received product: ${(error as Error).message}`
+        );
       },
     }
   );
@@ -123,7 +126,7 @@ const RefundDetail: React.FC = () => {
         );
       },
       onError: (error: AxiosError) => {
-        showAlert("error", `Error: ${(error as Error).message}`);
+        showAlert("error", `Error update status: ${(error as Error).message}`);
       },
     }
   );
