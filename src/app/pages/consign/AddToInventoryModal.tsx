@@ -57,7 +57,7 @@ export const AddToInventoryModal: React.FC<AddToInventoryModalProps> = ({
           level
         );
         console.log("category", response);
-        setCategories(response.data.data!); // Assuming response.data contains the categories array
+        setCategories(response.data.data!);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
@@ -138,6 +138,7 @@ export const AddToInventoryModal: React.FC<AddToInventoryModalProps> = ({
       setDescription("");
       setCategoryId("");
       setIsCreatingMasterItem(false);
+      window.location.reload();
     } catch (error) {
       console.error("Error creating master product:", error);
       showAlert("error", "Failed to create master product. Please try again.");
