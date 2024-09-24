@@ -77,33 +77,37 @@ const OrderAdminDetails: React.FC<{
                   : "N/A"}
               </td>
             </tr>
-            <tr>
-              <td className="text-muted">
-                <div className="d-flex align-items-center">
-                  <KTIcon iconName="calendar" className="fs-2 me-2" />
-                  Payment Date
-                </div>
-              </td>
-              <td className="fw-bold text-end">
-                {orderAdminDetail?.paymentDate
-                  ? new Date(orderAdminDetail.paymentDate!).toLocaleString()
-                  : "N/A"}
-              </td>
-            </tr>
-            <tr>
-              <td className="text-muted">
-                <div className="d-flex align-items-center">
-                  <KTIcon iconName="calendar" className="fs-2 me-2" />
-                  Completed Date
-                </div>
-              </td>
-              <td className="fw-bold text-end">
-                {orderAdminDetail?.status === "Completed"
-                  ? new Date(orderAdminDetail.completedDate!).toLocaleString()
-                  : "N/A"}
-              </td>
-            </tr>
-
+            {(orderAdminDetail?.status === "Completed" ||
+              orderAdminDetail?.status === "OnDelivery") && (
+              <tr>
+                <td className="text-muted">
+                  <div className="d-flex align-items-center">
+                    <KTIcon iconName="calendar" className="fs-2 me-2" />
+                    Payment Date
+                  </div>
+                </td>
+                <td className="fw-bold text-end">
+                  {orderAdminDetail?.paymentDate
+                    ? new Date(orderAdminDetail.paymentDate).toLocaleString()
+                    : "N/A"}
+                </td>
+              </tr>
+            )}
+            {orderAdminDetail?.status === "Completed" && (
+              <tr>
+                <td className="text-muted">
+                  <div className="d-flex align-items-center">
+                    <KTIcon iconName="calendar" className="fs-2 me-2" />
+                    Completed Date
+                  </div>
+                </td>
+                <td className="fw-bold text-end">
+                  {orderAdminDetail?.status === "Completed"
+                    ? new Date(orderAdminDetail.completedDate!).toLocaleString()
+                    : "N/A"}
+                </td>
+              </tr>
+            )}
             <tr>
               <td className="text-muted">
                 <div className="d-flex align-items-center">

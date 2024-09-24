@@ -35,7 +35,12 @@ const TransactionManagement: React.FC = () => {
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
   };
-
+  const handleTransactionTypeChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setTransactionTypeFilter(event.target.value as TransactionType);
+    setCurrentPage(1);
+  };
   const columns = useMemo(
     () => [
       {
@@ -59,7 +64,7 @@ const TransactionManagement: React.FC = () => {
       },
       {
         Header: "Order Code",
-        accessor: "orderCode",
+        accessor: "productCode",
       },
       {
         Header: "Customer Name",
@@ -101,11 +106,7 @@ const TransactionManagement: React.FC = () => {
                 className="form-select form-select-solid me-2"
                 style={{ width: "200px" }}
                 value={transactionTypeFilter}
-                onChange={(e) =>
-                  setTransactionTypeFilter(
-                    e.target.value as TransactionType | ""
-                  )
-                }
+                onChange={handleTransactionTypeChange}
               >
                 <option value="">All Types</option>
                 {Object.values(TransactionType).map((type) => (

@@ -207,7 +207,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
     accept: {
       "image/*": [".jpeg", ".png", ".jpg", ".gif"],
     },
-    maxFiles: 3,
+    maxFiles: 1,
   });
 
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
