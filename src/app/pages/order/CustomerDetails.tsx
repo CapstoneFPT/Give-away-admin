@@ -1,12 +1,13 @@
 import React from "react";
 import { KTCard, KTCardBody, KTIcon } from "../../../_metronic/helpers";
-import { OrderDetailedResponse, FeedbackApi } from "../../../api";
+import { OrderDetailedResponse, FeedbackApi, OrderLineItem, OrderLineItemListResponse } from "../../../api";
 import ShippingAddress from "./ShippingAddress";
 import { useQuery } from "react-query";
 
 const CustomerDetails: React.FC<{
   orderDetail: OrderDetailedResponse | undefined;
-}> = ({ orderDetail }) => {
+  orderLineItems: OrderLineItemListResponse[] | undefined;
+}> = ({ orderDetail,orderLineItems }) => {
   const { data: feedback } = useQuery(
     ["feedback", orderDetail?.orderId],
     () => {
@@ -69,7 +70,7 @@ const CustomerDetails: React.FC<{
               </tr>
               <tr>
                 <td colSpan={2}>
-                  <ShippingAddress orderDetail={orderDetail} />
+                  <ShippingAddress orderDetail={orderDetail} orderLineItems={orderLineItems} />
                 </td>
               </tr>
               {feedback && (

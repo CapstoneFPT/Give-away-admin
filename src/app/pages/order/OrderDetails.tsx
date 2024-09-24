@@ -11,6 +11,7 @@ const OrderDetails: React.FC<{
 }> = ({ orderDetail }) => {
   const { currentUser } = useAuth();
 
+  console.log("orderDetail", orderDetail);
   const generateInvoiceMutation = useMutation(
     async () => {
       if (!orderDetail?.orderId) {
@@ -110,8 +111,8 @@ const OrderDetails: React.FC<{
                   </div>
                 </td>
                 <td className="fw-bold text-end">
-                  {orderDetail?.paymentDate
-                    ? new Date(orderDetail.paymentDate!).toLocaleString()
+                  {orderDetail?.paymentDate != null
+                    ? new Date(orderDetail!.paymentDate!).toLocaleString()
                     : "N/A"}
                 </td>
               </tr>
@@ -123,7 +124,7 @@ const OrderDetails: React.FC<{
                   </div>
                 </td>
                 <td className="fw-bold text-end">
-                  {orderDetail?.status === "Completed"
+                  {orderDetail?.completedDate != null
                     ? new Date(orderDetail.completedDate!).toLocaleString()
                     : "N/A"}
                 </td>

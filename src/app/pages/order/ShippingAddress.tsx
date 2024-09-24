@@ -1,11 +1,11 @@
 import React from "react";
 import { Button } from "react-bootstrap";
 import { KTCard, KTCardBody, KTIcon } from "../../../_metronic/helpers";
-import { OrderDetailedResponse, OrderStatus, PurchaseType, ShopApi } from "../../../api";
+import { OrderDetailedResponse, OrderLineItem, OrderLineItemListResponse, OrderStatus, PurchaseType, ShopApi } from "../../../api";
 import { useAuth } from "../../modules/auth";
 import { useMutation } from "react-query";
 
-const ShippingAddress: React.FC<{ orderDetail: OrderDetailedResponse | undefined }> = ({ orderDetail }) => {
+const ShippingAddress: React.FC<{ orderDetail: OrderDetailedResponse | undefined, orderLineItems: OrderLineItemListResponse[] | undefined }> = ({ orderDetail, orderLineItems }) => {
     const { currentUser } = useAuth();
     const deliveryApi = new ShopApi();
 
@@ -55,7 +55,7 @@ const ShippingAddress: React.FC<{ orderDetail: OrderDetailedResponse | undefined
                 <div>
                     {
                         orderDetail?.purchaseType === PurchaseType.Online &&
-                        orderDetail?.status === OrderStatus.OnDelivery &&
+                        orderDetail?.status === OrderStatus.OnDelivery && orderLineItems?.some((item) => item.itemStatus === 'OnDelivery')  &&
                     <Button 
                         style={{ marginTop: "10px" }} 
                         className="btn btn-success hover-rotate-end"

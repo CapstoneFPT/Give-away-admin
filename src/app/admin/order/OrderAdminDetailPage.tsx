@@ -53,7 +53,7 @@ const OrderAdminDetailPage: React.FC = () => {
 
         <div className="d-flex flex-column flex-xl-row gap-7 gap-lg-10">
           <OrderAdminDetails orderAdminDetail={orderAdminDetail} />
-          <CustomerDetails orderDetail={orderAdminDetail} />
+          <CustomerDetails orderDetail={orderAdminDetail} orderLineItems={[]} />
         </div>
 
         <div className="tab-content">
