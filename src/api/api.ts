@@ -1503,6 +1503,12 @@ export interface BidDetailResponse {
      * @type {string}
      * @memberof BidDetailResponse
      */
+    'phone'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof BidDetailResponse
+     */
     'createdDate'?: string;
     /**
      * 
@@ -3860,7 +3866,7 @@ export interface CreateInquiryRequest {
      * @type {string}
      * @memberof CreateInquiryRequest
      */
-    'message'?: string | null;
+    'message': string;
 }
 /**
  * 
@@ -8041,7 +8047,7 @@ export interface OrderDetailedResponse {
      * @type {string}
      * @memberof OrderDetailedResponse
      */
-    'paymentDate'?: string;
+    'paymentDate'?: string | null;
     /**
      * 
      * @type {PurchaseType}
@@ -8053,7 +8059,7 @@ export interface OrderDetailedResponse {
      * @type {string}
      * @memberof OrderDetailedResponse
      */
-    'completedDate'?: string;
+    'completedDate'?: string | null;
     /**
      * 
      * @type {string}
@@ -8101,7 +8107,7 @@ export interface OrderDetailedResponse {
      * @type {string}
      * @memberof OrderDetailedResponse
      */
-    'bidCreatedDate'?: string;
+    'bidCreatedDate'?: string | null;
     /**
      * 
      * @type {string}
@@ -8137,7 +8143,7 @@ export interface OrderDetailedResponse {
      * @type {string}
      * @memberof OrderDetailedResponse
      */
-    'createdDate'?: string;
+    'createdDate'?: string | null;
 }
 
 
@@ -10789,19 +10795,13 @@ export interface TransactionResponse {
      * @type {string}
      * @memberof TransactionResponse
      */
-    'orderCode'?: string | null;
+    'productCode'?: string | null;
     /**
      * 
      * @type {string}
      * @memberof TransactionResponse
      */
     'consignSaleId'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof TransactionResponse
-     */
-    'consignSaleCode'?: string | null;
     /**
      * 
      * @type {TransactionType}
@@ -12372,6 +12372,7 @@ export const AccountApiAxiosParamCreator = function (configuration?: Configurati
          * @param {number} [page] 
          * @param {number} [pageSize] 
          * @param {Array<TransactionType>} [types] 
+         * @param {Array<PaymentMethod>} [paymentMethods] 
          * @param {string} [transactionCode] 
          * @param {string} [orderCode] 
          * @param {string} [consignSaleCode] 
@@ -12382,7 +12383,7 @@ export const AccountApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiAccountsAccountIdTransactionsGet: async (accountId: string, page?: number, pageSize?: number, types?: Array<TransactionType>, transactionCode?: string, orderCode?: string, consignSaleCode?: string, rechargeCode?: string, depositCode?: string, withdrawCode?: string, refundCode?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        apiAccountsAccountIdTransactionsGet: async (accountId: string, page?: number, pageSize?: number, types?: Array<TransactionType>, paymentMethods?: Array<PaymentMethod>, transactionCode?: string, orderCode?: string, consignSaleCode?: string, rechargeCode?: string, depositCode?: string, withdrawCode?: string, refundCode?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'accountId' is not null or undefined
             assertParamExists('apiAccountsAccountIdTransactionsGet', 'accountId', accountId)
             const localVarPath = `/api/accounts/{accountId}/transactions`
@@ -12412,6 +12413,10 @@ export const AccountApiAxiosParamCreator = function (configuration?: Configurati
 
             if (types) {
                 localVarQueryParameter['Types'] = types;
+            }
+
+            if (paymentMethods) {
+                localVarQueryParameter['PaymentMethods'] = paymentMethods;
             }
 
             if (transactionCode !== undefined) {
@@ -13002,6 +13007,7 @@ export const AccountApiFp = function(configuration?: Configuration) {
          * @param {number} [page] 
          * @param {number} [pageSize] 
          * @param {Array<TransactionType>} [types] 
+         * @param {Array<PaymentMethod>} [paymentMethods] 
          * @param {string} [transactionCode] 
          * @param {string} [orderCode] 
          * @param {string} [consignSaleCode] 
@@ -13012,8 +13018,8 @@ export const AccountApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiAccountsAccountIdTransactionsGet(accountId: string, page?: number, pageSize?: number, types?: Array<TransactionType>, transactionCode?: string, orderCode?: string, consignSaleCode?: string, rechargeCode?: string, depositCode?: string, withdrawCode?: string, refundCode?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AccountTransactionsListResponsePaginationResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiAccountsAccountIdTransactionsGet(accountId, page, pageSize, types, transactionCode, orderCode, consignSaleCode, rechargeCode, depositCode, withdrawCode, refundCode, options);
+        async apiAccountsAccountIdTransactionsGet(accountId: string, page?: number, pageSize?: number, types?: Array<TransactionType>, paymentMethods?: Array<PaymentMethod>, transactionCode?: string, orderCode?: string, consignSaleCode?: string, rechargeCode?: string, depositCode?: string, withdrawCode?: string, refundCode?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AccountTransactionsListResponsePaginationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiAccountsAccountIdTransactionsGet(accountId, page, pageSize, types, paymentMethods, transactionCode, orderCode, consignSaleCode, rechargeCode, depositCode, withdrawCode, refundCode, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['AccountApi.apiAccountsAccountIdTransactionsGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -13326,6 +13332,7 @@ export const AccountApiFactory = function (configuration?: Configuration, basePa
          * @param {number} [page] 
          * @param {number} [pageSize] 
          * @param {Array<TransactionType>} [types] 
+         * @param {Array<PaymentMethod>} [paymentMethods] 
          * @param {string} [transactionCode] 
          * @param {string} [orderCode] 
          * @param {string} [consignSaleCode] 
@@ -13336,8 +13343,8 @@ export const AccountApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiAccountsAccountIdTransactionsGet(accountId: string, page?: number, pageSize?: number, types?: Array<TransactionType>, transactionCode?: string, orderCode?: string, consignSaleCode?: string, rechargeCode?: string, depositCode?: string, withdrawCode?: string, refundCode?: string, options?: RawAxiosRequestConfig): AxiosPromise<AccountTransactionsListResponsePaginationResponse> {
-            return localVarFp.apiAccountsAccountIdTransactionsGet(accountId, page, pageSize, types, transactionCode, orderCode, consignSaleCode, rechargeCode, depositCode, withdrawCode, refundCode, options).then((request) => request(axios, basePath));
+        apiAccountsAccountIdTransactionsGet(accountId: string, page?: number, pageSize?: number, types?: Array<TransactionType>, paymentMethods?: Array<PaymentMethod>, transactionCode?: string, orderCode?: string, consignSaleCode?: string, rechargeCode?: string, depositCode?: string, withdrawCode?: string, refundCode?: string, options?: RawAxiosRequestConfig): AxiosPromise<AccountTransactionsListResponsePaginationResponse> {
+            return localVarFp.apiAccountsAccountIdTransactionsGet(accountId, page, pageSize, types, paymentMethods, transactionCode, orderCode, consignSaleCode, rechargeCode, depositCode, withdrawCode, refundCode, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -13665,6 +13672,7 @@ export class AccountApi extends BaseAPI {
      * @param {number} [page] 
      * @param {number} [pageSize] 
      * @param {Array<TransactionType>} [types] 
+     * @param {Array<PaymentMethod>} [paymentMethods] 
      * @param {string} [transactionCode] 
      * @param {string} [orderCode] 
      * @param {string} [consignSaleCode] 
@@ -13676,8 +13684,8 @@ export class AccountApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof AccountApi
      */
-    public apiAccountsAccountIdTransactionsGet(accountId: string, page?: number, pageSize?: number, types?: Array<TransactionType>, transactionCode?: string, orderCode?: string, consignSaleCode?: string, rechargeCode?: string, depositCode?: string, withdrawCode?: string, refundCode?: string, options?: RawAxiosRequestConfig) {
-        return AccountApiFp(this.configuration).apiAccountsAccountIdTransactionsGet(accountId, page, pageSize, types, transactionCode, orderCode, consignSaleCode, rechargeCode, depositCode, withdrawCode, refundCode, options).then((request) => request(this.axios, this.basePath));
+    public apiAccountsAccountIdTransactionsGet(accountId: string, page?: number, pageSize?: number, types?: Array<TransactionType>, paymentMethods?: Array<PaymentMethod>, transactionCode?: string, orderCode?: string, consignSaleCode?: string, rechargeCode?: string, depositCode?: string, withdrawCode?: string, refundCode?: string, options?: RawAxiosRequestConfig) {
+        return AccountApiFp(this.configuration).apiAccountsAccountIdTransactionsGet(accountId, page, pageSize, types, paymentMethods, transactionCode, orderCode, consignSaleCode, rechargeCode, depositCode, withdrawCode, refundCode, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -18463,6 +18471,69 @@ export const FashionItemApiAxiosParamCreator = function (configuration?: Configu
         /**
          * 
          * @param {string} [itemCode] 
+         * @param {string} [shopId] 
+         * @param {Array<FashionItemStatus>} [status] 
+         * @param {Array<FashionItemType>} [type] 
+         * @param {number} [minPrice] 
+         * @param {number} [maxPrice] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiFashionitemsExportExcelGet: async (itemCode?: string, shopId?: string, status?: Array<FashionItemStatus>, type?: Array<FashionItemType>, minPrice?: number, maxPrice?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/fashionitems/export-excel`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (itemCode !== undefined) {
+                localVarQueryParameter['ItemCode'] = itemCode;
+            }
+
+            if (shopId !== undefined) {
+                localVarQueryParameter['ShopId'] = shopId;
+            }
+
+            if (status) {
+                localVarQueryParameter['Status'] = status;
+            }
+
+            if (type) {
+                localVarQueryParameter['Type'] = type;
+            }
+
+            if (minPrice !== undefined) {
+                localVarQueryParameter['MinPrice'] = minPrice;
+            }
+
+            if (maxPrice !== undefined) {
+                localVarQueryParameter['MaxPrice'] = maxPrice;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} [itemCode] 
          * @param {string} [memberId] 
          * @param {GenderType} [gender] 
          * @param {string} [color] 
@@ -18811,6 +18882,23 @@ export const FashionItemApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @param {string} [itemCode] 
+         * @param {string} [shopId] 
+         * @param {Array<FashionItemStatus>} [status] 
+         * @param {Array<FashionItemType>} [type] 
+         * @param {number} [minPrice] 
+         * @param {number} [maxPrice] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiFashionitemsExportExcelGet(itemCode?: string, shopId?: string, status?: Array<FashionItemStatus>, type?: Array<FashionItemType>, minPrice?: number, maxPrice?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<File>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiFashionitemsExportExcelGet(itemCode, shopId, status, type, minPrice, maxPrice, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['FashionItemApi.apiFashionitemsExportExcelGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} [itemCode] 
          * @param {string} [memberId] 
          * @param {GenderType} [gender] 
          * @param {string} [color] 
@@ -18923,6 +19011,20 @@ export const FashionItemApiFactory = function (configuration?: Configuration, ba
         /**
          * 
          * @param {string} [itemCode] 
+         * @param {string} [shopId] 
+         * @param {Array<FashionItemStatus>} [status] 
+         * @param {Array<FashionItemType>} [type] 
+         * @param {number} [minPrice] 
+         * @param {number} [maxPrice] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiFashionitemsExportExcelGet(itemCode?: string, shopId?: string, status?: Array<FashionItemStatus>, type?: Array<FashionItemType>, minPrice?: number, maxPrice?: number, options?: RawAxiosRequestConfig): AxiosPromise<File> {
+            return localVarFp.apiFashionitemsExportExcelGet(itemCode, shopId, status, type, minPrice, maxPrice, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} [itemCode] 
          * @param {string} [memberId] 
          * @param {GenderType} [gender] 
          * @param {string} [color] 
@@ -19014,6 +19116,22 @@ export class FashionItemApi extends BaseAPI {
      */
     public apiFashionitemsDelete(deleteDraftItemRequest?: Array<DeleteDraftItemRequest>, options?: RawAxiosRequestConfig) {
         return FashionItemApiFp(this.configuration).apiFashionitemsDelete(deleteDraftItemRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} [itemCode] 
+     * @param {string} [shopId] 
+     * @param {Array<FashionItemStatus>} [status] 
+     * @param {Array<FashionItemType>} [type] 
+     * @param {number} [minPrice] 
+     * @param {number} [maxPrice] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof FashionItemApi
+     */
+    public apiFashionitemsExportExcelGet(itemCode?: string, shopId?: string, status?: Array<FashionItemStatus>, type?: Array<FashionItemType>, minPrice?: number, maxPrice?: number, options?: RawAxiosRequestConfig) {
+        return FashionItemApiFp(this.configuration).apiFashionitemsExportExcelGet(itemCode, shopId, status, type, minPrice, maxPrice, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -20415,11 +20533,20 @@ export const OrderApiAxiosParamCreator = function (configuration?: Configuration
          * 
          * @param {string} [startDate] 
          * @param {string} [endDate] 
+         * @param {string} [orderCode] 
+         * @param {string} [recipientName] 
+         * @param {string} [phone] 
+         * @param {number} [minTotalPrice] 
+         * @param {number} [maxTotalPrice] 
+         * @param {Array<PaymentMethod>} [paymentMethods] 
+         * @param {Array<PurchaseType>} [purchaseTypes] 
+         * @param {Array<OrderStatus>} [statuses] 
+         * @param {Array<AddressType>} [addressTypes] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiOrdersExportCsvGet: async (startDate?: string, endDate?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/orders/export-csv`;
+        apiOrdersExportExcelGet: async (startDate?: string, endDate?: string, orderCode?: string, recipientName?: string, phone?: string, minTotalPrice?: number, maxTotalPrice?: number, paymentMethods?: Array<PaymentMethod>, purchaseTypes?: Array<PurchaseType>, statuses?: Array<OrderStatus>, addressTypes?: Array<AddressType>, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/orders/export-excel`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -20445,6 +20572,42 @@ export const OrderApiAxiosParamCreator = function (configuration?: Configuration
                 localVarQueryParameter['EndDate'] = (endDate as any instanceof Date) ?
                     (endDate as any).toISOString() :
                     endDate;
+            }
+
+            if (orderCode !== undefined) {
+                localVarQueryParameter['OrderCode'] = orderCode;
+            }
+
+            if (recipientName !== undefined) {
+                localVarQueryParameter['RecipientName'] = recipientName;
+            }
+
+            if (phone !== undefined) {
+                localVarQueryParameter['Phone'] = phone;
+            }
+
+            if (minTotalPrice !== undefined) {
+                localVarQueryParameter['MinTotalPrice'] = minTotalPrice;
+            }
+
+            if (maxTotalPrice !== undefined) {
+                localVarQueryParameter['MaxTotalPrice'] = maxTotalPrice;
+            }
+
+            if (paymentMethods) {
+                localVarQueryParameter['PaymentMethods'] = paymentMethods;
+            }
+
+            if (purchaseTypes) {
+                localVarQueryParameter['PurchaseTypes'] = purchaseTypes;
+            }
+
+            if (statuses) {
+                localVarQueryParameter['Statuses'] = statuses;
+            }
+
+            if (addressTypes) {
+                localVarQueryParameter['AddressTypes'] = addressTypes;
             }
 
 
@@ -20939,13 +21102,22 @@ export const OrderApiFp = function(configuration?: Configuration) {
          * 
          * @param {string} [startDate] 
          * @param {string} [endDate] 
+         * @param {string} [orderCode] 
+         * @param {string} [recipientName] 
+         * @param {string} [phone] 
+         * @param {number} [minTotalPrice] 
+         * @param {number} [maxTotalPrice] 
+         * @param {Array<PaymentMethod>} [paymentMethods] 
+         * @param {Array<PurchaseType>} [purchaseTypes] 
+         * @param {Array<OrderStatus>} [statuses] 
+         * @param {Array<AddressType>} [addressTypes] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiOrdersExportCsvGet(startDate?: string, endDate?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiOrdersExportCsvGet(startDate, endDate, options);
+        async apiOrdersExportExcelGet(startDate?: string, endDate?: string, orderCode?: string, recipientName?: string, phone?: string, minTotalPrice?: number, maxTotalPrice?: number, paymentMethods?: Array<PaymentMethod>, purchaseTypes?: Array<PurchaseType>, statuses?: Array<OrderStatus>, addressTypes?: Array<AddressType>, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<File>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiOrdersExportExcelGet(startDate, endDate, orderCode, recipientName, phone, minTotalPrice, maxTotalPrice, paymentMethods, purchaseTypes, statuses, addressTypes, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['OrderApi.apiOrdersExportCsvGet']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['OrderApi.apiOrdersExportExcelGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -21109,11 +21281,20 @@ export const OrderApiFactory = function (configuration?: Configuration, basePath
          * 
          * @param {string} [startDate] 
          * @param {string} [endDate] 
+         * @param {string} [orderCode] 
+         * @param {string} [recipientName] 
+         * @param {string} [phone] 
+         * @param {number} [minTotalPrice] 
+         * @param {number} [maxTotalPrice] 
+         * @param {Array<PaymentMethod>} [paymentMethods] 
+         * @param {Array<PurchaseType>} [purchaseTypes] 
+         * @param {Array<OrderStatus>} [statuses] 
+         * @param {Array<AddressType>} [addressTypes] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiOrdersExportCsvGet(startDate?: string, endDate?: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.apiOrdersExportCsvGet(startDate, endDate, options).then((request) => request(axios, basePath));
+        apiOrdersExportExcelGet(startDate?: string, endDate?: string, orderCode?: string, recipientName?: string, phone?: string, minTotalPrice?: number, maxTotalPrice?: number, paymentMethods?: Array<PaymentMethod>, purchaseTypes?: Array<PurchaseType>, statuses?: Array<OrderStatus>, addressTypes?: Array<AddressType>, options?: RawAxiosRequestConfig): AxiosPromise<File> {
+            return localVarFp.apiOrdersExportExcelGet(startDate, endDate, orderCode, recipientName, phone, minTotalPrice, maxTotalPrice, paymentMethods, purchaseTypes, statuses, addressTypes, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -21248,12 +21429,21 @@ export class OrderApi extends BaseAPI {
      * 
      * @param {string} [startDate] 
      * @param {string} [endDate] 
+     * @param {string} [orderCode] 
+     * @param {string} [recipientName] 
+     * @param {string} [phone] 
+     * @param {number} [minTotalPrice] 
+     * @param {number} [maxTotalPrice] 
+     * @param {Array<PaymentMethod>} [paymentMethods] 
+     * @param {Array<PurchaseType>} [purchaseTypes] 
+     * @param {Array<OrderStatus>} [statuses] 
+     * @param {Array<AddressType>} [addressTypes] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof OrderApi
      */
-    public apiOrdersExportCsvGet(startDate?: string, endDate?: string, options?: RawAxiosRequestConfig) {
-        return OrderApiFp(this.configuration).apiOrdersExportCsvGet(startDate, endDate, options).then((request) => request(this.axios, this.basePath));
+    public apiOrdersExportExcelGet(startDate?: string, endDate?: string, orderCode?: string, recipientName?: string, phone?: string, minTotalPrice?: number, maxTotalPrice?: number, paymentMethods?: Array<PaymentMethod>, purchaseTypes?: Array<PurchaseType>, statuses?: Array<OrderStatus>, addressTypes?: Array<AddressType>, options?: RawAxiosRequestConfig) {
+        return OrderApiFp(this.configuration).apiOrdersExportExcelGet(startDate, endDate, orderCode, recipientName, phone, minTotalPrice, maxTotalPrice, paymentMethods, purchaseTypes, statuses, addressTypes, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23691,6 +23881,88 @@ export const TransactionApiAxiosParamCreator = function (configuration?: Configu
     return {
         /**
          * 
+         * @param {string} [startDate] 
+         * @param {string} [endDate] 
+         * @param {Array<TransactionType>} [types] 
+         * @param {Array<PaymentMethod>} [paymentMethods] 
+         * @param {number} [minAmount] 
+         * @param {number} [maxAmount] 
+         * @param {string} [senderName] 
+         * @param {string} [receiverName] 
+         * @param {string} [transactionCode] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTransactionsExportExcelGet: async (startDate?: string, endDate?: string, types?: Array<TransactionType>, paymentMethods?: Array<PaymentMethod>, minAmount?: number, maxAmount?: number, senderName?: string, receiverName?: string, transactionCode?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/transactions/export-excel`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (startDate !== undefined) {
+                localVarQueryParameter['StartDate'] = (startDate as any instanceof Date) ?
+                    (startDate as any).toISOString() :
+                    startDate;
+            }
+
+            if (endDate !== undefined) {
+                localVarQueryParameter['EndDate'] = (endDate as any instanceof Date) ?
+                    (endDate as any).toISOString() :
+                    endDate;
+            }
+
+            if (types) {
+                localVarQueryParameter['Types'] = types;
+            }
+
+            if (paymentMethods) {
+                localVarQueryParameter['PaymentMethods'] = paymentMethods;
+            }
+
+            if (minAmount !== undefined) {
+                localVarQueryParameter['MinAmount'] = minAmount;
+            }
+
+            if (maxAmount !== undefined) {
+                localVarQueryParameter['MaxAmount'] = maxAmount;
+            }
+
+            if (senderName !== undefined) {
+                localVarQueryParameter['SenderName'] = senderName;
+            }
+
+            if (receiverName !== undefined) {
+                localVarQueryParameter['ReceiverName'] = receiverName;
+            }
+
+            if (transactionCode !== undefined) {
+                localVarQueryParameter['TransactionCode'] = transactionCode;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {number} [page] 
          * @param {number} [pageSize] 
          * @param {string} [shopId] 
@@ -23754,6 +24026,26 @@ export const TransactionApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
+         * @param {string} [startDate] 
+         * @param {string} [endDate] 
+         * @param {Array<TransactionType>} [types] 
+         * @param {Array<PaymentMethod>} [paymentMethods] 
+         * @param {number} [minAmount] 
+         * @param {number} [maxAmount] 
+         * @param {string} [senderName] 
+         * @param {string} [receiverName] 
+         * @param {string} [transactionCode] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiTransactionsExportExcelGet(startDate?: string, endDate?: string, types?: Array<TransactionType>, paymentMethods?: Array<PaymentMethod>, minAmount?: number, maxAmount?: number, senderName?: string, receiverName?: string, transactionCode?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<File>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiTransactionsExportExcelGet(startDate, endDate, types, paymentMethods, minAmount, maxAmount, senderName, receiverName, transactionCode, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TransactionApi.apiTransactionsExportExcelGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {number} [page] 
          * @param {number} [pageSize] 
          * @param {string} [shopId] 
@@ -23779,6 +24071,23 @@ export const TransactionApiFactory = function (configuration?: Configuration, ba
     return {
         /**
          * 
+         * @param {string} [startDate] 
+         * @param {string} [endDate] 
+         * @param {Array<TransactionType>} [types] 
+         * @param {Array<PaymentMethod>} [paymentMethods] 
+         * @param {number} [minAmount] 
+         * @param {number} [maxAmount] 
+         * @param {string} [senderName] 
+         * @param {string} [receiverName] 
+         * @param {string} [transactionCode] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTransactionsExportExcelGet(startDate?: string, endDate?: string, types?: Array<TransactionType>, paymentMethods?: Array<PaymentMethod>, minAmount?: number, maxAmount?: number, senderName?: string, receiverName?: string, transactionCode?: string, options?: RawAxiosRequestConfig): AxiosPromise<File> {
+            return localVarFp.apiTransactionsExportExcelGet(startDate, endDate, types, paymentMethods, minAmount, maxAmount, senderName, receiverName, transactionCode, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @param {number} [page] 
          * @param {number} [pageSize] 
          * @param {string} [shopId] 
@@ -23799,6 +24108,25 @@ export const TransactionApiFactory = function (configuration?: Configuration, ba
  * @extends {BaseAPI}
  */
 export class TransactionApi extends BaseAPI {
+    /**
+     * 
+     * @param {string} [startDate] 
+     * @param {string} [endDate] 
+     * @param {Array<TransactionType>} [types] 
+     * @param {Array<PaymentMethod>} [paymentMethods] 
+     * @param {number} [minAmount] 
+     * @param {number} [maxAmount] 
+     * @param {string} [senderName] 
+     * @param {string} [receiverName] 
+     * @param {string} [transactionCode] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TransactionApi
+     */
+    public apiTransactionsExportExcelGet(startDate?: string, endDate?: string, types?: Array<TransactionType>, paymentMethods?: Array<PaymentMethod>, minAmount?: number, maxAmount?: number, senderName?: string, receiverName?: string, transactionCode?: string, options?: RawAxiosRequestConfig) {
+        return TransactionApiFp(this.configuration).apiTransactionsExportExcelGet(startDate, endDate, types, paymentMethods, minAmount, maxAmount, senderName, receiverName, transactionCode, options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * 
      * @param {number} [page] 
