@@ -20,6 +20,8 @@ import { CreateMasterOfflineConsignRequest } from "../../../api";
 import { showAlert } from "../../../utils/Alert";
 import { Tabs, Tab } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { formatNumberWithDots, parseFormattedNumber } from "../utils/utils"; // Import the utility functions
+
 interface ConsignDetailRequest {
   masterItemId: string;
   note: string;
@@ -66,6 +68,7 @@ const AddConsignmentOffline: React.FC = () => {
   const pageSize = 6;
   const [formData, setFormData] = useState<ConsignmentForm>(initialFormData);
   const [showNewMasterItemModal, setShowNewMasterItemModal] = useState(false);
+  const [consignmentGender, setConsignmentGender] = useState<string>(""); // For consign detail request
   const [newMasterItem, setNewMasterItem] =
     useState<CreateMasterOfflineConsignRequest>({
       masterItemCode: "",
@@ -79,10 +82,19 @@ const AddConsignmentOffline: React.FC = () => {
   const currentUser = useAuth();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<string>("manual");
-  console.log(formData);
+
+  const handlePriceChange = (
+    index: number,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { value } = e.target;
+    const parsedValue = value === "" ? 0 : parseFormattedNumber(value);
+    handleItemChange(index, "expectedPrice", parsedValue);
+  };
+  console.log(newMasterItem);
   // Query to fetch master items
-  const { data: masterItems } = useQuery({
-    queryKey: ["masterItems"],
+  const { data: masterItems, refetch: refetchMasterItems } = useQuery({
+    queryKey: ["masterItems", consignmentGender],
     queryFn: async () => {
       const masterItemApi = new MasterItemApi();
       const response = await masterItemApi.apiMasterItemsGet(
@@ -93,13 +105,19 @@ const AddConsignmentOffline: React.FC = () => {
         null!,
         null!,
         currentUser.currentUser?.shopId,
-        null!, // You might want to filter by gender if needed
+        consignmentGender as GenderType, // Filter by consignment gender
         true
       );
       return response.data;
     },
+    enabled: !!consignmentGender, // Only run if consignmentGender is set
   });
 
+  const handleConsignmentGenderChange = (index: number, value: string) => {
+    setConsignmentGender(value); // Update the consignment gender
+    handleItemChange(index, "gender", value as "Male" | "Female"); // Update the item gender
+    refetchMasterItems(); // Refetch master items based on the new consignment gender
+  };
   // Query to fetch categories based on selected gender
   const { data: categories } = useQuery(
     ["categories", selectedGender],
@@ -386,11 +404,13 @@ const AddConsignmentOffline: React.FC = () => {
       // Handle error (e.g., show error message to user)
     }
   };
-
   const handleGenderChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const genderId = e.target.value;
-    setSelectedGender(genderId);
-    setNewMasterItem({ ...newMasterItem, categoryId: "" });
+    const selectedValue = e.target.value; // Get the selected value from the event
+    setSelectedGender(selectedValue); // Update the selected gender for the category
+
+    // Map the selected ID to the corresponding string value for newMasterItem
+    const gender = selectedValue === MALE_ID ? "Male" : "Female";
+    setNewMasterItem({ ...newMasterItem, gender }); // Update the gender in newMasterItem
   };
 
   const handleNewMasterItemImageUpload = useCallback(
@@ -699,9 +719,7 @@ const AddConsignmentOffline: React.FC = () => {
                               >
                                 <img
                                   src={url}
-                                  alt={`Item ${index + 1} Image ${
-                                    imageIndex + 1
-                                  }`}
+                                  alt={`Product Image ${imageIndex + 1}`}
                                   style={{
                                     width: "100px",
                                     height: "100px",
@@ -731,6 +749,7 @@ const AddConsignmentOffline: React.FC = () => {
                             onChange={(e) =>
                               handleMasterItemChange(index, e.target.value)
                             }
+                            disabled={!consignmentGender} // Disable until consignment gender is selected
                           >
                             <option value="">Select a Master Product</option>
                             {masterItems?.items?.map(
@@ -739,7 +758,7 @@ const AddConsignmentOffline: React.FC = () => {
                                   key={masterItem.masterItemId}
                                   value={masterItem.masterItemId}
                                 >
-                                  {masterItem.name}-{masterItem.itemCode}-
+                                  {masterItem.name} - {masterItem.itemCode} -{" "}
                                   {masterItem.categoryName}
                                 </option>
                               )
@@ -773,34 +792,47 @@ const AddConsignmentOffline: React.FC = () => {
                           />
                         </div>
                         <div className="mb-3">
-                          <label className="form-label">Expected Price</label>
-                          <input
-                            type="number"
-                            className="form-control form-control-sm"
-                            value={item.expectedPrice}
-                            onChange={(e) =>
-                              handleItemChange(
-                                index,
-                                "expectedPrice",
-                                parseFloat(e.target.value)
-                              )
-                            }
-                            placeholder="Expected Price"
-                          />
+                          <label className="form-label">
+                            {formData.type === "CustomerSale"
+                              ? "Buy Price"
+                              : "Expected Price"}
+                          </label>
+                          <div
+                            style={{ display: "flex", alignItems: "center" }}
+                          >
+                            <input
+                              type="text"
+                              className="form-control form-control-sm"
+                              value={formatNumberWithDots(
+                                item.expectedPrice.toString()
+                              )}
+                              onChange={(e) => handlePriceChange(index, e)}
+                              placeholder={
+                                formData.type === "CustomerSale"
+                                  ? "Buy Price"
+                                  : "Expected Price"
+                              }
+                              maxLength={10}
+                            />
+                            <span style={{ marginLeft: "0.5rem" }}>VND</span>
+                          </div>
                         </div>
                         <div className="mb-3">
-                          <label className="form-label">Gender</label>
+                          <label className="form-label">
+                            Consignment Gender
+                          </label>
                           <select
                             className="form-select form-select-sm"
-                            value={item.gender}
+                            value={consignmentGender}
                             onChange={(e) =>
-                              handleItemChange(
+                              handleConsignmentGenderChange(
                                 index,
-                                "gender",
-                                e.target.value as "Male" | "Female"
+                                e.target.value
                               )
                             }
+                            required
                           >
+                            <option value="">Select Gender</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
                           </select>
@@ -935,7 +967,7 @@ const AddConsignmentOffline: React.FC = () => {
               <Form.Label>Gender</Form.Label>
               <Form.Select
                 value={selectedGender}
-                onChange={handleGenderChange}
+                onChange={handleGenderChange} // Pass the event directly
                 required
               >
                 <option value={MALE_ID}>Male</option>

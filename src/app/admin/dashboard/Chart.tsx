@@ -2,22 +2,54 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import ApexCharts, { ApexOptions } from "apexcharts";
 import { getCSSVariableValue } from "../../../_metronic/assets/ts/_utils";
 import { useThemeMode } from "../../../_metronic/partials";
-import { DashboardApi, ShopApi, ShopDetailResponse } from "../../../api";
+import {
+  AccountApi,
+  DashboardApi,
+  OrderApi,
+  ShopApi,
+  ShopDetailResponse,
+  TransactionApi,
+} from "../../../api";
 import { showAlert } from "../../../utils/Alert";
+import { KTIcon } from "../../../_metronic/helpers"; // Import your icon component
 
 type Props = {
   className: string;
+};
+
+const getChartOptions = (revenueData: number[]): ApexOptions => {
+  return {
+    series: [
+      {
+        name: "Revenue",
+        data: revenueData,
+      },
+    ],
+    chart: {
+      fontFamily: "inherit",
+      type: "area",
+      height: 350,
+      toolbar: {
+        show: false,
+      },
+    },
+    // ... other chart options ...
+  };
 };
 
 const Chart: React.FC<Props> = ({ className }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const { mode } = useThemeMode();
   const [revenueData, setRevenueData] = useState<number[]>([]);
-  const [selectedYear, setSelectedYear] = useState<string>("2024"); // Default year
+  const [totalUsers, setTotalUsers] = useState<number>(0);
+  const [totalStaff, setTotalStaff] = useState<number>(0);
+  const [totalOrders, setTotalOrders] = useState<number>(0);
+  const [totalTransactions, setTotalTransactions] = useState<number[]>([]);
+  const [selectedYear, setSelectedYear] = useState<string>("2024");
   const [selectedShopId, setSelectedShopId] = useState<string>("");
-  const [shops, setShops] = useState<ShopDetailResponse[]>([]); // State to store shops
-  const [isYearInputDisabled, setIsYearInputDisabled] = useState<boolean>(true); // Disable year input initially
-  const [inputYear, setInputYear] = useState<string>("2024"); // New state for input year
+  const [shops, setShops] = useState<ShopDetailResponse[]>([]);
+  const [isYearInputDisabled, setIsYearInputDisabled] = useState<boolean>(true);
+  const [inputYear, setInputYear] = useState<string>("2024");
 
   const refreshMode = useCallback(() => {
     if (!chartRef.current) {
@@ -46,29 +78,63 @@ const Chart: React.FC<Props> = ({ className }) => {
   }, [chartRef, mode, revenueData, refreshMode]);
 
   useEffect(() => {
-    fetchShops(); // Fetch shops when the component mounts
+    fetchShops();
+  }, []);
+
+  useEffect(() => {
+    fetchTotalUsers();
+    fetchTotalStaff();
+    fetchTotalOrders();
+    fetchTotalTransactions();
   }, []);
 
   useEffect(() => {
     if (selectedShopId) {
       fetchRevenueData(selectedShopId, Number(selectedYear));
-      setIsYearInputDisabled(false); // Enable year input when a shop is selected
+      setIsYearInputDisabled(false);
     } else {
-      setIsYearInputDisabled(true); // Disable year input if no shop is selected
+      setIsYearInputDisabled(true);
     }
   }, [selectedYear, selectedShopId]);
 
   const fetchShops = async () => {
     const shopAPI = new ShopApi();
     const shopResponse = await shopAPI.apiShopsGet();
-    console.log(shopResponse);
-
-    // Safely handle the case where data might be null or undefined
     if (shopResponse.data.resultStatus === "Success" && shopResponse.data) {
-      setShops(shopResponse.data.data ?? []); //
+      setShops(shopResponse.data.data ?? []);
     } else {
-      setShops([]); // Default to an empty array if no valid data
+      setShops([]);
     }
+  };
+
+  const fetchTotalUsers = async () => {
+    const accountAPI = new AccountApi();
+    const usersResponse = await accountAPI.apiAccountsGet();
+    setTotalUsers(usersResponse.data.totalCount ?? 0);
+  };
+
+  const fetchTotalStaff = async () => {
+    const accountAPI = new AccountApi();
+    const staffResponse = await accountAPI.apiAccountsGet(
+      null!,
+      null!,
+      null!,
+      null!,
+      "Staff"
+    );
+    setTotalStaff(staffResponse.data.totalCount ?? 0);
+  };
+
+  const fetchTotalOrders = async () => {
+    const orderAPI = new OrderApi();
+    const ordersResponse = await orderAPI.apiOrdersGet();
+    setTotalOrders(ordersResponse.data.totalCount ?? 0);
+  };
+
+  const fetchTotalTransactions = async () => {
+    const transactionAPI = new TransactionApi();
+    const transactionsResponse = await transactionAPI.apiTransactionsGet();
+    setTotalTransactions([transactionsResponse.data?.data?.totalCount ?? 0]);
   };
 
   const fetchRevenueData = async (shopId: string, year: number) => {
@@ -78,41 +144,11 @@ const Chart: React.FC<Props> = ({ className }) => {
       year
     );
 
-    // Provide a default value of 0 for any undefined revenue
     const formattedData = revRespond.data.monthlyRevenue!.map(
       (item) => item.revenue ?? 0
     );
 
     setRevenueData(formattedData);
-  };
-
-  const handleYearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputYear(e.target.value);
-  };
-
-  const handleYearKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      const year = parseInt(inputYear, 10);
-      if (
-        !isNaN(year) &&
-        year >= 2000 &&
-        year <= 3000 &&
-        inputYear.length === 4
-      ) {
-        setSelectedYear(inputYear);
-      } else {
-        // Reset to previous valid year if input is invalid
-        setInputYear(selectedYear);
-        showAlert(
-          "error",
-          "Please enter a valid 4-digit year between 2000 and 3000."
-        );
-      }
-    }
-  };
-
-  const handleShopChange = (shopId: string) => {
-    setSelectedShopId(shopId);
   };
 
   return (
@@ -126,12 +162,10 @@ const Chart: React.FC<Props> = ({ className }) => {
             Monthly revenue data
           </span>
         </h3>
-
         <div className="card-toolbar">
-          {/* Shop Selection */}
           <select
             value={selectedShopId}
-            onChange={(e) => handleShopChange(e.target.value)}
+            onChange={(e) => setSelectedShopId(e.target.value)}
             className="form-control"
           >
             <option value="">Select Shop</option>
@@ -141,13 +175,10 @@ const Chart: React.FC<Props> = ({ className }) => {
               </option>
             ))}
           </select>
-
-          {/* Year Selection */}
           <input
             type="text"
             value={inputYear}
-            onChange={handleYearChange}
-            onKeyPress={handleYearKeyPress}
+            onChange={(e) => setInputYear(e.target.value)}
             placeholder="Enter year and press Enter"
             className="form-control"
             disabled={isYearInputDisabled}
@@ -156,6 +187,56 @@ const Chart: React.FC<Props> = ({ className }) => {
       </div>
 
       <div className="card-body">
+        <div className="row">
+          <div className="col-md-3">
+            <div className="card border">
+              <div className="card-body d-flex align-items-center">
+                <KTIcon iconName="user" className="fs-2 text-primary me-3" />
+                <div>
+                  <h4>Total Users</h4>
+                  <p>{totalUsers}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-3">
+            <div className="card border">
+              <div className="card-body d-flex align-items-center">
+                <KTIcon iconName="group" className="fs-2 text-success me-3" />
+                <div>
+                  <h4>Total Staff</h4>
+                  <p>{totalStaff}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-3">
+            <div className="card border">
+              <div className="card-body d-flex align-items-center">
+                <KTIcon
+                  iconName="shopping-cart"
+                  className="fs-2 text-warning me-3"
+                />
+                <div>
+                  <h4>Total Orders</h4>
+                  <p>{totalOrders}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-3">
+            <div className="card border">
+              <div className="card-body d-flex align-items-center">
+                <KTIcon iconName="money" className="fs-2 text-danger me-3" />
+                <div>
+                  <h4>Total Transactions</h4>
+                  <p>{totalTransactions[0]}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div
           ref={chartRef}
           id="kt_charts_widget_3_chart"
@@ -167,141 +248,3 @@ const Chart: React.FC<Props> = ({ className }) => {
 };
 
 export { Chart };
-
-function getChartOptions(revenueData: number[]): ApexOptions {
-  const labelColor = getCSSVariableValue("--bs-gray-500");
-  const borderColor = getCSSVariableValue("--bs-gray-200");
-  const baseColor = getCSSVariableValue("--bs-success");
-  const lightColor = getCSSVariableValue("--bs-success-light");
-
-  return {
-    series: [
-      {
-        name: "Revenue",
-        data: revenueData,
-      },
-    ],
-    chart: {
-      fontFamily: "inherit",
-      type: "area",
-      height: 350,
-      toolbar: {
-        show: false,
-      },
-    },
-    plotOptions: {},
-    legend: {
-      show: false,
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    fill: {
-      type: "solid",
-      opacity: 1,
-    },
-    stroke: {
-      curve: "smooth",
-      show: true,
-      width: 3,
-      colors: [baseColor],
-    },
-    xaxis: {
-      categories: [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ],
-      axisBorder: {
-        show: true,
-      },
-      axisTicks: {
-        show: true,
-      },
-      labels: {
-        style: {
-          colors: labelColor,
-          fontSize: "12px",
-        },
-      },
-      crosshairs: {
-        position: "front",
-        stroke: {
-          color: baseColor,
-          width: 1,
-          dashArray: 3,
-        },
-      },
-      tooltip: {
-        enabled: true,
-        formatter: undefined,
-        offsetY: 0,
-        style: {
-          fontSize: "12px",
-        },
-      },
-    },
-    yaxis: {
-      labels: {
-        style: {
-          colors: labelColor,
-          fontSize: "12px",
-        },
-      },
-    },
-    states: {
-      normal: {
-        filter: {
-          type: "none",
-          value: 0,
-        },
-      },
-      hover: {
-        filter: {
-          type: "none",
-          value: 0,
-        },
-      },
-      active: {
-        allowMultipleDataPointsSelection: false,
-        filter: {
-          type: "none",
-          value: 0,
-        },
-      },
-    },
-    tooltip: {
-      style: {
-        fontSize: "12px",
-      },
-      y: {
-        formatter: function (val) {
-          return val + " VND";
-        },
-      },
-    },
-    colors: [lightColor],
-    grid: {
-      borderColor: borderColor,
-      strokeDashArray: 4,
-      yaxis: {
-        lines: {
-          show: true,
-        },
-      },
-    },
-    markers: {
-      strokeColors: baseColor,
-      strokeWidth: 3,
-    },
-  };
-}

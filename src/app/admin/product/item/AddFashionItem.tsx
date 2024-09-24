@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-
 import { CreateIndividualItemRequest, MasterItemApi } from "../../../../api";
-
 import { useParams } from "react-router-dom";
 import { showAlert } from "../../../../utils/Alert";
+import {
+  formatNumberWithDots,
+  parseFormattedNumber,
+} from "../../../pages/utils/utils"; // Import the utility functions
 
 export type SizeType = "XS" | "S" | "M" | "L" | "XL";
 
@@ -44,6 +46,7 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
         id,
         itemData
       );
+      showAlert("success", "Fashion product(s) created successfully");
     } catch (error) {
       console.error("Error creating fashion product:", error);
 
@@ -64,6 +67,15 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
       ...prevItem,
       [id]:
         type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
+    }));
+  };
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    const parsedValue = value === "" ? 0 : parseFormattedNumber(value);
+    setFashionItem((prevItem) => ({
+      ...prevItem,
+      sellingPrice: parsedValue,
     }));
   };
 
@@ -252,16 +264,22 @@ const AddFashionItem: React.FC<AddFashionItemProps> = ({
                   >
                     Selling Price
                   </label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    id="sellingPrice"
-                    placeholder="Enter the selling price"
-                    value={fashionItem.sellingPrice || ""}
-                    onChange={handleChange}
-                    disabled={isLoading}
-                    style={{ padding: "0.5rem" }}
-                  />
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="sellingPrice"
+                      placeholder="Enter the selling price"
+                      value={formatNumberWithDots(
+                        fashionItem.sellingPrice!.toString()
+                      )}
+                      maxLength={10}
+                      onChange={handlePriceChange}
+                      disabled={isLoading}
+                      style={{ padding: "0.5rem", flex: 1 }}
+                    />
+                    <span style={{ marginLeft: "0.5rem" }}>VND</span>
+                  </div>
                 </div>
                 {/* Stock amount */}
                 <div className="form-group" style={{ marginBottom: "1rem" }}>

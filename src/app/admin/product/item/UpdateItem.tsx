@@ -9,6 +9,11 @@ import { storage } from "../../../../firebaseconfig";
 import { KTIcon } from "../../../../_metronic/helpers";
 import { showAlert } from "../../../../utils/Alert";
 
+import {
+  formatNumberWithDots,
+  parseFormattedNumber,
+} from "../../../pages/utils/utils"; // Import the utility functions
+
 interface UpdateItemProps {
   isOpen: boolean;
   onClose: () => void;
@@ -64,6 +69,15 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    const parsedValue = value === "" ? 0 : parseFormattedNumber(value);
+    setFormData((prev) => ({
+      ...prev,
+      sellingPrice: parsedValue,
+    }));
   };
 
   const onDrop = useCallback(
@@ -126,14 +140,23 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
             <div className="modal-body">
               <div className="form-group mb-3">
                 <label htmlFor="sellingPrice">Selling Price</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  id="sellingPrice"
-                  name="sellingPrice"
-                  value={formData.sellingPrice || ""}
-                  onChange={handleChange}
-                />
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="sellingPrice"
+                    name="sellingPrice"
+                    placeholder="Enter the selling price"
+                    value={formatNumberWithDots(
+                      formData.sellingPrice?.toString() || ""
+                    )}
+                    maxLength={10}
+                    onChange={handlePriceChange}
+                    disabled={isImageLoading || updateMutation.isLoading}
+                    style={{ padding: "0.5rem", flex: 1 }}
+                  />
+                  <span style={{ marginLeft: "0.5rem" }}>VND</span>
+                </div>
               </div>
               <div className="form-group mb-3">
                 <label htmlFor="note">Note</label>
