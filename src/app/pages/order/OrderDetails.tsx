@@ -18,19 +18,23 @@ const OrderDetails: React.FC<{
         throw new Error("Order ID is missing");
       }
       const orderApi = new OrderApi();
-      return await orderApi.apiOrdersOrderIdInvoiceGet(orderDetail.orderId, currentUser?.shopId, { responseType: 'arraybuffer' });
+      return await orderApi.apiOrdersOrderIdInvoiceGet(
+        orderDetail.orderId,
+        currentUser?.shopId,
+        { responseType: "arraybuffer" }
+      );
     },
     {
       onSuccess: (response) => {
-        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const blob = new Blob([response.data], { type: "application/pdf" });
         const url = window.URL.createObjectURL(blob);
-        window.open(url, '_blank');
+        window.open(url, "_blank");
         window.URL.revokeObjectURL(url);
       },
       onError: (error) => {
         console.error("Error generating invoice:", error);
         // Handle error (e.g., show an error message to the user)
-      }
+      },
     }
   );
 
@@ -201,6 +205,7 @@ const OrderDetails: React.FC<{
                     Discount
                   </div>
                 </td>
+
                 <td className="fw-bold text-end">
                   <strong style={{ color: "red" }}>
                     -
@@ -234,11 +239,19 @@ const OrderDetails: React.FC<{
           <button
             className="btn btn-primary"
             onClick={handleGenerateInvoice}
-            disabled={!orderDetail?.orderId || generateInvoiceMutation.isLoading || orderDetail.status !== "Completed"}
+            disabled={
+              !orderDetail?.orderId ||
+              generateInvoiceMutation.isLoading ||
+              orderDetail.status !== "Completed"
+            }
           >
             {generateInvoiceMutation.isLoading ? (
               <>
-                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                <span
+                  className="spinner-border spinner-border-sm me-2"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
                 Generating Invoice...
               </>
             ) : (
