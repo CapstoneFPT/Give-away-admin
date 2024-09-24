@@ -22,7 +22,7 @@ const ProductTable = ({
 
   const fetchFashionItems = async ({ queryKey }: any) => {
     const [searchValue, page] = queryKey;
-
+    const pageSize = 10;
     const fashionItemApi = new FashionItemApi();
     const response = await fashionItemApi.apiFashionitemsGet(
       searchValue,
@@ -37,8 +37,8 @@ const ProductTable = ({
       ["ConsignedForSale", "ItemBase"],
       null!,
       null!,
-      null!,
-      null!,
+      page,
+      pageSize,
       null!,
       null!,
       currentUser?.shopId,
@@ -49,11 +49,11 @@ const ProductTable = ({
   };
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["fashionItems", searchTerm, currentPage],
+    queryKey: [searchTerm, currentPage, pageSize],
     queryFn: fetchFashionItems,
     keepPreviousData: true,
   });
-
+  console.log(data);
   const fashionItems = data?.items || [];
   const totalCount = data?.totalCount || 0;
   const totalPages = data?.totalPages || 1;
