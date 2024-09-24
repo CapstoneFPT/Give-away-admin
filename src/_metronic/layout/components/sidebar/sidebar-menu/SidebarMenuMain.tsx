@@ -126,6 +126,18 @@ const SidebarMenuMain = () => {
               hasBullet={true}
             />
           </SidebarMenuItemWithSub>
+          <SidebarMenuItemWithSub
+            to="/inquiries"
+            title="Inquiries"
+            icon="element-11"
+            fontIcon="bi-chat-left-text"
+          >
+            <SidebarMenuItem
+              to="/inquiries"
+              title="View Inquiries"
+              hasBullet={true}
+            />
+          </SidebarMenuItemWithSub>
         </>
       )}
       {currentUser?.role === "Staff" && (
@@ -225,6 +237,18 @@ const SidebarMenuMain = () => {
             <SidebarMenuItem
               to="/transaction"
               title="View Transactions"
+              hasBullet={true}
+            />
+          </SidebarMenuItemWithSub>
+          <SidebarMenuItemWithSub
+            to="/inquiries"
+            title="Inquiries"
+            icon="element-11"
+            fontIcon="bi-chat-left-text"
+          >
+            <SidebarMenuItem
+              to="/inquiries"
+              title="View Inquiries"
               hasBullet={true}
             />
           </SidebarMenuItemWithSub>

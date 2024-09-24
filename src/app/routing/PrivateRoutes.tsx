@@ -35,6 +35,7 @@ import CreateRefund from "../pages/refund/CreateRefund.tsx";
 import RefundItemDetail from "../pages/refund/RefundItemDetail.tsx";
 import AddConsignmentOffline from "../pages/consign/AddConsignmentOffline.tsx";
 import AddCategory from "../admin/category/AddCategory.tsx";
+import InquiriesPage from "../pages/inquiries/InquiriesPage.tsx";
 import ChangePassword from "../admin/account/ChangePassword.tsx";
 const PrivateRoutes = () => {
   const { currentUser } = useAuth();
@@ -79,6 +80,14 @@ const PrivateRoutes = () => {
         <Route path="/order/order-list" element={<OrderPage />} />
 
         {/* Product Admin Routes */}
+        <Route
+          path="/inquiries"
+          element={
+            <ProtectedRoute roles={["Admin", "Staff"]}>
+              <InquiriesPage />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="change-password"
           element={

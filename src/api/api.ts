@@ -6818,7 +6818,15 @@ export interface InquiryListResponse {
      * @memberof InquiryListResponse
      */
     'createdDate'?: string;
+    /**
+     * 
+     * @type {InquiryStatus}
+     * @memberof InquiryListResponse
+     */
+    'status'?: InquiryStatus;
 }
+
+
 /**
  * 
  * @export
@@ -6894,8 +6902,7 @@ export interface InquiryListResponsePaginationResponse {
 
 export const InquiryStatus = {
     Processing: 'Processing',
-    Approved: 'Approved',
-    Rejected: 'Rejected'
+    Completed: 'Completed'
 } as const;
 
 export type InquiryStatus = typeof InquiryStatus[keyof typeof InquiryStatus];
@@ -14074,47 +14081,6 @@ export const AuctionApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiAuctionsAuctionIdDepositsDepositIdDelete: async (auctionId: string, depositId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'auctionId' is not null or undefined
-            assertParamExists('apiAuctionsAuctionIdDepositsDepositIdDelete', 'auctionId', auctionId)
-            // verify required parameter 'depositId' is not null or undefined
-            assertParamExists('apiAuctionsAuctionIdDepositsDepositIdDelete', 'depositId', depositId)
-            const localVarPath = `/api/auctions/{auctionId}/deposits/{depositId}`
-                .replace(`{${"auctionId"}}`, encodeURIComponent(String(auctionId)))
-                .replace(`{${"depositId"}}`, encodeURIComponent(String(depositId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication Bearer required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string} auctionId 
-         * @param {string} depositId 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
         apiAuctionsAuctionIdDepositsDepositIdGet: async (auctionId: string, depositId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'auctionId' is not null or undefined
             assertParamExists('apiAuctionsAuctionIdDepositsDepositIdGet', 'auctionId', auctionId)
@@ -14143,51 +14109,6 @@ export const AuctionApiAxiosParamCreator = function (configuration?: Configurati
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string} auctionId 
-         * @param {string} depositId 
-         * @param {object} [body] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        apiAuctionsAuctionIdDepositsDepositIdPut: async (auctionId: string, depositId: string, body?: object, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'auctionId' is not null or undefined
-            assertParamExists('apiAuctionsAuctionIdDepositsDepositIdPut', 'auctionId', auctionId)
-            // verify required parameter 'depositId' is not null or undefined
-            assertParamExists('apiAuctionsAuctionIdDepositsDepositIdPut', 'depositId', depositId)
-            const localVarPath = `/api/auctions/{auctionId}/deposits/{depositId}`
-                .replace(`{${"auctionId"}}`, encodeURIComponent(String(auctionId)))
-                .replace(`{${"depositId"}}`, encodeURIComponent(String(depositId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication Bearer required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(body, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -14652,43 +14573,6 @@ export const AuctionApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * 
          * @param {string} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        apiAuctionsIdDelete: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('apiAuctionsIdDelete', 'id', id)
-            const localVarPath = `/api/auctions/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication Bearer required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string} id 
          * @param {string} [memberId] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -14907,37 +14791,10 @@ export const AuctionApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiAuctionsAuctionIdDepositsDepositIdDelete(auctionId: string, depositId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiAuctionsAuctionIdDepositsDepositIdDelete(auctionId, depositId, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['AuctionApi.apiAuctionsAuctionIdDepositsDepositIdDelete']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @param {string} auctionId 
-         * @param {string} depositId 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
         async apiAuctionsAuctionIdDepositsDepositIdGet(auctionId: string, depositId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AuctionDepositDetailResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiAuctionsAuctionIdDepositsDepositIdGet(auctionId, depositId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['AuctionApi.apiAuctionsAuctionIdDepositsDepositIdGet']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @param {string} auctionId 
-         * @param {string} depositId 
-         * @param {object} [body] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async apiAuctionsAuctionIdDepositsDepositIdPut(auctionId: string, depositId: string, body?: object, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AuctionDepositDetailResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiAuctionsAuctionIdDepositsDepositIdPut(auctionId, depositId, body, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['AuctionApi.apiAuctionsAuctionIdDepositsDepositIdPut']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -15080,18 +14937,6 @@ export const AuctionApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @param {string} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async apiAuctionsIdDelete(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiAuctionsIdDelete(id, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['AuctionApi.apiAuctionsIdDelete']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @param {string} id 
          * @param {string} [memberId] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -15170,29 +15015,8 @@ export const AuctionApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiAuctionsAuctionIdDepositsDepositIdDelete(auctionId: string, depositId: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.apiAuctionsAuctionIdDepositsDepositIdDelete(auctionId, depositId, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {string} auctionId 
-         * @param {string} depositId 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
         apiAuctionsAuctionIdDepositsDepositIdGet(auctionId: string, depositId: string, options?: RawAxiosRequestConfig): AxiosPromise<AuctionDepositDetailResponse> {
             return localVarFp.apiAuctionsAuctionIdDepositsDepositIdGet(auctionId, depositId, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {string} auctionId 
-         * @param {string} depositId 
-         * @param {object} [body] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        apiAuctionsAuctionIdDepositsDepositIdPut(auctionId: string, depositId: string, body?: object, options?: RawAxiosRequestConfig): AxiosPromise<AuctionDepositDetailResponse> {
-            return localVarFp.apiAuctionsAuctionIdDepositsDepositIdPut(auctionId, depositId, body, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -15304,15 +15128,6 @@ export const AuctionApiFactory = function (configuration?: Configuration, basePa
         /**
          * 
          * @param {string} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        apiAuctionsIdDelete(id: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.apiAuctionsIdDelete(id, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {string} id 
          * @param {string} [memberId] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -15377,33 +15192,8 @@ export class AuctionApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof AuctionApi
      */
-    public apiAuctionsAuctionIdDepositsDepositIdDelete(auctionId: string, depositId: string, options?: RawAxiosRequestConfig) {
-        return AuctionApiFp(this.configuration).apiAuctionsAuctionIdDepositsDepositIdDelete(auctionId, depositId, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {string} auctionId 
-     * @param {string} depositId 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof AuctionApi
-     */
     public apiAuctionsAuctionIdDepositsDepositIdGet(auctionId: string, depositId: string, options?: RawAxiosRequestConfig) {
         return AuctionApiFp(this.configuration).apiAuctionsAuctionIdDepositsDepositIdGet(auctionId, depositId, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {string} auctionId 
-     * @param {string} depositId 
-     * @param {object} [body] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof AuctionApi
-     */
-    public apiAuctionsAuctionIdDepositsDepositIdPut(auctionId: string, depositId: string, body?: object, options?: RawAxiosRequestConfig) {
-        return AuctionApiFp(this.configuration).apiAuctionsAuctionIdDepositsDepositIdPut(auctionId, depositId, body, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -15531,17 +15321,6 @@ export class AuctionApi extends BaseAPI {
      */
     public apiAuctionsIdBidsPlaceBidPost(id: string, createBidRequest?: CreateBidRequest, options?: RawAxiosRequestConfig) {
         return AuctionApiFp(this.configuration).apiAuctionsIdBidsPlaceBidPost(id, createBidRequest, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {string} id 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof AuctionApi
-     */
-    public apiAuctionsIdDelete(id: string, options?: RawAxiosRequestConfig) {
-        return AuctionApiFp(this.configuration).apiAuctionsIdDelete(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -19616,6 +19395,43 @@ export const InquiryApiAxiosParamCreator = function (configuration?: Configurati
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @param {string} inquiryId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiInquiriesInquiryIdPut: async (inquiryId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'inquiryId' is not null or undefined
+            assertParamExists('apiInquiriesInquiryIdPut', 'inquiryId', inquiryId)
+            const localVarPath = `/api/inquiries/{inquiryId}`
+                .replace(`{${"inquiryId"}}`, encodeURIComponent(String(inquiryId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -19641,6 +19457,18 @@ export const InquiryApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['InquiryApi.apiInquiriesGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
+        /**
+         * 
+         * @param {string} inquiryId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiInquiriesInquiryIdPut(inquiryId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<InquiryListResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiInquiriesInquiryIdPut(inquiryId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['InquiryApi.apiInquiriesInquiryIdPut']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
     }
 };
 
@@ -19662,6 +19490,15 @@ export const InquiryApiFactory = function (configuration?: Configuration, basePa
          */
         apiInquiriesGet(page?: number, pageSize?: number, searchName?: string, memberId?: string, options?: RawAxiosRequestConfig): AxiosPromise<InquiryListResponsePaginationResponse> {
             return localVarFp.apiInquiriesGet(page, pageSize, searchName, memberId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} inquiryId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiInquiriesInquiryIdPut(inquiryId: string, options?: RawAxiosRequestConfig): AxiosPromise<InquiryListResponse> {
+            return localVarFp.apiInquiriesInquiryIdPut(inquiryId, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -19685,6 +19522,17 @@ export class InquiryApi extends BaseAPI {
      */
     public apiInquiriesGet(page?: number, pageSize?: number, searchName?: string, memberId?: string, options?: RawAxiosRequestConfig) {
         return InquiryApiFp(this.configuration).apiInquiriesGet(page, pageSize, searchName, memberId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} inquiryId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof InquiryApi
+     */
+    public apiInquiriesInquiryIdPut(inquiryId: string, options?: RawAxiosRequestConfig) {
+        return InquiryApiFp(this.configuration).apiInquiriesInquiryIdPut(inquiryId, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
