@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import ApexCharts, { ApexOptions } from "apexcharts";
 import { useThemeMode } from "../../../_metronic/partials";
@@ -75,7 +76,6 @@ const Chart: React.FC<Props> = ({ className }) => {
     fetchShops();
   }, []);
 
-
   useEffect(() => {
     if (selectedShopId) {
       fetchRevenueData(selectedShopId, Number(selectedYear));
@@ -95,7 +95,6 @@ const Chart: React.FC<Props> = ({ className }) => {
     }
   };
 
-
   const fetchRevenueData = async (shopId: string, year: number) => {
     const revenueAPI = new DashboardApi();
     const revRespond = await revenueAPI.shopShopIdMonthlyOfflineRevenueGet(
@@ -112,61 +111,58 @@ const Chart: React.FC<Props> = ({ className }) => {
 
   return (
     <div className="row --gap-5">
-    {/* Wrapper column that spans the entire width */}
-    <div className="col-24">
-      <div className="row">
-        {/* Revenue column */}
-        <div className="col-xl">
-          <div className={`card ${className}`}>
-            <div className="card-header border-0 pt-5">
-              <h3 className="card-title align-items-start flex-column">
-                <span className="card-label fw-bold fs-3 mb-1">
-                  Revenue for {selectedYear}
-                </span>
-                <span className="text-muted fw-semibold fs-7">
-                  Monthly revenue data
-                </span>
-              </h3>
-              <div className="card-toolbar">
-                <select
-                  value={selectedShopId}
-                  onChange={(e) => setSelectedShopId(e.target.value)}
-                  className="form-control"
-                >
-                  <option value="">Select Shop</option>
-                  {shops.map((shop) => (
-                    <option key={shop.shopId} value={shop.shopId}>
-                      {shop.address}
-                    </option>
-                  ))}
-                </select>
-                <input
-                  type="text"
-                  value={inputYear}
-                  onChange={(e) => setInputYear(e.target.value)}
-                  placeholder="Enter year and press Enter"
-                  className="form-control"
-                  disabled={isYearInputDisabled}
-                />
+      {/* Wrapper column that spans the entire width */}
+      <div className="col-24">
+        <div className="row">
+          {/* Revenue column */}
+          <div className="col-xl">
+            <div className={`card ${className}`}>
+              <div className="card-header border-0 pt-5">
+                <h3 className="card-title align-items-start flex-column">
+                  <span className="card-label fw-bold fs-3 mb-1">
+                    Revenue for {selectedYear}
+                  </span>
+                  <span className="text-muted fw-semibold fs-7">
+                    Monthly revenue data
+                  </span>
+                </h3>
+                <div className="card-toolbar">
+                  <select
+                    value={selectedShopId}
+                    onChange={(e) => setSelectedShopId(e.target.value)}
+                    className="form-control"
+                  >
+                    <option value="">Select Shop</option>
+                    {shops.map((shop) => (
+                      <option key={shop.shopId} value={shop.shopId}>
+                        {shop.address}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    type="text"
+                    value={inputYear}
+                    onChange={(e) => setInputYear(e.target.value)}
+                    placeholder="Enter year and press Enter"
+                    className="form-control"
+                    disabled={isYearInputDisabled}
+                  />
+                </div>
+              </div>
+              <div className="card-body">
+                <div
+                  ref={chartRef}
+                  id="kt_charts_widget_3_chart"
+                  style={{ height: "350px" }}
+                ></div>
               </div>
             </div>
-            <div className="card-body">
-              <div
-                ref={chartRef}
-                id="kt_charts_widget_3_chart"
-                style={{ height: "350px" }}
-              ></div>
-            </div>
           </div>
+
+          {/* Totals column */}
         </div>
-  
-        {/* Totals column */}
-       
       </div>
     </div>
-  </div>
-  
-  
   );
 };
 

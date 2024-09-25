@@ -6,7 +6,6 @@ import {
   CreateRefundByShopRequest,
   OrderDetailedResponse,
   OrderLineItemListResponse,
-  OrderLineItemListResponsePaginationResponse,
 } from "../../../api";
 import { Content } from "../../../_metronic/layout/components/content";
 import { KTCard, KTCardBody } from "../../../_metronic/helpers";
@@ -41,17 +40,16 @@ const CreateRefund: React.FC = () => {
   );
 
   // Fetch order line items for the selected order
-  const { data: orderLineItems } =
-    useQuery<OrderLineItemListResponsePaginationResponse>(
-      ["orderLineItems", selectedOrder],
-      async () => {
-        const response = await orderApi.apiOrdersOrderIdOrderlineitemsGet(
-          selectedOrder
-        );
-        return response.data;
-      },
-      { enabled: !!selectedOrder }
-    );
+  const { data: orderLineItems } = useQuery<OrderLineItemListResponse[]>(
+    ["orderLineItems", selectedOrder],
+    async () => {
+      const response = await orderApi.apiOrdersOrderIdOrderlineitemsGet(
+        selectedOrder
+      );
+      return response.data.items || [];
+    },
+    { enabled: !!selectedOrder }
+  );
 
   // Extract the items from the response
 
@@ -160,7 +158,7 @@ const CreateRefund: React.FC = () => {
                         <th className="min-w-50px">Unit Price</th>
                         <th className="min-w-50px">Status</th>
 
-                        {orderLineItems.items?.some(
+                        {orderLineItems.some(
                           (item: OrderLineItemListResponse) =>
                             item.itemStatus !== "Returned"
                         ) && <th className="min-w-50px">Action</th>}
@@ -168,45 +166,43 @@ const CreateRefund: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {orderLineItems.items?.map(
-                        (item: OrderLineItemListResponse) => (
-                          <tr key={item.orderLineItemId}>
-                            <td>{item.itemName}</td>
-                            <td>{item.quantity}</td>
-                            <td>{item.unitPrice}</td>
-                            <td>{item.itemStatus}</td>
-                            {item.itemStatus !== "Returned" && (
-                              <td>
-                                <button
-                                  type="button"
-                                  className={`btn btn-sm ${
-                                    selectedItem === item.orderLineItemId
-                                      ? "btn-primary"
-                                      : "btn-light-primary"
-                                  }`}
-                                  onClick={() =>
-                                    handleItemSelect(item.orderLineItemId || "")
-                                  }
-                                >
-                                  {selectedItem === item.orderLineItemId
-                                    ? "Selected"
-                                    : "Select"}
-                                </button>
-                              </td>
-                            )}
+                      {orderLineItems.map((item: OrderLineItemListResponse) => (
+                        <tr key={item.orderLineItemId}>
+                          <td>{item.itemName}</td>
+                          <td>{item.quantity}</td>
+                          <td>{item.unitPrice}</td>
+                          <td>{item.itemStatus}</td>
+                          {item.itemStatus !== "Returned" && (
                             <td>
                               <button
-                                className="btn btn-light-primary"
+                                type="button"
+                                className={`btn btn-sm ${
+                                  selectedItem === item.orderLineItemId
+                                    ? "btn-primary"
+                                    : "btn-light-primary"
+                                }`}
                                 onClick={() =>
-                                  handleItemDetail(item.itemId || "")
+                                  handleItemSelect(item.orderLineItemId || "")
                                 }
                               >
-                                Detail
+                                {selectedItem === item.orderLineItemId
+                                  ? "Selected"
+                                  : "Select"}
                               </button>
                             </td>
-                          </tr>
-                        )
-                      )}
+                          )}
+                          <td>
+                            <button
+                              className="btn btn-light-primary"
+                              onClick={() =>
+                                handleItemDetail(item.itemId || "")
+                              }
+                            >
+                              Detail
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                 </div>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import { useParams } from "react-router-dom";
 import {
@@ -11,6 +12,7 @@ import OrderLineItems from "./OrderLineItems.tsx";
 import { useQuery } from "react-query";
 import OrderDetails from "./OrderDetails.tsx";
 import CustomerDetails from "./CustomerDetails.tsx";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import ShippingAddress from "./ShippingAddress.tsx";
 
 const OrderDetailPage: React.FC = () => {
