@@ -97,6 +97,7 @@ const OrderList: React.FC<Props> = ({ className }) => {
       filters.endDate,
       filters.orderCode,
       filters.recipientName,
+      currentUser?.shopId,
       filters.phone,
       filters.minTotalPrice ? parseFloat(filters.minTotalPrice) : undefined,
       filters.maxTotalPrice ? parseFloat(filters.maxTotalPrice) : undefined,
