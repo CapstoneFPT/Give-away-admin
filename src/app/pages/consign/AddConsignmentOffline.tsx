@@ -82,7 +82,8 @@ const AddConsignmentOffline: React.FC = () => {
   const currentUser = useAuth();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<string>("manual");
-
+  const [isImageUploading, setIsImageUploading] = useState<boolean>(false);
+  console.log(formData);
   const handlePriceChange = (
     index: number,
     e: React.ChangeEvent<HTMLInputElement>
@@ -91,7 +92,8 @@ const AddConsignmentOffline: React.FC = () => {
     const parsedValue = value === "" ? 0 : parseFormattedNumber(value);
     handleItemChange(index, "expectedPrice", parsedValue);
   };
-  console.log(newMasterItem);
+  const [isNewMasterItemImageUploading, setIsNewMasterItemImageUploading] =
+    useState<boolean>(false);
   // Query to fetch master items
   const { data: masterItems, refetch: refetchMasterItems } = useQuery({
     queryKey: ["masterItems", consignmentGender],
@@ -319,29 +321,36 @@ const AddConsignmentOffline: React.FC = () => {
 
   const handleImageUpload = useCallback(
     async (index: number, acceptedFiles: File[]) => {
-      const uploadPromises = acceptedFiles.map(async (file) => {
-        const storageRef = ref(storage, `consignment_images/${file.name}`);
-        const snapshot = await uploadBytes(storageRef, file);
-        return getDownloadURL(snapshot.ref);
-      });
+      setIsImageUploading(true);
+      try {
+        const uploadPromises = acceptedFiles.map(async (file) => {
+          const storageRef = ref(storage, `consignment_images/${file.name}`);
+          const snapshot = await uploadBytes(storageRef, file);
+          return getDownloadURL(snapshot.ref);
+        });
 
-      const firebaseUrls = await Promise.all(uploadPromises);
+        const firebaseUrls = await Promise.all(uploadPromises);
 
-      setFormData((prevData) => {
-        const updatedItems = [...prevData.consignDetailRequests];
-        updatedItems[index] = {
-          ...updatedItems[index],
-          imageUrls: [...updatedItems[index].imageUrls, ...firebaseUrls],
-        };
-        return {
-          ...prevData,
-          consignDetailRequests: updatedItems,
-        };
-      });
+        setFormData((prevData) => {
+          const updatedItems = [...prevData.consignDetailRequests];
+          updatedItems[index] = {
+            ...updatedItems[index],
+            imageUrls: [...updatedItems[index].imageUrls, ...firebaseUrls],
+          };
+          return {
+            ...prevData,
+            consignDetailRequests: updatedItems,
+          };
+        });
+      } catch (error) {
+        console.error("Error uploading images:", error);
+        // Handle error (e.g., show error message to user)
+      } finally {
+        setIsImageUploading(false);
+      }
     },
     []
   );
-
   const removeImage = (itemIndex: number, imageIndex: number) => {
     setFormData((prevData) => {
       const updatedItems = [...prevData.consignDetailRequests];
@@ -364,7 +373,7 @@ const AddConsignmentOffline: React.FC = () => {
           currentUser.currentUser?.shopId || "",
           formData
         );
-      console.log(createConsignmentOffline);
+
       showAlert("success", "Consignment created successfully");
       setFormData(initialFormData);
       navigate(
@@ -415,16 +424,17 @@ const AddConsignmentOffline: React.FC = () => {
 
   const handleNewMasterItemImageUpload = useCallback(
     async (acceptedFiles: File[]) => {
-      const uploadPromises = acceptedFiles.map(async (file) => {
-        const storageRef = ref(
-          storage,
-          `master-items/${Date.now()}_${file.name}`
-        );
-        const snapshot = await uploadBytes(storageRef, file);
-        return getDownloadURL(snapshot.ref);
-      });
-
+      setIsNewMasterItemImageUploading(true);
       try {
+        const uploadPromises = acceptedFiles.map(async (file) => {
+          const storageRef = ref(
+            storage,
+            `master-items/${Date.now()}_${file.name}`
+          );
+          const snapshot = await uploadBytes(storageRef, file);
+          return getDownloadURL(snapshot.ref);
+        });
+
         const downloadURLs = await Promise.all(uploadPromises);
         setNewMasterItem((prevItem) => ({
           ...prevItem,
@@ -433,6 +443,8 @@ const AddConsignmentOffline: React.FC = () => {
       } catch (error) {
         console.error("Error uploading images:", error);
         // Handle error (e.g., show error message to user)
+      } finally {
+        setIsNewMasterItemImageUploading(false);
       }
     },
     []
@@ -710,6 +722,7 @@ const AddConsignmentOffline: React.FC = () => {
                             onDrop={(acceptedFiles) =>
                               handleImageUpload(index, acceptedFiles)
                             }
+                            isLoading={isImageUploading}
                           />
                           <div className="d-flex flex-wrap mt-2">
                             {item.imageUrls.map((url, imageIndex) => (
@@ -742,6 +755,26 @@ const AddConsignmentOffline: React.FC = () => {
                           </div>
                         </div>
                         <div className="mb-3">
+                          <label className="form-label">
+                            Consignment Gender
+                          </label>
+                          <select
+                            className="form-select form-select-sm"
+                            value={consignmentGender}
+                            onChange={(e) =>
+                              handleConsignmentGenderChange(
+                                index,
+                                e.target.value
+                              )
+                            }
+                            required
+                          >
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                          </select>
+                        </div>
+                        <div className="mb-3">
                           <label className="form-label">Master Product</label>
                           <select
                             className="form-select form-select-sm"
@@ -749,7 +782,7 @@ const AddConsignmentOffline: React.FC = () => {
                             onChange={(e) =>
                               handleMasterItemChange(index, e.target.value)
                             }
-                            disabled={!consignmentGender} // Disable until consignment gender is selected
+                            disabled={!consignmentGender}
                           >
                             <option value="">Select a Master Product</option>
                             {masterItems?.items?.map(
@@ -817,26 +850,7 @@ const AddConsignmentOffline: React.FC = () => {
                             <span style={{ marginLeft: "0.5rem" }}>VND</span>
                           </div>
                         </div>
-                        <div className="mb-3">
-                          <label className="form-label">
-                            Consignment Gender
-                          </label>
-                          <select
-                            className="form-select form-select-sm"
-                            value={consignmentGender}
-                            onChange={(e) =>
-                              handleConsignmentGenderChange(
-                                index,
-                                e.target.value
-                              )
-                            }
-                            required
-                          >
-                            <option value="">Select Gender</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                          </select>
-                        </div>
+
                         <div className="mb-3">
                           <label className="form-label">Condition</label>
                           <select
@@ -850,6 +864,7 @@ const AddConsignmentOffline: React.FC = () => {
                                   .value as ConsignDetailRequest["condition"]
                               )
                             }
+                            required
                           >
                             <option value="Never worn, with tag">
                               Never worn, with tag
@@ -893,6 +908,7 @@ const AddConsignmentOffline: React.FC = () => {
                                   | "XXXXL"
                               )
                             }
+                            required
                           >
                             <option value="XS">XS</option>
                             <option value="S">S</option>
@@ -970,6 +986,7 @@ const AddConsignmentOffline: React.FC = () => {
                 onChange={handleGenderChange} // Pass the event directly
                 required
               >
+                <option value="">Select Gender</option>
                 <option value={MALE_ID}>Male</option>
                 <option value={FEMALE_ID}>Female</option>
               </Form.Select>
@@ -1011,7 +1028,10 @@ const AddConsignmentOffline: React.FC = () => {
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Images</Form.Label>
-              <ImageDropzone onDrop={handleNewMasterItemImageUpload} />
+              <ImageDropzone
+                onDrop={handleNewMasterItemImageUpload}
+                isLoading={isNewMasterItemImageUploading}
+              />
               <div className="d-flex flex-wrap mt-2">
                 {newMasterItem.images?.map((url, imageIndex) => (
                   <div key={imageIndex} className="position-relative me-2 mb-2">
@@ -1051,9 +1071,10 @@ const AddConsignmentOffline: React.FC = () => {
 
 interface ImageDropzoneProps {
   onDrop: (acceptedFiles: File[]) => void;
+  isLoading: boolean;
 }
 
-const ImageDropzone: React.FC<ImageDropzoneProps> = ({ onDrop }) => {
+const ImageDropzone: React.FC<ImageDropzoneProps> = ({ onDrop, isLoading }) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
@@ -1077,7 +1098,11 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({ onDrop }) => {
       }}
     >
       <input {...getInputProps()} />
-      {isDragActive ? (
+      {isLoading ? (
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      ) : isDragActive ? (
         <p className="m-0">Drop the images here ...</p>
       ) : (
         <p className="m-0">

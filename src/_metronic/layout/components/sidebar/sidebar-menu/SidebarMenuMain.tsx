@@ -161,7 +161,7 @@ const SidebarMenuMain = () => {
             />
             <SidebarMenuItem
               to="/consignment/create-offline"
-              title="Create Consignment Offline"
+              title="Create Consignment Offline / Customer Sale"
               hasBullet={true}
             />
           </SidebarMenuItemWithSub>

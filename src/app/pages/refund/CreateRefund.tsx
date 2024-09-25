@@ -6,6 +6,7 @@ import {
   CreateRefundByShopRequest,
   OrderDetailedResponse,
   OrderLineItemListResponse,
+  OrderLineItemListResponsePaginationResponse,
 } from "../../../api";
 import { Content } from "../../../_metronic/layout/components/content";
 import { KTCard, KTCardBody } from "../../../_metronic/helpers";
@@ -40,17 +41,21 @@ const CreateRefund: React.FC = () => {
   );
 
   // Fetch order line items for the selected order
-  const { data: orderLineItems } = useQuery<OrderLineItemListResponse>(
-    ["orderLineItems", selectedOrder],
-    async () => {
-      const response = await orderApi.apiOrdersOrderIdOrderlineitemsGet(
-        selectedOrder
-      );
-      return response.data as OrderLineItemListResponse;
-    },
-    { enabled: !!selectedOrder }
-  );
+  const { data: orderLineItems } =
+    useQuery<OrderLineItemListResponsePaginationResponse>(
+      ["orderLineItems", selectedOrder],
+      async () => {
+        const response = await orderApi.apiOrdersOrderIdOrderlineitemsGet(
+          selectedOrder
+        );
+        return response.data;
+      },
+      { enabled: !!selectedOrder }
+    );
 
+  // Extract the items from the response
+
+  console.log(orderLineItems);
   const createRefundMutation = useMutation(
     (newRefund: CreateRefundByShopRequest) =>
       shopApi.apiShopsShopIdRefundsPost(shopId!, newRefund),
@@ -155,8 +160,8 @@ const CreateRefund: React.FC = () => {
                         <th className="min-w-50px">Quantity</th>
                         <th className="min-w-50px">Unit Price</th>
                         <th className="min-w-50px">Status</th>
-                        {/* @ts-expect-error idk */}
-                        {orderLineItems.items.some(
+
+                        {orderLineItems.items?.some(
                           (item: OrderLineItemListResponse) =>
                             item.itemStatus !== "Returned"
                         ) && <th className="min-w-50px">Action</th>}
@@ -164,8 +169,7 @@ const CreateRefund: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {/* @ts-expect-error idk */}
-                      {orderLineItems.items.map(
+                      {orderLineItems.items?.map(
                         (item: OrderLineItemListResponse) => (
                           <tr key={item.orderLineItemId}>
                             <td>{item.itemName}</td>
