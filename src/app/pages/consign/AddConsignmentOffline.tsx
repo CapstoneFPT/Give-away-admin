@@ -366,6 +366,10 @@ const AddConsignmentOffline: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isFormValid()) {
+      showAlert("error", "Please fill in all required fields.");
+      return;
+    }
     try {
       const consignApi = new ShopApi();
       const createConsignmentOffline =
@@ -471,7 +475,37 @@ const AddConsignmentOffline: React.FC = () => {
       }));
     }
   };
+  const isFormValid = () => {
+    if (
+      !formData.type ||
+      !formData.consignorName ||
+      !formData.phone ||
+      !formData.address ||
+      !formData.email ||
+      formData.consignDetailRequests.length === 0
+    ) {
+      return false;
+    }
 
+    for (const item of formData.consignDetailRequests) {
+      if (
+        !item.masterItemId ||
+        !item.note ||
+        item.expectedPrice <= 0 ||
+        !item.productName ||
+        !item.brand ||
+        !item.gender ||
+        !item.condition ||
+        !item.color ||
+        !item.size ||
+        item.imageUrls.length === 0
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  };
   return (
     <>
       <div className="d-flex flex-column flex-lg-row">
@@ -866,6 +900,7 @@ const AddConsignmentOffline: React.FC = () => {
                             }
                             required
                           >
+                            <option value="">Select Condition</option>
                             <option value="Never worn, with tag">
                               Never worn, with tag
                             </option>
