@@ -11,6 +11,7 @@ import { useAuth } from "../../modules/auth";
 import { Content } from "../../../_metronic/layout/components/content";
 import { KTTable } from "../../../_metronic/helpers/components/KTTable";
 import orderListColumns from "./_columns";
+import ExportOrderToExcelModal from "./ExportOrderToExcelModal";
 
 type Props = {
   className: string;
@@ -32,6 +33,7 @@ const OrderList: React.FC<Props> = ({ className }) => {
   >("");
   const [statusFilter, setStatusFilter] = useState<OrderStatus | "">("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [showExportModal, setShowExportModal] = useState(false);
   const pageSize = 5;
   const { currentUser } = useAuth();
 
@@ -88,6 +90,31 @@ const OrderList: React.FC<Props> = ({ className }) => {
     setCurrentPage(newPage);
   };
 
+   const handleExport = async (filters: any) => {
+    const orderApi = new OrderApi();
+    const response = await orderApi.apiOrdersExportExcelGet(
+      filters.startDate,
+      filters.endDate,
+      filters.orderCode,
+      filters.recipientName,
+      filters.phone,
+      filters.minTotalPrice ? parseFloat(filters.minTotalPrice) : undefined,
+      filters.maxTotalPrice ? parseFloat(filters.maxTotalPrice) : undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      { responseType: "blob" }
+    );
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `OrderReport_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
+
   if (error) return <div>Error: {(error as Error).message}</div>;
 
   return (
@@ -100,6 +127,14 @@ const OrderList: React.FC<Props> = ({ className }) => {
                 Recent Orders
               </span>
             </h3>
+            <div className="card-toolbar">
+            <button
+              className="btn btn-primary"
+              onClick={() => setShowExportModal(true)}
+            >
+              Export to Excel
+            </button>
+          </div>
           </div>
           <div className="d-flex flex-column flex-md-row gap-4 mb-5">
             <div className="d-flex flex-column flex-grow-1 gap-2">
@@ -203,6 +238,11 @@ const OrderList: React.FC<Props> = ({ className }) => {
           />
         </KTCardBody>
       </KTCard>
+      <ExportOrderToExcelModal
+        show={showExportModal}
+        onHide={() => setShowExportModal(false)}
+        onExport={handleExport}
+      />
     </Content>
   );
 };

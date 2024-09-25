@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import ApexCharts, { ApexOptions } from "apexcharts";
-import { getCSSVariableValue } from "../../../_metronic/assets/ts/_utils";
 import { useThemeMode } from "../../../_metronic/partials";
 import {
   AccountApi,
@@ -10,8 +9,7 @@ import {
   ShopDetailResponse,
   TransactionApi,
 } from "../../../api";
-import { showAlert } from "../../../utils/Alert";
-import { KTIcon } from "../../../_metronic/helpers"; // Import your icon component
+import { KTIcon } from "../../../_metronic/helpers";
 
 type Props = {
   className: string;
@@ -33,7 +31,7 @@ const getChartOptions = (revenueData: number[]): ApexOptions => {
         show: false,
       },
     },
-    // ... other chart options ...
+    // Các cấu hình biểu đồ khác ...
   };
 };
 
@@ -41,10 +39,6 @@ const Chart: React.FC<Props> = ({ className }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const { mode } = useThemeMode();
   const [revenueData, setRevenueData] = useState<number[]>([]);
-  const [totalUsers, setTotalUsers] = useState<number>(0);
-  const [totalStaff, setTotalStaff] = useState<number>(0);
-  const [totalOrders, setTotalOrders] = useState<number>(0);
-  const [totalTransactions, setTotalTransactions] = useState<number[]>([]);
   const [selectedYear, setSelectedYear] = useState<string>("2024");
   const [selectedShopId, setSelectedShopId] = useState<string>("");
   const [shops, setShops] = useState<ShopDetailResponse[]>([]);
@@ -81,12 +75,6 @@ const Chart: React.FC<Props> = ({ className }) => {
     fetchShops();
   }, []);
 
-  useEffect(() => {
-    fetchTotalUsers();
-    fetchTotalStaff();
-    fetchTotalOrders();
-    fetchTotalTransactions();
-  }, []);
 
   useEffect(() => {
     if (selectedShopId) {
@@ -107,35 +95,6 @@ const Chart: React.FC<Props> = ({ className }) => {
     }
   };
 
-  const fetchTotalUsers = async () => {
-    const accountAPI = new AccountApi();
-    const usersResponse = await accountAPI.apiAccountsGet();
-    setTotalUsers(usersResponse.data.totalCount ?? 0);
-  };
-
-  const fetchTotalStaff = async () => {
-    const accountAPI = new AccountApi();
-    const staffResponse = await accountAPI.apiAccountsGet(
-      null!,
-      null!,
-      null!,
-      null!,
-      "Staff"
-    );
-    setTotalStaff(staffResponse.data.totalCount ?? 0);
-  };
-
-  const fetchTotalOrders = async () => {
-    const orderAPI = new OrderApi();
-    const ordersResponse = await orderAPI.apiOrdersGet();
-    setTotalOrders(ordersResponse.data.totalCount ?? 0);
-  };
-
-  const fetchTotalTransactions = async () => {
-    const transactionAPI = new TransactionApi();
-    const transactionsResponse = await transactionAPI.apiTransactionsGet();
-    setTotalTransactions([transactionsResponse.data?.data?.totalCount ?? 0]);
-  };
 
   const fetchRevenueData = async (shopId: string, year: number) => {
     const revenueAPI = new DashboardApi();
@@ -152,98 +111,62 @@ const Chart: React.FC<Props> = ({ className }) => {
   };
 
   return (
-    <div className={`card ${className}`}>
-      <div className="card-header border-0 pt-5">
-        <h3 className="card-title align-items-start flex-column">
-          <span className="card-label fw-bold fs-3 mb-1">
-            Revenue for {selectedYear}
-          </span>
-          <span className="text-muted fw-semibold fs-7">
-            Monthly revenue data
-          </span>
-        </h3>
-        <div className="card-toolbar">
-          <select
-            value={selectedShopId}
-            onChange={(e) => setSelectedShopId(e.target.value)}
-            className="form-control"
-          >
-            <option value="">Select Shop</option>
-            {shops.map((shop) => (
-              <option key={shop.shopId} value={shop.shopId}>
-                {shop.address}
-              </option>
-            ))}
-          </select>
-          <input
-            type="text"
-            value={inputYear}
-            onChange={(e) => setInputYear(e.target.value)}
-            placeholder="Enter year and press Enter"
-            className="form-control"
-            disabled={isYearInputDisabled}
-          />
-        </div>
-      </div>
-
-      <div className="card-body">
-        <div className="row">
-          <div className="col-md-3">
-            <div className="card border">
-              <div className="card-body d-flex align-items-center">
-                <KTIcon iconName="user" className="fs-2 text-primary me-3" />
-                <div>
-                  <h4>Total Users</h4>
-                  <p>{totalUsers}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-3">
-            <div className="card border">
-              <div className="card-body d-flex align-items-center">
-                <KTIcon iconName="group" className="fs-2 text-success me-3" />
-                <div>
-                  <h4>Total Staff</h4>
-                  <p>{totalStaff}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-3">
-            <div className="card border">
-              <div className="card-body d-flex align-items-center">
-                <KTIcon
-                  iconName="shopping-cart"
-                  className="fs-2 text-warning me-3"
+    <div className="row --gap-5">
+    {/* Wrapper column that spans the entire width */}
+    <div className="col-24">
+      <div className="row">
+        {/* Revenue column */}
+        <div className="col-xl">
+          <div className={`card ${className}`}>
+            <div className="card-header border-0 pt-5">
+              <h3 className="card-title align-items-start flex-column">
+                <span className="card-label fw-bold fs-3 mb-1">
+                  Revenue for {selectedYear}
+                </span>
+                <span className="text-muted fw-semibold fs-7">
+                  Monthly revenue data
+                </span>
+              </h3>
+              <div className="card-toolbar">
+                <select
+                  value={selectedShopId}
+                  onChange={(e) => setSelectedShopId(e.target.value)}
+                  className="form-control"
+                >
+                  <option value="">Select Shop</option>
+                  {shops.map((shop) => (
+                    <option key={shop.shopId} value={shop.shopId}>
+                      {shop.address}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="text"
+                  value={inputYear}
+                  onChange={(e) => setInputYear(e.target.value)}
+                  placeholder="Enter year and press Enter"
+                  className="form-control"
+                  disabled={isYearInputDisabled}
                 />
-                <div>
-                  <h4>Total Orders</h4>
-                  <p>{totalOrders}</p>
-                </div>
               </div>
             </div>
-          </div>
-          <div className="col-md-3">
-            <div className="card border">
-              <div className="card-body d-flex align-items-center">
-                <KTIcon iconName="money" className="fs-2 text-danger me-3" />
-                <div>
-                  <h4>Total Transactions</h4>
-                  <p>{totalTransactions[0]}</p>
-                </div>
-              </div>
+            <div className="card-body">
+              <div
+                ref={chartRef}
+                id="kt_charts_widget_3_chart"
+                style={{ height: "350px" }}
+              ></div>
             </div>
           </div>
         </div>
-
-        <div
-          ref={chartRef}
-          id="kt_charts_widget_3_chart"
-          style={{ height: "350px" }}
-        ></div>
+  
+        {/* Totals column */}
+       
       </div>
     </div>
+  </div>
+  
+  
   );
 };
 
