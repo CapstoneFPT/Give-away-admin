@@ -79,8 +79,7 @@ export const ConsignDetail: React.FC = () => {
     error: itemsError,
     refetch: refetchLineItems,
   } = useConsignSaleLineItems(consignSaleId!);
-  console.log(consignSaleResponse?.consignSaleId);
-  console.log(currentUser?.shopId);
+
   const handleActionStart = () => {
     setIsActionInProgress(true);
   };
