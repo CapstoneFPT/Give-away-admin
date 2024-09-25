@@ -112,7 +112,7 @@ const RefundDetail: React.FC = () => {
 
   const approveMutation = useMutation(
     ({ status }: ApprovalRefundRequest) =>
-      refundApi.apiRefundsRefundIdApprovalPut(refundId!, {
+        refundApi.apiRefundsRefundIdApprovalPut(refundId!, {
         status,
       }),
     {
@@ -121,7 +121,7 @@ const RefundDetail: React.FC = () => {
         showAlert(
           "success",
           `Refund ${
-            status === RefundStatus.Approved ? "approved" : "rejected"
+            data?.refundStatus === RefundStatus.Approved ? "approved" : "rejected"
           } successfully`
         );
       },

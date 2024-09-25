@@ -90,26 +90,26 @@ const OrderList: React.FC<Props> = ({ className }) => {
     setCurrentPage(newPage);
   };
 
-   const handleExport = async (filters: any) => {
+  const handleExport = async (filters: any) => {
     const orderApi = new OrderApi();
     const response = await orderApi.apiOrdersExportExcelGet(
       filters.startDate,
       filters.endDate,
       filters.orderCode,
       filters.recipientName,
+      currentUser?.shopId,
       filters.phone,
       filters.minTotalPrice ? parseFloat(filters.minTotalPrice) : undefined,
       filters.maxTotalPrice ? parseFloat(filters.maxTotalPrice) : undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
+      filters.paymentMethods.length > 0 ? filters.paymentMethods : undefined,
+      filters.purchaseTypes.length > 0 ? filters.purchaseTypes : undefined,
+      filters.statuses.length > 0 ? filters.statuses : undefined,
       { responseType: "blob" }
     );
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", `OrderReport_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    link.setAttribute("download", `OrderReport_${new Date().toISOString()}.xlsx`);
     document.body.appendChild(link);
     link.click();
     link.remove();
