@@ -55,7 +55,6 @@ const CreateRefund: React.FC = () => {
 
   // Extract the items from the response
 
-  console.log(orderLineItems);
   const createRefundMutation = useMutation(
     (newRefund: CreateRefundByShopRequest) =>
       shopApi.apiShopsShopIdRefundsPost(shopId!, newRefund),

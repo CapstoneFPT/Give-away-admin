@@ -3,7 +3,7 @@ import {
   FashionItemStatus,
   OrderDetailedResponse,
   OrderLineItemApi,
-  OrderLineItemListResponsePaginationResponse,
+  OrderLineItemListResponse,
   PurchaseType,
 } from "../../../api";
 import { useState } from "react";
@@ -18,17 +18,17 @@ const OrderLineItems = ({
   items,
   orderDetail,
 }: {
-  items: OrderLineItemListResponsePaginationResponse;
+  items: OrderLineItemListResponse[];
   orderDetail: OrderDetailedResponse;
 }) => {
-  const calculateSubtotal = () => {
-    return (
-      items.items?.reduce(
-        (total, item) => total + (item.unitPrice || 0) * (item.quantity || 0),
-        0
-      ) || 0
-    );
-  };
+  //   const calculateSubtotal = () => {
+  //     return (
+  //       items?.reduce(
+  //         (total, item) => total + (item.unitPrice || 0) * (item.quantity || 0),
+  //         0
+  //       ) || 0
+  //     );
+  //   };
   const [isLoading, setIsLoading] = useState(false);
   const deliveryApi = new OrderLineItemApi();
 
@@ -114,7 +114,7 @@ const OrderLineItems = ({
                 </tr>
               </thead>
               <tbody className="fw-semibold text-gray-600">
-                {items.items?.map((item, index) => (
+                {items?.map((item, index) => (
                   <tr key={index}>
                     <td>
                       <div className="d-flex align-items-center">
