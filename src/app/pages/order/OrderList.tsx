@@ -242,6 +242,7 @@ const OrderList: React.FC<Props> = ({ className }) => {
         show={showExportModal}
         onHide={() => setShowExportModal(false)}
         onExport={handleExport}
+        isAdmin={false}
       />
     </Content>
   );

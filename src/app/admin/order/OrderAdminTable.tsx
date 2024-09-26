@@ -7,7 +7,8 @@ import {
   PaymentMethod,
   PurchaseType,
 } from "../../../api";
-
+import ExportOrderToExcelModal from "../../pages/order/ExportOrderToExcelModal";
+import { useAuth } from "../../modules/auth";
 import { Content } from "../../../_metronic/layout/components/content";
 import { KTTable } from "../../../_metronic/helpers/components/KTTable";
 
@@ -33,6 +34,8 @@ const OrderAdminList: React.FC<Props> = ({ className }) => {
   >("");
   const [statusFilter, setStatusFilter] = useState<OrderStatus | "">("");
   const [currentPage, setCurrentPage] = useState(1);
+  const { currentUser } = useAuth();
+const [showExportModal, setShowExportModal] = useState(false);
   const pageSize = 10;
 
   const fetchOrders = useCallback(
@@ -83,6 +86,31 @@ const OrderAdminList: React.FC<Props> = ({ className }) => {
     setSearchTerms((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleExport = async (filters: any) => {
+    const orderApi = new OrderApi();
+    const response = await orderApi.apiOrdersExportExcelGet(
+      filters.startDate,
+      filters.endDate,
+      filters.orderCode,
+      filters.recipientName,
+      filters.shopId,
+      filters.phone,
+      filters.minTotalPrice ? parseFloat(filters.minTotalPrice) : undefined,
+      filters.maxTotalPrice ? parseFloat(filters.maxTotalPrice) : undefined,
+      filters.paymentMethods.length > 0 ? filters.paymentMethods : undefined,
+      filters.purchaseTypes.length > 0 ? filters.purchaseTypes : undefined,
+      filters.statuses.length > 0 ? filters.statuses : undefined,
+      { responseType: "blob" }
+    );
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `OrderReport_${new Date().toISOString()}.xlsx`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
+
   if (error) return <div>Error: {(error as Error).message}</div>;
 
   return (
@@ -95,6 +123,14 @@ const OrderAdminList: React.FC<Props> = ({ className }) => {
                 Recent Orders
               </span>
             </h3>
+            <div className="card-toolbar">
+              <button
+                className="btn btn-primary"
+                onClick={() => setShowExportModal(true)}
+              >
+                Export to Excel
+              </button>
+            </div>
           </div>
           <div className="d-flex flex-column flex-md-row gap-4 mb-5">
             <div className="d-flex flex-column flex-grow-1 gap-2">
@@ -198,6 +234,12 @@ const OrderAdminList: React.FC<Props> = ({ className }) => {
           />
         </KTCardBody>
       </KTCard>
+      <ExportOrderToExcelModal
+        show={showExportModal}
+        onHide={() => setShowExportModal(false)}
+        onExport={handleExport}
+        isAdmin={currentUser?.role === "Admin"}
+      />
     </Content>
   );
 };

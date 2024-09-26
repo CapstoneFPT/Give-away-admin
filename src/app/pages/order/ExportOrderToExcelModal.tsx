@@ -1,20 +1,24 @@
 import React, { useState } from "react";
 import { Modal, Button, Form, Col, Row, FormControlProps } from "react-bootstrap";
-import { PaymentMethod, PurchaseType, OrderStatus, AddressType } from "../../../api";
+import { PaymentMethod, PurchaseType, OrderStatus, AddressType, ShopApi } from "../../../api";
+import { useQuery } from "react-query";
+
 
 type ExportOrderToExcelModalProps = {
   show: boolean;
   onHide: () => void;
   onExport: (filters: any) => void;
+  isAdmin: boolean;
 };
 
-const ExportOrderToExcelModal: React.FC<ExportOrderToExcelModalProps> = ({ show, onHide, onExport }) => {
+const ExportOrderToExcelModal: React.FC<ExportOrderToExcelModalProps> = ({ show, onHide, onExport, isAdmin }) => {
   const [filters, setFilters] = useState<{
     startDate: string;
     endDate: string;
     orderCode: string;
     recipientName: string;
     phone: string;
+    shopId: string;
     minTotalPrice: string;
     maxTotalPrice: string;
     paymentMethods: PaymentMethod[];
@@ -28,11 +32,22 @@ const ExportOrderToExcelModal: React.FC<ExportOrderToExcelModalProps> = ({ show,
     phone: "",
     minTotalPrice: "",
     maxTotalPrice: "",
+    shopId: "",
     paymentMethods: [],
     purchaseTypes: [],
     statuses: [],
   });
-
+  
+  const { data: shops } = useQuery(
+    "shops",
+    async () => {
+      if (!isAdmin) return null;
+      const shopApi = new ShopApi();
+      const response = await shopApi.apiShopsGet();
+      return response.data.data;
+    },
+    { enabled: isAdmin }
+  );
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
@@ -199,6 +214,28 @@ const ExportOrderToExcelModal: React.FC<ExportOrderToExcelModalProps> = ({ show,
               </Form.Group>
             </Col>
           </Row>
+          {isAdmin && (
+            <Row>
+              <Col md={6}>
+                <Form.Group controlId="shopId">
+                  <Form.Label>Shop</Form.Label>
+                  <Form.Control
+                    as="select"
+                    name="shopId"
+                    value={filters.shopId}
+                    onChange={handleChange}
+                  >
+                    <option value="">All Shops</option>
+                    {shops?.map((shop: any) => (
+                      <option key={shop.id} value={shop.id}>
+                        {shop.address}
+                      </option>
+                    ))}
+                  </Form.Control>
+                </Form.Group>
+              </Col>
+            </Row>
+          )}
         </Form>
       </Modal.Body>
       <Modal.Footer>
