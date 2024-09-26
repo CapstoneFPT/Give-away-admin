@@ -178,7 +178,7 @@ const OrderDetails: React.FC<{
                 <td className="fw-bold text-end">
                   <strong>
                     {orderDetail?.subtotal
-                      ? formatBalance(orderDetail.subtotal)
+                      ? formatBalance(orderDetail.subtotal) + " VND"
                       : "N/A"}
                   </strong>
                 </td>
@@ -193,7 +193,7 @@ const OrderDetails: React.FC<{
                 <td className="fw-bold text-end">
                   <strong>
                     {orderDetail?.shippingFee
-                      ? formatBalance(orderDetail.shippingFee)
+                      ? formatBalance(orderDetail.shippingFee) + " VND"
                       : "N/A"}
                   </strong>
                 </td>
@@ -210,9 +210,8 @@ const OrderDetails: React.FC<{
                   <strong style={{ color: "red" }}>
                     -
                     {orderDetail?.discount
-                      ? formatBalance(orderDetail.discount)
+                      ? formatBalance(orderDetail.discount) + " VND"
                       : "N/A"}
-                    VND
                   </strong>
                 </td>
               </tr>
@@ -227,7 +226,7 @@ const OrderDetails: React.FC<{
                 <td className="fw-bold text-end">
                   <strong>
                     {orderDetail?.totalPrice
-                      ? formatBalance(orderDetail.totalPrice)
+                      ? formatBalance(orderDetail.totalPrice) + " VND"
                       : "N/A"}
                   </strong>
                 </td>
