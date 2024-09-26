@@ -3,9 +3,12 @@ import clsx from "clsx";
 import { KTIcon, toAbsoluteUrl } from "../../../helpers";
 import { HeaderUserMenu } from "../../../partials";
 import { useLayout } from "../../core";
+import { useQuery } from "react-query";
+import { AccountApi } from "../../../../api";
 import { useAuth } from "../../../../app/modules/auth";
 import { useEffect, useState } from "react";
 import { ShopApi, ShopDetailResponse } from "../../../../api"; // Adjust the import path as needed
+import { formatBalance } from "../../../../app/pages/utils/utils";
 
 const itemClass = "ms-1 ms-md-4";
 const userAvatarClass = "symbol-35px";
@@ -14,8 +17,27 @@ const btnIconClass = "fs-2";
 const Navbar = () => {
   const { config } = useLayout();
   const { currentUser } = useAuth();
+
   const [shopDetails, setShopDetails] = useState<ShopDetailResponse | null>(
     null
+  );
+  const {
+    data: accountDetails,
+    error,
+    isLoading,
+  } = useQuery(
+    ["adminAccountDetails", currentUser?.id],
+    async () => {
+      if (currentUser?.id) {
+        const accountApi = new AccountApi();
+        const response = await accountApi.apiAccountsIdGet(currentUser.id);
+
+        return response.data.data;
+      }
+    },
+    {
+      enabled: !!currentUser?.id && currentUser?.role === "Admin",
+    }
   );
 
   useEffect(() => {
@@ -36,7 +58,11 @@ const Navbar = () => {
     };
 
     fetchShopDetails();
-  }, [currentUser?.shopId]);
+  }, [currentUser]);
+
+  if (error) {
+    console.error("Error fetching account details:", error);
+  }
 
   return (
     <div className="app-navbar flex-shrink-0 d-flex align-items-stretch justify-content-between w-100">
@@ -50,7 +76,14 @@ const Navbar = () => {
 
       <div className="d-flex align-items-stretch justify-content-between flex-lg-grow-1">
         <div className="d-flex align-items-center ms-1 ms-lg-3">
-          {/* Add any additional navbar items here */}
+          {currentUser?.role === "Admin" && (
+            <div className={clsx("app-navbar-item", itemClass)}>
+              <span className="fw-bolder fs-5 text-dark px-2">
+                Admin's balance: {formatBalance(accountDetails?.balance || 0)}{" "}
+                VND
+              </span>
+            </div>
+          )}
         </div>
 
         <div className="d-flex align-items-center">

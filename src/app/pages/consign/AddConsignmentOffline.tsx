@@ -131,7 +131,7 @@ const AddConsignmentOffline: React.FC = () => {
         null!,
         selectedGender,
         4,
-        null!
+        "Available"
       );
       return response.data.data || [];
     },

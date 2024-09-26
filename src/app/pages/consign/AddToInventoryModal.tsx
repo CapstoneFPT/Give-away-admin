@@ -54,7 +54,8 @@ export const AddToInventoryModal: React.FC<AddToInventoryModalProps> = ({
           null!,
           null!,
           selectedGender,
-          level
+          level,
+          "Available"
         );
         console.log("category", response);
         setCategories(response.data.data!);
