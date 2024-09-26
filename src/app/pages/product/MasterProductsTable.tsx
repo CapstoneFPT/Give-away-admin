@@ -6,12 +6,14 @@ import {
   MasterItemApi,
   MasterItemListResponse,
   GenderType,
+  FashionItemApi,
 } from "../../../api";
 import { Link } from "react-router-dom";
 import { KTTable } from "../../../_metronic/helpers/components/KTTable";
 import { Column } from "react-table";
 import { Content } from "../../../_metronic/layout/components/content";
 import { useAuth } from "../../modules/auth";
+import ExportFashionItemsToExcelModal from "../../admin/product/master/ExportFashionItemsToExcelModal";
 
 type Props = {
   className: string;
@@ -28,7 +30,7 @@ const MasterProductsTable: React.FC<Props> = ({ className }) => {
   const [isLeftInStock, setIsLeftInStock] = useState<boolean | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;
-
+  const [showExportModal, setShowExportModal] = useState(false);
   const fetchData = useCallback(
     async (page: number, pageSize: number, sortBy: string[]) => {
       const masterItemApi = new MasterItemApi();
@@ -83,7 +85,25 @@ const MasterProductsTable: React.FC<Props> = ({ className }) => {
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
   };
-
+  const handleExport = async (filters: any) => {
+    const fashionItemApi = new FashionItemApi();
+    const response = await fashionItemApi.apiFashionitemsExportExcelGet(
+      filters.itemCode,
+      currentUser?.shopId,
+      filters.status.length > 0 ? filters.status : undefined,
+      filters.type.length > 0 ? filters.type : undefined,
+      filters.minPrice ? parseFloat(filters.minPrice) : undefined,
+      filters.maxPrice ? parseFloat(filters.maxPrice) : undefined,
+      { responseType: "blob" }
+    );
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `FashionItemsReport_${new Date().toISOString()}.xlsx`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
   const columns: Column<MasterItemListResponse>[] = [
     {
       Header: "Product Code",
@@ -178,6 +198,12 @@ const MasterProductsTable: React.FC<Props> = ({ className }) => {
           </h3>
           <div className="card-toolbar">
             <div className="d-flex align-items-center">
+              <button
+                className="btn btn-sm btn-light-primary me-2"
+                onClick={() => setShowExportModal(true)}
+              >
+                Export to Excel
+              </button>
               <select
                 className="form-select form-select-solid w-250px me-2"
                 onChange={(e) => setGenderType(e.target.value as GenderType)}
@@ -222,6 +248,11 @@ const MasterProductsTable: React.FC<Props> = ({ className }) => {
           totalPages={data?.totalPages || 0}
         />
       </div>
+      <ExportFashionItemsToExcelModal
+        show={showExportModal}
+        onHide={() => setShowExportModal(false)}
+        onExport={handleExport}
+      />
     </Content>
   );
 };
