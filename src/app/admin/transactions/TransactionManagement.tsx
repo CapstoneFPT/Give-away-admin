@@ -6,6 +6,8 @@ import { Content } from "../../../_metronic/layout/components/content";
 import { KTTable } from "../../../_metronic/helpers/components/KTTable";
 import { formatBalance } from "../../pages/utils/utils";
 import { useAuth } from "../../modules/auth";
+import ExportTransactionToExcelModal from './ExportTransactionToExcelModal';
+
 const TransactionManagement: React.FC = () => {
   const { currentUser } = useAuth();
   const shopId = currentUser?.shopId;
@@ -15,6 +17,7 @@ const TransactionManagement: React.FC = () => {
   const [transactionTypeFilter, setTransactionTypeFilter] = useState<
     TransactionType | ""
   >(null!);
+  const [showExportModal, setShowExportModal] = useState(false);
 
   const transactionApi = new TransactionApi();
   console.log(shopId);
@@ -85,6 +88,34 @@ const TransactionManagement: React.FC = () => {
   const totalCount = data?.data?.data?.totalCount || 0;
   const totalPages = data?.data?.data?.totalPages || 1;
 
+  const handleExport = async (filters: any) => {
+    try {
+      const response = await transactionApi.apiTransactionsExportExcelGet(
+        filters.startDate,
+        filters.endDate,
+        filters.types.length > 0 ? filters.types : undefined,
+        filters.paymentMethods.length > 0 ? filters.paymentMethods : undefined,
+        shopId || filters.shopId,
+        filters.minAmount ? Number(filters.minAmount) : undefined,
+        filters.maxAmount ? Number(filters.maxAmount) : undefined,
+        filters.senderName,
+        filters.receiverName,
+        filters.transactionCode,
+        { responseType: 'blob' }
+      );
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `TransactionReport_${new Date().toISOString()}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error('Error exporting transactions:', error);
+    }
+  };
+
   if (error) return <div>An error occurred: {(error as Error).message}</div>;
 
   return (
@@ -115,6 +146,12 @@ const TransactionManagement: React.FC = () => {
                   </option>
                 ))}
               </select>
+              <button
+                className="btn btn-primary"
+                onClick={() => setShowExportModal(true)}
+              >
+                Export to Excel
+              </button>
             </div>
           </div>
 
@@ -141,6 +178,12 @@ const TransactionManagement: React.FC = () => {
           )}
         </KTCardBody>
       </KTCard>
+
+      <ExportTransactionToExcelModal
+        show={showExportModal}
+        onHide={() => setShowExportModal(false)}
+        onExport={handleExport}
+      />
     </Content>
   );
 };
