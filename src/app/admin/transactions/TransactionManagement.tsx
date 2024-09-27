@@ -82,11 +82,11 @@ const TransactionManagement: React.FC = () => {
   );
 
   const transactions = useMemo(() => {
-    return data?.data?.data?.items || [];
+    return data != undefined ? data.data != undefined ? data.data.data != undefined ? data.data.data.items : [] : [] : [];
   }, [data]);
 
-  const totalCount = data?.data?.data?.totalCount || 0;
-  const totalPages = data?.data?.data?.totalPages || 1;
+  const totalCount = data != undefined ? data.data != undefined ? data.data.data != undefined ? data.data.data.totalCount : 0 : 0 : 0;
+  const totalPages = data != undefined ? data.data != undefined ? data.data.data != undefined ? data.data.data.totalPages : 1 : 1 : 1;
 
   const handleExport = async (filters: any) => {
     try {
@@ -167,13 +167,13 @@ const TransactionManagement: React.FC = () => {
           ) : (
             <KTTable
               columns={columns}
-              data={transactions}
+              data={transactions != undefined ? transactions : []}
               currentPage={currentPage}
               pageSize={pageSize}
               onPageChange={handlePageChange}
               loading={isLoading}
-              totalCount={totalCount}
-              totalPages={totalPages}
+              totalCount={totalCount != undefined ? totalCount : 0}
+              totalPages={totalPages != undefined ? totalPages : 1}
             />
           )}
         </KTCardBody>

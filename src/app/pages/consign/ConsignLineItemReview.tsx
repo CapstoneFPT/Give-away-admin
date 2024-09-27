@@ -52,7 +52,6 @@ console.log("lineItemId", lineItemId);
   >({
     queryKey: ["consignSaleLineItem", consignSaleId, lineItemId],
     queryFn: async () => {
-      
       const consignLineItemApi = new ConsignLineItemApi();
       const response =
         await consignLineItemApi.apiConsignlineitemsConsignLineItemIdGet(
@@ -60,6 +59,7 @@ console.log("lineItemId", lineItemId);
         );
       return response.data;
     },
+    refetchOnWindowFocus: false,
     onSuccess: (data) => {
       setDealPrice(
         !data.dealPrice

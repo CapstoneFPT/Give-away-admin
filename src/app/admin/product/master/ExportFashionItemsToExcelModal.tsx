@@ -28,7 +28,7 @@ const ExportFashionItemsToExcelModal: React.FC<ExportFashionItemsToExcelModalPro
     maxPrice: "",
   });
 
-  const { data: shops } = useQuery(
+  const { data: shops, isLoading: isLoadingShops } = useQuery(
     "shops",
     async () => {
       if (currentUser?.role !== "Admin") return null;
@@ -56,6 +56,10 @@ const ExportFashionItemsToExcelModal: React.FC<ExportFashionItemsToExcelModalPro
     onExport(filters);
     onHide();
   };
+
+  if(isLoadingShops) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Modal show={show} onHide={onHide} size="lg">
@@ -87,7 +91,7 @@ const ExportFashionItemsToExcelModal: React.FC<ExportFashionItemsToExcelModalPro
                     onChange={handleChange as any}
                   >
                     <option value="">All Shops</option>
-                    {shops && shops.map((shop: any) => (
+                    {(!isLoadingShops && shops) && shops.map((shop: any) => (
                       <option key={shop.id} value={shop.id}>
                         {shop.address}
                       </option>
