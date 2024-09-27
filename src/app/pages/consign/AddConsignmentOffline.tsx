@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useCallback } from "react";
 import { KTCard, KTCardBody } from "../../../_metronic/helpers";
 import { KTTable } from "../../../_metronic/helpers/components/KTTable";
@@ -428,25 +429,26 @@ const AddConsignmentOffline: React.FC = () => {
 
   const handleNewMasterItemImageUpload = useCallback(
     async (acceptedFiles: File[]) => {
+      if (acceptedFiles.length > 1) {
+        showAlert("info", "Only one image is allowed for a master item.");
+        return;
+      }
       setIsNewMasterItemImageUploading(true);
       try {
-        const uploadPromises = acceptedFiles.map(async (file) => {
-          const storageRef = ref(
-            storage,
-            `master-items/${Date.now()}_${file.name}`
-          );
-          const snapshot = await uploadBytes(storageRef, file);
-          return getDownloadURL(snapshot.ref);
-        });
-
-        const downloadURLs = await Promise.all(uploadPromises);
+        const file = acceptedFiles[0];
+        const storageRef = ref(
+          storage,
+          `master-items/${Date.now()}_${file.name}`
+        );
+        const snapshot = await uploadBytes(storageRef, file);
+        const downloadURL = await getDownloadURL(snapshot.ref);
         setNewMasterItem((prevItem) => ({
           ...prevItem,
-          images: [...(prevItem.images || []), ...downloadURLs],
+          images: [downloadURL],
         }));
       } catch (error) {
-        console.error("Error uploading images:", error);
-        // Handle error (e.g., show error message to user)
+        console.error("Error uploading image:", error);
+        showAlert("error", "Error uploading image. Please try again.");
       } finally {
         setIsNewMasterItemImageUploading(false);
       }
@@ -454,12 +456,11 @@ const AddConsignmentOffline: React.FC = () => {
     []
   );
 
-  const removeNewMasterItemImage = (imageUrl: string) => {
+  const removeNewMasterItemImage = () => {
     setNewMasterItem((prevItem) => ({
       ...prevItem,
-      images: prevItem.images?.filter((url) => url !== imageUrl) || [],
+      images: [],
     }));
-    // Note: You may want to also delete the image from Firebase Storage here
   };
 
   const handleTabChange = (tab: string) => {
@@ -1061,17 +1062,19 @@ const AddConsignmentOffline: React.FC = () => {
               </Form.Select>
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Images</Form.Label>
+              <Form.Label>Image (Only 1 image)</Form.Label>
               <ImageDropzone
                 onDrop={handleNewMasterItemImageUpload}
                 isLoading={isNewMasterItemImageUploading}
+                maxFiles={1}
+                isMasterItem={true}
               />
               <div className="d-flex flex-wrap mt-2">
-                {newMasterItem.images?.map((url, imageIndex) => (
-                  <div key={imageIndex} className="position-relative me-2 mb-2">
+                {newMasterItem.images && newMasterItem.images.length > 0 && (
+                  <div className="position-relative me-2 mb-2">
                     <img
-                      src={url}
-                      alt={`New Master Product Image ${imageIndex + 1}`}
+                      src={newMasterItem.images[0]}
+                      alt="New Master Product Image"
                       style={{
                         width: "100px",
                         height: "100px",
@@ -1081,8 +1084,9 @@ const AddConsignmentOffline: React.FC = () => {
                     <button
                       type="button"
                       className="btn btn-icon btn-sm btn-danger position-absolute top-0 end-0"
-                      onClick={() => removeNewMasterItemImage(url)}
+                      onClick={removeNewMasterItemImage}
                       style={{ padding: "2px", fontSize: "10px" }}
+                      disabled={isNewMasterItemImageUploading}
                     >
                       <i className="ki-duotone ki-cross fs-2">
                         <span className="path1"></span>
@@ -1090,10 +1094,14 @@ const AddConsignmentOffline: React.FC = () => {
                       </i>
                     </button>
                   </div>
-                ))}
+                )}
               </div>
             </Form.Group>
-            <Button variant="primary" type="submit">
+            <Button
+              variant="primary"
+              type="submit"
+              disabled={isNewMasterItemImageUploading}
+            >
               Create Master Product
             </Button>
           </Form>
@@ -1106,15 +1114,23 @@ const AddConsignmentOffline: React.FC = () => {
 interface ImageDropzoneProps {
   onDrop: (acceptedFiles: File[]) => void;
   isLoading: boolean;
+  maxFiles?: number;
+  isMasterItem?: boolean;
 }
 
-const ImageDropzone: React.FC<ImageDropzoneProps> = ({ onDrop, isLoading }) => {
+const ImageDropzone: React.FC<ImageDropzoneProps> = ({
+  onDrop,
+  isLoading,
+  maxFiles = 1,
+  isMasterItem = false,
+}) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
       "image/*": [".jpeg", ".jpg", ".png", ".gif"],
     },
-    multiple: true,
+    multiple: !isMasterItem,
+    maxFiles: isMasterItem ? 1 : undefined,
   });
 
   return (
@@ -1127,24 +1143,70 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({ onDrop, isLoading }) => {
         border: "2px dashed #ccc",
         borderRadius: "4px",
         padding: "20px",
-        cursor: "pointer",
+        cursor: isLoading ? "not-allowed" : "pointer",
         minHeight: "100px",
+        opacity: isLoading ? 0.6 : 1,
       }}
     >
-      <input {...getInputProps()} />
+      <input {...getInputProps()} disabled={isLoading} />
       {isLoading ? (
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
       ) : isDragActive ? (
-        <p className="m-0">Drop the images here ...</p>
+        <p className="m-0">Drop the image{isMasterItem ? "" : "s"} here ...</p>
       ) : (
         <p className="m-0">
-          Drag 'n' drop some images here, or click to select images
+          Drag 'n' drop {isMasterItem ? "an image" : "some images"} here, or
+          click to select {isMasterItem ? "an image" : "images"}
         </p>
       )}
     </div>
   );
 };
+
+interface ImageDropzoneProps {
+  onDrop: (acceptedFiles: File[]) => void;
+  isLoading: boolean;
+}
+
+// const ImageDropzone: React.FC<ImageDropzoneProps> = ({ onDrop, isLoading }) => {
+//   const { getRootProps, getInputProps, isDragActive } = useDropzone({
+//     onDrop,
+//     accept: {
+//       "image/*": [".jpeg", ".jpg", ".png", ".gif"],
+//     },
+//     multiple: true,
+//   });
+
+//   return (
+//     <div
+//       {...getRootProps()}
+//       className={`dropzone ${
+//         isDragActive ? "dropzone-active" : ""
+//       } d-flex align-items-center justify-content-center`}
+//       style={{
+//         border: "2px dashed #ccc",
+//         borderRadius: "4px",
+//         padding: "20px",
+//         cursor: "pointer",
+//         minHeight: "100px",
+//       }}
+//     >
+//       <input {...getInputProps()} />
+//       {isLoading ? (
+//         <div className="spinner-border text-primary" role="status">
+//           <span className="visually-hidden">Loading...</span>
+//         </div>
+//       ) : isDragActive ? (
+//         <p className="m-0">Drop the images here ...</p>
+//       ) : (
+//         <p className="m-0">
+//           Drag 'n' drop some images here, or click to select images
+//         </p>
+//       )}
+//     </div>
+//   );
+// };
 
 export default AddConsignmentOffline;

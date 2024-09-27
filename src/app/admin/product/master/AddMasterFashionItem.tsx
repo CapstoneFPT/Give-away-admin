@@ -178,29 +178,36 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
     });
   };
 
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    setLoading(true);
-    try {
-      const uploadedImageUrls: string[] = [];
-      for (const file of acceptedFiles) {
-        const storageRef = ref(storage, `images/${file.name}`);
-        await uploadBytes(storageRef, file);
-        const downloadURL = await getDownloadURL(storageRef);
-        uploadedImageUrls.push(downloadURL);
+  const onDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      if (files.length >= 1 || acceptedFiles.length > 1) {
+        showAlert("info", "Only one image is allowed for a master item.");
+        return;
       }
-      setFormData((prevData) => ({
-        ...prevData,
-        images: Array.isArray(prevData.images)
-          ? [...prevData.images, ...uploadedImageUrls]
-          : [...uploadedImageUrls],
-      }));
-      setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
-    } catch (error) {
-      console.error("Error uploading files:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+      setLoading(true);
+      try {
+        const uploadedImageUrls: string[] = [];
+        for (const file of acceptedFiles) {
+          const storageRef = ref(storage, `images/${file.name}`);
+          await uploadBytes(storageRef, file);
+          const downloadURL = await getDownloadURL(storageRef);
+          uploadedImageUrls.push(downloadURL);
+        }
+        setFormData((prevData) => ({
+          ...prevData,
+          images: Array.isArray(prevData.images)
+            ? [...prevData.images, ...uploadedImageUrls]
+            : [...uploadedImageUrls],
+        }));
+        setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
+      } catch (error) {
+        console.error("Error uploading files:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [files]
+  );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -471,8 +478,8 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
                         />
                         <div className="fw-bold fs-3 text-primary">
                           {isDragActive
-                            ? "Drop the files here ..."
-                            : "Drag 'n' drop files or click to select"}
+                            ? "Drop the files here (Only one image is allowed)..."
+                            : "Drag 'n' drop files or click to select (Only one image is allowed)"}
                         </div>
                       </div>
                     </div>
