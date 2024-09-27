@@ -239,13 +239,13 @@ const MasterProductsTable: React.FC<Props> = ({ className }) => {
 
         <KTTable
           columns={columns}
-          data={data?.data || []}
-          totalCount={data?.totalCount || 0}
+          data={data != undefined ? data.data || [] : []}
+          totalCount={data != undefined ? data.totalCount || 0 : 0}
           currentPage={currentPage}
           pageSize={pageSize}
           onPageChange={handlePageChange}
           loading={isLoading}
-          totalPages={data?.totalPages || 0}
+          totalPages={data != undefined ? data.totalPages || 0 : 0}
         />
       </div>
       <ExportFashionItemsToExcelModal

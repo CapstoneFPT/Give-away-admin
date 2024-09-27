@@ -114,7 +114,7 @@ const OrderLineItems = ({
                 </tr>
               </thead>
               <tbody className="fw-semibold text-gray-600">
-                {items?.map((item, index) => (
+                {items && items.map((item, index) => (
                   <tr key={index}>
                     <td>
                       <div className="d-flex align-items-center">

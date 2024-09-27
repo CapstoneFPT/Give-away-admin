@@ -20,7 +20,7 @@ const OrderDetails: React.FC<{
       const orderApi = new OrderApi();
       return await orderApi.apiOrdersOrderIdInvoiceGet(
         orderDetail.orderId,
-        currentUser?.shopId,
+        currentUser != undefined ? currentUser.shopId : "",
         { responseType: "arraybuffer" }
       );
     },
@@ -33,7 +33,6 @@ const OrderDetails: React.FC<{
       },
       onError: (error) => {
         console.error("Error generating invoice:", error);
-        // Handle error (e.g., show an error message to the user)
       },
     }
   );
@@ -63,10 +62,10 @@ const OrderDetails: React.FC<{
                 <td className="fw-bold text-end">
                   <span
                     className={`badge badge-light-${getStatusBadge(
-                      orderDetail?.status!
+                      orderDetail != undefined ? orderDetail.status ?? "Pending" : "Pending"
                     )}`}
                   >
-                    {orderDetail?.status}
+                    {orderDetail != undefined ? orderDetail.status ?? "Pending" : "Pending"}
                   </span>
                 </td>
               </tr>
@@ -79,7 +78,7 @@ const OrderDetails: React.FC<{
                   </div>
                 </td>
                 <td className="fw-bold text-end">
-                  <strong>{orderDetail?.auctionTitle || "N/A"}</strong>
+                  <strong>{orderDetail != undefined ? orderDetail.auctionTitle ?? "N/A" : "N/A"}</strong>
                 </td>
               </tr>
               <tr>
@@ -90,7 +89,7 @@ const OrderDetails: React.FC<{
                   </div>
                 </td>
                 <td className="fw-bold text-end">
-                  <span>{orderDetail?.quantity ?? "N/A"} </span>
+                  <span>{orderDetail != undefined ? orderDetail.quantity ?? "N/A" : "N/A"}</span>
                 </td>
               </tr>
 
@@ -102,9 +101,10 @@ const OrderDetails: React.FC<{
                   </div>
                 </td>
                 <td className="fw-bold text-end">
-                  {orderDetail?.createdDate
+                  {orderDetail != undefined ? orderDetail.createdDate
                     ? new Date(orderDetail.createdDate).toLocaleString()
-                    : "N/A"}
+                    : "N/A" : 
+                    "N/A"}
                 </td>
               </tr>
               <tr>
@@ -115,9 +115,10 @@ const OrderDetails: React.FC<{
                   </div>
                 </td>
                 <td className="fw-bold text-end">
-                  {orderDetail?.paymentDate != null
-                    ? new Date(orderDetail!.paymentDate!).toLocaleString()
-                    : "N/A"}
+                  {orderDetail != undefined ? orderDetail.paymentDate
+                    ? new Date(orderDetail.paymentDate!).toLocaleString()
+                    : "N/A" : 
+                    "N/A"}
                 </td>
               </tr>
               <tr>
@@ -128,9 +129,10 @@ const OrderDetails: React.FC<{
                   </div>
                 </td>
                 <td className="fw-bold text-end">
-                  {orderDetail?.completedDate != null
+                  {orderDetail != undefined ? orderDetail.completedDate
                     ? new Date(orderDetail.completedDate!).toLocaleString()
-                    : "N/A"}
+                    : "N/A" : 
+                    "N/A"}
                 </td>
               </tr>
               <tr>
@@ -143,10 +145,10 @@ const OrderDetails: React.FC<{
                 <td className="fw-bold text-end">
                   <span
                     className={`badge badge-light-${paymentMethod(
-                      orderDetail?.paymentMethod ?? "Cash"
+                      orderDetail != undefined ? orderDetail.paymentMethod ?? "Cash" : "Cash"
                     )}`}
                   >
-                    {orderDetail?.paymentMethod}
+                    {orderDetail != undefined ? orderDetail.paymentMethod ?? "N/A" : "N/A"}
                   </span>
                 </td>
               </tr>

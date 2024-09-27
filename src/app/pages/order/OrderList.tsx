@@ -228,13 +228,13 @@ const OrderList: React.FC<Props> = ({ className }) => {
           </div>
           <KTTable
             columns={orderListColumns}
-            data={data?.data || []}
-            totalCount={data?.totalCount || 0}
+            data={data != undefined ? data.data || [] : []}
+            totalCount={data != undefined ? data.totalCount || 0 : 0}
             currentPage={currentPage}
             pageSize={pageSize}
             onPageChange={handlePageChange}
             loading={isLoading}
-            totalPages={data?.totalPages || 0}
+            totalPages={data != undefined ? data.totalPages || 0 : 0}
           />
         </KTCardBody>
       </KTCard>

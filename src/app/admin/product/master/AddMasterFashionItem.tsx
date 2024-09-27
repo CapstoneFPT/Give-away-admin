@@ -445,7 +445,7 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
                 </select>
               </div>
               <div className="fv-row">
-                <label className="required form-label">Image</label>
+                <label className="required form-label">Image (1 only)</label>
                 <KTCard className="p-3">
                   {loading ? (
                     <div

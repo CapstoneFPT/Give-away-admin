@@ -87,7 +87,7 @@ const ExportFashionItemsToExcelModal: React.FC<ExportFashionItemsToExcelModalPro
                     onChange={handleChange as any}
                   >
                     <option value="">All Shops</option>
-                    {shops?.map((shop: any) => (
+                    {shops && shops.map((shop: any) => (
                       <option key={shop.id} value={shop.id}>
                         {shop.address}
                       </option>

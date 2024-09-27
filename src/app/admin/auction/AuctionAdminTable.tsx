@@ -152,7 +152,7 @@ const AuctionAdminList: React.FC<Props> = ({ className }) => {
           ) : (
             <>
               <div className="row g-4">
-                {data?.items?.map((auction: AuctionListResponse) => (
+                {data != undefined ? data.items != undefined ? data.items.map((auction: AuctionListResponse) => (
                   <div
                     key={auction.auctionId}
                     className="col-sm-6 col-md-4 col-lg-3"
@@ -248,7 +248,7 @@ const AuctionAdminList: React.FC<Props> = ({ className }) => {
                       </div>
                     </div>
                   </div>
-                ))}
+                )) : "No auction available" : "No auction available"}
               </div>
 
               <div className="d-flex justify-content-between align-items-center mt-5">

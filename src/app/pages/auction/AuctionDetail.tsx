@@ -274,7 +274,7 @@ const AuctionDetail: React.FC = () => {
             <Card.Body>
               <Card.Title>Product Details</Card.Title>
               <div className="mb-3">
-                {item?.images?.map((image: string, index: number) => (
+                {item != undefined ? item.images != undefined ? item.images.map((image: string, index: number) => (
                   <img
                     key={index}
                     src={image}
@@ -286,7 +286,7 @@ const AuctionDetail: React.FC = () => {
                       marginRight: "10px",
                     }}
                   />
-                ))}
+                )) : "No image available" : "No image available"}
               </div>
               <dl className="row">
                 <dt className="col-sm-4">Product Code</dt>

@@ -203,7 +203,7 @@ const ExportTransactionToExcelModal: React.FC<ExportTransactionToExcelModalProps
                     onChange={handleChange as any}
                   >
                     <option value="">All Shops</option>
-                    {shops?.data.data?.map((shop) => (
+                    {shops && shops.data.data && shops.data.data.map((shop) => (
                       <option key={shop.shopId} value={shop.shopId}>
                         {shop.address}
                       </option>

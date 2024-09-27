@@ -51,11 +51,11 @@ const ShippingAddress: React.FC<{ orderDetail: OrderDetailedResponse | undefined
                 </div>
             </div>
             <KTCardBody className="pt-0">
-                {orderDetail?.address}
+                {orderDetail && orderDetail.address}
                 <div>
                     {
-                        orderDetail?.purchaseType === PurchaseType.Online &&
-                        orderDetail?.status === OrderStatus.OnDelivery && orderLineItems?.some((item) => item.itemStatus === 'OnDelivery')  &&
+                        orderDetail && orderDetail.purchaseType === PurchaseType.Online &&
+                        orderDetail.status === OrderStatus.OnDelivery && orderLineItems && orderLineItems.some((item) => item.itemStatus === 'OnDelivery')  &&
                     <Button 
                         style={{ marginTop: "10px" }} 
                         className="btn btn-success hover-rotate-end"

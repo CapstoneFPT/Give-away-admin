@@ -273,10 +273,10 @@ const RefundList: React.FC = () => {
 
           <KTTable
             columns={columns}
-            data={data?.data || []}
-            totalCount={data?.totalCount || 0}
+            data={data != undefined ? data.data != undefined ? data.data || [] : [] : []}
+            totalCount={data != undefined ? data.totalCount != undefined ? data.totalCount || 0 : 0 : 0}
             currentPage={currentPage}
-            totalPages={data?.totalPages || 0}
+            totalPages={data != undefined ? data.totalPages != undefined ? data.totalPages || 0 : 0 : 0}
             pageSize={pageSize}
             onPageChange={handlePageChange}
             loading={isLoading}

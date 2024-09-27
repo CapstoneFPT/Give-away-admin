@@ -311,7 +311,7 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
                     <KTCardBody>
                       <h3 className="fs-2 fw-bold mb-5">Master Image</h3>
                       <div className="d-flex flex-wrap gap-3">
-                        {masterItemQuery.data?.images?.map((image, index) => (
+                        {masterItemQuery.data != undefined ? masterItemQuery.data.images != undefined ? masterItemQuery.data.images.map((image, index) => (
                           <img
                             key={index}
                             src={image.imageUrl ?? ""}
@@ -322,7 +322,7 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
                               objectFit: "cover",
                             }}
                           />
-                        ))}
+                        )) : "No image available" : "No image available"}
                       </div>
                     </KTCardBody>
                   </KTCard>
@@ -362,11 +362,11 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
 
         <KTTable
           columns={columns}
-          data={data?.items || []}
-          totalCount={data?.totalCount || 0}
+          data={data != undefined ? data.items || [] : []}
+          totalCount={data != undefined ? data.totalCount || 0 : 0}
           currentPage={currentPage}
           pageSize={pageSize}
-          totalPages={data?.totalPages || 0}
+          totalPages={data != undefined ? data.totalPages || 0 : 0}
           onPageChange={handlePageChange}
           loading={isLoading}
         />
