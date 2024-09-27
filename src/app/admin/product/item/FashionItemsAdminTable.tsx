@@ -338,7 +338,7 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                         iconName="information"
                         className="fs-3 text-primary me-2"
                       />
-                      <div className="fs-6 text-gray-800 fw-bold">Type</div>
+                      <div className="fs-6 text-gray-800 fw-bold">Type </div>
                     </div>
                     <div className="fs-7 text-gray-600 mt-2">
                       Consigned Item
@@ -352,7 +352,7 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                         iconName="information"
                         className="fs-3 text-primary me-2"
                       />
-                      <div className="fs-6 text-gray-800 fw-bold">Type</div>
+                      <div className="fs-6 text-gray-800 fw-bold">Type </div>
                     </div>
                     <div className="fs-7 text-gray-600 mt-2">Shop Item</div>
                   </div>
@@ -416,7 +416,7 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                 </th>
                 <th className="min-w-125px">Item Code</th>
                 <th className="min-w-200px">Product</th>
-                <th className="min-w-200px">Description</th>
+                <th className="min-w-150px">Type</th>
                 <th className="min-w-125px">Selling Price</th>
                 <th className="min-w-125px">Condition</th>
                 <th className="min-w-150px text-center">Status</th>
@@ -473,7 +473,7 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
                   </td>
                   <td>
                     <span className="text-muted fw-semibold text-muted d-block fs-7">
-                      {product.note || "N/A"}
+                      {product.type || "N/A"}
                     </span>
                   </td>
                   <td>

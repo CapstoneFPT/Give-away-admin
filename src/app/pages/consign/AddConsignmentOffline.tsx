@@ -1170,43 +1170,4 @@ interface ImageDropzoneProps {
   isLoading: boolean;
 }
 
-// const ImageDropzone: React.FC<ImageDropzoneProps> = ({ onDrop, isLoading }) => {
-//   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-//     onDrop,
-//     accept: {
-//       "image/*": [".jpeg", ".jpg", ".png", ".gif"],
-//     },
-//     multiple: true,
-//   });
-
-//   return (
-//     <div
-//       {...getRootProps()}
-//       className={`dropzone ${
-//         isDragActive ? "dropzone-active" : ""
-//       } d-flex align-items-center justify-content-center`}
-//       style={{
-//         border: "2px dashed #ccc",
-//         borderRadius: "4px",
-//         padding: "20px",
-//         cursor: "pointer",
-//         minHeight: "100px",
-//       }}
-//     >
-//       <input {...getInputProps()} />
-//       {isLoading ? (
-//         <div className="spinner-border text-primary" role="status">
-//           <span className="visually-hidden">Loading...</span>
-//         </div>
-//       ) : isDragActive ? (
-//         <p className="m-0">Drop the images here ...</p>
-//       ) : (
-//         <p className="m-0">
-//           Drag 'n' drop some images here, or click to select images
-//         </p>
-//       )}
-//     </div>
-//   );
-// };
-
 export default AddConsignmentOffline;
