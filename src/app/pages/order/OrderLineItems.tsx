@@ -145,12 +145,12 @@ const OrderLineItems = ({
                     <td className="text-end">{item.itemCode}</td>
                     <td className="text-end">{item.quantity}</td>
                     <td className="text-end">
-                      {formatBalance(item.unitPrice || 0)}
+                      {formatBalance(item.unitPrice || 0)} VND
                     </td>
                     <td className="text-end">
                       {formatBalance(
                         (item.unitPrice || 0) * (item.quantity || 0)
-                      )}
+                      )} VND
                     </td>
                     <td className="text-end">{item.itemStatus}</td>
                     <td className="text-end">

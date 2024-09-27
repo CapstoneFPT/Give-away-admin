@@ -9,6 +9,7 @@ import {
 import { useQuery } from "react-query";
 import AddMasterItem from "./AddMasterFashionItem";
 import { Link } from "react-router-dom";
+import ExportFashionItemsToExcelModal from "./ExportFashionItemsToExcelModal";
 type Props = {
   className: string;
 };
@@ -18,6 +19,7 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
   const pageSize = 6;
 
   useEffect(() => {
@@ -69,6 +71,26 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
     result.refetch();
   };
 
+  const handleExport = async (filters: any) => {
+    const fashionItemApi = new FashionItemApi();
+    const response = await fashionItemApi.apiFashionitemsExportExcelGet(
+      filters.itemCode,
+      filters.shopId,
+      filters.status.length > 0 ? filters.status : undefined,
+      filters.type.length > 0 ? filters.type : undefined,
+      filters.minPrice ? parseFloat(filters.minPrice) : undefined,
+      filters.maxPrice ? parseFloat(filters.maxPrice) : undefined,
+      { responseType: "blob" }
+    );
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `FashionItemsReport_${new Date().toISOString()}.xlsx`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
+
   if (result.isLoading) return <div>Loading...</div>;
   if (result.error)
     return <div>An error occurred: {(result.error as Error).message}</div>;
@@ -95,6 +117,13 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
               onChange={handleSearchInputChange}
             />
           </form>
+          <button
+            className="btn btn-sm btn-light-primary me-2"
+            onClick={() => setShowExportModal(true)}
+          >
+            <KTIcon iconName="file-down" className="fs-2" />
+            Export to Excel
+          </button>
           <button
             className="btn btn-sm btn-light-primary"
             onClick={handleShowAddModal}
@@ -276,7 +305,11 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
         handleClose={handleCloseAddModal}
         handleSave={handleItemCreated}
       />
-      {/* end::Footer */}
+      <ExportFashionItemsToExcelModal
+        show={showExportModal}
+        onHide={() => setShowExportModal(false)}
+        onExport={handleExport}
+      />
     </div>
   );
 };
