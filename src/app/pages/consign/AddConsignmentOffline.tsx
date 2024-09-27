@@ -27,7 +27,6 @@ interface ConsignDetailRequest {
   masterItemId: string;
   note: string;
   expectedPrice: number;
-  productName: string;
 
   gender: GenderType;
   condition: string;
@@ -299,7 +298,7 @@ const AddConsignmentOffline: React.FC = () => {
           masterItemId: "",
           note: "",
           expectedPrice: 0,
-          productName: "",
+
           gender: "Male",
           condition: "",
           color: "",
@@ -322,6 +321,10 @@ const AddConsignmentOffline: React.FC = () => {
 
   const handleImageUpload = useCallback(
     async (index: number, acceptedFiles: File[]) => {
+      if (acceptedFiles.length > 3) {
+        showAlert("info", "Only 3 images are allowed for a consignment item.");
+        acceptedFiles = acceptedFiles.slice(0, 3);
+      }
       setIsImageUploading(true);
       try {
         const uploadPromises = acceptedFiles.map(async (file) => {
@@ -334,9 +337,11 @@ const AddConsignmentOffline: React.FC = () => {
 
         setFormData((prevData) => {
           const updatedItems = [...prevData.consignDetailRequests];
+          const currentImages = updatedItems[index].imageUrls || [];
+          const newImages = [...currentImages, ...firebaseUrls].slice(0, 3);
           updatedItems[index] = {
             ...updatedItems[index],
-            imageUrls: [...updatedItems[index].imageUrls, ...firebaseUrls],
+            imageUrls: newImages,
           };
           return {
             ...prevData,
@@ -345,7 +350,7 @@ const AddConsignmentOffline: React.FC = () => {
         });
       } catch (error) {
         console.error("Error uploading images:", error);
-        // Handle error (e.g., show error message to user)
+        showAlert("error", "Error uploading images. Please try again.");
       } finally {
         setIsImageUploading(false);
       }
@@ -493,7 +498,6 @@ const AddConsignmentOffline: React.FC = () => {
         !item.masterItemId ||
         !item.note ||
         item.expectedPrice <= 0 ||
-        !item.productName ||
         !item.gender ||
         !item.condition ||
         !item.color ||
@@ -751,11 +755,14 @@ const AddConsignmentOffline: React.FC = () => {
                       </div>
                       <div className="card-body pt-0">
                         <div className="mb-3">
-                          <label className="form-label">Images</label>
+                          <label className="form-label">
+                            Images (Only 3 images)
+                          </label>
                           <ImageDropzone
                             onDrop={(acceptedFiles) =>
                               handleImageUpload(index, acceptedFiles)
                             }
+                            maxFiles={3}
                             isLoading={isImageUploading}
                           />
                           <div className="d-flex flex-wrap mt-2">
@@ -789,9 +796,7 @@ const AddConsignmentOffline: React.FC = () => {
                           </div>
                         </div>
                         <div className="mb-3">
-                          <label className="form-label">
-                            Consignment Gender
-                          </label>
+                          <label className="form-label">Product Gender</label>
                           <select
                             className="form-select form-select-sm"
                             value={consignmentGender}
@@ -843,21 +848,7 @@ const AddConsignmentOffline: React.FC = () => {
                             placeholder="Note"
                           />
                         </div>
-                        <div className="mb-3">
-                          <label className="form-label">Product Name</label>
-                          <input
-                            className="form-control form-control-sm"
-                            value={item.productName}
-                            onChange={(e) =>
-                              handleItemChange(
-                                index,
-                                "productName",
-                                e.target.value
-                              )
-                            }
-                            placeholder="Product Name"
-                          />
-                        </div>
+
                         <div className="mb-3">
                           <label className="form-label">
                             {formData.type === "CustomerSale"
@@ -1066,7 +1057,6 @@ const AddConsignmentOffline: React.FC = () => {
               <ImageDropzone
                 onDrop={handleNewMasterItemImageUpload}
                 isLoading={isNewMasterItemImageUploading}
-                maxFiles={1}
                 isMasterItem={true}
               />
               <div className="d-flex flex-wrap mt-2">
@@ -1121,7 +1111,7 @@ interface ImageDropzoneProps {
 const ImageDropzone: React.FC<ImageDropzoneProps> = ({
   onDrop,
   isLoading,
-  maxFiles = 1,
+  maxFiles,
   isMasterItem = false,
 }) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -1130,7 +1120,7 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
       "image/*": [".jpeg", ".jpg", ".png", ".gif"],
     },
     multiple: !isMasterItem,
-    maxFiles: isMasterItem ? 1 : undefined,
+    maxFiles: isMasterItem ? 1 : maxFiles,
   });
 
   return (
@@ -1157,17 +1147,11 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
         <p className="m-0">Drop the image{isMasterItem ? "" : "s"} here ...</p>
       ) : (
         <p className="m-0">
-          Drag 'n' drop {isMasterItem ? "an image" : "some images"} here, or
+          Drag 'n' drop {isMasterItem ? "an image" : "up to 3 images"} here, or
           click to select {isMasterItem ? "an image" : "images"}
         </p>
       )}
     </div>
   );
 };
-
-interface ImageDropzoneProps {
-  onDrop: (acceptedFiles: File[]) => void;
-  isLoading: boolean;
-}
-
 export default AddConsignmentOffline;
