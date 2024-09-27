@@ -39,22 +39,24 @@ export const AddToInventoryModal: React.FC<AddToInventoryModalProps> = ({
   const [masterItemCode, setMasterItemCode] = useState("");
   const [description, setDescription] = useState("");
   const [categoryId, setCategoryId] = useState("");
-  const [selectedGender, setSelectedGender] = useState<
-    | "550e8400-e29b-41d4-a716-446655440000"
-    | "550e8400-e29b-41d4-a716-446655440001"
-  >("550e8400-e29b-41d4-a716-446655440000");
   const [categories, setCategories] = useState<any[]>([]);
-  console.log("consignLineItemid", data.consignSaleLineItemId);
+
+  const getGenderIdFromString = (gender: string): string => {
+    return gender === "Female"
+      ? "550e8400-e29b-41d4-a716-446655440001"
+      : "550e8400-e29b-41d4-a716-446655440000";
+  };
+
   useEffect(() => {
     const fetchCategories = async () => {
       const categoryApi = new CategoryApi();
-      const level = 4; // Set the level as a number
+      const genderId = getGenderIdFromString(data.gender || "");
       try {
         const response = await categoryApi.apiCategoriesConditionGet(
           null!,
           null!,
-          selectedGender,
-          level,
+          genderId,
+          4,
           "Available"
         );
         console.log("category", response);
@@ -65,7 +67,8 @@ export const AddToInventoryModal: React.FC<AddToInventoryModalProps> = ({
     };
 
     fetchCategories();
-  }, [selectedGender]);
+  }, [data.gender]);
+
   const validateMasterItemForm = (): boolean => {
     if (!masterItemCode.trim()) {
       showAlert("error", "Master product code is required.");
@@ -82,6 +85,7 @@ export const AddToInventoryModal: React.FC<AddToInventoryModalProps> = ({
     }
     return true;
   };
+
   const handleCreateButtonClick = () => {
     setIsCreatingMasterItem(true);
   };
@@ -102,19 +106,13 @@ export const AddToInventoryModal: React.FC<AddToInventoryModalProps> = ({
     setCategoryId(e.target.value);
   };
 
-  const handleGenderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedGender(
-      e.target.value as
-        | "550e8400-e29b-41d4-a716-446655440000"
-        | "550e8400-e29b-41d4-a716-446655440001"
-    );
-  };
   const handleCancelChanges = () => {
     setIsCreatingMasterItem(false);
     setMasterItemCode("");
     setDescription("");
     setCategoryId("");
   };
+
   const handleSaveChanges = async () => {
     if (!validateMasterItemForm()) {
       return;
@@ -299,45 +297,18 @@ export const AddToInventoryModal: React.FC<AddToInventoryModalProps> = ({
                 />
               </div>
               <div className="mb-3">
-                <label className="form-label">Category</label>
-                <div className="d-flex">
-                  <div className="form-check me-4">
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      name="genderRadio"
-                      id="menRadio"
-                      value="550e8400-e29b-41d4-a716-446655440000"
-                      checked={
-                        selectedGender ===
-                        "550e8400-e29b-41d4-a716-446655440000"
-                      }
-                      onChange={handleGenderChange}
-                    />
-                    <label className="form-check-label" htmlFor="menRadio">
-                      Men
-                    </label>
-                  </div>
-                  <div className="form-check">
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      name="genderRadio"
-                      id="womenRadio"
-                      value="550e8400-e29b-41d4-a716-446655440001"
-                      checked={
-                        selectedGender ===
-                        "550e8400-e29b-41d4-a716-446655440001"
-                      }
-                      onChange={handleGenderChange}
-                    />
-                    <label className="form-check-label" htmlFor="womenRadio">
-                      Women
-                    </label>
-                  </div>
-                </div>
+                <label className="form-label">Gender</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={data.gender}
+                  readOnly
+                />
               </div>
               <div className="mb-3">
+                <label htmlFor="categorySelect" className="form-label">
+                  Category
+                </label>
                 <select
                   id="categorySelect"
                   className="form-select"
@@ -357,7 +328,7 @@ export const AddToInventoryModal: React.FC<AddToInventoryModalProps> = ({
               </div>
               <button
                 type="button"
-                className="btn btn-primary"
+                className="btn btn-primary me-2"
                 onClick={handleSaveChanges}
               >
                 Save Master Product
