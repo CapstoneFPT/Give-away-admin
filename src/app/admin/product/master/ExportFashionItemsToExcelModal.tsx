@@ -31,10 +31,10 @@ const ExportFashionItemsToExcelModal: React.FC<ExportFashionItemsToExcelModalPro
   const { data: shops, isLoading: isLoadingShops } = useQuery(
     "shops",
     async () => {
-      if (currentUser?.role !== "Admin") return null;
+      if (currentUser?.role !== "Admin") return [];
       const shopApi = new ShopApi();
       const response = await shopApi.apiShopsGet();
-      return response.data.data;
+      return response.data.data || [];
     },
     { enabled: currentUser?.role === "Admin" }
   );

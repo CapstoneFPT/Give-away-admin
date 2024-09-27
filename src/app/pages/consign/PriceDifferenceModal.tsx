@@ -15,15 +15,15 @@ interface PriceDifferenceModalProps {
 }
 
 export const PriceDifferenceModal: React.FC<PriceDifferenceModalProps> = ({
-                                                                              isOpen,
-                                                                              onClose,
-                                                                              data,
-                                                                              dealPrice,
-                                                                              priceChangeExplanation,
-                                                                              setPriceChangeExplanation,
-                                                                              handlePriceDifferenceSubmit,
-                                                                              negotiatePriceMutation
-                                                                          }) => {
+    isOpen,
+    onClose,
+    data,
+    dealPrice,
+    priceChangeExplanation,
+    setPriceChangeExplanation,
+    handlePriceDifferenceSubmit,
+    negotiatePriceMutation
+}) => {
     return (
         <KTModal
             isOpen={isOpen}

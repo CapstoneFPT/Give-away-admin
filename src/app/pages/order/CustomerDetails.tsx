@@ -10,10 +10,10 @@ const CustomerDetails: React.FC<{
 }> = ({ orderDetail,orderLineItems }) => {
   const { data: feedback } = useQuery(
     ["feedback", orderDetail?.orderId],
-    () => {
+    async () => {
       if (orderDetail?.orderId) {
         const feedbackApi = new FeedbackApi();
-        return feedbackApi.apiFeedbacksGet(null!, null!, orderDetail.orderId);
+        return await feedbackApi.apiFeedbacksGet(null!, null!, orderDetail.orderId);
       }
     },
     { enabled: !!orderDetail?.orderId }

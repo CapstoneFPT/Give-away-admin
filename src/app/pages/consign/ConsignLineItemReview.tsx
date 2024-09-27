@@ -117,12 +117,13 @@ console.log("lineItemId", lineItemId);
   });
 
   const readyForConsignMutation = useMutation(
-    (data: { dealPrice: number }) => {
+    async (data: { dealPrice: number }) => {
       const consignSaleLineItemApi = new ConsignLineItemApi();
-      return consignSaleLineItemApi.apiConsignlineitemsConsignLineItemIdReadyForConsignPut(
+      const response = await consignSaleLineItemApi.apiConsignlineitemsConsignLineItemIdReadyForConsignPut(
         lineItemId!,
         data
       );
+      return response
     },
     {
       onSuccess: () => {

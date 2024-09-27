@@ -53,9 +53,9 @@ const AddOrderPage = () => {
   });
 
   const findAccountMutation = useMutation({
-    mutationFn: (params: { phone: string; page: number; pageSize: number }) => {
+    mutationFn: async (params: { phone: string; page: number; pageSize: number }) => {
       const userApi = new AccountApi();
-      return userApi.apiAccountsGet(
+      return await userApi.apiAccountsGet(
         params.page,
         params.pageSize,
         null!,

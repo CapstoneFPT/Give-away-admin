@@ -37,7 +37,10 @@ const ExportTransactionToExcelModal: React.FC<ExportTransactionToExcelModalProps
   });
 
   const shopApi = new ShopApi();
-  const { data: shops, isLoading: isLoadingShops } = useQuery('shops', () => shopApi.apiShopsGet());
+  const { data: shops, isLoading: isLoadingShops } = useQuery('shops', async () => {
+    const response = await shopApi.apiShopsGet();
+    return response.data.data || [];
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -64,6 +67,8 @@ const ExportTransactionToExcelModal: React.FC<ExportTransactionToExcelModalProps
   if(isLoadingShops) {
     return <div>Loading...</div>;
   }
+
+  console.log(shops)
 
   return (
     <Modal show={show} onHide={onHide} size="lg">
@@ -207,7 +212,7 @@ const ExportTransactionToExcelModal: React.FC<ExportTransactionToExcelModalProps
                     onChange={handleChange as any}
                   >
                     <option value="">All Shops</option>
-                    {(!isLoadingShops && shops && shops.data.data) && shops.data.data.map((shop) => (
+                    {(!isLoadingShops && shops) && shops.map((shop) => (
                       <option key={shop.shopId} value={shop.shopId}>
                         {shop.address}
                       </option>

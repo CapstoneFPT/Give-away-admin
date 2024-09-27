@@ -61,7 +61,10 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
 
   const { data, isLoading, error } = useQuery(
     ["FashionItems", debouncedSearchTerm, masterItemId, currentPage],
-    () => fetchData(currentPage, pageSize),
+    async () => {
+      const response = await fetchData(currentPage, pageSize)
+      return response
+    },
     { refetchOnWindowFocus: false, keepPreviousData: true }
   );
 

@@ -31,7 +31,10 @@ const AuctionAdminList: React.FC<Props> = ({ className }) => {
 
   const { data, isLoading, error } = useQuery(
     ["Auctions", currentPage, searchTerm, statusFilter, expired],
-    () => fetchAuctions(),
+    async () => {
+      const response = await fetchAuctions();
+      return response;
+    },
     { keepPreviousData: true }
   );
   console.log(data);

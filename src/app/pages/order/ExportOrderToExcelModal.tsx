@@ -41,10 +41,10 @@ const ExportOrderToExcelModal: React.FC<ExportOrderToExcelModalProps> = ({ show,
   const { data: shops, isLoading: isLoadingShops } = useQuery(
     "shops",
     async () => {
-      if (!isAdmin) return null;
+      if (!isAdmin) return [];
       const shopApi = new ShopApi();
       const response = await shopApi.apiShopsGet();
-      return response.data.data;
+      return response.data.data || [];
     },
     { enabled: isAdmin }
   );
