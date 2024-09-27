@@ -54,9 +54,9 @@ const ProductTable = ({
     keepPreviousData: true,
   });
   console.log(data);
-  const fashionItems = data?.items || [];
-  const totalCount = data?.totalCount || 0;
-  const totalPages = data?.totalPages || 1;
+  const fashionItems = data != undefined ? data.items || [] : [];
+  const totalCount = data != undefined ? data.totalCount || 0 : 0;
+  const totalPages = data != undefined ? data.totalPages || 1 : 1;
 
   useEffect(() => {
     setCurrentPage(1);
@@ -79,7 +79,7 @@ const ProductTable = ({
 
       updatedTotalCost = updatedSelectedItems.reduce((acc, id) => {
         const item = fashionItems.find((i) => i.itemId === id);
-        return acc + (item?.sellingPrice || 0);
+        return acc + (item != undefined ? item.sellingPrice || 0 : 0);
       }, 0);
 
       if (setTotalCost) {
@@ -239,7 +239,7 @@ const ProductTable = ({
                 <td className="text-end pe-5" data-order={item.sellingPrice}>
                   <span className="fw-bold ms-3">
                     <strong>
-                      {formatBalance(item.sellingPrice!) || 0} VND
+                      {formatBalance(item.sellingPrice || 0) || 0} VND
                     </strong>
                   </span>
                 </td>

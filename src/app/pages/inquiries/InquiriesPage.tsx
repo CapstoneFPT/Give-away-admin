@@ -63,7 +63,7 @@ const InquiriesTable: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {data?.data?.items?.map((inquiry) => (
+              {data != undefined ? data.data != undefined ? data.data.items != undefined ? data.data.items.map((inquiry) => (
                 <React.Fragment key={inquiry.inquiryId}>
                   <tr
                     onClick={() => toggleInquiry(inquiry.inquiryId ?? "")}
@@ -112,7 +112,7 @@ const InquiriesTable: React.FC = () => {
                     </td>
                   </tr>
                 </React.Fragment>
-              ))}
+              )) : "No inquiry available" : "No inquiry available" : "No inquiry available"}
             </tbody>
           </table>
         </div>

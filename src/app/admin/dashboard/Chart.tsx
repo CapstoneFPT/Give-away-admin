@@ -133,11 +133,11 @@ const Chart: React.FC<Props> = ({ className }) => {
                     className="form-control"
                   >
                     <option value="">Select Shop</option>
-                    {shops.map((shop) => (
+                    {shops != undefined ? shops.map((shop) => (
                       <option key={shop.shopId} value={shop.shopId}>
                         {shop.address}
                       </option>
-                    ))}
+                    )) : "No shop available"}
                   </select>
                   <input
                     type="text"

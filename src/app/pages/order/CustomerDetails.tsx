@@ -96,7 +96,7 @@ const CustomerDetails: React.FC<{
                                 className="max-h-100px overflow-auto p-3 border border-gray-300 rounded"
                                 style={{ wordWrap: "break-word" }}
                               >
-                                {feedback.data.items?.[0]?.content}
+                                {feedback.data.items && feedback.data.items[0] ? feedback.data.items[0].content : "No feedback available"}
                               </div>
                             </div>
                           </td>
