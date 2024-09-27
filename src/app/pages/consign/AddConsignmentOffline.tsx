@@ -64,6 +64,7 @@ const AddConsignmentOffline: React.FC = () => {
     useState<AccountResponse | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [isPhoneValid, setIsPhoneValid] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const pageSize = 6;
   const [formData, setFormData] = useState<ConsignmentForm>(initialFormData);
@@ -202,7 +203,6 @@ const AddConsignmentOffline: React.FC = () => {
     const term = e.target.value;
     setSearchTerm(term);
   };
-
   const handleFindAccount = () => {
     if (searchTerm) {
       findAccountMutation.mutate({
@@ -269,6 +269,10 @@ const AddConsignmentOffline: React.FC = () => {
       ...prevData,
       [name]: value,
     }));
+
+    if (name === "phone") {
+      setIsPhoneValid(/(((\+|)84)|0)(3|5|7|8|9)+([0-9]{8})\b/.test(value));
+    }
   };
 
   const handleItemChange = (
@@ -544,11 +548,18 @@ const AddConsignmentOffline: React.FC = () => {
                       <input
                         id="phone"
                         name="phone"
-                        className="form-control"
+                        className={`form-control ${
+                          !isPhoneValid ? "is-invalid" : ""
+                        }`}
                         value={formData.phone}
                         onChange={handleChange}
                         required
                       />
+                      {!isPhoneValid && (
+                        <div className="invalid-feedback">
+                          Please enter a valid phone number.
+                        </div>
+                      )}
                     </div>
                     <div className="mb-5">
                       <label htmlFor="address" className="form-label">
@@ -614,7 +625,7 @@ const AddConsignmentOffline: React.FC = () => {
                         <div className="input-group input-group-solid">
                           <input
                             type="text"
-                            className="form-control form-control-solid"
+                            className={`form-control form-control-solid`}
                             placeholder="Enter phone number"
                             value={searchTerm}
                             onChange={handleSearchChange}

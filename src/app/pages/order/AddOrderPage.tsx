@@ -27,6 +27,7 @@ const AddOrderPage = () => {
   const [selectedAccount, setSelectedAccount] =
     useState<AccountResponse | null>(null);
   const navigate = useNavigate();
+  const [isPhoneValid, setIsPhoneValid] = useState(false);
   const pageSize = 6;
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -88,6 +89,10 @@ const AddOrderPage = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!isPhoneValid) {
+      showAlert("error", "Please enter a valid phone number.");
+      return;
+    }
     const orderData: CreateOrderRequest = {
       recipientName: buyerName,
       phone: phoneNumber,
@@ -100,6 +105,7 @@ const AddOrderPage = () => {
     setPhoneNumber(e.target.value);
     setSelectedAccount(null);
     setAccounts([]);
+    setIsPhoneValid(/(((\+|)84)|0)(3|5|7|8|9)+([0-9]{8})\b/.test(e.target.value));
   };
 
   const handleFindAccount = () => {
@@ -205,12 +211,19 @@ const AddOrderPage = () => {
                         </label>
                         <input
                           type="text"
-                          className="form-control form-control-solid"
+                          className={`form-control form-control-solid ${
+                            !isPhoneValid ? "is-invalid" : ""
+                          }`}
                           placeholder="Enter phone number"
                           value={phoneNumber}
                           onChange={handlePhoneNumberChange}
                           required
                         />
+                        {!isPhoneValid && (
+                          <div className="invalid-feedback">
+                            Please enter a valid phone number.
+                          </div>
+                        )}
                       </div>
                       <div className="fv-row mb-7">
                         <label className="form-label fs-6 fw-bold mb-3">
