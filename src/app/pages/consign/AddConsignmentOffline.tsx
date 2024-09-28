@@ -58,6 +58,7 @@ const FEMALE_ID = "550e8400-e29b-41d4-a716-446655440001";
 
 const AddConsignmentOffline: React.FC = () => {
   const navigate = useNavigate();
+  const [isPhoneTouched, setIsPhoneTouched] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<AccountResponse[]>([]);
   const [selectedAccount, setSelectedAccount] =
@@ -271,10 +272,16 @@ const AddConsignmentOffline: React.FC = () => {
     }));
 
     if (name === "phone") {
-      setIsPhoneValid(/(((\+|)84)|0)(3|5|7|8|9)+([0-9]{8})\b/.test(value));
+      const phoneRegex = /(((\+|)84)|0)(3|5|7|8|9)+([0-9]{8})\b/;
+      setIsPhoneValid(phoneRegex.test(value));
     }
   };
-
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const { name } = e.target;
+    if (name === "phone") {
+      setIsPhoneTouched(true);
+    }
+  };
   const handleItemChange = (
     index: number,
     field: keyof ConsignDetailRequest,
@@ -549,17 +556,24 @@ const AddConsignmentOffline: React.FC = () => {
                         id="phone"
                         name="phone"
                         className={`form-control ${
-                          !isPhoneValid ? "is-invalid" : ""
+                          isPhoneTouched &&
+                          !isPhoneValid &&
+                          formData.phone !== ""
+                            ? "is-invalid"
+                            : ""
                         }`}
                         value={formData.phone}
                         onChange={handleChange}
+                        onBlur={handleBlur}
                         required
                       />
-                      {!isPhoneValid && (
-                        <div className="invalid-feedback">
-                          Please enter a valid phone number.
-                        </div>
-                      )}
+                      {!isPhoneValid &&
+                        isPhoneTouched &&
+                        formData.phone !== "" && (
+                          <div className="invalid-feedback">
+                            Please enter a valid phone number.
+                          </div>
+                        )}
                     </div>
                     <div className="mb-5">
                       <label htmlFor="address" className="form-label">

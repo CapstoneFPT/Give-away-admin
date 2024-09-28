@@ -31,6 +31,7 @@ const AddOrderPage = () => {
   const pageSize = 6;
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [isPhoneTouched, setIsPhoneTouched] = useState(false);
 
   const queryClient = useQueryClient();
   const { currentUser } = useAuth();
@@ -54,7 +55,11 @@ const AddOrderPage = () => {
   });
 
   const findAccountMutation = useMutation({
-    mutationFn: async (params: { phone: string; page: number; pageSize: number }) => {
+    mutationFn: async (params: {
+      phone: string;
+      page: number;
+      pageSize: number;
+    }) => {
       const userApi = new AccountApi();
       return await userApi.apiAccountsGet(
         params.page,
@@ -102,10 +107,15 @@ const AddOrderPage = () => {
   };
 
   const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPhoneNumber(e.target.value);
+    const value = e.target.value;
+    setPhoneNumber(value);
     setSelectedAccount(null);
     setAccounts([]);
-    setIsPhoneValid(/(((\+|)84)|0)(3|5|7|8|9)+([0-9]{8})\b/.test(e.target.value));
+    setIsPhoneValid(/(((\+|)84)|0)(3|5|7|8|9)+([0-9]{8})\b/.test(value));
+  };
+
+  const handlePhoneBlur = () => {
+    setIsPhoneTouched(true);
   };
 
   const handleFindAccount = () => {
@@ -212,18 +222,25 @@ const AddOrderPage = () => {
                         <input
                           type="text"
                           className={`form-control form-control-solid ${
-                            !isPhoneValid ? "is-invalid" : ""
+                            isPhoneTouched &&
+                            !isPhoneValid &&
+                            phoneNumber !== ""
+                              ? "is-invalid"
+                              : ""
                           }`}
                           placeholder="Enter phone number"
                           value={phoneNumber}
                           onChange={handlePhoneNumberChange}
+                          onBlur={handlePhoneBlur}
                           required
                         />
-                        {!isPhoneValid && (
-                          <div className="invalid-feedback">
-                            Please enter a valid phone number.
-                          </div>
-                        )}
+                        {isPhoneTouched &&
+                          !isPhoneValid &&
+                          phoneNumber !== "" && (
+                            <div className="invalid-feedback">
+                              Please enter a valid phone number.
+                            </div>
+                          )}
                       </div>
                       <div className="fv-row mb-7">
                         <label className="form-label fs-6 fw-bold mb-3">
@@ -247,10 +264,17 @@ const AddOrderPage = () => {
                         <div className="input-group input-group-solid">
                           <input
                             type="text"
-                            className="form-control form-control-solid"
+                            className={`form-control form-control-solid ${
+                              isPhoneTouched &&
+                              !isPhoneValid &&
+                              phoneNumber !== ""
+                                ? "is-invalid"
+                                : ""
+                            }`}
                             placeholder="Enter phone number"
                             value={phoneNumber}
                             onChange={handlePhoneNumberChange}
+                            onBlur={handlePhoneBlur}
                             required
                           />
                           <button
@@ -273,6 +297,13 @@ const AddOrderPage = () => {
                             )}
                           </button>
                         </div>
+                        {isPhoneTouched &&
+                          !isPhoneValid &&
+                          phoneNumber !== "" && (
+                            <div className="invalid-feedback">
+                              Please enter a valid phone number.
+                            </div>
+                          )}
                       </div>
                     </Tab>
                   </Tabs>
