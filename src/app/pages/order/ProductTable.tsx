@@ -50,7 +50,10 @@ const ProductTable = ({
 
   const { data, isLoading, error } = useQuery({
     queryKey: [searchTerm, currentPage, pageSize],
-    queryFn: fetchFashionItems,
+    queryFn: async () => {
+      const response = await fetchFashionItems({ queryKey: [searchTerm, currentPage, pageSize] });
+      return response
+    },
     keepPreviousData: true,
   });
   console.log(data);

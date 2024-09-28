@@ -38,13 +38,13 @@ const ExportOrderToExcelModal: React.FC<ExportOrderToExcelModalProps> = ({ show,
     statuses: [],
   });
   
-  const { data: shops } = useQuery(
+  const { data: shops, isLoading: isLoadingShops } = useQuery(
     "shops",
     async () => {
-      if (!isAdmin) return null;
+      if (!isAdmin) return [];
       const shopApi = new ShopApi();
       const response = await shopApi.apiShopsGet();
-      return response.data.data;
+      return response.data.data || [];
     },
     { enabled: isAdmin }
   );
@@ -65,6 +65,10 @@ const ExportOrderToExcelModal: React.FC<ExportOrderToExcelModalProps> = ({ show,
     onExport(filters);
     onHide();
   };
+
+  if(isLoadingShops) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Modal show={show} onHide={onHide} size="lg">
@@ -226,11 +230,11 @@ const ExportOrderToExcelModal: React.FC<ExportOrderToExcelModalProps> = ({ show,
                     onChange={handleChange}
                   >
                     <option value="">All Shops</option>
-                    {shops && shops.map((shop: any) => (
+                    {(shops != undefined || shops != null) ? shops.map((shop: any) => (
                       <option key={shop.id} value={shop.id}>
                         {shop.address}
                       </option>
-                    ))}
+                    )) : "No shop available"}
                   </Form.Control>
                 </Form.Group>
               </Col>

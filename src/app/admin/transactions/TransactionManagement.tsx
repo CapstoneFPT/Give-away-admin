@@ -23,13 +23,15 @@ const TransactionManagement: React.FC = () => {
   console.log(shopId);
   const { data, isLoading, error } = useQuery(
     ["transactions", currentPage, pageSize, shopId, transactionTypeFilter],
-    () =>
-      transactionApi.apiTransactionsGet(
+    async () =>{
+      const response = await transactionApi.apiTransactionsGet(
         currentPage,
         pageSize,
         shopId,
         transactionTypeFilter || null!
-      ),
+      )
+      return response.data.data
+    },
     {
       keepPreviousData: true,
     }
@@ -81,12 +83,9 @@ const TransactionManagement: React.FC = () => {
     []
   );
 
-  const transactions = useMemo(() => {
-    return data?.data?.data?.items || [];
-  }, [data]);
 
-  const totalCount = data?.data?.data?.totalCount || 0;
-  const totalPages = data?.data?.data?.totalPages || 1;
+  const totalCount = data != undefined ? data.totalCount : 0;
+  const totalPages = data != undefined ? data.totalPages : 1;
 
   const handleExport = async (filters: any) => {
     try {
@@ -167,13 +166,13 @@ const TransactionManagement: React.FC = () => {
           ) : (
             <KTTable
               columns={columns}
-              data={transactions}
+              data={data?.items ||  []}
               currentPage={currentPage}
               pageSize={pageSize}
               onPageChange={handlePageChange}
               loading={isLoading}
-              totalCount={totalCount}
-              totalPages={totalPages}
+              totalCount={totalCount != undefined ? totalCount : 0}
+              totalPages={totalPages != undefined ? totalPages : 1}
             />
           )}
         </KTCardBody>

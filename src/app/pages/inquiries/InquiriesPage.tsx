@@ -12,11 +12,11 @@ const InquiriesTable: React.FC = () => {
   const pageSize = 10;
   const queryClient = useQueryClient();
 
-  const { data, isLoading, error } = useQuery(["inquiries", page], () => {
+  const { data, isLoading, error } = useQuery(["inquiries", page], async () => {
     const inquiryApi = new InquiryApi();
-    return inquiryApi.apiInquiriesGet(page, pageSize);
+    const response = await inquiryApi.apiInquiriesGet(page, pageSize);
+    return response.data
   });
-  console.log(data);
   const markAsDoneMutation = useMutation(
     (inquiryId: string) => {
       const inquiryApi = new InquiryApi();
@@ -63,7 +63,7 @@ const InquiriesTable: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {data != undefined ? data.data != undefined ? data.data.items != undefined ? data.data.items.map((inquiry) => (
+              {data?.items && data.items.map((inquiry) => (
                 <React.Fragment key={inquiry.inquiryId}>
                   <tr
                     onClick={() => toggleInquiry(inquiry.inquiryId ?? "")}
@@ -112,7 +112,7 @@ const InquiriesTable: React.FC = () => {
                     </td>
                   </tr>
                 </React.Fragment>
-              )) : "No inquiry available" : "No inquiry available" : "No inquiry available"}
+              ))}
             </tbody>
           </table>
         </div>
@@ -124,11 +124,11 @@ const InquiriesTable: React.FC = () => {
             Previous
           </Button>
           <span>
-            Page {page} of {data?.data.totalPages}
+            Page {page} of {data?.totalPages}
           </span>
           <Button
             onClick={() => setPage((prev) => prev + 1)}
-            disabled={!data?.data.hasNext}
+            disabled={!data?.hasNext}
           >
             Next
           </Button>

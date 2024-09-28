@@ -78,7 +78,10 @@ const MasterProductsTable: React.FC<Props> = ({ className }) => {
       isLeftInStock,
       currentPage,
     ],
-    () => fetchData(currentPage, pageSize, []),
+    async () => {
+      const response = await fetchData(currentPage, pageSize, [])
+      return response
+    },
     { refetchOnWindowFocus: false, keepPreviousData: true }
   );
 

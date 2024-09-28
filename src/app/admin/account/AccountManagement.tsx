@@ -50,7 +50,10 @@ const AccountManagement: React.FC = () => {
 
   const { data, isLoading, error, isFetching, refetch } = useQuery(
     ["accounts", searchTerm, statusFilter, currentPage, activeTab],
-    () => fetchAccounts(currentPage, pageSize),
+    async () => {
+      const response = await fetchAccounts(currentPage, pageSize);
+      return response;
+    },
     { keepPreviousData: true }
   );
   console.log(data);

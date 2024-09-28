@@ -73,7 +73,10 @@ const [showExportModal, setShowExportModal] = useState(false);
       statusFilter,
       currentPage,
     ],
-    () => fetchOrders(currentPage, pageSize),
+    async () => {
+      const response = await fetchOrders(currentPage, pageSize);
+      return response;
+    },
     { keepPreviousData: true }
   );
 

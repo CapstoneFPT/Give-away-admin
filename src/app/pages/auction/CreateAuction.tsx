@@ -97,7 +97,10 @@ const CreateAuction = () => {
   const endDateTime = getValidDateTime(selectedDate, endTime);
 
   const createAuctionMutation = useMutation(
-    (data: CreateAuctionRequest) => auctionApi.apiAuctionsPost(data),
+    async (data: CreateAuctionRequest) => {
+      const response = await auctionApi.apiAuctionsPost(data);
+      return response.data;
+    },
     {
       onSuccess: () => {
         showAlert("success", "Auction created successfully!");

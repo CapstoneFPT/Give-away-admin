@@ -115,7 +115,10 @@ const ConsignTable: React.FC = () => {
       selectedShop,
       consignType,
     ],
-    () => fetchData(currentPage, pageSize, consignType),
+    async () => {
+      const response = await fetchData(currentPage, pageSize, consignType)
+      return response
+    },
     {
       refetchOnWindowFocus: false,
       keepPreviousData: false,

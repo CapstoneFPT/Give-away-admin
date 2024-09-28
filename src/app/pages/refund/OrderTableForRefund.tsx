@@ -33,8 +33,8 @@ const OrderTableForRefund: React.FC<OrderTableProps> = ({
     refetch,
   } = useQuery(
     ["orders", shopId, page, debouncedSearchCode],
-    () =>
-      orderApi.apiOrdersGet(
+    async () => {
+      const response = await orderApi.apiOrdersGet(
         page,
         pageSize,
         shopId,
@@ -47,7 +47,9 @@ const OrderTableForRefund: React.FC<OrderTableProps> = ({
         null!, //name
         debouncedSearchCode || null!,
         false
-      ),
+      )
+      return response
+    },
     {
       keepPreviousData: true,
     }

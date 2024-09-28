@@ -77,7 +77,10 @@ const OrderList: React.FC<Props> = ({ className }) => {
       statusFilter,
       currentPage,
     ],
-    () => fetchOrders(currentPage, pageSize),
+    async () => {
+      const response = await fetchOrders(currentPage, pageSize)
+      return response
+    },
     { keepPreviousData: true }
   );
 

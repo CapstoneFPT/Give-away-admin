@@ -68,7 +68,10 @@ const AuctionDetail: React.FC = () => {
 
   const { data: auctionData, isLoading: isLoadingAuction } = useQuery({
     queryKey: ["auction", auctionId],
-    queryFn: () => auctionApi.apiAuctionsIdGet(auctionId!),
+    queryFn: async () => {
+      const response = await auctionApi.apiAuctionsIdGet(auctionId!);
+      return response;
+    },
   });
 
   const { data: bidsData, isLoading: isLoadingBids } = useQuery({
@@ -80,20 +83,25 @@ const AuctionDetail: React.FC = () => {
       debouncedBidSearchTermName,
       debouncedBidSearchTermPhone,
     ],
-    queryFn: () =>
-      auctionApi.apiAuctionsIdBidsGet(
+    queryFn: async () => {
+      const response = await auctionApi.apiAuctionsIdBidsGet(
         auctionId!,
         currentPage,
         pageSize,
         null!,
         debouncedBidSearchTermName,
         debouncedBidSearchTermPhone
-      ),
+      );
+      return response;
+    },
   });
   console.log(bidsData);
   const { data: itemData, isLoading: isLoadingItem } = useQuery({
     queryKey: ["auctionItem", auctionId],
-    queryFn: () => auctionApi.apiAuctionsIdAuctionItemGet(auctionId!),
+    queryFn: async () => {
+      const response = await auctionApi.apiAuctionsIdAuctionItemGet(auctionId!);
+      return response;
+    },
   });
 
   const { data: depositData, isLoading: isLoadingDeposits } = useQuery({
@@ -104,13 +112,15 @@ const AuctionDetail: React.FC = () => {
       depositPageSize,
       debouncedDepositSearchTerm,
     ],
-    queryFn: () =>
-      auctionApi.apiAuctionsAuctionIdDepositsGet(
+    queryFn: async () => {
+      const response = await auctionApi.apiAuctionsAuctionIdDepositsGet(
         auctionId!,
         depositCurrentPage,
         depositPageSize,
         debouncedDepositSearchTerm
-      ),
+      );
+      return response;
+    },
   });
 
   const handlePageChange = (newPage: number) => {
