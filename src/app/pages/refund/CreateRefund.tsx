@@ -15,6 +15,9 @@ import OrderTableForRefund from "./OrderTableForRefund";
 import { useAuth } from "../../modules/auth";
 import { useDropzone } from "react-dropzone";
 import { showAlert } from "../../../utils/Alert";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../../../firebaseconfig";
+
 const CreateRefund: React.FC = () => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
@@ -56,12 +59,14 @@ const CreateRefund: React.FC = () => {
   const createRefundMutation = useMutation(
     (newRefund: CreateRefundByShopRequest) =>
       shopApi.apiShopsShopIdRefundsPost(shopId!, newRefund),
+
     {
       onSuccess: () => {
         showAlert("success", "Refund created successfully");
         navigate("/refund/list");
       },
       onError: (error) => {
+        console.error("Error creating refund:", error);
         showAlert(
           "error",
           `Error creating refund: ${(error as Error).message}`
@@ -74,7 +79,7 @@ const CreateRefund: React.FC = () => {
     e.preventDefault();
 
     if (!selectedItem) {
-      showAlert("error", "Please select an product to refund");
+      showAlert("error", "Please select a product to refund");
       return;
     }
 
@@ -91,11 +96,18 @@ const CreateRefund: React.FC = () => {
   };
 
   const uploadImages = async (files: File[]): Promise<string[]> => {
-    // Implement image upload logic here
-    // This should return an array of image URLs
-    console.log("Uploading images:", files);
-    // For now, we'll return placeholder URLs
-    return files.map((file) => URL.createObjectURL(file));
+    const uploadedUrls = await Promise.all(
+      files.map(async (file) => {
+        const storageRef = ref(
+          storage,
+          `refund-images/${Date.now()}_${file.name}`
+        );
+        await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(storageRef);
+        return url;
+      })
+    );
+    return uploadedUrls;
   };
 
   const handleItemSelect = (itemId: string) => {
@@ -103,7 +115,10 @@ const CreateRefund: React.FC = () => {
   };
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    setImages(acceptedFiles);
+    setImages((prevImages) => {
+      const newImages = [...prevImages, ...acceptedFiles];
+      return newImages.slice(0, 3); // Limit to 3 images
+    });
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -111,10 +126,15 @@ const CreateRefund: React.FC = () => {
     accept: {
       "image/*": [".jpeg", ".jpg", ".png", ".gif"],
     },
+    maxFiles: 3,
   });
 
   const handleItemDetail = (itemDetailId: string) => {
     navigate(`/refund/item-detail/${itemDetailId}`);
+  };
+
+  const removeImage = (index: number) => {
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
   return (
@@ -223,20 +243,28 @@ const CreateRefund: React.FC = () => {
                 </div>
 
                 <div className="mb-5">
-                  <label className="form-label fs-6 fw-bold">Images</label>
-                  <div {...getRootProps()} className="dropzone">
-                    <input {...getInputProps()} />
-                    {isDragActive ? (
-                      <p>Drop the files here ...</p>
-                    ) : (
-                      <p>
-                        Drag 'n' drop some files here, or click to select files
-                      </p>
-                    )}
-                  </div>
+                  <label className="form-label fs-6 fw-bold">
+                    Images (Max 3)
+                  </label>
+                  {images.length < 3 && (
+                    <div {...getRootProps()} className="dropzone">
+                      <input {...getInputProps()} />
+                      {isDragActive ? (
+                        <p>Drop the files here ...</p>
+                      ) : (
+                        <p>
+                          Drag 'n' drop some files here, or click to select
+                          files (Max 3)
+                        </p>
+                      )}
+                    </div>
+                  )}
                   <div className="mt-3">
-                    {images.map((file) => (
-                      <div key={file.name} className="d-inline-block m-2">
+                    {images.map((file, index) => (
+                      <div
+                        key={index}
+                        className="d-inline-block m-2 position-relative"
+                      >
                         <img
                           src={URL.createObjectURL(file)}
                           className="img-thumbnail"
@@ -247,6 +275,14 @@ const CreateRefund: React.FC = () => {
                           }}
                           alt={file.name}
                         />
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-danger position-absolute top-0 end-0"
+                          onClick={() => removeImage(index)}
+                        >
+                          X
+                        </button>
+                        <p>{file.name}</p>
                       </div>
                     ))}
                   </div>
@@ -271,7 +307,9 @@ const CreateRefund: React.FC = () => {
                 <button
                   type="submit"
                   className="btn btn-primary"
-                  disabled={createRefundMutation.isLoading}
+                  disabled={
+                    createRefundMutation.isLoading || images.length === 0
+                  }
                 >
                   {createRefundMutation.isLoading
                     ? "Creating..."
