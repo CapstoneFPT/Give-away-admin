@@ -37,6 +37,8 @@ import AddConsignmentOffline from "../pages/consign/AddConsignmentOffline.tsx";
 import AddCategory from "../admin/category/AddCategory.tsx";
 import InquiriesPage from "../pages/inquiries/InquiriesPage.tsx";
 import ChangePassword from "../admin/account/ChangePassword.tsx";
+import MasterProductsPage from "../pages/product/MasterProductsPage.tsx";
+import ConsignmentPage from "../pages/consign/ConsignmentPage.tsx";
 const PrivateRoutes = () => {
   const { currentUser } = useAuth();
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
@@ -44,15 +46,8 @@ const PrivateRoutes = () => {
   const AccountPage = lazy(() => import("../modules/accounts/AccountPage"));
   const WidgetsPage = lazy(() => import("../modules/widgets/WidgetsPage"));
   const ChatPage = lazy(() => import("../modules/apps/chat/ChatPage"));
-  const UsersPage = lazy(
-    () => import("../modules/apps/user-management/UsersPage")
-  );
-  const ConsignmentPage = lazy(
-    () => import("../pages/consign/ConsignmentPage.tsx")
-  );
-  const FashionItemsPage = lazy(
-    () => import("../pages/product/MasterProductsPage.tsx")
-  );
+  
+  
 
   const getDefaultRoute = () => {
     switch (currentUser?.role) {
@@ -214,7 +209,7 @@ const PrivateRoutes = () => {
               roles={["Staff"]}
               children={
                 <SuspensedView>
-                  <FashionItemsPage />
+                  <MasterProductsPage />
                 </SuspensedView>
               }
             />
@@ -454,14 +449,6 @@ const PrivateRoutes = () => {
           element={
             <SuspensedView>
               <ChatPage />
-            </SuspensedView>
-          }
-        />
-        <Route
-          path="apps/user-management/*"
-          element={
-            <SuspensedView>
-              <UsersPage />
             </SuspensedView>
           }
         />

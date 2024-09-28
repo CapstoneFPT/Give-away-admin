@@ -13,6 +13,8 @@ type ExportFashionItemsToExcelModalProps = {
 const ExportFashionItemsToExcelModal: React.FC<ExportFashionItemsToExcelModalProps> = ({ show, onHide, onExport }) => {
   const { currentUser } = useAuth();
   const [filters, setFilters] = useState<{
+    startDate: string;
+    endDate: string;
     itemCode: string;
     shopId: string;
     status: FashionItemStatus[];
@@ -20,6 +22,8 @@ const ExportFashionItemsToExcelModal: React.FC<ExportFashionItemsToExcelModalPro
     minPrice: string;
     maxPrice: string;
   }>({
+    startDate: "",
+    endDate: "",
     itemCode: "",
     shopId: currentUser?.shopId || "",
     status: [],
@@ -91,8 +95,8 @@ const ExportFashionItemsToExcelModal: React.FC<ExportFashionItemsToExcelModalPro
                     onChange={handleChange as any}
                   >
                     <option value="">All Shops</option>
-                    {(!isLoadingShops && shops) && shops.map((shop: any) => (
-                      <option key={shop.id} value={shop.id}>
+                    {(!isLoadingShops && shops) && shops.map((shop) => (
+                      <option key={shop.shopId} value={shop.shopId}>
                         {shop.address}
                       </option>
                     ))}
@@ -100,6 +104,30 @@ const ExportFashionItemsToExcelModal: React.FC<ExportFashionItemsToExcelModalPro
                 </Form.Group>
               </Col>
             )}
+          </Row>
+          <Row>
+            <Col md={6}>
+              <Form.Group controlId="startDate">
+                <Form.Label>Start Date</Form.Label>
+                <Form.Control
+                  type="date"
+                  name="startDate"
+                  value={filters.startDate}
+                  onChange={handleChange as any}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Form.Group controlId="endDate">
+                <Form.Label>End Date</Form.Label>
+                <Form.Control
+                  type="date"
+                  name="endDate"
+                  value={filters.endDate}
+                  onChange={handleChange as any}
+                />
+              </Form.Group>
+            </Col>
           </Row>
           <Row>
             <Col md={6}>

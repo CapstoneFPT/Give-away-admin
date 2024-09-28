@@ -1,54 +1,53 @@
 import React, { useState } from "react";
-import { Modal, Button, Form, Col, Row, FormControlProps } from "react-bootstrap";
-import { PaymentMethod, PurchaseType, OrderStatus, AddressType, ShopApi } from "../../../api";
+import { Modal, Button, Form, Col, Row } from "react-bootstrap";
+import { ConsignSaleStatus, ConsignSaleType, ConsignSaleMethod, ShopApi } from "../../../api";
 import { useQuery } from "react-query";
+import { useAuth } from "../../modules/auth";
 
-
-type ExportOrderToExcelModalProps = {
+type ExportConsignSaleToExcelModalProps = {
   show: boolean;
   onHide: () => void;
   onExport: (filters: any) => void;
-  isAdmin: boolean;
 };
 
-const ExportOrderToExcelModal: React.FC<ExportOrderToExcelModalProps> = ({ show, onHide, onExport, isAdmin }) => {
+const ExportConsignSaleToExcelModal: React.FC<ExportConsignSaleToExcelModalProps> = ({ show, onHide, onExport }) => {
+  const { currentUser } = useAuth();
   const [filters, setFilters] = useState<{
     startDate: string;
     endDate: string;
-    orderCode: string;
-    recipientName: string;
+    consignSaleCode: string;
+    memberName: string;
     phone: string;
+    email: string;
     shopId: string;
-    minTotalPrice: string;
-    maxTotalPrice: string;
-    paymentMethods: PaymentMethod[];
-    purchaseTypes: PurchaseType[];
-    statuses: OrderStatus[];
+    statuses: ConsignSaleStatus[];
+    types: ConsignSaleType[];
+    consignSaleMethods: ConsignSaleMethod[];
   }>({
     startDate: "",
     endDate: "",
-    orderCode: "",
-    recipientName: "",
+    consignSaleCode: "",
+    memberName: "",
     phone: "",
-    minTotalPrice: "",
-    maxTotalPrice: "",
+    email: "",
     shopId: "",
-    paymentMethods: [],
-    purchaseTypes: [],
     statuses: [],
+    types: [],
+    consignSaleMethods: [],
   });
-  
+
   const { data: shops, isLoading: isLoadingShops } = useQuery(
     "shops",
     async () => {
-      if (!isAdmin) return [];
+      if (currentUser?.role !== "Admin") return [];
       const shopApi = new ShopApi();
       const response = await shopApi.apiShopsGet();
       return response.data.data || [];
     },
-    { enabled: isAdmin }
+    { enabled: currentUser?.role === "Admin" }
   );
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
@@ -66,14 +65,14 @@ const ExportOrderToExcelModal: React.FC<ExportOrderToExcelModalProps> = ({ show,
     onHide();
   };
 
-  if(isLoadingShops) {
+  if (isLoadingShops) {
     return <div>Loading...</div>;
   }
 
   return (
     <Modal show={show} onHide={onHide} size="lg">
       <Modal.Header closeButton>
-        <Modal.Title>Export Orders to Excel</Modal.Title>
+        <Modal.Title>Export Consignments to Excel</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>
@@ -85,7 +84,7 @@ const ExportOrderToExcelModal: React.FC<ExportOrderToExcelModalProps> = ({ show,
                   type="date"
                   name="startDate"
                   value={filters.startDate}
-                  onChange={handleChange}
+                  onChange={handleChange as any}
                 />
               </Form.Group>
             </Col>
@@ -96,31 +95,31 @@ const ExportOrderToExcelModal: React.FC<ExportOrderToExcelModalProps> = ({ show,
                   type="date"
                   name="endDate"
                   value={filters.endDate}
-                  onChange={handleChange}
+                  onChange={handleChange as any}
                 />
               </Form.Group>
             </Col>
           </Row>
           <Row>
             <Col md={6}>
-              <Form.Group controlId="orderCode">
-                <Form.Label>Order Code</Form.Label>
+              <Form.Group controlId="consignSaleCode">
+                <Form.Label>Consign Sale Code</Form.Label>
                 <Form.Control
                   type="text"
-                  name="orderCode"
-                  value={filters.orderCode}
-                  onChange={handleChange}
+                  name="consignSaleCode"
+                  value={filters.consignSaleCode}
+                  onChange={handleChange as any}
                 />
               </Form.Group>
             </Col>
             <Col md={6}>
-              <Form.Group controlId="recipientName">
-                <Form.Label>Recipient Name</Form.Label>
+              <Form.Group controlId="memberName">
+                <Form.Label>Member Name</Form.Label>
                 <Form.Control
                   type="text"
-                  name="recipientName"
-                  value={filters.recipientName}
-                  onChange={handleChange}
+                  name="memberName"
+                  value={filters.memberName}
+                  onChange={handleChange as any}
                 />
               </Form.Group>
             </Col>
@@ -133,68 +132,19 @@ const ExportOrderToExcelModal: React.FC<ExportOrderToExcelModalProps> = ({ show,
                   type="text"
                   name="phone"
                   value={filters.phone}
-                  onChange={handleChange}
+                  onChange={handleChange as any}
                 />
-              </Form.Group>
-            </Col>
-            <Col md={3}>
-              <Form.Group controlId="minTotalPrice">
-                <Form.Label>Min Total Price</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="minTotalPrice"
-                  value={filters.minTotalPrice}
-                  onChange={handleChange}
-                />
-              </Form.Group>
-            </Col>
-            <Col md={3}>
-              <Form.Group controlId="maxTotalPrice">
-                <Form.Label>Max Total Price</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="maxTotalPrice"
-                  value={filters.maxTotalPrice}
-                  onChange={handleChange}
-                />
-              </Form.Group>
-            </Col>
-          </Row>
-          <Row>
-            <Col md={6}>
-              <Form.Group controlId="paymentMethods">
-                <Form.Label>Payment Methods</Form.Label>
-                <Form.Control
-                  as="select"
-                  multiple
-                  name="paymentMethods"
-                  value={filters.paymentMethods}
-                  onChange={handleMultiSelectChange as any}
-                >
-                  {Object.values(PaymentMethod).map((method) => (
-                    <option key={method} value={method}>
-                      {method}
-                    </option>
-                  ))}
-                </Form.Control>
               </Form.Group>
             </Col>
             <Col md={6}>
-              <Form.Group controlId="purchaseTypes">
-                <Form.Label>Purchase Types</Form.Label>
+              <Form.Group controlId="email">
+                <Form.Label>Email</Form.Label>
                 <Form.Control
-                  as="select"
-                  multiple
-                  name="purchaseTypes"
-                  value={filters.purchaseTypes}
-                  onChange={handleMultiSelectChange as any}
-                >
-                  {Object.values(PurchaseType).map((type) => (
-                    <option key={type} value={type}>
-                      {type}
-                    </option>
-                  ))}
-                </Form.Control>
+                  type="email"
+                  name="email"
+                  value={filters.email}
+                  onChange={handleChange as any}
+                />
               </Form.Group>
             </Col>
           </Row>
@@ -209,7 +159,7 @@ const ExportOrderToExcelModal: React.FC<ExportOrderToExcelModalProps> = ({ show,
                   value={filters.statuses}
                   onChange={handleMultiSelectChange as any}
                 >
-                  {Object.values(OrderStatus).map((status) => (
+                  {Object.values(ConsignSaleStatus).map((status) => (
                     <option key={status} value={status}>
                       {status}
                     </option>
@@ -217,9 +167,45 @@ const ExportOrderToExcelModal: React.FC<ExportOrderToExcelModalProps> = ({ show,
                 </Form.Control>
               </Form.Group>
             </Col>
+            <Col md={6}>
+              <Form.Group controlId="types">
+                <Form.Label>Types</Form.Label>
+                <Form.Control
+                  as="select"
+                  multiple
+                  name="types"
+                  value={filters.types}
+                  onChange={handleMultiSelectChange as any}
+                >
+                  {Object.values(ConsignSaleType).map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </Form.Control>
+              </Form.Group>
+            </Col>
           </Row>
-          {isAdmin && (
-            <Row>
+          <Row>
+            <Col md={6}>
+              <Form.Group controlId="consignSaleMethods">
+                <Form.Label>Consign Sale Methods</Form.Label>
+                <Form.Control
+                  as="select"
+                  multiple
+                  name="consignSaleMethods"
+                  value={filters.consignSaleMethods}
+                  onChange={handleMultiSelectChange as any}
+                >
+                  {Object.values(ConsignSaleMethod).map((method) => (
+                    <option key={method} value={method}>
+                      {method}
+                    </option>
+                  ))}
+                </Form.Control>
+              </Form.Group>
+            </Col>
+            {currentUser?.role === "Admin" && (
               <Col md={6}>
                 <Form.Group controlId="shopId">
                   <Form.Label>Shop</Form.Label>
@@ -227,19 +213,19 @@ const ExportOrderToExcelModal: React.FC<ExportOrderToExcelModalProps> = ({ show,
                     as="select"
                     name="shopId"
                     value={filters.shopId}
-                    onChange={handleChange}
+                    onChange={handleChange as any}
                   >
                     <option value="">All Shops</option>
-                    {(shops != undefined || shops != null) ? shops.map((shop) => (
+                    {shops?.map((shop: any) => (
                       <option key={shop.shopId} value={shop.shopId}>
                         {shop.address}
                       </option>
-                    )) : "No shop available"}
+                    ))}
                   </Form.Control>
                 </Form.Group>
               </Col>
-            </Row>
-          )}
+            )}
+          </Row>
         </Form>
       </Modal.Body>
       <Modal.Footer>
@@ -254,4 +240,4 @@ const ExportOrderToExcelModal: React.FC<ExportOrderToExcelModalProps> = ({ show,
   );
 };
 
-export default ExportOrderToExcelModal;
+export default ExportConsignSaleToExcelModal;
