@@ -111,7 +111,14 @@ const AddOrderPage = () => {
     setPhoneNumber(value);
     setSelectedAccount(null);
     setAccounts([]);
-    setIsPhoneValid(/(((\+|)84)|0)(3|5|7|8|9)+([0-9]{8})\b/.test(value));
+
+    if (activeTab === "manual") {
+      const phoneRegex = /(((\+|)84)|0)(5|7|8|9)+([0-9]{8})\b/;
+      setIsPhoneValid(phoneRegex.test(value));
+    } else {
+      // For "Find Account" tab, we don't validate the phone number
+      setIsPhoneValid(true);
+    }
   };
 
   const handlePhoneBlur = () => {
@@ -211,7 +218,11 @@ const AddOrderPage = () => {
                 ) : (
                   <Tabs
                     activeKey={activeTab}
-                    onSelect={(k) => setActiveTab(k || "manual")}
+                    onSelect={(k) => {
+                      setActiveTab(k || "manual");
+                      setIsPhoneTouched(false);
+                      setIsPhoneValid(true);
+                    }}
                     className="mb-5 nav-tabs-custom"
                   >
                     <Tab eventKey="manual" title="Enter Manually">
@@ -264,24 +275,17 @@ const AddOrderPage = () => {
                         <div className="input-group input-group-solid">
                           <input
                             type="text"
-                            className={`form-control form-control-solid ${
-                              isPhoneTouched &&
-                              !isPhoneValid &&
-                              phoneNumber !== ""
-                                ? "is-invalid"
-                                : ""
-                            }`}
+                            className="form-control form-control-solid"
                             placeholder="Enter phone number"
                             value={phoneNumber}
                             onChange={handlePhoneNumberChange}
-                            onBlur={handlePhoneBlur}
                             required
                           />
                           <button
                             type="button"
                             className="btn btn-light-primary"
                             onClick={handleFindAccount}
-                            disabled={isLoading}
+                            disabled={isLoading || phoneNumber === ""}
                           >
                             {isLoading ? (
                               <>
@@ -297,13 +301,6 @@ const AddOrderPage = () => {
                             )}
                           </button>
                         </div>
-                        {isPhoneTouched &&
-                          !isPhoneValid &&
-                          phoneNumber !== "" && (
-                            <div className="invalid-feedback">
-                              Please enter a valid phone number.
-                            </div>
-                          )}
                       </div>
                     </Tab>
                   </Tabs>
