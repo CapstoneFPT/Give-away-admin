@@ -74,6 +74,8 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
   const handleExport = async (filters: any) => {
     const fashionItemApi = new FashionItemApi();
     const response = await fashionItemApi.apiFashionitemsExportExcelGet(
+      filters.startDate,
+      filters.endDate,
       filters.itemCode,
       filters.shopId,
       filters.status.length > 0 ? filters.status : undefined,

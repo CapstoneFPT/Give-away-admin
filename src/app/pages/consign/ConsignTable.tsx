@@ -15,11 +15,13 @@ import {
   customerSaleColumns,
 } from "./_columns";
 import { Tabs, Tab } from "react-bootstrap";
+import ExportConsignSaleToExcelModal from "./ExportConsignSaleToExcelModal";
 
 const ConsignTable: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [consignorName, setConsignorName] = useState("");
   const [consignorPhone, setConsignorPhone] = useState("");
+  const [showExportModal, setShowExportModal] = useState(false);
   const [statusFilter, setStatusFilter] = useState<ConsignSaleStatus | null>(
     null
   );
@@ -151,6 +153,34 @@ const ConsignTable: React.FC = () => {
       });
     }, 0);
   };
+  const handleExport = async (filters: any) => {
+    try {
+      const consignSaleApi = new ConsignSaleApi();
+      const response = await consignSaleApi.apiConsignsalesExportExcelGet(
+        filters.consignSaleCode,
+        filters.memberName,
+        filters.phone,
+        currentUser?.role === "Admin" ? filters.shopId : currentUser?.shopId,
+        filters.email,
+        filters.statuses.length > 0 ? filters.statuses : undefined,
+        filters.types.length > 0 ? filters.types : undefined,
+        filters.consignSaleMethods.length > 0 ? filters.consignSaleMethods : undefined,
+        filters.startDate,
+        filters.endDate,
+        { responseType: "blob" }
+      );
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `ConsignmentReport_${new Date().toISOString()}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Error exporting consignments:", error);
+    }
+  };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -234,6 +264,12 @@ const ConsignTable: React.FC = () => {
             ))}
           </select>
         )}
+        <button
+          className="btn btn-primary"
+          onClick={() => setShowExportModal(true)}
+        >
+          Export to Excel
+        </button>
       </>
     );
 
@@ -287,8 +323,8 @@ const ConsignTable: React.FC = () => {
               consignType === ConsignSaleType.ConsignedForSale
                 ? consignSaleColumns
                 : consignType === ConsignSaleType.ConsignedForAuction
-                ? consignAuctionColumns
-                : customerSaleColumns
+                  ? consignAuctionColumns
+                  : customerSaleColumns
             }
             data={data != undefined ? data.data || [] : []}
             totalCount={data != undefined ? data.totalCount || 0 : 0}
@@ -300,6 +336,11 @@ const ConsignTable: React.FC = () => {
           />
         )}
       </div>
+      <ExportConsignSaleToExcelModal
+        show={showExportModal}
+        onHide={() => setShowExportModal(false)}
+        onExport={handleExport}
+      />
     </Content>
   );
 };

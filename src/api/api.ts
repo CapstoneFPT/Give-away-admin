@@ -17485,6 +17485,93 @@ export const ConsignSaleApiAxiosParamCreator = function (configuration?: Configu
         },
         /**
          * 
+         * @param {string} [consignSaleCode] 
+         * @param {string} [memberName] 
+         * @param {string} [phone] 
+         * @param {string} [shopId] 
+         * @param {string} [email] 
+         * @param {Array<ConsignSaleStatus>} [statuses] 
+         * @param {Array<ConsignSaleType>} [types] 
+         * @param {Array<ConsignSaleMethod>} [consignSaleMethods] 
+         * @param {string} [startDate] 
+         * @param {string} [endDate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiConsignsalesExportExcelGet: async (consignSaleCode?: string, memberName?: string, phone?: string, shopId?: string, email?: string, statuses?: Array<ConsignSaleStatus>, types?: Array<ConsignSaleType>, consignSaleMethods?: Array<ConsignSaleMethod>, startDate?: string, endDate?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/consignsales/export-excel`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (consignSaleCode !== undefined) {
+                localVarQueryParameter['ConsignSaleCode'] = consignSaleCode;
+            }
+
+            if (memberName !== undefined) {
+                localVarQueryParameter['MemberName'] = memberName;
+            }
+
+            if (phone !== undefined) {
+                localVarQueryParameter['Phone'] = phone;
+            }
+
+            if (shopId !== undefined) {
+                localVarQueryParameter['ShopId'] = shopId;
+            }
+
+            if (email !== undefined) {
+                localVarQueryParameter['Email'] = email;
+            }
+
+            if (statuses) {
+                localVarQueryParameter['Statuses'] = statuses;
+            }
+
+            if (types) {
+                localVarQueryParameter['Types'] = types;
+            }
+
+            if (consignSaleMethods) {
+                localVarQueryParameter['ConsignSaleMethods'] = consignSaleMethods;
+            }
+
+            if (startDate !== undefined) {
+                localVarQueryParameter['StartDate'] = (startDate as any instanceof Date) ?
+                    (startDate as any).toISOString() :
+                    startDate;
+            }
+
+            if (endDate !== undefined) {
+                localVarQueryParameter['EndDate'] = (endDate as any instanceof Date) ?
+                    (endDate as any).toISOString() :
+                    endDate;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {number} [page] 
          * @param {number} [pageSize] 
          * @param {string} [shopId] 
@@ -17709,6 +17796,27 @@ export const ConsignSaleApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {string} [consignSaleCode] 
+         * @param {string} [memberName] 
+         * @param {string} [phone] 
+         * @param {string} [shopId] 
+         * @param {string} [email] 
+         * @param {Array<ConsignSaleStatus>} [statuses] 
+         * @param {Array<ConsignSaleType>} [types] 
+         * @param {Array<ConsignSaleMethod>} [consignSaleMethods] 
+         * @param {string} [startDate] 
+         * @param {string} [endDate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiConsignsalesExportExcelGet(consignSaleCode?: string, memberName?: string, phone?: string, shopId?: string, email?: string, statuses?: Array<ConsignSaleStatus>, types?: Array<ConsignSaleType>, consignSaleMethods?: Array<ConsignSaleMethod>, startDate?: string, endDate?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<File>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiConsignsalesExportExcelGet(consignSaleCode, memberName, phone, shopId, email, statuses, types, consignSaleMethods, startDate, endDate, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ConsignSaleApi.apiConsignsalesExportExcelGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {number} [page] 
          * @param {number} [pageSize] 
          * @param {string} [shopId] 
@@ -17830,6 +17938,24 @@ export const ConsignSaleApiFactory = function (configuration?: Configuration, ba
          */
         apiConsignsalesConsignsaleIdNotifyDeliveryPut(consignsaleId: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
             return localVarFp.apiConsignsalesConsignsaleIdNotifyDeliveryPut(consignsaleId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} [consignSaleCode] 
+         * @param {string} [memberName] 
+         * @param {string} [phone] 
+         * @param {string} [shopId] 
+         * @param {string} [email] 
+         * @param {Array<ConsignSaleStatus>} [statuses] 
+         * @param {Array<ConsignSaleType>} [types] 
+         * @param {Array<ConsignSaleMethod>} [consignSaleMethods] 
+         * @param {string} [startDate] 
+         * @param {string} [endDate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiConsignsalesExportExcelGet(consignSaleCode?: string, memberName?: string, phone?: string, shopId?: string, email?: string, statuses?: Array<ConsignSaleStatus>, types?: Array<ConsignSaleType>, consignSaleMethods?: Array<ConsignSaleMethod>, startDate?: string, endDate?: string, options?: RawAxiosRequestConfig): AxiosPromise<File> {
+            return localVarFp.apiConsignsalesExportExcelGet(consignSaleCode, memberName, phone, shopId, email, statuses, types, consignSaleMethods, startDate, endDate, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -17970,6 +18096,26 @@ export class ConsignSaleApi extends BaseAPI {
      */
     public apiConsignsalesConsignsaleIdNotifyDeliveryPut(consignsaleId: string, options?: RawAxiosRequestConfig) {
         return ConsignSaleApiFp(this.configuration).apiConsignsalesConsignsaleIdNotifyDeliveryPut(consignsaleId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} [consignSaleCode] 
+     * @param {string} [memberName] 
+     * @param {string} [phone] 
+     * @param {string} [shopId] 
+     * @param {string} [email] 
+     * @param {Array<ConsignSaleStatus>} [statuses] 
+     * @param {Array<ConsignSaleType>} [types] 
+     * @param {Array<ConsignSaleMethod>} [consignSaleMethods] 
+     * @param {string} [startDate] 
+     * @param {string} [endDate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ConsignSaleApi
+     */
+    public apiConsignsalesExportExcelGet(consignSaleCode?: string, memberName?: string, phone?: string, shopId?: string, email?: string, statuses?: Array<ConsignSaleStatus>, types?: Array<ConsignSaleType>, consignSaleMethods?: Array<ConsignSaleMethod>, startDate?: string, endDate?: string, options?: RawAxiosRequestConfig) {
+        return ConsignSaleApiFp(this.configuration).apiConsignsalesExportExcelGet(consignSaleCode, memberName, phone, shopId, email, statuses, types, consignSaleMethods, startDate, endDate, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -18476,6 +18622,8 @@ export const FashionItemApiAxiosParamCreator = function (configuration?: Configu
         },
         /**
          * 
+         * @param {string} [startDate] 
+         * @param {string} [endDate] 
          * @param {string} [itemCode] 
          * @param {string} [shopId] 
          * @param {Array<FashionItemStatus>} [status] 
@@ -18485,7 +18633,7 @@ export const FashionItemApiAxiosParamCreator = function (configuration?: Configu
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiFashionitemsExportExcelGet: async (itemCode?: string, shopId?: string, status?: Array<FashionItemStatus>, type?: Array<FashionItemType>, minPrice?: number, maxPrice?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        apiFashionitemsExportExcelGet: async (startDate?: string, endDate?: string, itemCode?: string, shopId?: string, status?: Array<FashionItemStatus>, type?: Array<FashionItemType>, minPrice?: number, maxPrice?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/fashionitems/export-excel`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -18501,6 +18649,18 @@ export const FashionItemApiAxiosParamCreator = function (configuration?: Configu
             // authentication Bearer required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (startDate !== undefined) {
+                localVarQueryParameter['StartDate'] = (startDate as any instanceof Date) ?
+                    (startDate as any).toISOString() :
+                    startDate;
+            }
+
+            if (endDate !== undefined) {
+                localVarQueryParameter['EndDate'] = (endDate as any instanceof Date) ?
+                    (endDate as any).toISOString() :
+                    endDate;
+            }
 
             if (itemCode !== undefined) {
                 localVarQueryParameter['ItemCode'] = itemCode;
@@ -18887,6 +19047,8 @@ export const FashionItemApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {string} [startDate] 
+         * @param {string} [endDate] 
          * @param {string} [itemCode] 
          * @param {string} [shopId] 
          * @param {Array<FashionItemStatus>} [status] 
@@ -18896,8 +19058,8 @@ export const FashionItemApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiFashionitemsExportExcelGet(itemCode?: string, shopId?: string, status?: Array<FashionItemStatus>, type?: Array<FashionItemType>, minPrice?: number, maxPrice?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<File>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiFashionitemsExportExcelGet(itemCode, shopId, status, type, minPrice, maxPrice, options);
+        async apiFashionitemsExportExcelGet(startDate?: string, endDate?: string, itemCode?: string, shopId?: string, status?: Array<FashionItemStatus>, type?: Array<FashionItemType>, minPrice?: number, maxPrice?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<File>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiFashionitemsExportExcelGet(startDate, endDate, itemCode, shopId, status, type, minPrice, maxPrice, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['FashionItemApi.apiFashionitemsExportExcelGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -19016,6 +19178,8 @@ export const FashionItemApiFactory = function (configuration?: Configuration, ba
         },
         /**
          * 
+         * @param {string} [startDate] 
+         * @param {string} [endDate] 
          * @param {string} [itemCode] 
          * @param {string} [shopId] 
          * @param {Array<FashionItemStatus>} [status] 
@@ -19025,8 +19189,8 @@ export const FashionItemApiFactory = function (configuration?: Configuration, ba
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiFashionitemsExportExcelGet(itemCode?: string, shopId?: string, status?: Array<FashionItemStatus>, type?: Array<FashionItemType>, minPrice?: number, maxPrice?: number, options?: RawAxiosRequestConfig): AxiosPromise<File> {
-            return localVarFp.apiFashionitemsExportExcelGet(itemCode, shopId, status, type, minPrice, maxPrice, options).then((request) => request(axios, basePath));
+        apiFashionitemsExportExcelGet(startDate?: string, endDate?: string, itemCode?: string, shopId?: string, status?: Array<FashionItemStatus>, type?: Array<FashionItemType>, minPrice?: number, maxPrice?: number, options?: RawAxiosRequestConfig): AxiosPromise<File> {
+            return localVarFp.apiFashionitemsExportExcelGet(startDate, endDate, itemCode, shopId, status, type, minPrice, maxPrice, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -19126,6 +19290,8 @@ export class FashionItemApi extends BaseAPI {
 
     /**
      * 
+     * @param {string} [startDate] 
+     * @param {string} [endDate] 
      * @param {string} [itemCode] 
      * @param {string} [shopId] 
      * @param {Array<FashionItemStatus>} [status] 
@@ -19136,8 +19302,8 @@ export class FashionItemApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof FashionItemApi
      */
-    public apiFashionitemsExportExcelGet(itemCode?: string, shopId?: string, status?: Array<FashionItemStatus>, type?: Array<FashionItemType>, minPrice?: number, maxPrice?: number, options?: RawAxiosRequestConfig) {
-        return FashionItemApiFp(this.configuration).apiFashionitemsExportExcelGet(itemCode, shopId, status, type, minPrice, maxPrice, options).then((request) => request(this.axios, this.basePath));
+    public apiFashionitemsExportExcelGet(startDate?: string, endDate?: string, itemCode?: string, shopId?: string, status?: Array<FashionItemStatus>, type?: Array<FashionItemType>, minPrice?: number, maxPrice?: number, options?: RawAxiosRequestConfig) {
+        return FashionItemApiFp(this.configuration).apiFashionitemsExportExcelGet(startDate, endDate, itemCode, shopId, status, type, minPrice, maxPrice, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
