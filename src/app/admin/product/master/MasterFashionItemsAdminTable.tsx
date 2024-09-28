@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { KTIcon, toAbsoluteUrl } from "../../../../_metronic/helpers";
@@ -85,7 +86,10 @@ const MasterFashionItemsAdminTable: React.FC<Props> = ({ className }) => {
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", `FashionItemsReport_${new Date().toISOString()}.xlsx`);
+    link.setAttribute(
+      "download",
+      `FashionItemsReport_${new Date().toISOString()}.xlsx`
+    );
     document.body.appendChild(link);
     link.click();
     link.remove();

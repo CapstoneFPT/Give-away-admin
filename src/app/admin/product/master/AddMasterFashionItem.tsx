@@ -387,14 +387,14 @@ const AddMasterItem: React.FC<AddMasterItemProps> = ({
               </div>
               <div className="fv-row">
                 <label className="required form-label">Description</label>
-                <input
-                  type="text"
+                <textarea
                   className="form-control mb-2"
                   id="description"
                   placeholder="Enter Description"
                   value={formData.description || ""}
                   onChange={handleChange}
-                  style={{ width: "100%" }}
+                  rows={4} // You can adjust this number to set the initial number of visible text lines
+                  style={{ width: "100%", resize: "vertical" }}
                 />
               </div>
 

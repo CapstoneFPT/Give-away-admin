@@ -89,7 +89,7 @@ export const consignAuctionColumns: Column<ConsignSaleListResponse>[] = [
       value ? new Date(value).toLocaleString() : "N/A",
   },
   {
-    Header: "Type",
+    Header: "Method",
     accessor: "consignSaleMethod",
   },
   {
