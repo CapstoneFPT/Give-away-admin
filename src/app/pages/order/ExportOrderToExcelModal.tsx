@@ -230,8 +230,8 @@ const ExportOrderToExcelModal: React.FC<ExportOrderToExcelModalProps> = ({ show,
                     onChange={handleChange}
                   >
                     <option value="">All Shops</option>
-                    {(shops != undefined || shops != null) ? shops.map((shop: any) => (
-                      <option key={shop.id} value={shop.id}>
+                    {(shops != undefined || shops != null) ? shops.map((shop) => (
+                      <option key={shop.shopId} value={shop.shopId}>
                         {shop.address}
                       </option>
                     )) : "No shop available"}
