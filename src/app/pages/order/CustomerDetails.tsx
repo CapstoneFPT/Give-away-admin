@@ -39,7 +39,11 @@ const CustomerDetails: React.FC<{
                 </td>
                 <td className="fw-bold text-end w-50">
                   <div className="d-flex align-items-center justify-content-end">
-                    <span>{orderDetail?.customerName}</span>
+                    <span>{orderDetail != null 
+                    ? orderDetail.reciepientName != null
+                    ? orderDetail.reciepientName 
+                    : orderDetail.customerName 
+                    : "N/A"}</span>
                   </div>
                 </td>
               </tr>
