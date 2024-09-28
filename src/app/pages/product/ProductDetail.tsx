@@ -11,7 +11,7 @@ import { KTCard, KTCardBody } from "../../../_metronic/helpers";
 import { formatBalance } from "../utils/utils";
 import KTInfoItem from "../../../_metronic/helpers/components/KTInfoItem";
 import { showAlert } from "../../../utils/Alert";
-
+import MagnifyImage from "../../utils/MagnifyImage";
 import "react-toastify/dist/ReactToastify.css";
 
 const ProductDetail: React.FC = () => {
@@ -83,24 +83,29 @@ const ProductDetail: React.FC = () => {
                   >
                     {data.images &&
                       data.images.map((image, index) => (
-                        <img
+                        <div
                           key={index}
-                          src={image}
-                          alt={`${data.name || "Product"} ${index + 1}`}
-                          className={`img-thumbnail mb-3 cursor-pointer ${
-                            selectedImage === image ? "border-primary" : ""
+                          className={`mb-3 cursor-pointer ${
+                            selectedImage === image
+                              ? "border border-primary"
+                              : ""
                           }`}
-                          style={{
-                            width: "150px",
-                            height: "150px",
-                            objectFit: "cover",
-                          }}
                           onClick={() => setSelectedImage(image)}
-                        />
+                        >
+                          <MagnifyImage
+                            src={image}
+                            alt={`${data.name || "Product"} ${index + 1}`}
+                            width="150px"
+                            height="150px"
+                            magnifierHeight={75}
+                            magnifieWidth={75}
+                            zoomLevel={1.5}
+                          />
+                        </div>
                       ))}
                   </div>
                   <div style={{ flex: 1, marginLeft: "90px" }}>
-                    <img
+                    <MagnifyImage
                       src={
                         selectedImage ||
                         (data.images && data.images.length > 0
@@ -108,13 +113,11 @@ const ProductDetail: React.FC = () => {
                           : "")
                       }
                       alt={`${data.name || "Product"} main`}
-                      className="img-fluid rounded cursor-pointer"
-                      style={{
-                        maxHeight: "700px",
-                        width: "100%",
-                        objectFit: "cover",
-                      }}
-                      onClick={() => setIsModalOpen(true)}
+                      width="100%"
+                      height="700px"
+                      magnifierHeight={200}
+                      magnifieWidth={200}
+                      zoomLevel={2}
                     />
                   </div>
                 </div>
@@ -246,7 +249,7 @@ const ProductDetail: React.FC = () => {
                 ></button>
               </div>
               <div className="modal-body">
-                <img
+                <MagnifyImage
                   src={
                     selectedImage ||
                     (data.images && data.images.length > 0
@@ -254,8 +257,11 @@ const ProductDetail: React.FC = () => {
                       : "")
                   }
                   alt={`${data.name || "Product"} full`}
-                  className="img-fluid"
-                  style={{ width: "100%", height: "auto" }}
+                  width="100%"
+                  height="auto"
+                  magnifierHeight={300}
+                  magnifieWidth={300}
+                  zoomLevel={2.5}
                 />
               </div>
             </div>
