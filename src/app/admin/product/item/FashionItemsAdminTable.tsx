@@ -5,6 +5,8 @@ import {
   FashionItemApi,
   FashionItemList,
   MasterItemApi,
+  UpdateMasterItemRequest,
+  MasterItemDetailResponse,
 } from "../../../../api";
 import { useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
@@ -13,6 +15,8 @@ import AddFashionItem from "./AddFashionItem";
 import { KTCard, KTCardBody } from "../../../../_metronic/helpers";
 import { showAlert } from "../../../../utils/Alert";
 import { useNavigate } from "react-router-dom";
+import UpdateMasterItemModal from "./UpdateMasterItem";
+
 type Props = {
   className: string;
 };
@@ -29,6 +33,25 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
   const handleCloseModal = () => setIsModalVisible(false);
   const [action, setAction] = useState<boolean>(false);
   const navigate = useNavigate();
+
+  // Add this state
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+
+  // Add this function
+  const handleOpenUpdateModal = () => setIsUpdateModalOpen(true);
+
+  // Add this function
+  const handleCloseUpdateModal = () => setIsUpdateModalOpen(false);
+
+  // Add this function
+  const handleMasterItemUpdate = (updatedData: UpdateMasterItemRequest) => {
+    // Implement the update logic here
+    console.log("Updating master item with:", updatedData);
+    // Call the API to update the master item
+    // Then close the modal and refetch the data
+    handleCloseUpdateModal();
+    queryClient.invalidateQueries(["MasterFashionItemsDetail"]);
+  };
 
   const handleRedirect = () => {
     navigate("/product-admin");
@@ -89,7 +112,7 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
 
     { refetchOnWindowFocus: false, keepPreviousData: true }
   );
-  console.log(result);
+
   const MasterResult = useQuery(
     ["MasterFashionItemsDetail", debouncedSearchTerm, currentPage, pageSize],
     async () => {
@@ -102,6 +125,8 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
 
     { refetchOnWindowFocus: false, keepPreviousData: true }
   );
+  console.log(MasterResult);
+
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const handleSelectItem = (itemId: string) => {
     // Find the item with the matching itemId
@@ -246,6 +271,15 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
               Add new item
             </a>
           )}
+
+          {/* Add this button */}
+          <button
+            className="btn btn-sm btn-light-primary d-flex align-items-center me-2"
+            onClick={handleOpenUpdateModal}
+          >
+            <KTIcon iconName="pencil" className="fs-2 me-2" />
+            Update Master Item
+          </button>
         </div>
       </div>
       <KTCard className="mb-5 mb-xl-8">
@@ -575,6 +609,13 @@ const FashionItemsAdminTable: React.FC<Props> = ({ className }) => {
         handleClose={handleCloseModal}
         handleSave={handleItemCreated}
         handleItemCreated={handleItemCreated}
+      />
+      <UpdateMasterItemModal
+        isOpen={isUpdateModalOpen}
+        onClose={handleCloseUpdateModal}
+        onUpdate={handleMasterItemUpdate}
+        initialData={MasterResult.data as MasterItemDetailResponse}
+        masterItemId={MasterResult.data?.masterItemId || ""}
       />
     </div>
   );

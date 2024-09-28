@@ -309,11 +309,9 @@ const AddConsignmentOffline: React.FC = () => {
           masterItemId: "",
           note: "",
           expectedPrice: 0,
-
           gender: "Male",
           condition: "",
           color: "",
-
           size: "XS",
           imageUrls: [],
         },

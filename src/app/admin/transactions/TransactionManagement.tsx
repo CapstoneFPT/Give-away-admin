@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useMemo } from "react";
 import { useQuery } from "react-query";
 import { KTCard, KTCardBody } from "../../../_metronic/helpers";
@@ -6,7 +7,7 @@ import { Content } from "../../../_metronic/layout/components/content";
 import { KTTable } from "../../../_metronic/helpers/components/KTTable";
 import { formatBalance } from "../../pages/utils/utils";
 import { useAuth } from "../../modules/auth";
-import ExportTransactionToExcelModal from './ExportTransactionToExcelModal';
+import ExportTransactionToExcelModal from "./ExportTransactionToExcelModal";
 
 const TransactionManagement: React.FC = () => {
   const { currentUser } = useAuth();
@@ -23,14 +24,14 @@ const TransactionManagement: React.FC = () => {
   console.log(shopId);
   const { data, isLoading, error } = useQuery(
     ["transactions", currentPage, pageSize, shopId, transactionTypeFilter],
-    async () =>{
+    async () => {
       const response = await transactionApi.apiTransactionsGet(
         currentPage,
         pageSize,
         shopId,
         transactionTypeFilter || null!
-      )
-      return response.data.data
+      );
+      return response.data.data;
     },
     {
       keepPreviousData: true,
@@ -58,6 +59,10 @@ const TransactionManagement: React.FC = () => {
         Cell: ({ value }: { value: number }) => formatBalance(value) + " VND",
       },
       {
+        Header: "Payment Method",
+        accessor: "paymentMethod",
+      },
+      {
         Header: "Type",
         accessor: "transactionType",
       },
@@ -83,7 +88,6 @@ const TransactionManagement: React.FC = () => {
     []
   );
 
-
   const totalCount = data != undefined ? data.totalCount : 0;
   const totalPages = data != undefined ? data.totalPages : 1;
 
@@ -100,18 +104,21 @@ const TransactionManagement: React.FC = () => {
         filters.senderName,
         filters.receiverName,
         filters.transactionCode,
-        { responseType: 'blob' }
+        { responseType: "blob" }
       );
 
       const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.setAttribute('download', `TransactionReport_${new Date().toISOString()}.xlsx`);
+      link.setAttribute(
+        "download",
+        `TransactionReport_${new Date().toISOString()}.xlsx`
+      );
       document.body.appendChild(link);
       link.click();
       link.remove();
     } catch (error) {
-      console.error('Error exporting transactions:', error);
+      console.error("Error exporting transactions:", error);
     }
   };
 
@@ -166,7 +173,7 @@ const TransactionManagement: React.FC = () => {
           ) : (
             <KTTable
               columns={columns}
-              data={data?.items ||  []}
+              data={data?.items || []}
               currentPage={currentPage}
               pageSize={pageSize}
               onPageChange={handlePageChange}

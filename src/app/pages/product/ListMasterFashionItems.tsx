@@ -62,8 +62,8 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
   const { data, isLoading, error } = useQuery(
     ["FashionItems", debouncedSearchTerm, masterItemId, currentPage],
     async () => {
-      const response = await fetchData(currentPage, pageSize)
-      return response
+      const response = await fetchData(currentPage, pageSize);
+      return response;
     },
     { refetchOnWindowFocus: false, keepPreviousData: true }
   );
@@ -112,12 +112,32 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
     }
   );
 
+  const returnMutation = useMutation(
+    (id: string) =>
+      new FashionItemApi().apiFashionitemsItemIdAddReturnedItemPatch(id),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([
+          "FashionItems",
+          debouncedSearchTerm,
+          masterItemId,
+          currentPage,
+        ]);
+        showAlert("success", "Item returned successfully");
+      },
+    }
+  );
+
   const handlePost = (id: string) => {
     postMutation.mutate(id);
   };
 
   const handleTaken = (id: string) => {
     takenMutation.mutate(id);
+  };
+
+  const handleReturn = (id: string) => {
+    returnMutation.mutate(id);
   };
 
   const handlePageChange = (newPage: number) => {
@@ -242,22 +262,37 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
     {
       Header: "Action",
       accessor: "id",
-      Cell: ({ row }: { row: any }) =>
-        row.original.status === "Available" ? (
-          <button
-            className="btn btn-sm btn-primary"
-            onClick={() => handleTaken(row.original.itemId)}
-          >
-            Take Down
-          </button>
-        ) : row.original.status === "Unavailable" ? (
-          <button
-            className="btn btn-sm btn-secondary"
-            onClick={() => handlePost(row.original.itemId)}
-          >
-            Post
-          </button>
-        ) : null,
+      Cell: ({ row }: { row: any }) => {
+        if (row.original.status === "Available") {
+          return (
+            <button
+              className="btn btn-sm btn-primary"
+              onClick={() => handleTaken(row.original.itemId)}
+            >
+              Take Down
+            </button>
+          );
+        } else if (row.original.status === "Unavailable") {
+          return (
+            <button
+              className="btn btn-sm btn-secondary"
+              onClick={() => handlePost(row.original.itemId)}
+            >
+              Post
+            </button>
+          );
+        } else if (row.original.status === "Returned") {
+          return (
+            <button
+              className="btn btn-sm btn-warning"
+              onClick={() => handleReturn(row.original.itemId)}
+            >
+              Return
+            </button>
+          );
+        }
+        return null;
+      },
     },
   ];
 
@@ -314,18 +349,24 @@ const ListMasterFashionItems: React.FC<Props> = ({ className }) => {
                     <KTCardBody>
                       <h3 className="fs-2 fw-bold mb-5">Master Image</h3>
                       <div className="d-flex flex-wrap gap-3">
-                        {masterItemQuery.data != undefined ? masterItemQuery.data.images != undefined ? masterItemQuery.data.images.map((image, index) => (
-                          <img
-                            key={index}
-                            src={image.imageUrl ?? ""}
-                            alt={`Product ${index + 1}`}
-                            style={{
-                              width: "150px",
-                              height: "200px",
-                              objectFit: "cover",
-                            }}
-                          />
-                        )) : "No image available" : "No image available"}
+                        {masterItemQuery.data != undefined
+                          ? masterItemQuery.data.images != undefined
+                            ? masterItemQuery.data.images.map(
+                                (image, index) => (
+                                  <img
+                                    key={index}
+                                    src={image.imageUrl ?? ""}
+                                    alt={`Product ${index + 1}`}
+                                    style={{
+                                      width: "150px",
+                                      height: "200px",
+                                      objectFit: "cover",
+                                    }}
+                                  />
+                                )
+                              )
+                            : "No image available"
+                          : "No image available"}
                       </div>
                     </KTCardBody>
                   </KTCard>
