@@ -393,7 +393,11 @@ const RefundDetail: React.FC = () => {
                       <KTInfoItem
                         iconName="user"
                         title="Customer Name"
-                        value={data.customerName || "N/A"}
+                        value={data.recipientName != null ? 
+                          data.recipientName 
+                          : data.customerName != null ? 
+                          data.customerName 
+                          : "N/A"}
                       />
                       <KTInfoItem
                         iconName="phone"
